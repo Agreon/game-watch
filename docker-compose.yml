@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:11
+    environment:
+      - POSTGRES_DB=game_view
+      - POSTGRES_USER=game_view
+      - POSTGRES_PASSWORD=game_view
+    ports:
+      - 5437:5432

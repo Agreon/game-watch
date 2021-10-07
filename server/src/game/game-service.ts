@@ -1,0 +1,90 @@
+import { EntityRepository } from "@mikro-orm/core";
+import { InjectRepository } from "@mikro-orm/nestjs";
+import { Injectable, Logger } from "@nestjs/common";
+import { ResolveService } from "../resolve/resolve-service";
+import { SearchService } from "../search/search-service";
+import { Game } from "./game-model";
+import { InfoSource, InfoSourceType } from "./info-source-model";
+
+@Injectable()
+export class GameService {
+    private readonly logger = new Logger(GameService.name);
+
+    public constructor(
+        private readonly searchService: SearchService,
+        private readonly resolveService: ResolveService,
+        @InjectRepository(Game)
+        private readonly gameRepository: EntityRepository<Game>
+    ) { }
+
+    public async createGame(name: string) {
+        let game = await this.gameRepository.findOne({ name }, ["infoSources"]);
+        if (game === null) {
+            game = new Game({ name });
+        }
+
+        await this.syncGameInfoSources(game);
+
+        return await this.gameRepository.findOneOrFail(game.id, ["infoSources"]);
+    }
+
+    public async syncGameInfoSources(game: Game) {
+        const existingInfoSources = await game.infoSources.loadItems();
+
+        // Resolve for existing sources
+        await Promise.all(existingInfoSources.map(
+            async source => {
+                const resolvedGameData = await this.resolveService.resolveGameInformation(
+                    source.remoteGameId,
+                    source.type
+                );
+                if (!resolvedGameData) {
+                    this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable`)
+
+                    return;
+                }
+
+                source.data = resolvedGameData;
+            }
+        ))
+
+        // Resolve for possible new sources
+        const sourcesToSearch = Object.values(InfoSourceType).filter(
+            (type => !existingInfoSources.map(({ type }) => type).includes(type))
+        );
+        await Promise.all(sourcesToSearch.map(
+            async sourceType => {
+                const remoteGameId = await this.searchService.searchForGameInSource(game.name, sourceType);
+                if (!remoteGameId) {
+                    console.log("Skipping ", sourceType);
+                    return null;
+                }
+
+
+                const resolvedGameData = await this.resolveService.resolveGameInformation(remoteGameId, sourceType);
+                if (!resolvedGameData) {
+                    // TODO: Warning parsing error
+                    return;
+                }
+
+                game.infoSources.add(new InfoSource({
+                    type: sourceType,
+                    remoteGameId: remoteGameId,
+                    data: resolvedGameData,
+                }));
+            }
+        ));
+
+        await this.gameRepository.persistAndFlush(game);
+    }
+
+
+    public async getGames() {
+        return await this.gameRepository.findAll({
+            populate: ["infoSources"],
+            orderBy: {
+                "updatedAt": "DESC"
+            }
+        })
+    }
+}
