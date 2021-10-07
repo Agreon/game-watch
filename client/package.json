@@ -1,5 +1,5 @@
 {
-  "name": "game-watch",
+  "name": "game-watch-client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,14 +13,11 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "axios": "^0.22.0",
-    "cheerio": "^1.0.0-rc.10",
     "framer-motion": "^4",
     "next": "11.1.2",
-    "puppeteer": "^10.4.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "yarn": "^1.22.15",
-    "zombie": "^6.1.4"
+    "yarn": "^1.22.15"
   },
   "devDependencies": {
     "@types/react": "17.0.27",

@@ -13,7 +13,10 @@ Sentry.init({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: true,
-    cors: false
+    cors: {
+      allowedHeaders: "*",
+      origin: "*"
+    }
   });
 
   await app.listen(3002);
