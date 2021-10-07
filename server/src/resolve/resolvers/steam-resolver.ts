@@ -3,6 +3,10 @@ import { InfoResolver } from "../resolve-service";
 import axios from "axios";
 import { Logger } from "@nestjs/common";
 
+/**
+ * TODO:
+ * - Add offer end date => We need to make a second api call
+ */
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;
 

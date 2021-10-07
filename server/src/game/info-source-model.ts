@@ -8,10 +8,13 @@ export enum InfoSourceType {
     PsStore = "psStore",
 }
 
-export interface SteamGameData {
+export interface StoreGameData {
     id: string;
     fullName: string;
     storeUrl: string;
+}
+
+export interface SteamGameData extends StoreGameData {
     thumbnailUrl: string;
     releaseDate: {
         comingSoon: boolean;
@@ -27,16 +30,21 @@ export interface SteamGameData {
     controllerSupport?: string;
 }
 
-export interface NintendoGameData {
-    id: string;
-    storeUrl: string;
-    price: string;
+export interface NintendoGameData extends StoreGameData {
+    priceInformation?: {
+        initial: string;
+        final: string;
+    };
     releaseDate: string;
 }
 
-export interface PsStoreGameData {
-    id: string;
-    reduced: boolean;
+export interface PsStoreGameData extends StoreGameData {
+    priceInformation?: {
+        initial: string;
+        final: string;
+        discountDescription?: string;
+    };
+    releaseDate?: string;
 }
 
 // TODO: What do these generics give us except for binding us to details?

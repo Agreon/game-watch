@@ -10,22 +10,25 @@ export class NintendoResolver implements InfoResolver {
 
         return await withBrowser(async (page) => {
             await page.goto(id);
+            console.timeEnd("Resolve Nintendo");
 
-            // TODO: Test
             await page.waitForSelector(".release-date > dd");
 
-            // TODO: We are too fast for the price sometimes
-            // TODO: Price could be missing
-            const price = await page.$eval(".price > .msrp", (el) => el.textContent?.trim());
-            const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
+            const fullName = await page.$eval(".game-title", (el) => el.textContent?.trim());
+            const price = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
+            const salePrice = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
 
-            console.timeEnd("Resolve Nintendo");
+            const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
 
             return {
                 id,
                 storeUrl: id,
-                price: price || "",
-                releaseDate: releaseDate || ""
+                priceInformation: price ? {
+                    initial: price,
+                    final: salePrice || price
+                } : undefined,
+                fullName: fullName || "",
+                releaseDate: releaseDate || "",
             };
         })
     }

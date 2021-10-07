@@ -1,22 +1,30 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { Game } from "./game-model";
 import { GameService } from "./game-service";
 
 export class CreateGameDto {
-    public name: string;
+    public search: string;
 }
 
 @Controller("/game")
 export class GameController {
     public constructor(
-        private readonly gameService: GameService
+        private readonly gameService: GameService,
     ) { }
 
     @Post()
     public async create(
-        @Body() { name }: CreateGameDto
+        // TODO: Validation
+        @Body() { search }: CreateGameDto
     ): Promise<Game> {
-        return await this.gameService.createGame(name);
+        return await this.gameService.createGame(search);
+    }
+
+    @Post("/:gameId/sync")
+    public async sync(
+        @Param("gameId") gameId: string
+    ): Promise<Game> {
+        return await this.gameService.syncGame(gameId);
     }
 
     @Get()

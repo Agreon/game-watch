@@ -9,28 +9,28 @@ export class SteamSearcher implements InfoSearcher {
     private logger = new Logger(SteamSearcher.name);
 
     public async search(search: string) {
-        this.logger.debug(`Searching steam for '${search}'`);
-
         console.time("Visit Steam");
         const { data } = await axios.get<string>(
             `https://store.steampowered.com/search/?term=${encodeURIComponent(search)}`
         );
         console.timeEnd("Visit Steam");
 
-        if (data.includes("0 results match your search.")) {
+        const $ = cheerio.load(data);
+
+        const resultRow = $(".search_result_row");
+        if (!resultRow) {
             this.logger.debug("No results found");
 
             return null;
         }
 
-        const $ = cheerio.load(data);
-        const appId = $(".search_result_row").attr("data-ds-appid");
+        const appId = resultRow.attr("data-ds-appid");
         const appName = ($(".search_result_row .title")[0].children[0] as any).data as string;
 
         const searchTokens = search.toLowerCase().split(" ");
-        const nameTokens = appName.toLowerCase().split(" ");
+        const nameTokens = appName.replace(/:/g, "").toLowerCase().split(" ");
         if (!nameTokens.some(token => searchTokens.includes(token))) {
-            this.logger.debug("Found name does not include search. Skipping steam");
+            this.logger.debug(`Found name '${appName}' does not include search '${search}'. Skipping steam`);
 
             return null;
         }

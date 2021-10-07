@@ -17,22 +17,29 @@ export class GameService {
         private readonly gameRepository: EntityRepository<Game>
     ) { }
 
-    public async createGame(name: string) {
-        let game = await this.gameRepository.findOne({ name }, ["infoSources"]);
-        if (game === null) {
-            game = new Game({ name });
+    public async createGame(search: string) {
+        let game = await this.gameRepository.findOne({ name: search });
+        if (game !== null) {
+            return game;
         }
 
-        await this.syncGameInfoSources(game);
+        game = new Game({ name: search });
+        await this.gameRepository.persistAndFlush(game);
 
-        return await this.gameRepository.findOneOrFail(game.id, ["infoSources"]);
+        return game;
     }
 
-    public async syncGameInfoSources(game: Game) {
+    public async syncGame(gameId: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+
+        return await this.syncGameInfoSources(game);
+    }
+
+    private async syncGameInfoSources(game: Game) {
         const existingInfoSources = await game.infoSources.loadItems();
 
         // Resolve for existing sources
-        await Promise.all(existingInfoSources.map(
+        const resolvePromises = existingInfoSources.map(
             async source => {
                 const resolvedGameData = await this.resolveService.resolveGameInformation(
                     source.remoteGameId,
@@ -46,24 +53,23 @@ export class GameService {
 
                 source.data = resolvedGameData;
             }
-        ))
+        );
 
         // Resolve for possible new sources
         const sourcesToSearch = Object.values(InfoSourceType).filter(
             (type => !existingInfoSources.map(({ type }) => type).includes(type))
         );
-        await Promise.all(sourcesToSearch.map(
+        const searchAndResolvePromises = sourcesToSearch.map(
             async sourceType => {
                 const remoteGameId = await this.searchService.searchForGameInSource(game.name, sourceType);
                 if (!remoteGameId) {
-                    console.log("Skipping ", sourceType);
+                    this.logger.debug(`No store game information found in '${sourceType}' for '${game.name}'`);
                     return null;
                 }
 
 
                 const resolvedGameData = await this.resolveService.resolveGameInformation(remoteGameId, sourceType);
                 if (!resolvedGameData) {
-                    // TODO: Warning parsing error
                     return;
                 }
 
@@ -73,9 +79,13 @@ export class GameService {
                     data: resolvedGameData,
                 }));
             }
-        ));
+        );
+
+        await Promise.all([...resolvePromises, ...searchAndResolvePromises]);
 
         await this.gameRepository.persistAndFlush(game);
+
+        return game;
     }
 
 

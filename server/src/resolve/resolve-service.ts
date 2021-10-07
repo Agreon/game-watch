@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { GameDataU, InfoSourceType } from "../game/info-source-model";
+import * as Sentry from '@sentry/node';
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType;
@@ -21,10 +22,19 @@ export class ResolveService {
             throw new Error(`No resolver for type ${type} found`);
         }
 
+        this.logger.debug(`Resolving ${type} for '${id}'`);
+
         try {
             return await resolverForType.resolve(id);
         } catch (error) {
-            // TODO: Or show user Something unexpected went wrong
+            Sentry.captureException(error, {
+                contexts: {
+                    resolveParameters: {
+                        id,
+                        type
+                    }
+                }
+            });
             this.logger.warn(error);
             return null;
         }

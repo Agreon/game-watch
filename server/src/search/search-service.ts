@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { InfoSourceType } from "../game/info-source-model";
+import * as Sentry from '@sentry/node';
 
 export interface InfoSearcher {
     type: InfoSourceType;
@@ -15,16 +16,25 @@ export class SearchService {
         private readonly searchers: InfoSearcher[],
     ) { }
 
-    public async searchForGameInSource(name: string, type: InfoSourceType): Promise<string | null> {
+    public async searchForGameInSource(search: string, type: InfoSourceType): Promise<string | null> {
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
             throw new Error(`No searcher for type ${type} found`);
         }
 
+        this.logger.debug(`Searching ${type} for '${search}'`);
+
         try {
-            return await searcherForType.search(name);
+            return await searcherForType.search(search);
         } catch (error) {
-            // TODO: Or show user Something unexpected went wrong
+            Sentry.captureException(error, {
+                contexts: {
+                    searchParameters: {
+                        search,
+                        type
+                    }
+                }
+            });
             this.logger.warn(error);
             return null;
         }
