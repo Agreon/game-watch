@@ -1,4 +1,4 @@
-import { EntityRepository } from "@mikro-orm/core";
+import { EntityRepository, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable, Logger } from "@nestjs/common";
 import { ResolveService } from "../resolve/resolve-service";
@@ -18,7 +18,7 @@ export class GameService {
     ) { }
 
     public async createGame(search: string) {
-        let game = await this.gameRepository.findOne({ name: search });
+        let game = await this.gameRepository.findOne({ name: search }, ["infoSources"]);
         if (game !== null) {
             return game;
         }
@@ -35,7 +35,17 @@ export class GameService {
         return await this.syncGameInfoSources(game);
     }
 
+    public async syncAllGames() {
+        const games = await this.gameRepository.findAll(["infoSources"]);
+
+        // TODO: use p-queue
+        for (const game of games) {
+            await this.syncGameInfoSources(game);
+        }
+    }
+
     private async syncGameInfoSources(game: Game) {
+        this.logger.debug(`Syncing InfoSources for ${game.name} (${game.id})`)
         const existingInfoSources = await game.infoSources.loadItems();
 
         // Resolve for existing sources
@@ -46,6 +56,7 @@ export class GameService {
                     source.type
                 );
                 if (!resolvedGameData) {
+                    // TODO: disable or mark with warning?
                     this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable`)
 
                     return;
@@ -93,7 +104,8 @@ export class GameService {
         return await this.gameRepository.findAll({
             populate: ["infoSources"],
             orderBy: {
-                "updatedAt": "DESC"
+                updatedAt: QueryOrder.DESC,
+                infoSources: { type: QueryOrder.DESC },
             }
         })
     }

@@ -44,7 +44,6 @@ export class SteamResolver implements InfoResolver {
                     date: json.release_date.date,
                 },
                 priceInformation: json.price_overview ? {
-                    // TODO: May be ""
                     initial: json.price_overview.initial_formatted,
                     final: json.price_overview.final_formatted,
                     discountPercentage: json.price_overview.discount_percent,

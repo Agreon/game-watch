@@ -12,10 +12,10 @@ export interface StoreGameData {
     id: string;
     fullName: string;
     storeUrl: string;
+    thumbnailUrl: string;
 }
 
 export interface SteamGameData extends StoreGameData {
-    thumbnailUrl: string;
     releaseDate: {
         comingSoon: boolean;
         date: Date;

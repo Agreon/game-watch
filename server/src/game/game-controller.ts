@@ -20,6 +20,12 @@ export class GameController {
         return await this.gameService.createGame(search);
     }
 
+
+    @Post("/sync")
+    public async syncAll(): Promise<void> {
+        await this.gameService.syncAllGames();
+    }
+
     @Post("/:gameId/sync")
     public async sync(
         @Param("gameId") gameId: string

@@ -11,7 +11,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 padding: "0 0.5rem",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh"
+                height: "100vh",
+                overflow: "scroll"
             }}
         >
             <Head>

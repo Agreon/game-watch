@@ -21,7 +21,7 @@ export class PsStoreResolver implements InfoResolver {
 
             await browser.waitForSelector(".psw-t-title-m");
 
-            const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent?.trim());
+            const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim());
 
             const price = await browser.evaluate(
                 () => document.querySelector('.psw-t-title-m[data-qa="mfeCtaMain#offer0#finalPrice"]')?.textContent?.trim()
@@ -37,10 +37,15 @@ export class PsStoreResolver implements InfoResolver {
                 () => document.querySelector('dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]')?.textContent?.trim()
             );
 
+            const thumbnailUrl = await browser.evaluate(
+                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')!.getAttribute("src")!
+            );
+
             return {
                 id: storePage,
                 storeUrl: storePage,
-                fullName: fullName || "",
+                fullName,
+                thumbnailUrl,
                 priceInformation: price ? {
                     initial: originalPrice || price,
                     final: price,
