@@ -1,4 +1,4 @@
-import { InfoSourceType, SteamGameData } from "../../game/info-source-model";
+import { InfoSourceType, SteamGameData } from "../../info-source/info-source-model";
 import { InfoResolver } from "../resolve-service";
 import axios from "axios";
 import { Logger } from "@nestjs/common";

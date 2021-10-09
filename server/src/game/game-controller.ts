@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { Game } from "./game-model";
 import { GameService } from "./game-service";
+import { IsString } from "class-validator";
 
 export class CreateGameDto {
+    @IsString()
     public search: string;
 }
 
@@ -14,12 +16,15 @@ export class GameController {
 
     @Post()
     public async create(
-        // TODO: Validation
         @Body() { search }: CreateGameDto
     ): Promise<Game> {
         return await this.gameService.createGame(search);
     }
 
+    @Get()
+    public async getAll() {
+        return await this.gameService.getGames();
+    }
 
     @Post("/sync")
     public async syncAll(): Promise<void> {
@@ -33,8 +38,10 @@ export class GameController {
         return await this.gameService.syncGame(gameId);
     }
 
-    @Get()
-    public async getAll() {
-        return await this.gameService.getGames();
+    @Delete("/:gameId")
+    public async delete(
+        @Param("gameId") gameId: string
+    ): Promise<void> {
+        await this.gameService.deleteGame(gameId);
     }
 }

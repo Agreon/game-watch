@@ -1,5 +1,5 @@
 import { InfoSearcher } from "../search-service";
-import { InfoSourceType } from "../../game/info-source-model";
+import { InfoSourceType } from "../../info-source/info-source-model";
 import { withBrowser } from "../../util/with-browser";
 import { Logger } from "@nestjs/common";
 import { matchingName } from "../../util/matching-name";

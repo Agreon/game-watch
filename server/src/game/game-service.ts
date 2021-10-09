@@ -1,10 +1,10 @@
 import { EntityRepository, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable, Logger } from "@nestjs/common";
+import { ConflictException, Injectable, Logger } from "@nestjs/common";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
 import { Game } from "./game-model";
-import { InfoSource, InfoSourceType } from "./info-source-model";
+import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 
 @Injectable()
 export class GameService {
@@ -14,13 +14,15 @@ export class GameService {
         private readonly searchService: SearchService,
         private readonly resolveService: ResolveService,
         @InjectRepository(Game)
-        private readonly gameRepository: EntityRepository<Game>
+        private readonly gameRepository: EntityRepository<Game>,
+        @InjectRepository(InfoSource)
+        private readonly infoSourceRepository: EntityRepository<InfoSource>
     ) { }
 
     public async createGame(search: string) {
-        let game = await this.gameRepository.findOne({ name: search }, ["infoSources"]);
+        let game = await this.gameRepository.findOne({ name: search });
         if (game !== null) {
-            return game;
+            throw new ConflictException()
         }
 
         game = new Game({ name: search });
@@ -33,6 +35,16 @@ export class GameService {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
 
         return await this.syncGameInfoSources(game);
+    }
+
+    public async deleteGame(gameId: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+
+        for (const source of game.infoSources) {
+            this.infoSourceRepository.remove(source);
+        }
+
+        await this.gameRepository.removeAndFlush(game)
     }
 
     public async syncAllGames() {
@@ -49,22 +61,25 @@ export class GameService {
         const existingInfoSources = await game.infoSources.loadItems();
 
         // Resolve for existing sources
-        const resolvePromises = existingInfoSources.map(
-            async source => {
-                const resolvedGameData = await this.resolveService.resolveGameInformation(
-                    source.remoteGameId,
-                    source.type
-                );
-                if (!resolvedGameData) {
-                    // TODO: disable or mark with warning?
-                    this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable`)
+        const resolvePromises = existingInfoSources
+            .filter(infoSource => !infoSource.disabled)
+            .map(
+                async source => {
+                    const resolvedGameData = await this.resolveService.resolveGameInformation(
+                        source.remoteGameId,
+                        source.type
+                    );
+                    if (!resolvedGameData) {
+                        // TODO: disable or mark with warning?
+                        // => data: null as warning?
+                        this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable`)
 
-                    return;
+                        return;
+                    }
+
+                    source.data = resolvedGameData;
                 }
-
-                source.data = resolvedGameData;
-            }
-        );
+            );
 
         // Resolve for possible new sources
         const sourcesToSearch = Object.values(InfoSourceType).filter(
@@ -98,7 +113,6 @@ export class GameService {
 
         return game;
     }
-
 
     public async getGames() {
         return await this.gameRepository.findAll({

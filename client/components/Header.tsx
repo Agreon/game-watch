@@ -9,11 +9,15 @@ export default function Header() {
 
     return (
         <div style={{
+            position: "absolute",
+            width: "100%",
             borderBottom: "1px solid grey",
             padding: "1rem",
             display: "flex",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
+            backgroundColor: "var(--chakra-colors-gray-800)",
+            zIndex: 2
         }}>
             <Link href="/" style={{ fontSize: "1.5rem" }}>
                 GameView

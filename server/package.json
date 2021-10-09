@@ -30,6 +30,8 @@
     "@sentry/node": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
     "cheerio": "^1.0.0-rc.10",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "dotenv": "^10.0.0",
     "puppeteer": "^10.4.0",
     "reflect-metadata": "^0.1.13",

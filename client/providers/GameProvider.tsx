@@ -1,13 +1,14 @@
 import axios from "axios";
 import React, { useCallback, useContext, useMemo, useState } from "react";
 
+// TOOD: We need a monorepo
 export interface InfoSource {
     id: string
     type: string
-    data: Record<string, unknown>
+    disabled: boolean
+    data: Record<string, any>
 }
 
-// TOOD: We need a monorepo
 export interface Game {
     id: string
     name: string
@@ -17,14 +18,18 @@ export interface Game {
 
 export interface GameCtx {
     games: Game[]
-    addGame: (name: string) => Promise<Game>
-    syncGame: (id: string) => Promise<Game>
+    addGame: (name: string) => Promise<void>
+    syncGame: (id: string) => Promise<void>
+    deleteGame: (id: string) => Promise<void>
+    disableInfoSource: (game: Game, infoSource: InfoSource) => Promise<void>
 }
 
 export const GameContext = React.createContext<GameCtx>({
     games: [],
-    addGame: async () => ({} as Game),
-    syncGame: async () => ({} as Game),
+    addGame: async () => { },
+    syncGame: async () => { },
+    deleteGame: async () => { },
+    disableInfoSource: async () => { },
 });
 
 export function useGameContext() {
@@ -36,56 +41,51 @@ export function useGameContext() {
 export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
     const [games, setGames] = useState(initialGames);
 
-    // TODO: Won't work that way
-    const setGameLoading = useCallback((gameId: string, state: boolean) => {
-        console.log(gameId);
-        const game = games.find(({ id }) => id === gameId);
-        game!.syncing = state;
+    const addGame = useCallback(async (name: string) => {
+        const { data } = await axios.post<any>("http://localhost:3002/game", { search: name });
+
+        setGames([data, ...games]);
+    }, [games, setGames]);
+
+
+    const syncGame = useCallback(async (gameId: string) => {
+        const { data } = await axios.post<any>(`http://localhost:3002/game/${gameId}/sync`);
+
+        setGames([
+            data!,
+            ...games.filter(game => game.id !== gameId),
+        ]);
+    }, [games, setGames]);
+
+
+    const deleteGame = useCallback(async (gameId: string) => {
+        await axios.delete(`http://localhost:3002/game/${gameId}`);
+
+        setGames(games.filter(game => game.id !== gameId));
+    }, [games, setGames])
+
+    const disableInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
+        const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/disable`);
+
+        game.infoSources = [
+            data,
+            ...game.infoSources.filter(({ id }) => id !== infoSource.id),
+        ];
 
         setGames([
             game!,
-            ...games.filter(game => game.id !== gameId),
+            ...games.filter(({ id }) => id !== game.id),
         ]);
-    }, [games]);
-
-    const syncGame = useCallback(async (gameId: string) => {
-        try {
-            setGameLoading(gameId, true);
-
-            const { data } = await axios.post<any>(`http://localhost:3002/game/${gameId}/sync`);
-
-            setGames([
-                data!,
-                ...games.filter(game => game.id !== gameId),
-            ]);
-
-            return data;
-        } catch (e) {
-            console.error(e);
-        } finally {
-            // TODO: Will override sync?
-            setGameLoading(gameId, false);
-        }
-    }, [games, setGames, setGameLoading])
-
-    const addGame = useCallback(async (name: string) => {
-        try {
-            const { data } = await axios.post<any>("http://localhost:3002/game", { search: name });
-
-            setGames([{ ...data }, ...games]);
-
-            return data;
-        } catch (e) {
-            console.error(e);
-        }
-    }, [games, setGames])
+    }, [games, setGames]);
 
 
     const contextValue = useMemo(() => ({
         games,
         addGame,
-        syncGame
-    }), [games, addGame, syncGame]);
+        syncGame,
+        deleteGame,
+        disableInfoSource
+    }), [games, addGame, syncGame, deleteGame, disableInfoSource]);
 
     return (
         <GameContext.Provider value={contextValue}>

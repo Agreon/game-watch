@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, Enum, IdentifiedReference, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from 'uuid';
-import { Game } from "./game-model";
+import { Game } from "../game/game-model";
 
 export enum InfoSourceType {
     Steam = "steam",
@@ -71,6 +71,10 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
 
     @Property()
     public remoteGameId: string;
+
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    @Property()
+    public disabled: boolean = false;
 
     @Property({ columnType: "json" })
     public data!: GameData[T];

@@ -1,14 +1,14 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { GameModule } from './game/game-module';
-import { SearchModule } from './search/search-module';
+import { InfoSourceModule } from './info-source/info-source-module';
 import config from './mikro-orm.config';
 
 @Module({
   imports: [
+    MikroOrmModule.forRoot(config),
     GameModule,
-    SearchModule,
-    MikroOrmModule.forRoot(config)
+    InfoSourceModule,
   ],
   controllers: [],
   providers: [],

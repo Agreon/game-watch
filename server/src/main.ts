@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import * as dotenv from "dotenv";
@@ -18,6 +19,8 @@ async function bootstrap() {
       origin: "*"
     }
   });
+
+  app.useGlobalPipes(new ValidationPipe())
 
   await app.listen(3002);
 }

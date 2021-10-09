@@ -1,6 +1,6 @@
 import { BaseEntity, Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from 'uuid';
-import { InfoSource } from "./info-source-model";
+import { InfoSource } from "../info-source/info-source-model";
 
 @Entity()
 export class Game extends BaseEntity<Game, "id"> {

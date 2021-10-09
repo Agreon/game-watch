@@ -8,7 +8,6 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         <div
             style={{
                 minHeight: "100vh",
-                padding: "0 0.5rem",
                 display: "flex",
                 flexDirection: "column",
                 height: "100vh",
@@ -16,12 +15,12 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             }}
         >
             <Head>
-                <title>GameView</title>
+                <title>GameWatch</title>
                 <meta name="description" content="Overview of game release dates, prices and news" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <main style={{ padding: "2rem" }}>{children}</main>
+            <main style={{ padding: "2rem", marginTop: "4rem" }}>{children}</main>
             <footer style={{
                 position: "absolute",
                 bottom: "0px",
@@ -31,7 +30,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 justifyContent: "center",
                 alignItems: "center",
                 width: "100%",
-                padding: "1rem"
+                padding: "1rem",
+                backgroundColor: "var(--chakra-colors-gray-800)"
             }}>
                 <a
                     href="https://github.com/Agreon"
