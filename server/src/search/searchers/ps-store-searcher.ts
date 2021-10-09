@@ -13,7 +13,7 @@ export class PsStoreSearcher implements InfoSearcher {
 
         return await withBrowser(async browser => {
             await browser.goto(
-                `https://store.playstation.com/en-gb/search/${encodeURIComponent(search)}/`
+                `https://store.playstation.com/de-de/search/${encodeURIComponent(search)}/`
             );
             console.timeEnd("Visit Ps Store");
 

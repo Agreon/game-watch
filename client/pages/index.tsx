@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import React from 'react'
-import styles from '../styles/Home.module.css'
 import axios from "axios";
+import { Text } from "@chakra-ui/react";
 import { Box, Flex } from "@chakra-ui/layout";
 
 import { Game, GameProvider } from '../providers/GameProvider';
@@ -12,18 +12,18 @@ const Home: NextPage<{ games: Game[] }> = ({ games }) => {
   return (
     <GameProvider initialGames={games}>
       <Box>
-        <Box style={{ left: "auto", right: "auto", width: "100%", marginBottom: "2rem" }}>
-          <h1 className={styles.title}>
-            Welcome to GameWatch!
-          </h1>
+        {games.length === 0 &&
+          <Box textAlign="center" mb="2rem">
+          <Text fontSize="4xl">Welcome to GameWatch!</Text>
 
-          <p className={styles.description}>
+          <Text fontSize="2xl">
             To get started, add a new game to watch:
-          </p>
+          </Text>
         </Box>
+        }
 
-        <Flex justifyContent="center">
-          <Box width="50%">
+        <Flex justify="center">
+          <Box width={["80%", "80%", "80%", "30%"]} ml={["0rem", "0rem", "0rem", "6rem"]}>
             <AddGame />
           </Box>
         </Flex>

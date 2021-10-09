@@ -6,8 +6,8 @@ export const LoadingSpinner = () => (
         position="absolute"
         width="100%"
         height="100%"
-        justifyContent="center"
-        alignItems="center"
+        justify="center"
+        align="center"
         zIndex="1"
         backgroundColor="rgba(186, 186, 186, 0.21)"
     >

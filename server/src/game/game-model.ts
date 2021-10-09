@@ -16,6 +16,9 @@ export class Game extends BaseEntity<Game, "id"> {
     @Property()
     public name!: string;
 
+    @Property()
+    public description: string = "";
+
     @OneToMany(() => InfoSource, infoSource => infoSource.game)
     public infoSources = new Collection<InfoSource, Game>(this);
 

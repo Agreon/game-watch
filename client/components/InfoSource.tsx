@@ -9,10 +9,12 @@ import {
     StatLabel,
     StatNumber,
 } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider"
 import { ChevronDownIcon, ViewOffIcon } from '@chakra-ui/icons'
-
+import dayjs from "dayjs";
+var customParseFormat = require('dayjs/plugin/customParseFormat')
+dayjs.extend(customParseFormat)
 
 /**
 TODO:
@@ -52,25 +54,42 @@ const Options: React.FC<{ source: Source, game: Game }> = ({ source, game }) => 
 }
 
 const SourceName: React.FC<{ name: string, url: string }> = ({ name, url }) => (
-    <a href={url} target="_blank" rel="noreferrer">
-        <b>{name}</b>
-    </a>
+    <Box flex="0.7">
+        <a href={url} target="_blank" rel="noreferrer">
+            <b>{name}</b>
+        </a>
+    </Box>
 )
+
+const ReleaseDate: React.FC<{ date: string, expectedFormat?: string }> = ({ date, expectedFormat }) => {
+    const parsedDate = useMemo(() => {
+        if (parseInt(date) !== NaN && !date.includes("/")) {
+            return date;
+        }
+
+        return dayjs(date, expectedFormat).format("DD MMM YYYY");
+    }, [date, expectedFormat]);
+
+    return (
+        <Flex flex="1">
+            <Stat>
+                <StatLabel>Release Date</StatLabel>
+                <StatNumber fontSize="1rem">{parsedDate}</StatNumber>
+            </Stat>
+        </Flex>
+    )
+}
+
 
 const SteamInfoSource: React.FC<{ source: Source, game: Game }> = ({ source, game }) => {
     return (
-        <Flex key={source.id} py="1rem" alignItems="center" justifyContent="space-between">
+        <Flex key={source.id} py="1rem" align="center" justify="space-between">
             <SourceName name="Steam" url={source.data.storeUrl} />
-            <Box>
-                <Stat>
-                    <StatLabel>Release Date</StatLabel>
-                    <StatNumber fontSize="1rem">{source.data.releaseDate.date}</StatNumber>
-                </Stat>
-            </Box>
-            <Box>
+            <ReleaseDate date={source.data.releaseDate.date} />
+            <Box flex="0.7">
                 <Stat>
                     <StatLabel>Price</StatLabel>
-                    <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? ""}</StatNumber>
+                    <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? "TBA"}</StatNumber>
                 </Stat>
             </Box>
             <Box>
@@ -82,18 +101,13 @@ const SteamInfoSource: React.FC<{ source: Source, game: Game }> = ({ source, gam
 
 const NintendoInfoSource: React.FC<{ source: Source, game: Game }> = ({ source, game }) => {
     return (
-        <Flex key={source.id} py="1rem" alignItems="center" justifyContent="space-between">
+        <Flex key={source.id} py="1rem" align="center" justify="space-between">
             <SourceName name="Nintendo" url={source.data.storeUrl} />
-            <Box>
-                <Stat>
-                    <StatLabel>Release Date</StatLabel>
-                    <StatNumber fontSize="1rem">{source.data.releaseDate}</StatNumber>
-                </Stat>
-            </Box>
-            <Box>
+            <ReleaseDate date={source.data.releaseDate} />
+            <Box flex="0.7">
                 <Stat>
                     <StatLabel>Price</StatLabel>
-                    <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? ""}</StatNumber>
+                    <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? "TBA"}</StatNumber>
                 </Stat>
             </Box>
             <Box>
@@ -119,19 +133,16 @@ export const InfoSource: React.FC<{ source: Source, game: Game }> = ({ source, g
             return <NintendoInfoSource source={source} game={game} />
         case "psStore":
         default:
+            console.log(source)
+
             return (
-                <Flex key={source.id} py="1rem" alignItems="center" justifyContent="space-between">
+                <Flex py="1rem" align="center" justify="space-between">
                     <SourceName name={source.type} url={source.data.storeUrl} />
-                    <Box>
-                        <Stat>
-                            <StatLabel>Release Date</StatLabel>
-                            <StatNumber fontSize="1rem">{source.data.releaseDate}</StatNumber>
-                        </Stat>
-                    </Box>
-                    <Box>
+                    <ReleaseDate date={source.data.releaseDate} expectedFormat={"M/D/YYYY"} />
+                    <Box flex="0.7">
                         <Stat>
                             <StatLabel>Price</StatLabel>
-                            <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? ""}</StatNumber>
+                            <StatNumber fontSize="1rem">{source.data.priceInformation?.final ?? "TBA"}</StatNumber>
                         </Stat>
                     </Box>
                     <Box>

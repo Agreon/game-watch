@@ -1,35 +1,31 @@
-import { Button, useColorMode } from '@chakra-ui/react'
+import { Button, useColorModeValue, useColorMode, Text } from '@chakra-ui/react'
 import Image from 'next/image'
 import githubIconLight from '../assets/github-icon-light.png'
 import githubIconDark from '../assets/github-icon-dark.png'
-import { Link } from '@chakra-ui/layout'
+import { Box, Flex } from '@chakra-ui/layout'
 
 export default function Header() {
     const { colorMode, toggleColorMode } = useColorMode()
 
     return (
-        <div style={{
-            position: "absolute",
-            width: "100%",
-            borderBottom: "1px solid grey",
-            padding: "1rem",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "var(--chakra-colors-gray-800)",
-            zIndex: 2
-        }}>
-            <Link href="/" style={{ fontSize: "1.5rem" }}>
-                GameView
-            </Link>
-            <div style={{
-                position: "absolute",
-                right: "0px",
-                marginRight: "1rem",
-                display: "flex",
-                alignItems: "center"
-            }}>
-                <div style={{ marginRight: "1rem", marginTop: "0.25rem" }}>
+        <Flex
+            justify="center"
+            align="center"
+            position="absolute"
+            zIndex="2"
+            bg={useColorModeValue('white', 'gray.800')}
+            width="100%"
+            padding="1rem"
+            boxShadow="lg"
+        >
+            <Text fontSize="2xl">GameView</Text>
+            <Flex
+                align="center"
+                position="absolute"
+                right="0"
+                mr="1rem"
+            >
+                <Box mr="1rem" mt="0.25rem">
                     <a
                         href="https://github.com/Agreon/game-watch"
                         target="_blank"
@@ -42,11 +38,11 @@ export default function Header() {
                             height={32}
                         />
                     </a>
-                </div>
+                </Box>
                 <Button onClick={toggleColorMode}>
                     Toggle {colorMode === "light" ? "Dark" : "Light"}
                 </Button>
-            </div>
-        </div>
+            </Flex>
+        </Flex>
     )
 }

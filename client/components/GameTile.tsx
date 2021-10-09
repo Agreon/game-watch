@@ -1,14 +1,13 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { Button } from "@chakra-ui/button";
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider";
-import { Skeleton, Text, SkeletonText } from "@chakra-ui/react";
-// TODO: RM
-import styles from '../styles/Home.module.css'
+import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
 import { InfoSource } from "./InfoSource";
 import { GameTileMenu } from "./GameTile/GameTileMenu";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { AddInfoSource } from "./GameTile/AddInfoSource";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -26,9 +25,11 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
                 const thumbnailUrl = matchingSource.data[key] as string;
 
                 if (matchingSource.type === "nintendo") {
+                    const width = 460 + 100;
+                    const height = 215 + 100;
                     return thumbnailUrl
-                        .replace(/w_(\d*)/, "w_460")
-                        .replace(/h_(\d*)/, "h_215")
+                        .replace(/w_(\d*)/, `w_${width}`)
+                        .replace(/h_(\d*)/, `h_${height}`)
                 }
 
                 if (matchingSource.type === "psStore") {
@@ -48,13 +49,13 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 
 /**
  * TODO:
- * - Stretch the image to full width
  * - Toasts for errors
  */
 export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     const { syncGame, deleteGame } = useGameContext();
 
     const [loading, setLoading] = useState(false);
+    const [imageLoading, setImageLoading] = useState(false);
 
     const onSync = useCallback(async () => {
         setLoading(true);
@@ -74,6 +75,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     useEffect(() => {
         (async () => {
             if (!infoSourceLength) {
+                setImageLoading(true);
                 await onSync();
             }
         })();
@@ -87,40 +89,59 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     }), [game.infoSources])
 
     return (
-        <Box key={game.id} className={styles.card} height="100%" position="relative" minWidth="510px" style={{ maxWidth: "510px" }}>
-            {loading && <LoadingSpinner />}
-            {infoSourceLength > 0 &&
-                <Box position="absolute" right="1rem" top="1rem">
+        <Box
+            position="relative"
+            margin="1rem"
+            height="100%"
+            minWidth="460px"
+            maxWidth="460px"
+            overflow="hidden"
+            bg={useColorModeValue('white', 'gray.800')}
+            borderWidth="1px"
+            rounded="lg"
+            shadow="lg"
+            boxShadow="xl"
+            _hover={{
+                borderColor: useColorModeValue("grey", "white")
+            }}
+            transition="border-color 0.15s ease"
+        >
+            <Box position="absolute" right="0" top="0" zIndex="1">
                 <GameTileMenu onSync={onSync} onDelete={onDelete} gameName={fullName ?? game.name} />
-                </Box>
-            }
-            <Flex padding="1rem" flexDirection="column">
-                <Skeleton isLoaded={infoSourceLength > 0}>
-                    <Flex justifyContent="center" minHeight="215px" >
-                        {thumbnail &&
-                            <img
-                                alt="thumbnail"
+            </Box>
+            <Flex direction="column">
+                <Box position="relative">
+                    {(loading || (infoSourceLength > 0 && imageLoading)) && <LoadingSpinner />}
+                    <Skeleton isLoaded={!loading || infoSourceLength > 0}>
+                        <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
+                            {thumbnail &&
+                                <img
                                 src={thumbnail}
                                 width="460"
-                                style={{ objectFit: "contain", height: "215px" }}
-                            />
-                        }
-                    </Flex>
-                </Skeleton>
-                <Text fontSize="2xl" mt="1rem">{fullName ?? game.name}</Text>
-                <Box>
-                    <SkeletonText isLoaded={infoSourceLength > 0}>
-                        {game.infoSources
-                            .filter(source => !source.disabled)
-                            .map(source => <InfoSource key={source.id} game={game} source={source} />)
-                        }
-                    </SkeletonText>
+                                onLoad={() => setImageLoading(false)}
+                                style={{ objectFit: "cover" }}
+                                />
+                            }
+                        </Flex>
+                    </Skeleton>
                 </Box>
-                <Flex justifyContent="center">
-                    <Button>
-                        +
-                    </Button>
-                </Flex>
+                <Box padding="1rem">
+                    <Text fontSize="2xl">{fullName ?? game.name}</Text>
+                    <Box>
+                        {loading && infoSourceLength === 0 ?
+                            <SkeletonText />
+                            :
+                            game.infoSources
+                                .filter(source => !source.disabled)
+                                .map(source => <InfoSource key={source.id} game={game} source={source} />)
+                        }
+
+                        {!loading && infoSourceLength === 0 &&
+                            <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>
+                        }
+                    </Box>
+                    {!loading && <AddInfoSource game={game} />}
+                </Box>
             </Flex>
         </Box>
     )

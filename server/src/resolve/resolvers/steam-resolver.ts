@@ -6,6 +6,8 @@ import { Logger } from "@nestjs/common";
 /**
  * TODO:
  * - Add offer end date => We need to make a second api call
+ * - Currency is random
+ * => Maybe we need browser language
  */
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;

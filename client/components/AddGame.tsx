@@ -1,5 +1,5 @@
 import { Input } from "@chakra-ui/input";
-import { Button } from "@chakra-ui/react";
+import { Button, useColorModeValue } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/layout";
 import { useState, useCallback } from "react";
 import { useGameContext } from "../providers/GameProvider";
@@ -26,13 +26,14 @@ export const AddGame: React.FC = () => {
     }, [searchGame]);
 
     return (
-        <Flex id="name">
+        <Flex>
             <Input
                 value={name}
                 disabled={loading}
                 onChange={(event) => setName(event.target.value)}
                 onKeyPress={onNameKeyPress}
                 placeholder="Name of the game"
+                bg={useColorModeValue("white", "gray.800")}
                 size="lg"
             />
             <Button

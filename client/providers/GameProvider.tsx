@@ -1,10 +1,16 @@
 import axios from "axios";
 import React, { useCallback, useContext, useMemo, useState } from "react";
 
+export enum InfoSourceType {
+    Steam = "steam",
+    Nintendo = "nintendo",
+    PsStore = "psStore",
+}
+
 // TOOD: We need a monorepo
 export interface InfoSource {
     id: string
-    type: string
+    type: InfoSourceType
     disabled: boolean
     data: Record<string, any>
 }
@@ -41,28 +47,29 @@ export function useGameContext() {
 export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
     const [games, setGames] = useState(initialGames);
 
+
     const addGame = useCallback(async (name: string) => {
         const { data } = await axios.post<any>("http://localhost:3002/game", { search: name });
 
-        setGames([data, ...games]);
-    }, [games, setGames]);
+        setGames(games => [data, ...games]);
+    }, [setGames]);
 
 
     const syncGame = useCallback(async (gameId: string) => {
         const { data } = await axios.post<any>(`http://localhost:3002/game/${gameId}/sync`);
 
-        setGames([
+        setGames(games => [
             data!,
             ...games.filter(game => game.id !== gameId),
         ]);
-    }, [games, setGames]);
+    }, [setGames]);
 
 
     const deleteGame = useCallback(async (gameId: string) => {
         await axios.delete(`http://localhost:3002/game/${gameId}`);
 
-        setGames(games.filter(game => game.id !== gameId));
-    }, [games, setGames])
+        setGames(games => games.filter(game => game.id !== gameId));
+    }, [setGames])
 
     const disableInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
         const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/disable`);
@@ -72,11 +79,11 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
             ...game.infoSources.filter(({ id }) => id !== infoSource.id),
         ];
 
-        setGames([
+        setGames(games => [
             game!,
             ...games.filter(({ id }) => id !== game.id),
         ]);
-    }, [games, setGames]);
+    }, [setGames]);
 
 
     const contextValue = useMemo(() => ({

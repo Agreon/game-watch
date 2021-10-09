@@ -1,18 +1,16 @@
 import Head from 'next/head'
 import React, { PropsWithChildren } from 'react'
 import Header from './Header'
+import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
 
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                flexDirection: "column",
-                height: "100vh",
-                overflow: "scroll"
-            }}
+        <Flex
+            direction="column"
+            bg={useColorModeValue('gray.100', 'gray.700')}
+            height="100vh"
+            minHeight="100vh"
         >
             <Head>
                 <title>GameWatch</title>
@@ -20,19 +18,26 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <main style={{ padding: "2rem", marginTop: "4rem" }}>{children}</main>
-            <footer style={{
-                position: "absolute",
-                bottom: "0px",
-                left: "0px",
-                borderTop: "1px solid #eaeaea",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                padding: "1rem",
-                backgroundColor: "var(--chakra-colors-gray-800)"
-            }}>
+            <Box
+                p="2rem"
+                mt="4rem"
+                height="100%"
+                overflow="auto"
+            >
+                {children}
+            </Box>
+            <Flex
+                justify="center"
+                align="center"
+                position="absolute"
+                bottom="0"
+                left="0"
+                width="100%"
+                p="1rem"
+                pt="1.25rem"
+                bg={useColorModeValue('white', 'gray.800')}
+                boxShadow="xl"
+            >
                 <a
                     href="https://github.com/Agreon"
                     target="_blank"
@@ -40,7 +45,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 >
                     Made by <b>Agreon</b>
                 </a>
-            </footer>
-        </div>
+            </Flex>
+        </Flex>
     )
 }

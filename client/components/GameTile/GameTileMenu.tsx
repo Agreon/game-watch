@@ -62,7 +62,11 @@ export const GameTileMenu: React.FC<GameTileMenuProps> = ({ gameName, onSync, on
                     as={IconButton}
                     aria-label="Options"
                     icon={<SettingsIcon />}
-                    colorScheme="teal"
+                    variant="ghost"
+                    size="lg"
+                    _focus={{
+                        boxShadow: "none"
+                    }}
                 />
                 <MenuList>
                     <MenuItem icon={<DownloadIcon />} onClick={onSync}>
