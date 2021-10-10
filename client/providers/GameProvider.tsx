@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useCallback, useContext, useMemo, useState } from "react";
+import { useList } from "react-use";
 
 export enum InfoSourceType {
     Steam = "steam",
@@ -12,7 +13,8 @@ export interface InfoSource {
     id: string
     type: InfoSourceType
     disabled: boolean
-    data: Record<string, any>
+    resolveError: boolean
+    data: Record<string, any> | null
 }
 
 export interface Game {
@@ -27,6 +29,8 @@ export interface GameCtx {
     addGame: (name: string) => Promise<void>
     syncGame: (id: string) => Promise<void>
     deleteGame: (id: string) => Promise<void>
+    addInfoSource: (game: Game, type: InfoSourceType, remoteGameId: string) => Promise<InfoSource>
+    syncInfoSource: (game: Game, infoSource: InfoSource) => Promise<void>
     disableInfoSource: (game: Game, infoSource: InfoSource) => Promise<void>
 }
 
@@ -35,6 +39,8 @@ export const GameContext = React.createContext<GameCtx>({
     addGame: async () => { },
     syncGame: async () => { },
     deleteGame: async () => { },
+    addInfoSource: async () => ({} as InfoSource),
+    syncInfoSource: async () => { },
     disableInfoSource: async () => { },
 });
 
@@ -46,7 +52,9 @@ export function useGameContext() {
 
 export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
     const [games, setGames] = useState(initialGames);
-
+    // const [games, {set, setAll, remove, reset}] = useMap({
+    //     hello: 'there',
+    //   });
 
     const addGame = useCallback(async (name: string) => {
         const { data } = await axios.post<any>("http://localhost:3002/game", { search: name });
@@ -71,9 +79,52 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
         setGames(games => games.filter(game => game.id !== gameId));
     }, [setGames])
 
+    const addInfoSource = useCallback(async (game: Game, type: InfoSourceType, remoteGameId: string) => {
+        const { data: infoSource } = await axios.post<any>(`http://localhost:3002/info-source`, {
+            gameId: game.id,
+            type,
+            remoteGameId
+        });
+
+        game.infoSources = [...game.infoSources, infoSource];
+
+        setGames(games => [
+            game!,
+            ...games.filter(({ id }) => id !== game.id),
+        ]);
+
+        return infoSource;
+    }, [setGames]);
+
+    const syncInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
+        // TODO: this is ugly
+        infoSource.data = null;
+        game.infoSources = [
+            infoSource,
+            ...game.infoSources.filter(({ id }) => id !== infoSource.id),
+        ];
+        setGames(games => [
+            game!,
+            ...games.filter(({ id }) => id !== game.id),
+        ]);
+
+        const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/sync`);
+
+        game.infoSources = [
+            data,
+            ...game.infoSources.filter(({ id }) => id !== infoSource.id),
+        ];
+
+        setGames(games => [
+            game!,
+            ...games.filter(({ id }) => id !== game.id),
+        ]);
+    }, [setGames]);
+
     const disableInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
         const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/disable`);
 
+        // TODO: Not Sorted by type
         game.infoSources = [
             data,
             ...game.infoSources.filter(({ id }) => id !== infoSource.id),
@@ -91,8 +142,10 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
         addGame,
         syncGame,
         deleteGame,
+        addInfoSource,
+        syncInfoSource,
         disableInfoSource
-    }), [games, addGame, syncGame, deleteGame, disableInfoSource]);
+    }), [games, addGame, syncGame, deleteGame, addInfoSource, syncInfoSource, disableInfoSource]);
 
     return (
         <GameContext.Provider value={contextValue}>

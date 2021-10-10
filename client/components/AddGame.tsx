@@ -4,6 +4,7 @@ import { Flex } from "@chakra-ui/layout";
 import { useState, useCallback } from "react";
 import { useGameContext } from "../providers/GameProvider";
 
+// TODO: Focus initially
 export const AddGame: React.FC = () => {
     const { addGame } = useGameContext();
     const [loading, setLoading] = useState(false);

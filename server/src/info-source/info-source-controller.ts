@@ -5,7 +5,10 @@ import { InfoSourceService } from "./infou-source-service";
 
 export class CreateInfoSourceDto {
     @IsString()
-    public search: string;
+    public gameId: string;
+
+    @IsString()
+    public remoteGameId: string;
 
     @IsEnum(InfoSourceType)
     public type: InfoSourceType;
@@ -25,15 +28,16 @@ export class InfoSourceController {
 
     @Post()
     public async create(
-        @Body() { search, type }: CreateInfoSourceDto
-    ): Promise<void> {
+        @Body() { remoteGameId, type, gameId }: CreateInfoSourceDto
+    ): Promise<InfoSource> {
+        return await this.infoSourceService.addInfoSource(gameId, type, remoteGameId);
     }
 
-
-    @Put("/:infoSourceId")
-    public async update(
-        @Body() { search }: UpdateInfoSourceDto
-    ): Promise<void> {
+    @Post("/:infoSourceId/sync")
+    public async syncInfoSource(
+        @Param("infoSourceId") infoSourceId: string
+    ) {
+        return await this.infoSourceService.syncInfoSource(infoSourceId);
     }
 
     @Post("/:infoSourceId/disable")

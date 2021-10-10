@@ -31,7 +31,7 @@ export class NintendoResolver implements InfoResolver {
                     initial: price,
                     final: salePrice || price
                 } : undefined,
-                releaseDate: releaseDate || "",
+                releaseDate,
             };
         })
     }

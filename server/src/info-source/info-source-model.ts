@@ -13,13 +13,10 @@ export interface StoreGameData {
     fullName: string;
     storeUrl: string;
     thumbnailUrl: string;
+    releaseDate?: string;
 }
 
 export interface SteamGameData extends StoreGameData {
-    releaseDate: {
-        comingSoon: boolean;
-        date: Date;
-    };
     priceInformation?: {
         initial: number;
         final: number;
@@ -35,7 +32,6 @@ export interface NintendoGameData extends StoreGameData {
         initial: string;
         final: string;
     };
-    releaseDate: string;
 }
 
 export interface PsStoreGameData extends StoreGameData {
@@ -44,7 +40,6 @@ export interface PsStoreGameData extends StoreGameData {
         final: string;
         discountDescription?: string;
     };
-    releaseDate?: string;
 }
 
 // TODO: What do these generics give us except for binding us to details?
@@ -72,20 +67,24 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     @Property()
     public remoteGameId: string;
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     @Property()
     public disabled: boolean = false;
 
-    @Property({ columnType: "json" })
-    public data!: GameData[T];
+    @Property()
+    public resolveError: boolean = false;
+
+    @Property({ columnType: "json", nullable: true })
+    public data: GameData[T] | null = null;
 
     @ManyToOne(() => Game, { wrappedReference: true })
     public game!: IdentifiedReference<Game>;
 
-    public constructor({ type, remoteGameId, data }: { type: T, remoteGameId: string, data: GameData[T] }) {
+    public constructor(
+        { type, remoteGameId, data }: { type: T, remoteGameId: string, data?: GameData[T] }
+    ) {
         super();
         this.type = type;
         this.remoteGameId = remoteGameId;
-        this.data = data;
+        this.data = data ?? null;
     }
 }

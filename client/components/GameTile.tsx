@@ -18,9 +18,10 @@ const INFO_SOURCE_PRIORITY = [
 
 const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string | null => {
     for (const sourceType of INFO_SOURCE_PRIORITY) {
-        const matchingSource = infoSources.find(source => source.type === sourceType && !source.disabled);
-        if (matchingSource && matchingSource.data[key]) {
-
+        const matchingSource = infoSources.find(
+            ({ type, disabled }) => type === sourceType && !disabled
+        );
+        if (matchingSource?.data?.[key]) {
             if (key === "thumbnailUrl") {
                 const thumbnailUrl = matchingSource.data[key] as string;
 
@@ -50,6 +51,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 /**
  * TODO:
  * - Toasts for errors
+ * - Sort sources by type
  */
 export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     const { syncGame, deleteGame } = useGameContext();
@@ -111,7 +113,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
             </Box>
             <Flex direction="column">
                 <Box position="relative">
-                    {(loading || (infoSourceLength > 0 && imageLoading)) && <LoadingSpinner />}
+                    {(loading || (infoSourceLength > 0 && imageLoading)) && <LoadingSpinner size="xl" />}
                     <Skeleton isLoaded={!loading || infoSourceLength > 0}>
                         <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                             {thumbnail &&
@@ -130,8 +132,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                     <Box>
                         {loading && infoSourceLength === 0 ?
                             <SkeletonText />
-                            :
-                            game.infoSources
+                            : game.infoSources
                                 .filter(source => !source.disabled)
                                 .map(source => <InfoSource key={source.id} game={game} source={source} />)
                         }

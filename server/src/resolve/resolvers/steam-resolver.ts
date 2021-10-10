@@ -41,10 +41,7 @@ export class SteamResolver implements InfoResolver {
                 fullName: json.name,
                 storeUrl: `https://store.steampowered.com/app/${id}`,
                 thumbnailUrl: json.header_image,
-                releaseDate: {
-                    comingSoon: json.release_date.coming_soon,
-                    date: json.release_date.date,
-                },
+                releaseDate: json.release_date.date,
                 priceInformation: json.price_overview ? {
                     initial: json.price_overview.initial_formatted,
                     final: json.price_overview.final_formatted,
