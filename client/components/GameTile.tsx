@@ -17,15 +17,12 @@ const INFO_SOURCE_PRIORITY = [
 ]
 
 const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string | null => {
-    for (const sourceType of INFO_SOURCE_PRIORITY) {
-        const matchingSource = infoSources.find(
-            ({ type, disabled }) => type === sourceType && !disabled
-        );
-        if (matchingSource?.data?.[key]) {
+    for (const infoSource of infoSources) {
+        if (infoSource.data?.[key]) {
             if (key === "thumbnailUrl") {
-                const thumbnailUrl = matchingSource.data[key] as string;
+                const thumbnailUrl = infoSource.data[key] as string;
 
-                if (matchingSource.type === "nintendo") {
+                if (infoSource.type === "nintendo") {
                     const width = 460 + 100;
                     const height = 215 + 100;
                     return thumbnailUrl
@@ -33,7 +30,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
                         .replace(/h_(\d*)/, `h_${height}`)
                 }
 
-                if (matchingSource.type === "psStore") {
+                if (infoSource.type === "psStore") {
                     const url = new URL(thumbnailUrl);
                     url.searchParams.delete("w");
                     url.searchParams.append("w", "460");
@@ -41,7 +38,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
                 }
             }
 
-            return matchingSource.data[key] as string;
+            return infoSource.data[key] as string;
         }
     }
 
@@ -85,10 +82,20 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [infoSourceLength]);
 
+    const sortedInfoSources = useMemo(
+        () => game.infoSources
+            .filter(source => !source.disabled)
+            .sort((a, b) => {
+                const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
+                const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
+                return aPriority - bPriority;
+            })
+        , [game.infoSources]);
+
     const { fullName, thumbnail } = useMemo(() => ({
-        fullName: retrieveDataFromInfoSources(game.infoSources, "fullName"),
-        thumbnail: retrieveDataFromInfoSources(game.infoSources, "thumbnailUrl"),
-    }), [game.infoSources])
+        fullName: retrieveDataFromInfoSources(sortedInfoSources, "fullName"),
+        thumbnail: retrieveDataFromInfoSources(sortedInfoSources, "thumbnailUrl"),
+    }), [sortedInfoSources]);
 
     return (
         <Box
@@ -132,8 +139,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                     <Box>
                         {loading && infoSourceLength === 0 ?
                             <SkeletonText />
-                            : game.infoSources
-                                .filter(source => !source.disabled)
+                            : sortedInfoSources
                                 .map(source => <InfoSource key={source.id} game={game} source={source} />)
                         }
 
