@@ -10,6 +10,7 @@ dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 const serverPort = process.env.SERVER_PORT;
 const sentryDsn = process.env.SENTRY_DSN;
+const corsOrigin = process.env.CORS_ORIGIN || true;
 
 if (!serverPort || !sentryDsn) {
   throw new Error("Environment is not complete");
@@ -26,7 +27,7 @@ async function bootstrap() {
     bodyParser: true,
     cors: {
       allowedHeaders: "*",
-      origin: "*"
+      origin: corsOrigin
     }
   });
 

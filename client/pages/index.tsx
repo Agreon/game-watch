@@ -43,11 +43,11 @@ const basicAuthCheck = initializeBasicAuth({
 })
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
-  const { data } = await axios.get('/game');
-
   if (basicAuthPassword) {
     basicAuthCheck(req, res);
   }
+
+  const { data } = await axios.get('/game');
 
   return {
     props: {
