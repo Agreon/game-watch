@@ -3,10 +3,12 @@ import { Game } from "./game/game-model";
 import { InfoSource } from "./info-source/info-source-model";
 import * as dotenv from "dotenv";
 import path from 'path';
+import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
+import { Migration20211010133200 } from "./migrations/Migration20211010133200";
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
-export default {
+const config: MikroOrmModuleSyncOptions = {
     entities: [Game, InfoSource],
     type: 'postgresql' as keyof typeof Configuration.PLATFORMS,
     user: process.env.DATABASE_USER,
@@ -15,4 +17,12 @@ export default {
     host: process.env.DATABASE_HOST,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     port: parseInt(process.env.DATABASE_PORT!, 10),
+    migrations: {
+        path: './src/migrations',
+        migrationsList: [
+            { name: "Migration20211010133200.ts", class: Migration20211010133200 }
+        ]
+    }
 };
+
+export default config;

@@ -38,14 +38,14 @@ export class PsStoreResolver implements InfoResolver {
             );
 
             const thumbnailUrl = await browser.evaluate(
-                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')!.getAttribute("src")!
+                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')?.getAttribute("src")
             );
 
             return {
                 id: storePage,
                 storeUrl: storePage,
                 fullName,
-                thumbnailUrl,
+                thumbnailUrl: thumbnailUrl ?? "",
                 priceInformation: price ? {
                     initial: originalPrice || price,
                     final: price,

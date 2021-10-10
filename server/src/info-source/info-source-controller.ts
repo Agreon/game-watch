@@ -30,6 +30,7 @@ export class InfoSourceController {
     public async create(
         @Body() { remoteGameId, type, gameId }: CreateInfoSourceDto
     ): Promise<InfoSource> {
+        // TODO: check remoteGameId
         return await this.infoSourceService.addInfoSource(gameId, type, remoteGameId);
     }
 
