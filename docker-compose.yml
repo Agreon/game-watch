@@ -22,6 +22,7 @@ services:
       - SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
       - SENTRY_DSN=$SENTRY_DSN
       - SERVER_PORT=$SERVER_PORT
+      - CORS_ORIGIN=$CORS_ORIGIN
     depends_on:
       - db
     ports:
