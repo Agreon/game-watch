@@ -19,14 +19,13 @@ export class SteamSearcher implements InfoSearcher {
         const $ = cheerio.load(data);
 
         const resultRow = $(".search_result_row");
-        if (!resultRow) {
+        if (!resultRow.length) {
             this.logger.debug("No results found");
 
             return null;
         }
 
         const gameId = resultRow.attr("data-ds-appid");
-        // TODO: Sometimes children are not found
         const fullName = ($(".search_result_row .title")[0].children[0] as any).data as string;
 
         if (!matchingName(fullName, search)) {

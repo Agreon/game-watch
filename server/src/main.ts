@@ -12,8 +12,6 @@ const serverPort = process.env.SERVER_PORT;
 const sentryDsn = process.env.SENTRY_DSN;
 const corsOrigin = process.env.CORS_ORIGIN || true;
 
-console.log(corsOrigin);
-
 if (!serverPort || !sentryDsn) {
   throw new Error("Environment is not complete");
 }
