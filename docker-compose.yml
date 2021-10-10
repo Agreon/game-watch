@@ -2,10 +2,38 @@ version: '3'
 
 services:
   db:
-    image: postgres:11
+    image: postgres:12
+    restart: always
     environment:
-      - POSTGRES_DB=game_view
-      - POSTGRES_USER=game_view
-      - POSTGRES_PASSWORD=game_view
+      - POSTGRES_DB=$DATABASE_NAME
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
     ports:
-      - 5437:5432
+      - $DATABASE_PORT:5432
+
+  server:
+    build: ./server
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=$DATABASE_USER
+      - DATABASE_PASSWORD=$DATABASE_PASSWORD
+      - DATABASE_NAME=$DATABASE_NAME
+      - SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
+      - SENTRY_DSN=$SENTRY_DSN
+      - SERVER_PORT=$SERVER_PORT
+    depends_on:
+      - db
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+
+  client:
+    build: ./client
+    environment:
+      - SERVER_HOST=server
+      - SERVER_PORT=$SERVER_PORT
+      - BASIC_AUTH_PASSWORD=$BASIC_AUTH_PASSWORD
+    depends_on:
+      - server
+    ports:
+      - $CLIENT_SERVER_PORT:3000

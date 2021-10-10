@@ -3072,6 +3072,11 @@ next@11.1.2:
     "@next/swc-linux-x64-gnu" "11.1.2"
     "@next/swc-win32-x64-msvc" "11.1.2"
 
+nextjs-basic-auth@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/nextjs-basic-auth/-/nextjs-basic-auth-0.1.3.tgz#327c061ac1e432be30b6bdc36fdc542012d1d808"
+  integrity sha512-pLzT9AOthowyRR3ESxLag9Gul9ljn2XVfVAG0Nn8H3zVx7kSdBB7iK/6IxCQOJrbbouLbqPEBWPLdoX0w72RrQ==
+
 node-fetch@2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"

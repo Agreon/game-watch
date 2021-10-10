@@ -1,6 +1,6 @@
-import axios from "axios";
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { useMap } from "react-use";
+import { http } from "../util/http";
 
 export enum InfoSourceType {
     Steam = "steam",
@@ -61,19 +61,19 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
     const games = useMemo(() => Object.values(gameMap).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()), [gameMap]);
 
     const addGame = useCallback(async (name: string) => {
-        const { data } = await axios.post<any>("http://localhost:3002/game", { search: name });
+        const { data } = await http.post<any>("/game", { search: name });
 
         setGame(data.id, data);
     }, [setGame]);
 
     const syncGame = useCallback(async (gameId: string) => {
-        const { data } = await axios.post<any>(`http://localhost:3002/game/${gameId}/sync`);
+        const { data } = await http.post<any>(`/game/${gameId}/sync`);
 
         setGame(data.id, data);
     }, [setGame]);
 
     const deleteGame = useCallback(async (gameId: string) => {
-        await axios.delete(`http://localhost:3002/game/${gameId}`);
+        await http.delete(`/game/${gameId}`);
 
         removeGame(gameId)
     }, [removeGame]);
@@ -87,7 +87,7 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
     }, [setGame]);
 
     const addInfoSource = useCallback(async (game: Game, type: InfoSourceType, remoteGameId: string) => {
-        const { data: infoSource } = await axios.post<any>(`http://localhost:3002/info-source`, {
+        const { data: infoSource } = await http.post<any>(`/info-source`, {
             gameId: game.id,
             type,
             remoteGameId
@@ -104,13 +104,13 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
         infoSource.data = null;
         setGameInfoSource(game, infoSource);
 
-        const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/sync`);
+        const { data } = await http.post<any>(`/info-source/${infoSource.id}/sync`);
 
         setGameInfoSource(game, data);
     }, [setGameInfoSource]);
 
     const disableInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
-        const { data } = await axios.post<any>(`http://localhost:3002/info-source/${infoSource.id}/disable`);
+        const { data } = await http.post<any>(`/info-source/${infoSource.id}/disable`);
 
         setGameInfoSource(game, data);
     }, [setGameInfoSource]);

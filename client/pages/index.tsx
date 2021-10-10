@@ -1,12 +1,14 @@
-import type { NextPage } from 'next'
+import type { GetServerSidePropsContext, NextPage, NextPageContext } from 'next'
 import React from 'react'
 import axios from "axios";
 import { Text } from "@chakra-ui/react";
 import { Box, Flex } from "@chakra-ui/layout";
+import initializeBasicAuth from 'nextjs-basic-auth'
 
 import { Game, GameProvider } from '../providers/GameProvider';
 import { GameGrid } from '../components/GameGrid';
 import { AddGame } from '../components/AddGame';
+
 
 const Home: NextPage<{ games: Game[] }> = ({ games }) => {
   return (
@@ -33,8 +35,19 @@ const Home: NextPage<{ games: Game[] }> = ({ games }) => {
   )
 }
 
-export async function getServerSideProps() {
-  const { data } = await axios.get("http://localhost:3002/game");
+axios.defaults.baseURL = `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`;
+
+const basicAuthPassword = process.env.BASIC_AUTH_PASSWORD;
+const basicAuthCheck = initializeBasicAuth({
+  users: [{ user: 'admin', password: basicAuthPassword! },]
+})
+
+export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+  const { data } = await axios.get('/game');
+
+  if (basicAuthPassword) {
+    basicAuthCheck(req, res);
+  }
 
   return {
     props: {
