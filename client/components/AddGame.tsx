@@ -1,14 +1,17 @@
 import { Input } from "@chakra-ui/input";
 import { Button, useColorModeValue } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/layout";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useGameContext } from "../providers/GameProvider";
 
-// TODO: Focus initially
 export const AddGame: React.FC = () => {
     const { addGame } = useGameContext();
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
+
+    // Focus initially
+    const inputRef = useRef<HTMLInputElement | null>(null)
+    useEffect(() => { inputRef.current && inputRef.current.focus() }, []);
 
     const searchGame = useCallback(async () => {
         setLoading(true);
@@ -29,6 +32,7 @@ export const AddGame: React.FC = () => {
     return (
         <Flex>
             <Input
+                ref={inputRef}
                 value={name}
                 disabled={loading}
                 onChange={(event) => setName(event.target.value)}

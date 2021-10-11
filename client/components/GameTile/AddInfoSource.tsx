@@ -34,16 +34,15 @@ export const AddInfoSource: React.FC<{ game: Game }> = ({ game }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);
 
-    // TODO: Buggy
     const availableInfoSources = useMemo(
-        () => Object.values(InfoSourceType),
-            // .filter(type =>
-            //     !game.infoSources
-            //         .filter(source => source.disabled)
-            //         .map(source => source.type)
-            //         .includes(type)
-            // ),
-        [game]
+        () => Object.values(InfoSourceType)
+            .filter(type =>
+                !game.infoSources
+                    .filter(source => !source.disabled)
+                    .map(source => source.type)
+                    .includes(type)
+            ),
+        [game.infoSources]
     );
 
     const [type, setType] = useState(availableInfoSources[0]);

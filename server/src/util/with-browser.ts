@@ -9,10 +9,14 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
             "--disable-dev-shm-usage",
             "--disable-setuid-sandbox",
             "--no-sandbox",
+            '--lang=de-DE,de'
         ]
     })
     const page = await browser.newPage();
-    await page.setDefaultTimeout(60000);
+    page.setDefaultTimeout(60000);
+    await page.setExtraHTTPHeaders({
+        'Accept-Language': 'de'
+    });
 
     try {
         return await method(page);
