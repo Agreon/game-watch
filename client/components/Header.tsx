@@ -40,7 +40,7 @@ export default function Header() {
                     </a>
                 </Box>
                 <Button onClick={toggleColorMode}>
-                    Toggle {colorMode === "light" ? "Dark" : "Light"}
+                    {colorMode === "light" ? "Darker" : "Lighter"}
                 </Button>
             </Flex>
         </Flex>

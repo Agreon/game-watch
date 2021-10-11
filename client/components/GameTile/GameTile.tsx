@@ -2,11 +2,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider";
+import { Game, InfoSource as Source, useGameContext } from "../../providers/GameProvider";
 import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
-import { GameTileMenu } from "./GameTile/GameTileMenu";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { InfoSourceList } from "./InfoSource/InfoSourceList";
+import { GameTileMenu } from "./GameTileMenu";
+import { LoadingSpinner } from "../LoadingSpinner";
+import { InfoSourceList } from "../InfoSource/InfoSourceList";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -124,10 +124,10 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                         <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                             {thumbnail &&
                                 <img
-                                src={thumbnail}
-                                width="460"
-                                onLoad={() => setImageLoading(false)}
-                                style={{ objectFit: "cover" }}
+                                    src={thumbnail}
+                                    width="460"
+                                    onLoad={() => setImageLoading(false)}
+                                    style={{ objectFit: "cover" }}
                                 />
                             }
                         </Flex>

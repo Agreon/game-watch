@@ -1,57 +1,19 @@
 import { Flex, Box } from "@chakra-ui/layout"
 import {
-    IconButton,
-    Menu,
-    MenuList,
-    MenuButton,
-    MenuItem,
     Stat,
     StatLabel,
     StatNumber,
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import { useCallback } from "react";
-import { InfoSource as Source } from "../providers/GameProvider"
-import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
+import React from "react";
 import dayjs from "dayjs";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useInfoSourceContext } from "../providers/InfoSourceProvider";
+import { LoadingSpinner } from "../LoadingSpinner";
+import { InfoSourceOptions } from "./InfoSourceOptions";
+import { InfoSource } from "../../providers/GameProvider";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
-
-
-/**
-TODO:
-- edit
- */
-const Options: React.FC<{ source: Source }> = ({ source }) => {
-    const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
-
-    const onRemove = useCallback(() => disableInfoSource(source), [source, disableInfoSource]);
-    const onSync = useCallback(() => syncInfoSource(source), [source, syncInfoSource]);
-
-    return (
-        <Menu>
-            <MenuButton
-                as={IconButton}
-                aria-label="Options"
-                icon={<ChevronDownIcon />}
-                variant="outline"
-                size="sm"
-            />
-            <MenuList>
-                <MenuItem icon={<DownloadIcon />} onClick={onSync}>
-                    Sync
-                </MenuItem>
-                <MenuItem icon={<ViewOffIcon />} onClick={onRemove}>
-                    Remove
-                </MenuItem>
-            </MenuList>
-        </Menu>
-    )
-}
 
 /**
  * TODO:
@@ -93,7 +55,7 @@ const Price: React.FC<{ price?: number }> = ({ price }) => (
     </Stat>
 )
 
-const StoreInfoSource: React.FC<{ source: Source, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
+export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
             <Tooltip label={source.data?.fullName} placement="top">
@@ -118,19 +80,7 @@ const StoreInfoSource: React.FC<{ source: Source, expectedDateFormats: string[] 
                     }
                 </>
             )}
-            <Box><Options source={source} /></Box>
+            <Box><InfoSourceOptions source={source} /></Box>
         </Flex>
     )
-}
-
-export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
-    switch (source.type) {
-        case "steam":
-            return <StoreInfoSource source={source} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
-        case "nintendo":
-            return <StoreInfoSource source={source} expectedDateFormats={["MMMM DD, YYYY"]} />
-        case "psStore":
-        default:
-            return <StoreInfoSource source={source} expectedDateFormats={["M/D/YYYY"]} />
-    }
 }

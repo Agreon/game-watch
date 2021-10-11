@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/layout";
 import { useGameContext } from "../providers/GameProvider";
-import { GameTile } from "./GameTile";
+import { GameTile } from "./GameTile/GameTile";
 
 export const GameGrid: React.FC = () => {
     const { games } = useGameContext();

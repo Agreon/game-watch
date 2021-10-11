@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/layout";
 import React from "react";
 import { Game, InfoSource as Source } from "../../providers/GameProvider";
 import { AddInfoSource } from "../GameTile/AddInfoSource";
-import { InfoSource } from "../InfoSource";
+import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
 
 export interface InfoSourcesProps {
