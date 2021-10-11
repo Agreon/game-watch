@@ -1,5 +1,6 @@
 import { BaseEntity, Entity, Enum, IdentifiedReference, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from 'uuid';
+
 import { Game } from "../game/game-model";
 
 export enum InfoSourceType {
@@ -47,7 +48,7 @@ export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
     [InfoSourceType.Nintendo]: NintendoGameData;
     [InfoSourceType.PsStore]: PsStoreGameData;
-}
+};
 export type GameDataU = SteamGameData | NintendoGameData | PsStoreGameData;
 
 @Entity()

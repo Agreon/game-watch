@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { SearchService } from './search-service';
 import { NintendoSearcher } from './searchers/nintendo-searcher';
 import { PsStoreSearcher } from './searchers/ps-store-searcher';

@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import { InfoSourceType } from "../info-source/info-source-model";
 import * as Sentry from '@sentry/node';
+
+import { InfoSourceType } from "../info-source/info-source-model";
 
 export interface InfoSearcher {
     type: InfoSourceType;

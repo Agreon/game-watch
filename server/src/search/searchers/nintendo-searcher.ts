@@ -1,4 +1,5 @@
 import { Logger } from "@nestjs/common";
+
 import { InfoSourceType } from "../../info-source/info-source-model";
 import { matchingName } from "../../util/matching-name";
 import { withBrowser } from "../../util/with-browser";
@@ -36,6 +37,6 @@ export class NintendoSearcher implements InfoSearcher {
             this.logger.debug(`Found link to game '${gameTileLink}'`);
 
             return `https://www.nintendo.com${gameTileLink}`;
-        })
+        });
     }
 }

@@ -1,6 +1,6 @@
 import { InfoSourceType, NintendoGameData } from "../../info-source/info-source-model";
-import { InfoResolver } from "../resolve-service";
 import { withBrowser } from "../../util/with-browser";
+import { InfoResolver } from "../resolve-service";
 
 export class NintendoResolver implements InfoResolver {
     public type = InfoSourceType.Nintendo;
@@ -15,7 +15,7 @@ export class NintendoResolver implements InfoResolver {
             await page.waitForSelector(".release-date > dd");
 
             const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
-            const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!)
+            const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
 
             const price = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
             const salePrice = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
@@ -33,6 +33,6 @@ export class NintendoResolver implements InfoResolver {
                 } : undefined,
                 releaseDate,
             };
-        })
+        });
     }
 }

@@ -1,8 +1,9 @@
-import { InfoSearcher } from "../search-service";
-import { InfoSourceType } from "../../info-source/info-source-model";
-import { withBrowser } from "../../util/with-browser";
 import { Logger } from "@nestjs/common";
+
+import { InfoSourceType } from "../../info-source/info-source-model";
 import { matchingName } from "../../util/matching-name";
+import { withBrowser } from "../../util/with-browser";
+import { InfoSearcher } from "../search-service";
 
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
@@ -17,7 +18,7 @@ export class PsStoreSearcher implements InfoSearcher {
             );
             console.timeEnd("Visit Ps Store");
 
-            const content = await browser.content()
+            const content = await browser.content();
             if (content.includes("No results found")) {
                 this.logger.debug("No results found");
 
@@ -41,6 +42,6 @@ export class PsStoreSearcher implements InfoSearcher {
             this.logger.debug(`Found link to game '${href}'`);
 
             return `https://store.playstation.com/de-de/${href}`;
-        })
+        });
     }
 }

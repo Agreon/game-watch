@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ResolveService } from './resolve-service';
 import { NintendoResolver } from './resolvers/nintendo-resolver';
 import { PsStoreResolver } from './resolvers/ps-store-resolver';

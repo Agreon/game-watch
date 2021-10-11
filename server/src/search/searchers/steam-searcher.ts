@@ -1,9 +1,10 @@
-import * as cheerio from 'cheerio';
-import axios from "axios";
-import { InfoSearcher } from '../search-service';
-import { InfoSourceType } from '../../info-source/info-source-model';
 import { Logger } from '@nestjs/common';
+import axios from "axios";
+import * as cheerio from 'cheerio';
+
+import { InfoSourceType } from '../../info-source/info-source-model';
 import { matchingName } from '../../util/matching-name';
+import { InfoSearcher } from '../search-service';
 
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;

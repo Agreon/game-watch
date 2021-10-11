@@ -1,7 +1,9 @@
+import { Logger } from "@nestjs/common";
+import axios from "axios";
+
 import { InfoSourceType, SteamGameData } from "../../info-source/info-source-model";
 import { InfoResolver } from "../resolve-service";
-import axios from "axios";
-import { Logger } from "@nestjs/common";
+
 
 /**
  * TODO:
@@ -24,7 +26,7 @@ export class SteamResolver implements InfoResolver {
 
         const { success } = gameData;
         if (!success) {
-            throw new Error("Steam API request unsuccessful")
+            throw new Error("Steam API request unsuccessful");
         }
 
         const json = gameData.data as Record<string, any>;

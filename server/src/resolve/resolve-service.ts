@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import { GameDataU, InfoSourceType } from "../info-source/info-source-model";
 import * as Sentry from '@sentry/node';
+
+import { GameDataU, InfoSourceType } from "../info-source/info-source-model";
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType;

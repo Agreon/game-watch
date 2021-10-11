@@ -1,10 +1,11 @@
 import { EntityRepository, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
+
+import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
 import { Game } from "./game-model";
-import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 
 @Injectable()
 export class GameService {
@@ -22,7 +23,7 @@ export class GameService {
     public async createGame(search: string) {
         let game = await this.gameRepository.findOne({ name: search });
         if (game !== null) {
-            throw new ConflictException()
+            throw new ConflictException();
         }
 
         game = new Game({ name: search });
@@ -44,7 +45,7 @@ export class GameService {
             this.infoSourceRepository.remove(source);
         }
 
-        await this.gameRepository.removeAndFlush(game)
+        await this.gameRepository.removeAndFlush(game);
     }
 
     public async syncAllGames() {
@@ -57,7 +58,7 @@ export class GameService {
     }
 
     private async syncGameInfoSources(game: Game) {
-        this.logger.debug(`Syncing InfoSources for ${game.name} (${game.id})`)
+        this.logger.debug(`Syncing InfoSources for ${game.name} (${game.id})`);
         const existingInfoSources = await game.infoSources.loadItems();
 
         // Resolve for existing sources
@@ -70,7 +71,7 @@ export class GameService {
                         source.type
                     );
                     if (!resolvedGameData) {
-                        source.resolveError = true
+                        source.resolveError = true;
                         this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable anymore`);
 
                         return;
@@ -120,6 +121,6 @@ export class GameService {
                 updatedAt: QueryOrder.DESC,
                 infoSources: { type: QueryOrder.DESC },
             }
-        })
+        });
     }
 }

@@ -1,10 +1,11 @@
+import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import * as dotenv from "dotenv";
-import { AppModule } from './app.module';
 import path from 'path';
-import { MikroORM } from '@mikro-orm/core';
+
+import { AppModule } from './app.module';
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
@@ -36,7 +37,7 @@ async function bootstrap() {
   const migrator = orm.getMigrator();
   await migrator.up();
 
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(serverPort as string);
 

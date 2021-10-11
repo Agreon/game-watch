@@ -11,7 +11,8 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
             "--no-sandbox",
             '--lang=de-DE,de'
         ]
-    })
+    });
+
     const page = await browser.newPage();
     page.setDefaultTimeout(60000);
     await page.setExtraHTTPHeaders({
@@ -23,4 +24,5 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
     } finally {
         await browser.close();
     }
-}
+};
+

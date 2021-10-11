@@ -3,4 +3,4 @@ export const matchingName = (name: string, search: string) => {
     const searchTokens = search.replace(/\d/, "").toLowerCase().split(" ");
 
     return nameTokens.some(token => searchTokens.includes(token));
-}
+};

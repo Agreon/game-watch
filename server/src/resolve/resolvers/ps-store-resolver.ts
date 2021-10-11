@@ -1,6 +1,6 @@
 import { InfoSourceType, PsStoreGameData } from "../../info-source/info-source-model";
-import { InfoResolver } from "../resolve-service";
 import { withBrowser } from "../../util/with-browser";
+import { InfoResolver } from "../resolve-service";
 
 /**
  * TODO:

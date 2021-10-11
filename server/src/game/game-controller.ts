@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { IsString } from "class-validator";
+
 import { Game } from "./game-model";
 import { GameService } from "./game-service";
-import { IsString } from "class-validator";
 
 export class CreateGameDto {
     @IsString()

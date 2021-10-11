@@ -1,9 +1,10 @@
 import { Configuration } from "@mikro-orm/core";
-import { Game } from "./game/game-model";
-import { InfoSource } from "./info-source/info-source-model";
+import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
 import * as dotenv from "dotenv";
 import path from 'path';
-import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
+
+import { Game } from "./game/game-model";
+import { InfoSource } from "./info-source/info-source-model";
 import { Migration20211010133200 } from "./migrations/Migration20211010133200";
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
