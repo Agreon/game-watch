@@ -1,5 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
-import { useMap } from "react-use";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { http } from "../util/http";
 
 export enum InfoSourceType {
@@ -15,6 +14,7 @@ export interface InfoSource {
     disabled: boolean
     resolveError: boolean
     data: Record<string, any> | null
+    loading: boolean
 }
 
 export interface Game {
@@ -30,9 +30,7 @@ export interface GameCtx {
     addGame: (name: string) => Promise<void>
     syncGame: (id: string) => Promise<void>
     deleteGame: (id: string) => Promise<void>
-    addInfoSource: (game: Game, type: InfoSourceType, remoteGameId: string) => Promise<InfoSource>
-    syncInfoSource: (game: Game, infoSource: InfoSource) => Promise<void>
-    disableInfoSource: (game: Game, infoSource: InfoSource) => Promise<void>
+    setGameInfoSource: (game: Game, infoSource: InfoSource) => void
 }
 
 export const GameContext = React.createContext<GameCtx>({
@@ -40,9 +38,7 @@ export const GameContext = React.createContext<GameCtx>({
     addGame: async () => { },
     syncGame: async () => { },
     deleteGame: async () => { },
-    addInfoSource: async () => ({} as InfoSource),
-    syncInfoSource: async () => { },
-    disableInfoSource: async () => { },
+    setGameInfoSource: () => { }
 });
 
 export function useGameContext() {
@@ -52,79 +48,51 @@ export function useGameContext() {
 }
 
 export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
-    const [gameMap, { set: setGame, remove: removeGame }] = useMap<Record<string, Game>>(
-        initialGames.reduce((acc, curr) => {
-            acc[curr.id] = curr;
-            return acc;
-        }, {} as Record<string, Game>)
-    );
-    const games = useMemo(() => Object.values(gameMap).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()), [gameMap]);
+    const [games, setGames] = useState(initialGames);
+
 
     const addGame = useCallback(async (name: string) => {
         const { data } = await http.post<any>("/game", { search: name });
 
-        setGame(data.id, data);
-    }, [setGame]);
+        setGames([
+            data,
+            ...games,
+        ])
+    }, [setGames, games]);
 
     const syncGame = useCallback(async (gameId: string) => {
         const { data } = await http.post<any>(`/game/${gameId}/sync`);
 
-        setGame(data.id, data);
-    }, [setGame]);
+        setGames([
+            data,
+            ...games.filter(({ id }) => id !== gameId),
+        ])
+    }, [setGames, games]);
 
     const deleteGame = useCallback(async (gameId: string) => {
         await http.delete(`/game/${gameId}`);
 
-        removeGame(gameId)
-    }, [removeGame]);
+        setGames(games.filter(({ id }) => id !== gameId))
+    }, [setGames, games]);
 
     const setGameInfoSource = useCallback((game: Game, infoSource: InfoSource) => {
         game.infoSources = [
             infoSource,
             ...game.infoSources.filter(({ id }) => id !== infoSource.id),
         ];
-        setGame(game.id, game);
-    }, [setGame]);
-
-    const addInfoSource = useCallback(async (game: Game, type: InfoSourceType, remoteGameId: string) => {
-        const { data: infoSource } = await http.post<any>(`/info-source`, {
-            gameId: game.id,
-            type,
-            remoteGameId
-        });
-
-        setGameInfoSource(game, infoSource);
-
-        return infoSource;
-    }, [setGameInfoSource]);
-
-    const syncInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
-        // TODO: this is ugly,
-        // => Leads to name/image jump
-        infoSource.data = null;
-        setGameInfoSource(game, infoSource);
-
-        const { data } = await http.post<any>(`/info-source/${infoSource.id}/sync`);
-
-        setGameInfoSource(game, data);
-    }, [setGameInfoSource]);
-
-    const disableInfoSource = useCallback(async (game: Game, infoSource: InfoSource) => {
-        const { data } = await http.post<any>(`/info-source/${infoSource.id}/disable`);
-
-        setGameInfoSource(game, data);
-    }, [setGameInfoSource]);
-
+        setGames([
+            game,
+            ...games.filter(({ id }) => id !== game.id),
+        ])
+    }, [setGames, games]);
 
     const contextValue = useMemo(() => ({
         games,
         addGame,
         syncGame,
         deleteGame,
-        addInfoSource,
-        syncInfoSource,
-        disableInfoSource
-    }), [games, addGame, syncGame, deleteGame, addInfoSource, syncInfoSource, disableInfoSource]);
+        setGameInfoSource
+    }), [games, addGame, syncGame, deleteGame, setGameInfoSource]);
 
     return (
         <GameContext.Provider value={contextValue}>

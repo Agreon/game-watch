@@ -4,10 +4,9 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider";
 import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
-import { InfoSource } from "./InfoSource";
 import { GameTileMenu } from "./GameTile/GameTileMenu";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { AddInfoSource } from "./GameTile/AddInfoSource";
+import { InfoSourceList } from "./InfoSource/InfoSourceList";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -136,18 +135,13 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                 </Box>
                 <Box padding="1rem">
                     <Text fontSize="2xl">{fullName ?? game.name}</Text>
-                    <Box>
-                        {loading && infoSourceLength === 0 ?
-                            <SkeletonText />
-                            : sortedInfoSources
-                                .map(source => <InfoSource key={source.id} game={game} source={source} />)
-                        }
-
-                        {!loading && infoSourceLength === 0 &&
-                            <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>
-                        }
-                    </Box>
-                    {!loading && <AddInfoSource game={game} />}
+                    {infoSourceLength === 0 && (
+                        <>
+                            {loading && <SkeletonText />}
+                            {!loading && <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>}
+                        </>
+                    )}
+                    {!loading && <InfoSourceList game={game} infoSources={sortedInfoSources} />}
                 </Box>
             </Flex>
         </Box>

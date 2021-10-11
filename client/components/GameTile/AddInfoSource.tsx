@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import {
     Select,
@@ -14,8 +14,9 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import { Game, InfoSourceType, useGameContext } from "../../providers/GameProvider";
+import { InfoSourceType } from "../../providers/GameProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 const extractRemoteGameId = (type: InfoSourceType, storeUrl: string) => {
     switch (type) {
@@ -29,38 +30,42 @@ const extractRemoteGameId = (type: InfoSourceType, storeUrl: string) => {
     }
 }
 
-export const AddInfoSource: React.FC<{ game: Game }> = ({ game }) => {
-    const { addInfoSource, syncInfoSource } = useGameContext();
+export const AddInfoSource: React.FC = () => {
+    const { addInfoSource, syncInfoSource, infoSources } = useInfoSourceContext();
+    const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);
 
     const availableInfoSources = useMemo(
         () => Object.values(InfoSourceType)
             .filter(type =>
-                !game.infoSources
+                !infoSources
                     .filter(source => !source.disabled)
                     .map(source => source.type)
                     .includes(type)
             ),
-        [game.infoSources]
+        [infoSources]
     );
 
     const [type, setType] = useState(availableInfoSources[0]);
     const [storeUrl, setStoreUrl] = useState("");
 
     const onAddInfoSource = useCallback(async () => {
+        setLoading(true);
         try {
             const remoteGameId = extractRemoteGameId(type, storeUrl);
 
-            const infoSource = await addInfoSource(game, type, remoteGameId);
+            const infoSource = await addInfoSource(type, remoteGameId);
+            setLoading(false);
             onClose();
             setStoreUrl("");
 
-            await syncInfoSource(game, infoSource);
+            await syncInfoSource(infoSource);
         } catch (error) {
             console.error(error);
+            setLoading(false);
         }
-    }, [addInfoSource, syncInfoSource, onClose, game, type, storeUrl]);
+    }, [addInfoSource, syncInfoSource, onClose, type, storeUrl]);
 
     return (
         <>
@@ -95,7 +100,7 @@ export const AddInfoSource: React.FC<{ game: Game }> = ({ game }) => {
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose} mr="1rem">Cancel</Button>
-                        <Button colorScheme="teal" onClick={onAddInfoSource} >
+                        <Button loading={loading} colorScheme="teal" onClick={onAddInfoSource} >
                             Add
                         </Button>
                     </ModalFooter>

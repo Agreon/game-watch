@@ -59,8 +59,8 @@ export class InfoSourceService {
 
         if (!resolvedGameData) {
             infoSource.resolveError = true;
-            infoSource.data = null;
         } else {
+            infoSource.resolveError = false;
             infoSource.data = resolvedGameData;
         }
 

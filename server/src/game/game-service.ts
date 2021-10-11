@@ -70,9 +70,8 @@ export class GameService {
                         source.type
                     );
                     if (!resolvedGameData) {
-                        // TODO: Set data: null?
                         source.resolveError = true
-                        this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable`)
+                        this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable anymore`);
 
                         return;
                     }

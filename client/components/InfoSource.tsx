@@ -11,43 +11,26 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import { useCallback, useMemo, useState } from "react";
-import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider"
+import { useCallback } from "react";
+import { InfoSource as Source } from "../providers/GameProvider"
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import dayjs from "dayjs";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { useInfoSourceContext } from "../providers/InfoSourceProvider";
+
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
+
 
 /**
 TODO:
 - edit
-- pass loading state to parent
  */
-const Options: React.FC<{ source: Source, game: Game }> = ({ source, game }) => {
-    const { disableInfoSource, syncInfoSource } = useGameContext();
+const Options: React.FC<{ source: Source }> = ({ source }) => {
+    const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
 
-    const [loading, setLoading] = useState(false);
-
-    const onDisable = useCallback(async () => {
-        setLoading(true);
-        try {
-            await disableInfoSource(game, source);
-        } finally {
-            setLoading(false);
-        }
-    }, [disableInfoSource, game, source])
-
-
-    const onSync = useCallback(async () => {
-        setLoading(true);
-        try {
-            await syncInfoSource(game, source);
-        } finally {
-            setLoading(false);
-        }
-    }, [syncInfoSource, game, source])
-
+    const onRemove = useCallback(() => disableInfoSource(source), [source, disableInfoSource]);
+    const onSync = useCallback(() => syncInfoSource(source), [source, syncInfoSource]);
 
     return (
         <Menu>
@@ -62,7 +45,7 @@ const Options: React.FC<{ source: Source, game: Game }> = ({ source, game }) => 
                 <MenuItem icon={<DownloadIcon />} onClick={onSync}>
                     Sync
                 </MenuItem>
-                <MenuItem icon={<ViewOffIcon />} onClick={onDisable}>
+                <MenuItem icon={<ViewOffIcon />} onClick={onRemove}>
                     Remove
                 </MenuItem>
             </MenuList>
@@ -110,42 +93,44 @@ const Price: React.FC<{ price?: number }> = ({ price }) => (
     </Stat>
 )
 
-const StoreInfoSource: React.FC<{ source: Source, game: Game, expectedDateFormats: string[] }> = ({ source, game, expectedDateFormats }) => {
+const StoreInfoSource: React.FC<{ source: Source, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
     return (
-        <Flex key={source.id} py="1rem" align="center" justify="space-between">
+        <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
             <Tooltip label={source.data?.fullName} placement="top">
                 <Box flex="0.7">
                     <SourceName name={source.type} url={source.data?.storeUrl} />
                 </Box>
             </Tooltip>
-            {(source.data === null && !source.resolveError) && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
-            {(source.data === null && source.resolveError) && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-            {source.data !== null &&
+            {source.loading ? (
+                <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>
+            ) : (
                 <>
-                    <Box flex="1">
-                        <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
-                    </Box>
-                    <Box flex="0.7">
-                        <Price price={source.data.priceInformation?.final} />
-                    </Box>
+                    {source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                    {!source.resolveError && source.data !== null &&
+                        <>
+                            <Box flex="1">
+                                <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
+                            </Box>
+                            <Box flex="0.7">
+                                <Price price={source.data.priceInformation?.final} />
+                            </Box>
+                        </>
+                    }
                 </>
-            }
-            <Box>
-                <Options game={game} source={source} />
-            </Box>
+            )}
+            <Box><Options source={source} /></Box>
         </Flex>
     )
 }
 
-
-export const InfoSource: React.FC<{ source: Source, game: Game }> = ({ source, game }) => {
+export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
     switch (source.type) {
         case "steam":
-            return <StoreInfoSource source={source} game={game} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
         case "nintendo":
-            return <StoreInfoSource source={source} game={game} expectedDateFormats={["MMMM DD, YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["MMMM DD, YYYY"]} />
         case "psStore":
         default:
-            return <StoreInfoSource source={source} game={game} expectedDateFormats={["M/D/YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["M/D/YYYY"]} />
     }
 }
