@@ -8,7 +8,8 @@ import {
     Stat,
     StatLabel,
     StatNumber,
-    Text
+    Text,
+    Tooltip
 } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../providers/GameProvider"
@@ -62,7 +63,7 @@ const Options: React.FC<{ source: Source, game: Game }> = ({ source, game }) => 
                     Sync
                 </MenuItem>
                 <MenuItem icon={<ViewOffIcon />} onClick={onDisable}>
-                    Disable
+                    Remove
                 </MenuItem>
             </MenuList>
         </Menu>
@@ -79,6 +80,7 @@ const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => 
     </a>
 )
 
+// TODO: Maybe not decidable, depending on language given => at least ps store
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
     const parsedDate = useMemo(() => {
         for (const format of expectedFormats) {
@@ -106,28 +108,31 @@ const Price: React.FC<{ price?: number }> = ({ price }) => (
     </Stat>
 )
 
+// TODO: is minheight needed?
 const StoreInfoSource: React.FC<{ source: Source, game: Game, expectedDateFormats: string[] }> = ({ source, game, expectedDateFormats }) => {
     return (
-        <Flex key={source.id} py="1rem" minHeight="77px" align="center" justify="space-between">
-            <Box flex="0.7">
-                <SourceName name={source.type} url={source.data?.storeUrl} />
-            </Box>
-            {(source.data === null && !source.resolveError) && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
-            {(source.data === null && source.resolveError) && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-            {source.data !== null &&
-                <>
-                    <Box flex="1">
-                        <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
-                    </Box>
-                    <Box flex="0.7">
-                        <Price price={source.data.priceInformation?.final} />
-                    </Box>
-                </>
-            }
-            <Box>
-                <Options game={game} source={source} />
-            </Box>
-        </Flex>
+        <Tooltip label={source.data?.fullName} placement="top">
+            <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
+                <Box flex="0.7">
+                    <SourceName name={source.type} url={source.data?.storeUrl} />
+                </Box>
+                {(source.data === null && !source.resolveError) && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
+                {(source.data === null && source.resolveError) && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                {source.data !== null &&
+                    <>
+                        <Box flex="1">
+                            <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
+                        </Box>
+                        <Box flex="0.7">
+                            <Price price={source.data.priceInformation?.final} />
+                        </Box>
+                    </>
+                }
+                <Box>
+                    <Options game={game} source={source} />
+                </Box>
+            </Flex>
+        </Tooltip>
     )
 }
 

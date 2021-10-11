@@ -102,8 +102,6 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
             position="relative"
             margin="1rem"
             height="100%"
-            minWidth="460px"
-            maxWidth="460px"
             overflow="hidden"
             bg={useColorModeValue('white', 'gray.800')}
             borderWidth="1px"

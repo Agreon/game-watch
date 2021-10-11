@@ -19,7 +19,9 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             </Head>
             <Header />
             <Box
-                p="2rem"
+                pt="2rem"
+                pb="3rem"
+                pX={[0, 0, "2rem"]}
                 mt="4rem"
                 height="100%"
                 overflow="auto"

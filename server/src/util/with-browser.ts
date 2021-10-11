@@ -12,7 +12,7 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
         ]
     })
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(60000);
+    await page.setDefaultTimeout(60000);
 
     try {
         return await method(page);

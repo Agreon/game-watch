@@ -9,7 +9,7 @@ export default function Header() {
 
     return (
         <Flex
-            justify="center"
+            justify={["space-between", "space-between", "center"]}
             align="center"
             position="absolute"
             zIndex="2"
@@ -18,7 +18,7 @@ export default function Header() {
             padding="1rem"
             boxShadow="lg"
         >
-            <Text fontSize="2xl">GameView</Text>
+            <Text fontSize="2xl">GameWatch</Text>
             <Flex
                 align="center"
                 position="absolute"
