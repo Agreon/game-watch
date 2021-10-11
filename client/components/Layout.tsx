@@ -18,36 +18,35 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <Box
+            <Flex
+                direction="column"
+                justifyContent="space-between"
                 pt="2rem"
-                pb="3rem"
                 pX={[0, 0, "2rem"]}
                 mt="4rem"
-                height="100%"
                 overflow="auto"
+                minHeight="calc(100vh - 4rem)"
             >
                 {children}
-            </Box>
-            <Flex
-                justify="center"
-                align="center"
-                position="absolute"
-                bottom="0"
-                left="0"
-                width="100%"
-                p="1rem"
-                pt="1.25rem"
-                bg={useColorModeValue('white', 'gray.800')}
-                boxShadow="xl"
-            >
-                <a
-                    href="https://github.com/Agreon"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <Flex
+                    justify="center"
+                    align="center"
+                    width="100%"
+                    p="1rem"
+                    pt="1.25rem"
+                    bg={useColorModeValue('white', 'gray.800')}
+                    boxShadow="xl"
                 >
-                    Made by <b>Agreon</b>
-                </a>
+                    <a
+                        href="https://github.com/Agreon"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Made by <b>Agreon</b>
+                    </a>
             </Flex>
+            </Flex>
+
         </Flex>
     )
 }

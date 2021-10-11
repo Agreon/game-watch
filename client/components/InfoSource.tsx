@@ -80,23 +80,23 @@ const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => 
     </a>
 )
 
-// TODO: Maybe not decidable, depending on language given => at least ps store
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
-    const parsedDate = useMemo(() => {
-        for (const format of expectedFormats) {
-            const parsedDate = dayjs(date, format);
-            if (parsedDate.isValid()) {
-                return parsedDate.format("DD MMM, YYYY")
-            }
-        }
+    // TODO: Not decidable until the user can select a language
+    // const parsedDate = useMemo(() => {
+    //     for (const format of expectedFormats) {
+    //         const parsedDate = dayjs(date, format);
+    //         if (parsedDate.isValid()) {
+    //             return parsedDate.format("DD MMM, YYYY")
+    //         }
+    //     }
 
-        return date;
-    }, [date, expectedFormats]);
+    //     return date;
+    // }, [date, expectedFormats]);
 
     return (
         <Stat>
             <StatLabel>Release Date</StatLabel>
-            <StatNumber fontSize="1rem">{parsedDate}</StatNumber>
+            <StatNumber fontSize="1rem">{date}</StatNumber>
         </Stat>
     )
 }

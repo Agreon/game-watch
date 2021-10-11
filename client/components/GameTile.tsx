@@ -48,7 +48,6 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 /**
  * TODO:
  * - Toasts for errors
- * - Sort sources by type
  */
 export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     const { syncGame, deleteGame } = useGameContext();
@@ -100,8 +99,11 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     return (
         <Box
             position="relative"
-            margin="1rem"
+            marginX={[0, 0, "1rem"]}
+            marginY="1rem"
             height="100%"
+            minWidth={["100%", "28rem"]}
+            maxWidth={["100vw", "28rem"]}
             overflow="hidden"
             bg={useColorModeValue('white', 'gray.800')}
             borderWidth="1px"
