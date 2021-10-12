@@ -54,37 +54,37 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
     const addGame = useCallback(async (name: string) => {
         const { data } = await http.post<any>("/game", { search: name });
 
-        setGames([
+        setGames(games => [
             data,
             ...games,
         ])
-    }, [setGames, games]);
+    }, [setGames]);
 
     const syncGame = useCallback(async (gameId: string) => {
         const { data } = await http.post<any>(`/game/${gameId}/sync`);
 
-        setGames([
+        setGames(games => [
             data,
             ...games.filter(({ id }) => id !== gameId),
         ])
-    }, [setGames, games]);
+    }, [setGames]);
 
     const deleteGame = useCallback(async (gameId: string) => {
         await http.delete(`/game/${gameId}`);
 
-        setGames(games.filter(({ id }) => id !== gameId))
-    }, [setGames, games]);
+        setGames(games => games.filter(({ id }) => id !== gameId))
+    }, [setGames]);
 
     const setGameInfoSource = useCallback((game: Game, infoSource: InfoSource) => {
         game.infoSources = [
             infoSource,
             ...game.infoSources.filter(({ id }) => id !== infoSource.id),
         ];
-        setGames([
+        setGames(games => [
             game,
             ...games.filter(({ id }) => id !== game.id),
         ])
-    }, [setGames, games]);
+    }, [setGames]);
 
     const contextValue = useMemo(() => ({
         games,
