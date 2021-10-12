@@ -21,12 +21,12 @@ export class GameService {
     ) { }
 
     public async createGame(search: string) {
-        let game = await this.gameRepository.findOne({ name: search });
+        let game = await this.gameRepository.findOne({ search });
         if (game !== null) {
             throw new ConflictException();
         }
 
-        game = new Game({ name: search });
+        game = new Game({ search });
         await this.gameRepository.persistAndFlush(game);
 
         return game;
@@ -36,6 +36,15 @@ export class GameService {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
 
         return await this.syncGameInfoSources(game);
+    }
+
+    public async updateGameName(gameId: string, name: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+
+        game.name = name;
+        await this.gameRepository.persistAndFlush(game);
+
+        return game;
     }
 
     public async deleteGame(gameId: string) {
@@ -58,7 +67,8 @@ export class GameService {
     }
 
     private async syncGameInfoSources(game: Game) {
-        this.logger.debug(`Syncing InfoSources for ${game.name} (${game.id})`);
+        this.logger.debug(`Syncing InfoSources for ${game.search} (${game.id})`);
+        console.time("Sync");
         const existingInfoSources = await game.infoSources.loadItems();
 
         // Resolve for existing sources
@@ -87,15 +97,16 @@ export class GameService {
         );
         const searchAndResolvePromises = sourcesToSearch.map(
             async sourceType => {
-                const remoteGameId = await this.searchService.searchForGameInSource(game.name, sourceType);
+                const remoteGameId = await this.searchService.searchForGameInSource(game.search, sourceType);
                 if (!remoteGameId) {
-                    this.logger.debug(`No store game information found in '${sourceType}' for '${game.name}'`);
+                    this.logger.debug(`No store game information found in '${sourceType}' for '${game.search}'`);
                     return null;
                 }
 
-
                 const resolvedGameData = await this.resolveService.resolveGameInformation(remoteGameId, sourceType);
                 if (!resolvedGameData) {
+                    this.logger.debug(`'${remoteGameId}' could not be resolved in '${sourceType}' for '${game.search}'`);
+
                     return;
                 }
 
@@ -111,6 +122,7 @@ export class GameService {
 
         await this.gameRepository.persistAndFlush(game);
 
+        console.timeEnd("Sync");
         return game;
     }
 

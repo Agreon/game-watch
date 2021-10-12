@@ -15,7 +15,10 @@ export class Game extends BaseEntity<Game, "id"> {
     public updatedAt: Date = new Date();
 
     @Property()
-    public name!: string;
+    public search!: string;
+
+    @Property({ type: "string", nullable: true })
+    public name: string | null;
 
     @Property()
     public description: string = "";
@@ -23,8 +26,8 @@ export class Game extends BaseEntity<Game, "id"> {
     @OneToMany(() => InfoSource, infoSource => infoSource.game)
     public infoSources = new Collection<InfoSource, Game>(this);
 
-    public constructor({ name }: { name: string }) {
+    public constructor({ search }: { search: string }) {
         super();
-        this.name = name;
+        this.search = search;
     }
 }

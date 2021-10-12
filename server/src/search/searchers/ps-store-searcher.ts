@@ -41,7 +41,7 @@ export class PsStoreSearcher implements InfoSearcher {
 
             this.logger.debug(`Found link to game '${href}'`);
 
-            return `https://store.playstation.com/de-de/${href}`;
+            return `https://store.playstation.com${href}`;
         });
     }
 }

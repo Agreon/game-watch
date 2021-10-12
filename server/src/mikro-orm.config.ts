@@ -5,7 +5,7 @@ import path from 'path';
 
 import { Game } from "./game/game-model";
 import { InfoSource } from "./info-source/info-source-model";
-import { Migration20211010133200 } from "./migrations/Migration20211010133200";
+import { Migration20211012071707 } from "./migrations/Migration20211012071707";
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
@@ -21,7 +21,7 @@ const config: MikroOrmModuleSyncOptions = {
     migrations: {
         path: './src/migrations',
         migrationsList: [
-            { name: "Migration20211010133200.ts", class: Migration20211010133200 }
+            { name: "Migration20211012071707.ts", class: Migration20211012071707 }
         ]
     }
 };

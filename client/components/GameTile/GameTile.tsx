@@ -7,6 +7,7 @@ import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/reac
 import { GameTileMenu } from "./GameTileMenu";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceList } from "../InfoSource/InfoSourceList";
+import { GameName } from "./GameName";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -49,7 +50,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
  * - Toasts for errors
  */
 export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
-    const { syncGame, deleteGame } = useGameContext();
+    const { syncGame, deleteGame, changeGameName } = useGameContext();
 
     const [loading, setLoading] = useState(false);
     const [imageLoading, setImageLoading] = useState(false);
@@ -60,6 +61,13 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         setLoading(false);
     }, [game, syncGame])
 
+    const onChangeName = useCallback((value) => {
+        if (value === "") {
+            return;
+        }
+        // No loading state, this is optimistic.
+        changeGameName(game, value);
+    }, [game, changeGameName])
 
     const onDelete = useCallback(async () => {
         setLoading(true);
@@ -80,6 +88,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [infoSourceLength]);
 
+    // TODO: Do this on server side
     const sortedInfoSources = useMemo(
         () => game.infoSources
             .filter(source => !source.disabled)
@@ -115,7 +124,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
             transition="border-color 0.15s ease"
         >
             <Box position="absolute" right="0" top="0" zIndex="1">
-                <GameTileMenu onSync={onSync} onDelete={onDelete} gameName={fullName ?? game.name} />
+                <GameTileMenu onSync={onSync} onDelete={onDelete} gameName={game.name ?? fullName ?? game.search} />
             </Box>
             <Flex direction="column">
                 <Box position="relative">
@@ -134,7 +143,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                     </Skeleton>
                 </Box>
                 <Box padding="1rem">
-                    <Text fontSize="2xl">{fullName ?? game.name}</Text>
+                    <GameName name={game.name ?? fullName ?? game.search} onChange={onChangeName} />
                     {infoSourceLength === 0 && (
                         <>
                             {loading && <SkeletonText />}

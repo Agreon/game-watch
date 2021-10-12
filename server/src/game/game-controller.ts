@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { IsString } from "class-validator";
 
 import { Game } from "./game-model";
@@ -7,6 +7,11 @@ import { GameService } from "./game-service";
 export class CreateGameDto {
     @IsString()
     public search: string;
+}
+
+export class UpdateGameDto {
+    @IsString()
+    public name: string;
 }
 
 @Controller("/game")
@@ -37,6 +42,14 @@ export class GameController {
         @Param("gameId") gameId: string
     ): Promise<Game> {
         return await this.gameService.syncGame(gameId);
+    }
+
+    @Put("/:gameId")
+    public async update(
+        @Param("gameId") gameId: string,
+        @Body() { name }: UpdateGameDto
+    ): Promise<Game> {
+        return await this.gameService.updateGameName(gameId, name);
     }
 
     @Delete("/:gameId")

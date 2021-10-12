@@ -17,9 +17,9 @@ export class PsStoreResolver implements InfoResolver {
 
         return await withBrowser(async browser => {
             await browser.goto(storePage);
-            console.timeEnd("Resolve PsStore");
-
             await browser.waitForSelector(".psw-t-title-m");
+
+            console.timeEnd("Resolve PsStore");
 
             const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim());
 

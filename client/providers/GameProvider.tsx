@@ -19,7 +19,8 @@ export interface InfoSource {
 
 export interface Game {
     id: string
-    name: string
+    search: string
+    name: string | null
     infoSources: InfoSource[]
     syncing: boolean;
     updatedAt: string;
@@ -29,6 +30,7 @@ export interface GameCtx {
     games: Game[]
     addGame: (name: string) => Promise<void>
     syncGame: (id: string) => Promise<void>
+    changeGameName: (game: Game, name: string) => Promise<void>
     deleteGame: (id: string) => Promise<void>
     setGameInfoSource: (game: Game, infoSource: InfoSource) => void
 }
@@ -36,6 +38,7 @@ export interface GameCtx {
 export const GameContext = React.createContext<GameCtx>({
     games: [],
     addGame: async () => { },
+    changeGameName: async () => { },
     syncGame: async () => { },
     deleteGame: async () => { },
     setGameInfoSource: () => { }
@@ -50,7 +53,6 @@ export function useGameContext() {
 export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
     const [games, setGames] = useState(initialGames);
 
-
     const addGame = useCallback(async (name: string) => {
         const { data } = await http.post<any>("/game", { search: name });
 
@@ -61,12 +63,30 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
     }, [setGames]);
 
     const syncGame = useCallback(async (gameId: string) => {
-        const { data } = await http.post<any>(`/game/${gameId}/sync`);
+        const { data } = await http.post<Game>(`/game/${gameId}/sync`);
 
         setGames(games => [
             data,
             ...games.filter(({ id }) => id !== gameId),
         ])
+    }, [setGames]);
+
+    const changeGameName = useCallback(async (game: Game, name: string) => {
+        try {
+            const { data } = await http.put<Game>(`/game/${game.id}`, {
+                ...game,
+                name
+            });
+
+            setGames(games => [
+                data,
+                ...games.filter(({ id }) => id !== game.id),
+            ]);
+        }
+        catch (e) {
+            // TODO: show error toast
+            console.error(e);
+        }
     }, [setGames]);
 
     const deleteGame = useCallback(async (gameId: string) => {
@@ -89,10 +109,11 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
     const contextValue = useMemo(() => ({
         games,
         addGame,
+        changeGameName,
         syncGame,
         deleteGame,
         setGameInfoSource
-    }), [games, addGame, syncGame, deleteGame, setGameInfoSource]);
+    }), [games, addGame, changeGameName, syncGame, deleteGame, setGameInfoSource]);
 
     return (
         <GameContext.Provider value={contextValue}>

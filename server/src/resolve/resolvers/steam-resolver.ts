@@ -22,6 +22,8 @@ export class SteamResolver implements InfoResolver {
         const { data } = await axios.get<any>(
             `https://store.steampowered.com/api/appdetails?appids=${id}`
         );
+        console.timeEnd("Resolve Steam");
+
         const gameData = data[id];
 
         const { success } = gameData;
@@ -30,8 +32,6 @@ export class SteamResolver implements InfoResolver {
         }
 
         const json = gameData.data as Record<string, any>;
-
-        console.timeEnd("Resolve Steam");
 
         try {
             if (!json.price_overview && !json.is_free) {

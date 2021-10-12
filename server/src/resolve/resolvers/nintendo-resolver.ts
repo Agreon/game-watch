@@ -10,9 +10,9 @@ export class NintendoResolver implements InfoResolver {
 
         return await withBrowser(async (page) => {
             await page.goto(id);
-            console.timeEnd("Resolve Nintendo");
-
             await page.waitForSelector(".release-date > dd");
+
+            console.timeEnd("Resolve Nintendo");
 
             const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
             const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);

@@ -1,8 +1,9 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
+import { LoggerMiddleware } from './LoggerMiddleware';
 import config from './mikro-orm.config';
 
 @Module({
@@ -14,4 +15,8 @@ import config from './mikro-orm.config';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
