@@ -19,23 +19,11 @@ const INFO_SOURCE_PRIORITY = [
 const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string | null => {
     for (const infoSource of infoSources) {
         if (infoSource.data?.[key]) {
-            if (key === "thumbnailUrl") {
-                const thumbnailUrl = infoSource.data[key] as string;
-
-                if (infoSource.type === "nintendo") {
-                    const width = 460 + 100;
-                    const height = 215 + 100;
-                    return thumbnailUrl
-                        .replace(/w_(\d*)/, `w_${width}`)
-                        .replace(/h_(\d*)/, `h_${height}`)
-                }
-
-                if (infoSource.type === "psStore") {
-                    const url = new URL(thumbnailUrl);
-                    url.searchParams.delete("w");
-                    url.searchParams.append("w", "460");
-                    return url.toString();
-                }
+            if (key === "thumbnailUrl" && infoSource.type === "psStore") {
+                const url = new URL(infoSource.data[key] as string);
+                url.searchParams.delete("w");
+                url.searchParams.append("w", "460");
+                return url.toString();
             }
 
             return infoSource.data[key] as string;
@@ -135,6 +123,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                                 <img
                                     src={thumbnail}
                                     width="460"
+                                onError={() => setImageLoading(false)}
                                     onLoad={() => setImageLoading(false)}
                                     style={{ objectFit: "cover" }}
                                 />

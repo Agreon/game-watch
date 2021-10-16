@@ -128,10 +128,11 @@ export class GameService {
 
     public async getGames() {
         return await this.gameRepository.findAll({
-            populate: ["infoSources"],
+            populate: ["infoSources", "tags"],
             orderBy: {
                 updatedAt: QueryOrder.DESC,
                 infoSources: { type: QueryOrder.DESC },
+                tags: { updatedAt: QueryOrder.DESC },
             }
         });
     }

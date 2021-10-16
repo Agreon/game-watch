@@ -1,4 +1,4 @@
-import type { GetServerSidePropsContext, NextPage, NextPageContext } from 'next'
+import type { GetServerSidePropsContext, NextPage } from 'next'
 import React from 'react'
 import axios from "axios";
 import { Text } from "@chakra-ui/react";
