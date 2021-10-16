@@ -22,7 +22,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 direction="column"
                 justifyContent="space-between"
                 pt="2rem"
-                pX={[0, 0, "2rem"]}
+                paddingX={[0, 0, "2rem"]}
                 mt="4rem"
                 overflow="auto"
                 minHeight="calc(100vh - 4rem)"

@@ -6,7 +6,12 @@ export default class Document extends NextDocument {
   render() {
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SERVER_URL} />
+          <link rel="preconnect" href="https://cdn.akamai.steamstatic.com" />
+          <link rel="preconnect" href="https://image.api.playstation.com" />
+          <link rel="preconnect" href="https://cdn01.nintendo-europe.com" />
+        </Head>
         <body>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />

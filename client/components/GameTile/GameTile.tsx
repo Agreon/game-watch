@@ -1,9 +1,8 @@
-/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../../providers/GameProvider";
-import { Skeleton, Text, SkeletonText, useColorModeValue, Divider, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
 import { GameTileMenu } from "./GameTileMenu";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceList } from "../InfoSource/InfoSourceList";
@@ -126,6 +125,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                         <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                             {thumbnail &&
                                 <img
+                                alt="thumbnail"
                                 width="460"
                                 style={{ objectFit: "cover" }}
                                 src={thumbnail}
