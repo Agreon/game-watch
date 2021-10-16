@@ -76,6 +76,10 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [infoSourceLength]);
 
+    useEffect(() => {
+        setImageLoading(true);
+    }, []);
+
     // TODO: Do this on server side
     const sortedInfoSources = useMemo(
         () => game.infoSources

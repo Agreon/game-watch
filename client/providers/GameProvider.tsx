@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { http } from "../util/http";
 
 export enum InfoSourceType {
@@ -28,6 +28,7 @@ export interface Game {
 
 export interface GameCtx {
     games: Game[]
+    gamesLoading: boolean
     addGame: (name: string) => Promise<void>
     syncGame: (id: string) => Promise<void>
     changeGameName: (game: Game, name: string) => Promise<void>
@@ -37,6 +38,7 @@ export interface GameCtx {
 
 export const GameContext = React.createContext<GameCtx>({
     games: [],
+    gamesLoading: false,
     addGame: async () => { },
     changeGameName: async () => { },
     syncGame: async () => { },
@@ -50,8 +52,19 @@ export function useGameContext() {
     return context as GameCtx;
 }
 
-export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, initialGames }) => {
-    const [games, setGames] = useState(initialGames);
+export const GameProvider: React.FC = ({ children }) => {
+    const [gamesLoading, setGamesLoading] = useState(false);
+    const [games, setGames] = useState<Game[]>([]);
+
+    const fetchGames = useCallback(async () => {
+        setGamesLoading(true);
+        try {
+            const { data } = await http.get('/game');
+            setGames(data);
+        } finally {
+            setGamesLoading(false);
+        }
+    }, []);
 
     const addGame = useCallback(async (name: string) => {
         const { data } = await http.post<any>("/game", { search: name });
@@ -60,7 +73,7 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
             data,
             ...games,
         ])
-    }, [setGames]);
+    }, []);
 
     const syncGame = useCallback(async (gameId: string) => {
         const { data } = await http.post<Game>(`/game/${gameId}/sync`);
@@ -69,7 +82,7 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
             data,
             ...games.filter(({ id }) => id !== gameId),
         ])
-    }, [setGames]);
+    }, []);
 
     const changeGameName = useCallback(async (game: Game, name: string) => {
         try {
@@ -87,13 +100,13 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
             // TODO: show error toast
             console.error(e);
         }
-    }, [setGames]);
+    }, []);
 
     const deleteGame = useCallback(async (gameId: string) => {
         await http.delete(`/game/${gameId}`);
 
         setGames(games => games.filter(({ id }) => id !== gameId))
-    }, [setGames]);
+    }, []);
 
     const setGameInfoSource = useCallback((game: Game, infoSource: InfoSource) => {
         game.infoSources = [
@@ -104,16 +117,21 @@ export const GameProvider: React.FC<{ initialGames: Game[] }> = ({ children, ini
             game,
             ...games.filter(({ id }) => id !== game.id),
         ])
-    }, [setGames]);
+    }, []);
+
+    useEffect(() => {
+        fetchGames();
+    }, [fetchGames]);
 
     const contextValue = useMemo(() => ({
         games,
+        gamesLoading,
         addGame,
         changeGameName,
         syncGame,
         deleteGame,
         setGameInfoSource
-    }), [games, addGame, changeGameName, syncGame, deleteGame, setGameInfoSource]);
+    }), [games, gamesLoading, addGame, changeGameName, syncGame, deleteGame, setGameInfoSource]);
 
     return (
         <GameContext.Provider value={contextValue}>
