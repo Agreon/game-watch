@@ -19,7 +19,7 @@ export class PsStoreSearcher implements InfoSearcher {
             console.timeEnd("Visit Ps Store");
 
             const content = await browser.content();
-            if (content.includes("No results found")) {
+            if (content.includes("search-no-results")) {
                 this.logger.debug("No results found");
 
                 return null;

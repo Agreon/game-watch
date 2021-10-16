@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { ButtonGroup, Editable, EditableInput, EditablePreview, Flex, IconButton, useEditableControls } from "@chakra-ui/react"
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons"
 
+// TODO: Let these hover over the name
 const EditableControls: React.FC = () => {
     const {
         isEditing,

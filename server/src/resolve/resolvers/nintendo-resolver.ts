@@ -23,8 +23,8 @@ export class NintendoResolver implements InfoResolver {
                     fullName: id,
                     thumbnailUrl: game.image_url_h2x1_s,
                     priceInformation: game.price_regular_f ? {
-                        initial: `${game.price_discounted_f ?? game.price_regular_f} €`,
-                        final: `${game.price_regular_f} €`,
+                        initial: `${game.price_regular_f} €`,
+                        final: `${game.price_discounted_f ?? game.price_regular_f} €`,
                     } : undefined,
                     releaseDate: game.pretty_date_s,
                 };

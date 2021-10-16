@@ -36,6 +36,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 /**
  * TODO:
  * - Toasts for errors
+ * - If no image is found, loading state is forever, game not deletable
  */
 export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     const { syncGame, deleteGame, changeGameName } = useGameContext();

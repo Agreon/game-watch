@@ -14,7 +14,7 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
     });
 
     const page = await browser.newPage();
-    page.setDefaultTimeout(60000);
+    page.setDefaultTimeout(50000);
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'de'
     });
