@@ -1,7 +1,7 @@
-import { BaseEntity, Entity, Enum, IdentifiedReference, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { v4 } from 'uuid';
+import { Entity, Enum, IdentifiedReference, ManyToOne, Property } from "@mikro-orm/core";
 
 import { Game } from "../game/game-model";
+import { BaseEntity } from "../util/base-entity";
 
 export enum InfoSourceType {
     Steam = "steam",
@@ -52,16 +52,7 @@ export type GameData = {
 export type GameDataU = SteamGameData | NintendoGameData | PsStoreGameData;
 
 @Entity()
-export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource, "id"> {
-    @PrimaryKey()
-    public id: string = v4();
-
-    @Property()
-    public createdAt: Date = new Date();
-
-    @Property({ onUpdate: () => new Date() })
-    public updatedAt: Date = new Date();
-
+export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
 

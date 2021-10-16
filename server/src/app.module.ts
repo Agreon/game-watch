@@ -5,12 +5,14 @@ import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
 import { LoggerMiddleware } from './LoggerMiddleware';
 import config from './mikro-orm.config';
+import { TagModule } from './tag/tag-module';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(config),
     GameModule,
     InfoSourceModule,
+    TagModule,
   ],
   controllers: [],
   providers: [],

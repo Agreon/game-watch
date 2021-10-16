@@ -37,25 +37,25 @@ export class GameController {
         await this.gameService.syncAllGames();
     }
 
-    @Post("/:gameId/sync")
+    @Post("/:id/sync")
     public async sync(
-        @Param("gameId") gameId: string
+        @Param("id") id: string
     ): Promise<Game> {
-        return await this.gameService.syncGame(gameId);
+        return await this.gameService.syncGame(id);
     }
 
-    @Put("/:gameId")
+    @Put("/:id")
     public async update(
-        @Param("gameId") gameId: string,
+        @Param("id") id: string,
         @Body() { name }: UpdateGameDto
     ): Promise<Game> {
-        return await this.gameService.updateGameName(gameId, name);
+        return await this.gameService.updateGameName(id, name);
     }
 
-    @Delete("/:gameId")
+    @Delete("/:id")
     public async delete(
-        @Param("gameId") gameId: string
+        @Param("id") id: string
     ): Promise<void> {
-        await this.gameService.deleteGame(gameId);
+        await this.gameService.deleteGame(id);
     }
 }

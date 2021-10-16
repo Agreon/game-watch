@@ -1,19 +1,11 @@
-import { BaseEntity, Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { v4 } from 'uuid';
+import { Collection, Entity, ManyToMany, OneToMany, Property } from "@mikro-orm/core";
 
 import { InfoSource } from "../info-source/info-source-model";
+import { Tag } from "../tag/tag-model";
+import { BaseEntity } from "../util/base-entity";
 
 @Entity()
-export class Game extends BaseEntity<Game, "id"> {
-    @PrimaryKey()
-    public id: string = v4();
-
-    @Property()
-    public createdAt: Date = new Date();
-
-    @Property({ onUpdate: () => new Date() })
-    public updatedAt: Date = new Date();
-
+export class Game extends BaseEntity<Game> {
     @Property()
     public search!: string;
 
@@ -25,6 +17,9 @@ export class Game extends BaseEntity<Game, "id"> {
 
     @OneToMany(() => InfoSource, infoSource => infoSource.game)
     public infoSources = new Collection<InfoSource, Game>(this);
+
+    @ManyToMany(() => Tag)
+    public tags = new Collection<Tag, Game>(this);
 
     public constructor({ search }: { search: string }) {
         super();
