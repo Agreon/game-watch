@@ -1,7 +1,6 @@
-import type { GetServerSidePropsContext, NextPage } from 'next'
+import type { NextPage } from 'next'
 import React from 'react'
 import { Box, Flex } from "@chakra-ui/layout";
-import initializeBasicAuth from 'nextjs-basic-auth'
 
 import { GameProvider } from '../providers/GameProvider';
 import { GameGrid } from '../components/GameGrid';
