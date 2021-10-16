@@ -7,9 +7,9 @@ export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
         case "steam":
             return <StoreInfoSource source={source} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
         case "nintendo":
-            return <StoreInfoSource source={source} expectedDateFormats={["MMMM DD, YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["DD.MM.YYYY"]} />
         case "psStore":
         default:
-            return <StoreInfoSource source={source} expectedDateFormats={["M/D/YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["DD.M.YYYY"]} />
     }
 }

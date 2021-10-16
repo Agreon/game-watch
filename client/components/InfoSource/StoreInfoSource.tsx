@@ -6,7 +6,7 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
@@ -18,7 +18,6 @@ dayjs.extend(customParseFormat)
 /**
  * TODO:
  * - Icon for source
- * => Maybe use chakra tags etc.
  * https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016
  */
 const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => (
@@ -28,33 +27,48 @@ const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => 
 )
 
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
-    // TODO: Not decidable until the user can select a language
-    // const parsedDate = useMemo(() => {
-    //     for (const format of expectedFormats) {
-    //         const parsedDate = dayjs(date, format);
-    //         if (parsedDate.isValid()) {
-    //             return parsedDate.format("DD MMM, YYYY")
-    //         }
-    //     }
+    const parsedDate = useMemo(() => {
+        for (const format of expectedFormats) {
+            const parsedDate = dayjs(date, format);
+            if (parsedDate.isValid()) {
+                return parsedDate.format("DD MMM, YYYY")
+            }
+        }
 
-    //     return date;
-    // }, [date, expectedFormats]);
+        return date;
+    }, [date, expectedFormats]);
 
     return (
         <Stat>
             <StatLabel>Release Date</StatLabel>
-            <StatNumber fontSize="1rem">{date}</StatNumber>
+            <StatNumber fontSize="1rem">{parsedDate}</StatNumber>
         </Stat>
     )
 }
 
-const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial }) => (
+const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial }) => {
+    const parsePrice = useCallback((price?: string) => {
+        if (!price) {
+            return "TBA";
+        }
+
+        if (price[0] === '€') {
+            return price.slice(1) + "€"
+        }
+        return price;
+    }, []);
+
+    const hasDiscount = useMemo(() => price && initial && price !== initial, [price, initial]);
+    const parsedPrice = useMemo(() => parsePrice(price), [parsePrice, price]);
+    const parsedInitial = useMemo(() => parsePrice(initial), [parsePrice, initial]);
+
+    return (
     <Stat>
         <StatLabel>Price</StatLabel>
-        <StatNumber fontSize="1rem">{initial !== price ? <Text as="s">{initial}</Text> : null} {price ?? "TBA"}</StatNumber>
+            <StatNumber fontSize="1rem">{hasDiscount ? <Text as="s">{parsedInitial}</Text> : null} {parsedPrice}</StatNumber>
     </Stat>
-)
-
+    )
+}
 export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">

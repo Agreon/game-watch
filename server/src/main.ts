@@ -2,6 +2,7 @@ import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
+import compression from 'compression';
 import * as dotenv from "dotenv";
 import path from 'path';
 
@@ -36,6 +37,8 @@ async function bootstrap() {
   const orm = app.get<MikroORM>(MikroORM);
   const migrator = orm.getMigrator();
   await migrator.up();
+
+  app.use(compression());
 
   app.useGlobalPipes(new ValidationPipe());
 
