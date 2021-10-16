@@ -14,7 +14,7 @@ export const InfoSourceList: React.FC<InfoSourcesProps> = ({ game, infoSources }
     return (
         <InfoSourceProvider game={game}>
             <Box>{infoSources.map(source => <InfoSource key={source.id} source={source} />)}</Box>
-            {<AddInfoSource />}
+            <AddInfoSource />
         </InfoSourceProvider>
     )
 }

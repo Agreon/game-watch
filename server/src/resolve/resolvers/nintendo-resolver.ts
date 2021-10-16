@@ -19,7 +19,7 @@ export class NintendoResolver implements InfoResolver {
 
                 return {
                     id,
-                    storeUrl: `https://nintendo.de/${game.url}`,
+                    storeUrl: `https://nintendo.de${game.url}`,
                     fullName: id,
                     thumbnailUrl: game.image_url_h2x1_s,
                     priceInformation: game.price_regular_f ? {

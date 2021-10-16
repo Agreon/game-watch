@@ -66,7 +66,7 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
         addInfoSource,
         syncInfoSource,
         disableInfoSource
-    }), [game, addInfoSource, syncInfoSource, disableInfoSource]);
+    }), [game.infoSources, addInfoSource, syncInfoSource, disableInfoSource]);
 
     return (
         <InfoSourceContext.Provider value={contextValue}>

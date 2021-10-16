@@ -24,6 +24,13 @@ const extractRemoteGameId = (type: InfoSourceType, storeUrl: string) => {
             const parts = storeUrl.split("/");
             return parts[parts.length - 3];
         case InfoSourceType.Nintendo:
+            // https://www.nintendo.de/Spiele/Nintendo-Switch/Bayonetta-3-2045649.html
+            // => Extracts Last part without stuff behind last-
+            const urlParts = storeUrl.split("/");
+            const idPart = urlParts[urlParts.length - 1];
+            const idParts = idPart.split("-").slice(0, -1);
+
+            return idParts.join(" ");
         case InfoSourceType.PsStore:
         default:
             return storeUrl
@@ -55,6 +62,7 @@ export const AddInfoSource: React.FC = () => {
         try {
             const remoteGameId = extractRemoteGameId(type, storeUrl);
 
+            console.log("G", remoteGameId);
             const infoSource = await addInfoSource(type, remoteGameId);
             setLoading(false);
             onClose();
