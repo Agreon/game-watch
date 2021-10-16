@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { http } from "../util/http";
 
@@ -5,6 +6,12 @@ export enum InfoSourceType {
     Steam = "steam",
     Nintendo = "nintendo",
     PsStore = "psStore",
+}
+
+export interface Tag {
+    id: string;
+    name: string;
+    color: string;
 }
 
 // TOOD: We need a monorepo
@@ -22,6 +29,7 @@ export interface Game {
     search: string
     name: string | null
     infoSources: InfoSource[]
+    tags: Tag[]
     syncing: boolean;
     updatedAt: string;
 }
@@ -34,6 +42,8 @@ export interface GameCtx {
     changeGameName: (game: Game, name: string) => Promise<void>
     deleteGame: (id: string) => Promise<void>
     setGameInfoSource: (game: Game, infoSource: InfoSource) => void
+    addTagToGame: (game: Game, tag: Tag) => Promise<void>
+    removeTagFromGame: (game: Game, tag: Tag) => Promise<void>
 }
 
 export const GameContext = React.createContext<GameCtx>({
@@ -43,14 +53,17 @@ export const GameContext = React.createContext<GameCtx>({
     changeGameName: async () => { },
     syncGame: async () => { },
     deleteGame: async () => { },
-    setGameInfoSource: () => { }
+    setGameInfoSource: () => { },
+    addTagToGame: async () => { },
+    removeTagFromGame: async () => { },
 });
 
 export function useGameContext() {
-    const context = useContext(GameContext);
-
-    return context as GameCtx;
+    return useContext<GameCtx>(GameContext);
 }
+
+const replaceGame = (replacement: Game) => (games: Game[]) =>
+    games.map(game => game.id === replacement.id ? replacement : game);
 
 export const GameProvider: React.FC = ({ children }) => {
     const [gamesLoading, setGamesLoading] = useState(false);
@@ -59,7 +72,7 @@ export const GameProvider: React.FC = ({ children }) => {
     const fetchGames = useCallback(async () => {
         setGamesLoading(true);
         try {
-            const { data } = await http.get('/game');
+            const { data } = await http.get<Game[]>('/game');
             setGames(data);
         } finally {
             setGamesLoading(false);
@@ -67,7 +80,7 @@ export const GameProvider: React.FC = ({ children }) => {
     }, []);
 
     const addGame = useCallback(async (name: string) => {
-        const { data } = await http.post<any>("/game", { search: name });
+        const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
 
         setGames(games => [
             data,
@@ -85,20 +98,21 @@ export const GameProvider: React.FC = ({ children }) => {
     }, []);
 
     const changeGameName = useCallback(async (game: Game, name: string) => {
+        const oldGameName = game.name;
         try {
-            const { data } = await http.put<Game>(`/game/${game.id}`, {
+            // Optimistic update
+            game.name = name;
+            setGames(replaceGame(game));
+
+            await http.put<Game>(`/game/${game.id}`, {
                 ...game,
                 name
             });
-
-            setGames(games => [
-                data,
-                ...games.filter(({ id }) => id !== game.id),
-            ]);
         }
         catch (e) {
-            // TODO: show error toast
-            console.error(e);
+            // TODO: Show error toast
+            game.name = oldGameName;
+            setGames(replaceGame(game));
         }
     }, []);
 
@@ -113,15 +127,40 @@ export const GameProvider: React.FC = ({ children }) => {
             infoSource,
             ...game.infoSources.filter(({ id }) => id !== infoSource.id),
         ];
-        setGames(games => [
-            game,
-            ...games.filter(({ id }) => id !== game.id),
-        ])
+        setGames(replaceGame(game));
     }, []);
 
-    useEffect(() => {
-        fetchGames();
-    }, [fetchGames]);
+    const addTagToGame = useCallback(async (game: Game, tag: Tag) => {
+        const oldGameTags = [...game.tags];
+        try {
+            // Optimistic update
+            game.tags = [...game.tags, tag];
+            setGames(replaceGame(game));
+
+            await http.post(`/game/${game.id}/tag/${tag.id}`);
+        } catch (error) {
+            // TODO: Show error toast
+            game.tags = oldGameTags;
+            setGames(replaceGame(game));
+        }
+    }, []);
+
+    const removeTagFromGame = useCallback(async (game: Game, tag: Tag) => {
+        const oldGameTags = [...game.tags];
+        try {
+            // Optimistic update
+            game.tags = game.tags.filter(({ id }) => id !== tag.id);
+            setGames(replaceGame(game));
+
+            await http.delete(`/game/${game.id}/tag/${tag.id}`);
+        } catch (error) {
+            // TODO: Show error toast
+            game.tags = oldGameTags;
+            setGames(replaceGame(game));
+        }
+    }, []);
+
+    useEffect(() => { fetchGames() }, [fetchGames]);
 
     const contextValue = useMemo(() => ({
         games,
@@ -130,8 +169,10 @@ export const GameProvider: React.FC = ({ children }) => {
         changeGameName,
         syncGame,
         deleteGame,
-        setGameInfoSource
-    }), [games, gamesLoading, addGame, changeGameName, syncGame, deleteGame, setGameInfoSource]);
+        setGameInfoSource,
+        addTagToGame,
+        removeTagFromGame,
+    }), [games, gamesLoading, addGame, changeGameName, syncGame, deleteGame, setGameInfoSource, addTagToGame, removeTagFromGame]);
 
     return (
         <GameContext.Provider value={contextValue}>

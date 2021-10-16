@@ -3,11 +3,12 @@
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Game, InfoSource as Source, useGameContext } from "../../providers/GameProvider";
-import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
+import { Skeleton, Text, SkeletonText, useColorModeValue, Divider, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 import { GameTileMenu } from "./GameTileMenu";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceList } from "../InfoSource/InfoSourceList";
 import { GameName } from "./GameName";
+import { GameTags } from "../GameTags/GameTags";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -125,11 +126,11 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                         <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                             {thumbnail &&
                                 <img
-                                    src={thumbnail}
-                                    width="460"
+                                width="460"
+                                style={{ objectFit: "cover" }}
+                                src={thumbnail}
                                 onError={() => setImageLoading(false)}
-                                    onLoad={() => setImageLoading(false)}
-                                    style={{ objectFit: "cover" }}
+                                onLoad={() => setImageLoading(false)}
                                 />
                             }
                         </Flex>
@@ -137,6 +138,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                 </Box>
                 <Box padding="1rem">
                     <GameName name={game.name ?? fullName ?? game.search} onChange={onChangeName} />
+                    {!loading && <GameTags game={game} />}
                     {infoSourceLength === 0 && (
                         <>
                             {loading && <SkeletonText />}
@@ -149,3 +151,4 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         </Box>
     )
 }
+

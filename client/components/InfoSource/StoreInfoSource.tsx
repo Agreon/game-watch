@@ -48,10 +48,10 @@ const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ da
     )
 }
 
-const Price: React.FC<{ price?: number }> = ({ price }) => (
+const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial }) => (
     <Stat>
         <StatLabel>Price</StatLabel>
-        <StatNumber fontSize="1rem">{price ?? "TBA"}</StatNumber>
+        <StatNumber fontSize="1rem">{initial !== price ? <Text as="s">{initial}</Text> : null} {price ?? "TBA"}</StatNumber>
     </Stat>
 )
 
@@ -73,8 +73,8 @@ export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats
                             <Box flex="1">
                                 <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
                             </Box>
-                            <Box flex="0.7">
-                                <Price price={source.data.priceInformation?.final} />
+                            <Box flex="1">
+                                <Price price={source.data.priceInformation?.final} initial={source.data.priceInformation?.initial} />
                             </Box>
                         </>
                     }

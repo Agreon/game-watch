@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useMemo } from "react";
 import { http } from "../util/http";
 import { Game, InfoSource, InfoSourceType, useGameContext } from "./GameProvider";
@@ -27,7 +28,7 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
     const { setGameInfoSource } = useGameContext();
 
     const addInfoSource = useCallback(async (type: InfoSourceType, remoteGameId: string) => {
-        const { data: infoSource } = await http.post<any>(`/info-source`, {
+        const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
             gameId: game.id,
             type,
             remoteGameId
@@ -44,7 +45,7 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
             loading: true
         });
 
-        const { data } = await http.post<any>(`/info-source/${infoSource.id}/sync`);
+        const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/sync`);
 
         setGameInfoSource(game, data);
     }, [game, setGameInfoSource]);
@@ -55,7 +56,7 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
             loading: true
         });
 
-        const { data } = await http.post<any>(`/info-source/${infoSource.id}/disable`);
+        const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/disable`);
 
         setGameInfoSource(game, data);
     }, [game, setGameInfoSource]);

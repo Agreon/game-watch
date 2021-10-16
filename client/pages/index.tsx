@@ -6,10 +6,12 @@ import { GameProvider } from '../providers/GameProvider';
 import { GameGrid } from '../components/GameGrid';
 import { AddGame } from '../components/AddGame';
 import { NoGamesYet } from '../components/NoGamesYet';
+import { TagProvider } from '../providers/TagProvider';
 
 const Home: NextPage = () => {
   return (
     <GameProvider>
+      <TagProvider>
       <Box>
         <NoGamesYet />
         <Flex justify="center">
@@ -19,6 +21,7 @@ const Home: NextPage = () => {
         </Flex>
         <GameGrid />
       </Box>
+      </TagProvider>
     </GameProvider>
   )
 }

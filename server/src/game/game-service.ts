@@ -5,6 +5,7 @@ import { ConflictException, Injectable, Logger } from "@nestjs/common";
 import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
+import { Tag } from "../tag/tag-model";
 import { Game } from "./game-model";
 
 @Injectable()
@@ -17,7 +18,9 @@ export class GameService {
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
-        private readonly infoSourceRepository: EntityRepository<InfoSource>
+        private readonly infoSourceRepository: EntityRepository<InfoSource>,
+        @InjectRepository(Tag)
+        private readonly tagRepository: EntityRepository<Tag>
     ) { }
 
     public async createGame(search: string) {
@@ -33,13 +36,34 @@ export class GameService {
     }
 
     public async syncGame(gameId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
 
         return await this.syncGameInfoSources(game);
     }
 
+    public async addTagToGame(gameId: string, tagId: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+        const tag = await this.tagRepository.findOneOrFail(tagId);
+
+        game.tags.add(tag);
+        await this.gameRepository.persistAndFlush(game);
+
+        return game;
+    }
+
+    public async removeTagFromGame(gameId: string, tagId: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+        const tag = await this.tagRepository.findOneOrFail(tagId);
+
+        game.tags.remove(tag);
+        await this.gameRepository.persistAndFlush(game);
+
+        return game;
+    }
+
+
     public async updateGameName(gameId: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
 
         game.name = name;
         await this.gameRepository.persistAndFlush(game);
@@ -125,6 +149,8 @@ export class GameService {
         console.timeEnd("Sync");
         return game;
     }
+
+
 
     public async getGames() {
         return await this.gameRepository.findAll({

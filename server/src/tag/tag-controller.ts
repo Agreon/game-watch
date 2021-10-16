@@ -7,6 +7,9 @@ import { TagService } from './tag-service';
 export class CreateTagDto {
   @IsString()
   public name: string;
+
+  @IsString()
+  public color: string;
 }
 
 @Controller('tag')
@@ -17,9 +20,9 @@ export class TagController {
 
   @Post()
   public async create(
-    @Body() { name }: CreateTagDto
+    @Body() { name, color }: CreateTagDto
   ): Promise<Tag> {
-    return await this.tagService.create(name);
+    return await this.tagService.create(name, color);
   }
 
   @Get()

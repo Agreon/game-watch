@@ -13,13 +13,13 @@ export class TagService {
     private readonly tagRepository: EntityRepository<Tag>
   ) { }
 
-  public async create(name: string) {
+  public async create(name: string, color: string) {
     let tag = await this.tagRepository.findOne({ name });
     if (tag !== null) {
       throw new ConflictException();
     }
 
-    tag = new Tag({ name });
+    tag = new Tag({ name, color });
     await this.tagRepository.persistAndFlush(tag);
 
     return tag;

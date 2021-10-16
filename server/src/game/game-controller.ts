@@ -44,6 +44,23 @@ export class GameController {
         return await this.gameService.syncGame(id);
     }
 
+    @Post("/:id/tag/:tagId")
+    public async addTag(
+        @Param("id") id: string,
+        @Param("tagId") tagId: string
+    ): Promise<Game> {
+        return await this.gameService.addTagToGame(id, tagId);
+    }
+
+    @Delete("/:id/tag/:tagId")
+    public async removeTag(
+        @Param("id") id: string,
+        @Param("tagId") tagId: string
+    ): Promise<Game> {
+        return await this.gameService.removeTagFromGame(id, tagId);
+    }
+
+
     @Put("/:id")
     public async update(
         @Param("id") id: string,
