@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import React from 'react'
 import { Box, Flex } from "@chakra-ui/layout";
 
-import { GameProvider } from '../providers/GameProvider';
+import { GamesProvider } from '../providers/GamesProvider';
 import { GameGrid } from '../components/GameGrid';
 import { AddGame } from '../components/AddGame';
 import { NoGamesYet } from '../components/NoGamesYet';
@@ -10,7 +10,7 @@ import { TagProvider } from '../providers/TagProvider';
 
 const Home: NextPage = () => {
   return (
-    <GameProvider>
+    <GamesProvider>
       <TagProvider>
       <Box>
         <NoGamesYet />
@@ -22,7 +22,7 @@ const Home: NextPage = () => {
         <GameGrid />
       </Box>
       </TagProvider>
-    </GameProvider>
+    </GamesProvider>
   )
 }
 

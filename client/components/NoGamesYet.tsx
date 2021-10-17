@@ -1,10 +1,10 @@
 import React from 'react'
 import { Text } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/layout";
-import { useGameContext } from '../providers/GameProvider';
+import { useGamesContext } from '../providers/GamesProvider';
 
 export const NoGamesYet = () => {
-    const { games, gamesLoading } = useGameContext();
+    const { games, gamesLoading } = useGamesContext();
 
     if (gamesLoading || games.length) {
         return null;

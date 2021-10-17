@@ -10,7 +10,7 @@ import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
-import { InfoSource } from "../../providers/GameProvider";
+import { InfoSource } from "../../providers/GamesProvider";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)

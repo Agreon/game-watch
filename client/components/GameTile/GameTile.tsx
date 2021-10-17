@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Game, InfoSource as Source, useGameContext } from "../../providers/GameProvider";
+import { InfoSource as Source } from "../../providers/GamesProvider";
 import { Skeleton, Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
 import { GameTileMenu } from "./GameTileMenu";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceList } from "../InfoSource/InfoSourceList";
 import { GameName } from "./GameName";
 import { GameTags } from "../GameTags/GameTags";
+import { useGameContext } from "../../providers/GameProvider";
 
 // TODO: Let users select the priority / image
 const INFO_SOURCE_PRIORITY = [
@@ -38,34 +39,34 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
  * - Toasts for errors
  * - If no image is found, loading state is forever, game not deletable
  */
-export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
-    const { syncGame, deleteGame, changeGameName } = useGameContext();
+export const GameTileX: React.FC = () => {
+    const { game, infoSources, syncGame, deleteGame, changeGameName } = useGameContext();
 
     const [loading, setLoading] = useState(false);
     const [imageLoading, setImageLoading] = useState(false);
 
     const onSync = useCallback(async () => {
         setLoading(true);
-        await syncGame(game.id);
+        await syncGame();
         setLoading(false);
-    }, [game, syncGame])
+    }, [syncGame])
 
-    const onChangeName = useCallback((value) => {
+    const onChangeName = useCallback(async (value) => {
         if (value === "") {
             return;
         }
         // No loading state, this is optimistic.
-        changeGameName(game, value);
-    }, [game, changeGameName])
+        await changeGameName(value);
+    }, [changeGameName])
 
     const onDelete = useCallback(async () => {
         setLoading(true);
-        await deleteGame(game.id);
+        await deleteGame();
         setLoading(false);
-    }, [game, deleteGame]);
+    }, [deleteGame]);
 
     // Needed so that the effect props are evaluated correct.
-    const infoSourceLength = useMemo(() => game.infoSources.length, [game]);
+    const infoSourceLength = useMemo(() => infoSources.length, [infoSources]);
     useEffect(() => {
         (async () => {
             if (!infoSourceLength) {
@@ -77,20 +78,18 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [infoSourceLength]);
 
-    useEffect(() => {
-        setImageLoading(true);
-    }, []);
+    useEffect(() => { setImageLoading(true) }, []);
 
     // TODO: Do this on server side
     const sortedInfoSources = useMemo(
-        () => game.infoSources
+        () => infoSources
             .filter(source => !source.disabled)
             .sort((a, b) => {
                 const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
                 const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
                 return aPriority - bPriority;
             })
-        , [game.infoSources]);
+        , [infoSources]);
 
     const { fullName, thumbnail } = useMemo(() => ({
         fullName: retrieveDataFromInfoSources(sortedInfoSources, "fullName"),
@@ -139,7 +138,7 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
                 </Box>
                 <Box padding="1rem">
                     <GameName name={game.name ?? fullName ?? game.search} onChange={onChangeName} />
-                    {!loading && <GameTags game={game} />}
+                    {!loading && <GameTags />}
                     {infoSourceLength === 0 && (
                         <>
                             {loading && <SkeletonText />}
@@ -153,3 +152,4 @@ export const GameTile: React.FC<{ game: Game }> = ({ game }) => {
     )
 }
 
+export const GameTile = React.memo(GameTileX);

@@ -44,7 +44,7 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
                 onKeyPress={onNameKeyPress}
             />
             <ButtonGroup justifyContent="center" size="sm">
-                <IconButton aria-label="add" icon={<CheckIcon />} onClick={onAdd} loading={loading} />
+                <IconButton aria-label="add" icon={<CheckIcon />} onClick={onAdd} disabled={loading} />
                 <IconButton aria-label="cancel" icon={<CloseIcon />} onClick={onCancel} disabled={loading} />
             </ButtonGroup>
         </Flex>

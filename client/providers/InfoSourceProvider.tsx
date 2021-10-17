@@ -1,7 +1,8 @@
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useMemo } from "react";
 import { http } from "../util/http";
-import { Game, InfoSource, InfoSourceType, useGameContext } from "./GameProvider";
+import { Game, InfoSource, InfoSourceType } from "./GamesProvider";
+import { useGameContext } from "./GameProvider";
 
 
 export interface InfoSourceCtx {
@@ -34,32 +35,32 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
             remoteGameId
         });
 
-        setGameInfoSource(game, infoSource);
+        setGameInfoSource(infoSource);
 
         return infoSource;
-    }, [game, setGameInfoSource]);
+    }, [game.id, setGameInfoSource]);
 
     const syncInfoSource = useCallback(async (infoSource: InfoSource) => {
-        setGameInfoSource(game, {
+        setGameInfoSource({
             ...infoSource,
             loading: true
         });
 
         const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/sync`);
 
-        setGameInfoSource(game, data);
-    }, [game, setGameInfoSource]);
+        setGameInfoSource(data);
+    }, [setGameInfoSource]);
 
     const disableInfoSource = useCallback(async (infoSource: InfoSource) => {
-        setGameInfoSource(game, {
+        setGameInfoSource({
             ...infoSource,
             loading: true
         });
 
         const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/disable`);
 
-        setGameInfoSource(game, data);
-    }, [game, setGameInfoSource]);
+        setGameInfoSource(data);
+    }, [setGameInfoSource]);
 
     const contextValue = useMemo(() => ({
         infoSources: game.infoSources,

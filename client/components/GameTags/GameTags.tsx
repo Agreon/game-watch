@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Game, useGameContext } from "../../providers/GameProvider";
+import { useGameContext } from "../../providers/GameProvider";
 import { useTagContext } from "../../providers/TagProvider";
 import { AddTagToGame } from "./AddTagToGame";
 import { EditGameTags } from "./EditGameTags";
@@ -11,7 +11,7 @@ enum EditMode {
     Add
 }
 
-export const GameTags: React.FC<{ game: Game }> = ({ game }) => {
+export const GameTags: React.FC = () => {
     const [editMode, setEditMode] = useState(EditMode.None);
     const { addTag } = useTagContext();
     const { addTagToGame } = useGameContext();
@@ -19,17 +19,17 @@ export const GameTags: React.FC<{ game: Game }> = ({ game }) => {
     const onAdd = useCallback(async (name: string) => {
         try {
             const tag = await addTag(name);
-            await addTagToGame(game, tag);
+            await addTagToGame(tag);
         } finally {
             setEditMode(EditMode.None);
         }
-    }, [addTag, addTagToGame, game]);
+    }, [addTag, addTagToGame]);
 
     switch (editMode) {
         case EditMode.None:
-            return <GameTagList game={game} onEdit={() => setEditMode(EditMode.Edit)} />
+            return <GameTagList onEdit={() => setEditMode(EditMode.Edit)} />
         case EditMode.Edit:
-            return <EditGameTags game={game} onNewTag={() => setEditMode(EditMode.Add)} onCancel={() => setEditMode(EditMode.None)} />
+            return <EditGameTags onNewTag={() => setEditMode(EditMode.Add)} onCancel={() => setEditMode(EditMode.None)} />
         case EditMode.Add:
             return <AddTagToGame onSubmit={onAdd} onAbort={() => setEditMode(EditMode.Edit)} />
     }

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { http } from "../util/http";
-import { Tag } from "./GameProvider";
+import { Tag } from "./GamesProvider";
 
 export interface TagCtx {
     tags: Tag[]

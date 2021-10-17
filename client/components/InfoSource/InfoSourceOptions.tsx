@@ -6,7 +6,7 @@ import {
     MenuItem
 } from "@chakra-ui/react";
 import { useCallback } from "react";
-import { InfoSource } from "../../providers/GameProvider"
+import { InfoSource } from "../../providers/GamesProvider"
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 

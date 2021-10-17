@@ -1,6 +1,6 @@
 import React from "react"
 import { StoreInfoSource } from "./StoreInfoSource"
-import { InfoSource as Source } from "../../providers/GameProvider"
+import { InfoSource as Source } from "../../providers/GamesProvider"
 
 export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
     switch (source.type) {
@@ -10,6 +10,6 @@ export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
             return <StoreInfoSource source={source} expectedDateFormats={["DD.MM.YYYY"]} />
         case "psStore":
         default:
-            return <StoreInfoSource source={source} expectedDateFormats={["DD.M.YYYY"]} />
+            return <StoreInfoSource source={source} expectedDateFormats={["D.M.YYYY"]} />
     }
 }

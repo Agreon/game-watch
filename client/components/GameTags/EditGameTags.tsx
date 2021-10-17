@@ -2,40 +2,39 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useMemo } from "react";
 import { Tag as ChakraTag, TagLabel, TagLeftIcon, IconButton } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { Game, Tag, useGameContext } from "../../providers/GameProvider";
+import { Tag } from "../../providers/GamesProvider";
 import { useTagContext } from "../../providers/TagProvider";
+import { useGameContext } from "../../providers/GameProvider";
 
 interface TagWithToggleState extends Tag {
     toggled: boolean
 }
 
 export interface EditGameTagProps {
-    game: Game
     onNewTag: () => void
     onCancel: () => void
 }
 
-export const EditGameTags: React.FC<EditGameTagProps> = ({ game, onNewTag, onCancel }) => {
-    const { addTagToGame, removeTagFromGame } = useGameContext();
+export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel }) => {
+    const { tags: gameTags, addTagToGame, removeTagFromGame } = useGameContext();
     const { tags: allTags } = useTagContext();
 
     const tagsWithToggleState = useMemo(() => {
-        const activeTags = game.tags.map(tag => tag.id);
+        const activeTags = gameTags.map(tag => tag.id);
 
         return allTags.map(tag => ({
             ...tag,
             toggled: activeTags.includes(tag.id)
         }));
-    }, [allTags, game.tags]);
-
+    }, [allTags, gameTags]);
 
     const toggleTag = useCallback(async (tag: TagWithToggleState) => {
         if (tag.toggled) {
-            await removeTagFromGame(game, tag);
+            await removeTagFromGame(tag);
         } else {
-            await addTagToGame(game, tag);
+            await addTagToGame(tag);
         }
-    }, [game, addTagToGame, removeTagFromGame]);
+    }, [addTagToGame, removeTagFromGame]);
 
     return (
         <Flex align="center" position="relative">

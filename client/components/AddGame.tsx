@@ -2,10 +2,10 @@ import { Input } from "@chakra-ui/input";
 import { Button, useColorModeValue } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/layout";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useGameContext } from "../providers/GameProvider";
+import { useGamesContext } from "../providers/GamesProvider";
 
 export const AddGame: React.FC = () => {
-    const { addGame } = useGameContext();
+    const { addGame } = useGamesContext();
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
 

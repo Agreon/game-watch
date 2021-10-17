@@ -14,7 +14,7 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import { InfoSourceType } from "../../providers/GameProvider";
+import { InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
