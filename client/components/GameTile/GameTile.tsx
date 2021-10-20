@@ -14,7 +14,7 @@ import { useGameContext } from "../../providers/GameProvider";
 const INFO_SOURCE_PRIORITY = [
     "psStore",
     "steam",
-    "nintendo",
+    "switch",
 ]
 
 const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string | null => {
@@ -145,7 +145,7 @@ export const GameTileX: React.FC = () => {
                             {!loading && <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>}
                         </>
                     )}
-                    {!loading && <InfoSourceList game={game} infoSources={sortedInfoSources} />}
+                    {!loading && <InfoSourceList />}
                 </Box>
             </Flex>
         </Box>

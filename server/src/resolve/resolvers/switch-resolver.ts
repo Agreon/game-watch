@@ -1,25 +1,25 @@
-import { InfoSourceType, NintendoGameData } from "../../info-source/info-source-model";
-import { getNintendoSearchResponse } from "../../search/searchers/nintendo-searcher";
+import { InfoSourceType, SwitchGameData } from "../../info-source/info-source-model";
+import { getSwitchSearchResponse } from "../../search/searchers/switch-searcher";
 import { withBrowser } from "../../util/with-browser";
 import { InfoResolver } from "../resolve-service";
 
-export class NintendoResolver implements InfoResolver {
-    public type = InfoSourceType.Nintendo;
+export class SwitchResolver implements InfoResolver {
+    public type = InfoSourceType.Switch;
 
-    public async resolve(id: string): Promise<NintendoGameData> {
-        console.time("Resolve Nintendo");
+    public async resolve(id: string): Promise<SwitchGameData> {
+        console.time("Resolve Switch");
 
         return await withBrowser(async (page) => {
             if (!id.includes("/")) {
                 // Just reuse the same search because we have all info there
-                const { docs: results } = await getNintendoSearchResponse(id);
-                console.timeEnd("Resolve Nintendo");
+                const { docs: results } = await getSwitchSearchResponse(id);
+                console.timeEnd("Resolve Switch");
 
                 const game = results[0];
 
                 return {
                     id,
-                    storeUrl: `https://nintendo.de${game.url}`,
+                    storeUrl: `https://switch.de${game.url}`,
                     fullName: id,
                     thumbnailUrl: game.image_url_h2x1_s,
                     priceInformation: game.price_regular_f ? {
@@ -35,7 +35,7 @@ export class NintendoResolver implements InfoResolver {
             await page.goto(id);
             await page.waitForSelector(".release-date > dd");
 
-            console.timeEnd("Resolve Nintendo");
+            console.timeEnd("Resolve Switch");
 
             const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
             const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);

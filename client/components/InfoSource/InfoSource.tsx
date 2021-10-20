@@ -6,7 +6,7 @@ export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
     switch (source.type) {
         case "steam":
             return <StoreInfoSource source={source} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
-        case "nintendo":
+        case "switch":
             return <StoreInfoSource source={source} expectedDateFormats={["DD.MM.YYYY"]} />
         case "psStore":
         default:

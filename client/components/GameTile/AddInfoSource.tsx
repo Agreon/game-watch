@@ -23,7 +23,7 @@ const extractRemoteGameId = (type: InfoSourceType, storeUrl: string) => {
         case InfoSourceType.Steam:
             const parts = storeUrl.split("/");
             return parts[parts.length - 3];
-        case InfoSourceType.Nintendo:
+        case InfoSourceType.Switch:
             // https://www.nintendo.de/Spiele/Nintendo-Switch/Bayonetta-3-2045649.html
             // => Extracts Last part without stuff behind last-
             const urlParts = storeUrl.split("/");

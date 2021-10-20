@@ -1,16 +1,14 @@
 import { Box } from "@chakra-ui/layout";
 import React from "react";
-import { Game, InfoSource as Source } from "../../providers/GamesProvider";
 import { AddInfoSource } from "../GameTile/AddInfoSource";
 import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
+import { useGameContext } from "../../providers/GameProvider";
 
-export interface InfoSourcesProps {
-    game: Game
-    infoSources: Source[]
-}
 
-export const InfoSourceList: React.FC<InfoSourcesProps> = ({ game, infoSources }) => {
+export const InfoSourceList: React.FC = () => {
+    const { game, infoSources } = useGameContext();
+
     return (
         <InfoSourceProvider game={game}>
             <Box>{infoSources.map(source => <InfoSource key={source.id} source={source} />)}</Box>

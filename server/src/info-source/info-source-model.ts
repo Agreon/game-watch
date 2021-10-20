@@ -5,7 +5,7 @@ import { BaseEntity } from "../util/base-entity";
 
 export enum InfoSourceType {
     Steam = "steam",
-    Nintendo = "nintendo",
+    Switch = "switch",
     PsStore = "psStore",
 }
 
@@ -28,7 +28,7 @@ export interface SteamGameData extends StoreGameData {
     controllerSupport?: string;
 }
 
-export interface NintendoGameData extends StoreGameData {
+export interface SwitchGameData extends StoreGameData {
     priceInformation?: {
         initial: string;
         final: string;
@@ -46,10 +46,10 @@ export interface PsStoreGameData extends StoreGameData {
 // TODO: What do these generics give us except for binding us to details?
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
-    [InfoSourceType.Nintendo]: NintendoGameData;
+    [InfoSourceType.Switch]: SwitchGameData;
     [InfoSourceType.PsStore]: PsStoreGameData;
 };
-export type GameDataU = SteamGameData | NintendoGameData | PsStoreGameData;
+export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData;
 
 @Entity()
 export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {

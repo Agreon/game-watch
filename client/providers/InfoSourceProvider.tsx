@@ -4,7 +4,6 @@ import { http } from "../util/http";
 import { Game, InfoSource, InfoSourceType } from "./GamesProvider";
 import { useGameContext } from "./GameProvider";
 
-
 export interface InfoSourceCtx {
     infoSources: InfoSource[]
     addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource>

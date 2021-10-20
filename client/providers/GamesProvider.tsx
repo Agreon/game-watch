@@ -4,7 +4,7 @@ import { http } from "../util/http";
 
 export enum InfoSourceType {
     Steam = "steam",
-    Nintendo = "nintendo",
+    Switch = "switch",
     PsStore = "psStore",
 }
 

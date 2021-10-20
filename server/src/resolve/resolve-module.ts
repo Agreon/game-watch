@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 
 import { ResolveService } from './resolve-service';
-import { NintendoResolver } from './resolvers/nintendo-resolver';
 import { PsStoreResolver } from './resolvers/ps-store-resolver';
 import { SteamResolver } from './resolvers/steam-resolver';
+import { SwitchResolver } from './resolvers/switch-resolver';
 
 @Module({
     providers: [
         ResolveService,
         SteamResolver,
-        NintendoResolver,
+        SwitchResolver,
         PsStoreResolver,
         {
             provide: "RESOLVERS",
             useFactory: (
-                steamResolver, nintendoResolver, psStoreResolver
-            ) => [steamResolver, nintendoResolver, psStoreResolver],
-            inject: [SteamResolver, NintendoResolver, PsStoreResolver]
+                steamResolver, switchResolver, psStoreResolver
+            ) => [steamResolver, switchResolver, psStoreResolver],
+            inject: [SteamResolver, SwitchResolver, PsStoreResolver]
         }
     ],
     exports: [ResolveService]
