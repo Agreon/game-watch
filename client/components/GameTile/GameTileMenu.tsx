@@ -17,9 +17,8 @@ export interface GameTileMenuProps {
 }
 
 /**
- * TODO:
- * - Submit btn color
- * - Highlight setting icon on tile hover
+ * - TODO: Submit btn color
+ * - TODO: Highlight setting icon on tile hover
  */
 export const GameTileMenu: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)

@@ -11,20 +11,55 @@ import dayjs from "dayjs";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
 import { InfoSource } from "../../providers/GamesProvider";
+import Image from 'next/image';
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
 
 /**
  * TODO:
- * - Icon for source
- * https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016
+ * - Icon for ps store
  */
-const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => (
-    <a href={url} target="_blank" rel="noreferrer">
-        <b>{name}</b>
-    </a>
-)
+export const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => {
+    if (name === "switch") {
+        return (
+            <a href={url} target="_blank" rel="noreferrer">
+                <Flex align="center">
+                    <Image alt="source-icon" src="https://assets.nintendo.com/image/upload/f_auto,q_auto/Dev/aem-component-demo/switch-logo-large" height="30px" width="30px" />
+                    <Text fontWeight="bold" ml="0.5rem">Switch</Text>
+                </Flex>
+            </a>
+        )
+    }
+
+    if (name === "steam") {
+        return (
+            <a href={url} target="_blank" rel="noreferrer">
+                <Flex align="end">
+                    <Image alt="source-icon" src="https://cdn.akamai.steamstatic.com/store/about/icon-steamos.svg" height="30px" width="30px" />
+                    <Text fontWeight="bold" ml="0.5rem">Steam</Text>
+                </Flex>
+            </a>
+        )
+    }
+
+    if (name === "psStore") {
+        return (
+            <a href={url} target="_blank" rel="noreferrer">
+                <Flex align="end">
+                    <Image alt="source-icon" src="https://gmedia.playstation.com/is/image/SIEPDC/ps-store-blue-bag-icon-01-22sep20" height="30px" width="30px" />
+                    <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
+                </Flex>
+            </a>
+        )
+    }
+
+    return (
+        <a href={url} target="_blank" rel="noreferrer">
+            <b>{name}</b>
+        </a>
+    )
+}
 
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
     const parsedDate = useMemo(() => {
@@ -73,7 +108,7 @@ export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
             <Tooltip label={source.data?.fullName} placement="top">
-                <Box flex="0.7">
+                <Box flex="1">
                     <SourceName name={source.type} url={source.data?.storeUrl} />
                 </Box>
             </Tooltip>

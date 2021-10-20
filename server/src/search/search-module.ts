@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { SearchService } from './search-service';
-import { SwitchSearcher } from './searchers/switch-searcher';
+import { MetacriticSearcher } from './searchers/metacritic-searcher';
 import { PsStoreSearcher } from './searchers/ps-store-searcher';
 import { SteamSearcher } from './searchers/steam-searcher';
+import { SwitchSearcher } from './searchers/switch-searcher';
 
 @Module({
     providers: [
@@ -11,12 +12,13 @@ import { SteamSearcher } from './searchers/steam-searcher';
         SteamSearcher,
         SwitchSearcher,
         PsStoreSearcher,
+        MetacriticSearcher,
         {
             provide: "SEARCHERS",
             useFactory: (
-                steamSearcher, switchSearcher, psStoreSearcher
-            ) => [steamSearcher, switchSearcher, psStoreSearcher],
-            inject: [SteamSearcher, SwitchSearcher, PsStoreSearcher]
+                steamSearcher, switchSearcher, psStoreSearcher, metacriticSearcher
+            ) => [steamSearcher, switchSearcher, psStoreSearcher, metacriticSearcher],
+            inject: [SteamSearcher, SwitchSearcher, PsStoreSearcher, MetacriticSearcher]
         }
     ],
     exports: [SearchService]

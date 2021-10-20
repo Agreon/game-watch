@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import Image from 'next/image';
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoSource as Source } from "../../providers/GamesProvider";
@@ -15,6 +15,7 @@ const INFO_SOURCE_PRIORITY = [
     "psStore",
     "steam",
     "switch",
+    "metacritic"
 ]
 
 const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string | null => {
@@ -35,9 +36,8 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 }
 
 /**
- * TODO:
- * - Toasts for errors
- * - If no image is found, loading state is forever, game not deletable
+ * TODO: Toasts for errors
+ * TODO: If no image is found, loading state is forever, game not deletable
  */
 export const GameTileX: React.FC = () => {
     const { game, infoSources, syncGame, deleteGame, changeGameName } = useGameContext();
@@ -122,12 +122,13 @@ export const GameTileX: React.FC = () => {
                 <Box position="relative">
                     {(loading || (infoSourceLength > 0 && imageLoading)) && <LoadingSpinner size="xl" />}
                     <Skeleton isLoaded={!loading || infoSourceLength > 0}>
-                        <Flex justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
+                        <Flex position="relative" justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                             {thumbnail &&
-                                <img
-                                alt="thumbnail"
-                                width="460"
-                                style={{ objectFit: "cover" }}
+                                <Image
+                                alt=""
+                                priority={true}
+                                layout="fill"
+                                objectFit="cover"
                                 src={thumbnail}
                                 onError={() => setImageLoading(false)}
                                 onLoad={() => setImageLoading(false)}

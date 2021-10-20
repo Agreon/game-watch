@@ -9,6 +9,7 @@ import { Migration20211012071707 } from "./migrations/Migration20211012071707";
 import { Migration20211016065028 } from "./migrations/Migration20211016065028";
 import { Migration20211016134626 } from "./migrations/Migration20211016134626";
 import { Migration20211020104117 } from "./migrations/Migration20211020104117";
+import { Migration20211020112018 } from "./migrations/Migration20211020112018";
 import { Tag } from "./tag/tag-model";
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
@@ -28,7 +29,8 @@ const config: MikroOrmModuleSyncOptions = {
             { name: "Migration20211012071707.ts", class: Migration20211012071707 },
             { name: "Migration20211016065028.ts", class: Migration20211016065028 },
             { name: "Migration20211016134626.ts", class: Migration20211016134626 },
-            { name: "Migration20211020104117.ts", class: Migration20211020104117 }
+            { name: "Migration20211020104117.ts", class: Migration20211020104117 },
+            { name: "Migration20211020112018.ts", class: Migration20211020112018 }
         ]
     }
 };

@@ -7,11 +7,15 @@ export enum InfoSourceType {
     Steam = "steam",
     Switch = "switch",
     PsStore = "psStore",
+    Metacritic = "metacritic"
 }
 
-export interface StoreGameData {
+export interface BaseGameData {
     id: string;
     fullName: string;
+}
+
+export interface StoreGameData extends BaseGameData {
     storeUrl: string;
     thumbnailUrl: string;
     releaseDate?: string;
@@ -43,13 +47,20 @@ export interface PsStoreGameData extends StoreGameData {
     };
 }
 
+export interface MetacriticData extends BaseGameData {
+    url: string;
+    criticScore: string;
+    userScore: string;
+}
+
 // TODO: What do these generics give us except for binding us to details?
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
     [InfoSourceType.Switch]: SwitchGameData;
     [InfoSourceType.PsStore]: PsStoreGameData;
+    [InfoSourceType.Metacritic]: MetacriticData;
 };
-export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData;
+export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | MetacriticData;
 
 @Entity()
 export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {
