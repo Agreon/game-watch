@@ -4,10 +4,11 @@ import { AddInfoSource } from "../GameTile/AddInfoSource";
 import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
 import { useGameContext } from "../../providers/GameProvider";
+import { InfoSource as Source } from "../../providers/GamesProvider";
 
 
-export const InfoSourceList: React.FC = () => {
-    const { game, infoSources } = useGameContext();
+export const InfoSourceList: React.FC<{ infoSources: Source[] }> = ({ infoSources }) => {
+    const { game } = useGameContext();
 
     return (
         <InfoSourceProvider game={game}>

@@ -146,7 +146,7 @@ export const GameTileX: React.FC = () => {
                             {!loading && <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>}
                         </>
                     )}
-                    {!loading && <InfoSourceList />}
+                    {!loading && <InfoSourceList infoSources={sortedInfoSources} />}
                 </Box>
             </Flex>
         </Box>
