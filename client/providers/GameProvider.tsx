@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { http } from "../util/http";
 import { Game, InfoSource, Tag, useGamesContext } from "./GamesProvider";
+import { useHttp } from "../util/useHttp";
 
 export interface GameCtx {
     game: Game
@@ -32,37 +32,42 @@ export function useGameContext() {
 
 export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     const { setGame, removeGame } = useGamesContext();
+    const { withRequest, handleError } = useHttp();
 
     const syncGame = useCallback(async () => {
-        const { data } = await http.post<Game>(`/game/${game.id}/sync`);
-
-        setGame(data);
-    }, [setGame, game]);
+        await withRequest(async http => {
+            const { data } = await http.post<Game>(`/game/${game.id}/sync`);
+            setGame(data);
+        });
+    }, [withRequest, setGame, game]);
 
     const changeGameName = useCallback(async (name: string) => {
         const oldGameName = game.name;
-        try {
-            // Optimistic update
-            game.name = name;
-            setGame(game);
+        // Optimistic update
+        game.name = name;
+        setGame(game);
 
-            await http.put<Game>(`/game/${game.id}`, {
+        await withRequest(
+            async http => await http.put<Game>(`/game/${game.id}`, {
                 ...game,
                 name
-            });
-        }
-        catch (e) {
-            // TODO: Show error toast
-            game.name = oldGameName;
-            setGame(game);
-        }
-    }, [setGame, game]);
+            }),
+            (error) => {
+                game.name = oldGameName;
+                setGame(game);
+                handleError(error, {
+                    description: "Could not change the name. Please try again.",
+                });
+            }
+        );
+    }, [withRequest, handleError, setGame, game]);
 
     const deleteGame = useCallback(async () => {
-        await http.delete(`/game/${game.id}`);
-
-        removeGame(game.id);
-    }, [removeGame, game]);
+        await withRequest(async http => {
+            await http.delete(`/game/${game.id}`);
+            removeGame(game.id);
+        });
+    }, [withRequest, removeGame, game]);
 
     const setGameInfoSource = useCallback((infoSource: InfoSource) => {
         game.infoSources = [
@@ -74,34 +79,39 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
 
     const addTagToGame = useCallback(async (tag: Tag) => {
         const oldGameTags = [...game.tags];
-        try {
-            // Optimistic update
-            game.tags = [...game.tags, tag];
-            setGame(game);
+        // Optimistic update
+        game.tags = [...game.tags, tag];
+        setGame(game);
 
-            await http.post(`/game/${game.id}/tag/${tag.id}`);
-        } catch (error) {
-            console.error(error);
-            // TODO: Show error toast
-            game.tags = oldGameTags;
-            setGame(game);
-        }
-    }, [setGame, game]);
+        await withRequest(
+            async http => await http.post(`/game/${game.id}/tag/${tag.id}`),
+            (error) => {
+                game.tags = oldGameTags;
+                setGame(game);
+                handleError(error, {
+                    description: "Could not add tag. Please try again.",
+                });
+            }
+        );
+    }, [withRequest, handleError, setGame, game]);
 
     const removeTagFromGame = useCallback(async (tag: Tag) => {
         const oldGameTags = [...game.tags];
-        try {
-            // Optimistic update
-            game.tags = game.tags.filter(({ id }) => id !== tag.id);
-            setGame(game);
+        // Optimistic update
+        game.tags = game.tags.filter(({ id }) => id !== tag.id);
+        setGame(game);
 
-            await http.delete(`/game/${game.id}/tag/${tag.id}`);
-        } catch (error) {
-            // TODO: Show error toast
-            game.tags = oldGameTags;
-            setGame(game);
-        }
-    }, [setGame, game]);
+        await withRequest(
+            async http => await http.delete(`/game/${game.id}/tag/${tag.id}`),
+            (error) => {
+                game.tags = oldGameTags;
+                setGame(game);
+                handleError(error, {
+                    description: "Could not remove tag. Please try again.",
+                });
+            }
+        );
+    }, [withRequest, handleError, setGame, game]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
     const infoSources = useMemo(() => game.infoSources, [game.infoSources]);

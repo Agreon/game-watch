@@ -36,7 +36,6 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 }
 
 /**
- * TODO: Toasts for errors
  * TODO: If no image is found, loading state is forever, game not deletable
  */
 export const GameTileX: React.FC = () => {

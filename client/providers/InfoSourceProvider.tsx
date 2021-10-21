@@ -1,12 +1,12 @@
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useMemo } from "react";
-import { http } from "../util/http";
 import { Game, InfoSource, InfoSourceType } from "./GamesProvider";
 import { useGameContext } from "./GameProvider";
+import { useHttp } from "../util/useHttp";
 
 export interface InfoSourceCtx {
     infoSources: InfoSource[]
-    addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource>
+    addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource | undefined>
     syncInfoSource: (infoSource: InfoSource) => Promise<void>
     disableInfoSource: (infoSource: InfoSource) => Promise<void>
 }
@@ -26,18 +26,21 @@ export function useInfoSourceContext() {
 
 export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     const { setGameInfoSource } = useGameContext();
+    const { withRequest, handleError } = useHttp();
 
     const addInfoSource = useCallback(async (type: InfoSourceType, remoteGameId: string) => {
-        const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
-            gameId: game.id,
-            type,
-            remoteGameId
+        return await withRequest(async http => {
+            const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
+                gameId: game.id,
+                type,
+                remoteGameId
+            });
+
+            setGameInfoSource(infoSource);
+
+            return infoSource;
         });
-
-        setGameInfoSource(infoSource);
-
-        return infoSource;
-    }, [game.id, setGameInfoSource]);
+    }, [withRequest, game.id, setGameInfoSource]);
 
     const syncInfoSource = useCallback(async (infoSource: InfoSource) => {
         setGameInfoSource({
@@ -45,10 +48,18 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
             loading: true
         });
 
-        const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/sync`);
+        await withRequest(async http => {
+            const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/sync`);
 
-        setGameInfoSource(data);
-    }, [setGameInfoSource]);
+            setGameInfoSource(data);
+        }, error => {
+            setGameInfoSource({
+                ...infoSource,
+                loading: false
+            });
+            handleError(error);
+        });
+    }, [withRequest, setGameInfoSource, handleError]);
 
     const disableInfoSource = useCallback(async (infoSource: InfoSource) => {
         setGameInfoSource({
@@ -56,10 +67,18 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
             loading: true
         });
 
-        const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/disable`);
+        await withRequest(async http => {
+            const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/disable`);
 
-        setGameInfoSource(data);
-    }, [setGameInfoSource]);
+            setGameInfoSource(data);
+        }, error => {
+            setGameInfoSource({
+                ...infoSource,
+                loading: false
+            });
+            handleError(error);
+        });
+    }, [withRequest, handleError, setGameInfoSource]);
 
     const contextValue = useMemo(() => ({
         infoSources: game.infoSources,

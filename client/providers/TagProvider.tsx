@@ -1,12 +1,12 @@
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { http } from "../util/http";
+import { useHttp } from "../util/useHttp";
 import { Tag } from "./GamesProvider";
 
 export interface TagCtx {
     tags: Tag[]
     tagsLoading: boolean
-    addTag: (name: string) => Promise<Tag>
+    addTag: (name: string) => Promise<Tag | undefined>
 }
 
 export const TagContext = React.createContext<TagCtx>({
@@ -24,16 +24,16 @@ const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", 
 export const TagProvider: React.FC = ({ children }) => {
     const [tagsLoading, setTagsLoading] = useState(false);
     const [tags, setTags] = useState<Tag[]>([]);
+    const { withRequest } = useHttp();
 
     const fetchTags = useCallback(async () => {
         setTagsLoading(true);
-        try {
+        await withRequest(async http => {
             const { data } = await http.get('/tag');
             setTags(data);
-        } finally {
-            setTagsLoading(false);
-        }
-    }, []);
+        });
+        setTagsLoading(false);
+    }, [withRequest]);
 
     const getAvailableRandomTagColor = useCallback(() => {
         const usedColors = tags.map(tag => tag.color);
@@ -48,15 +48,17 @@ export const TagProvider: React.FC = ({ children }) => {
     const addTag = useCallback(async (name: string) => {
         const color = getAvailableRandomTagColor();
 
-        const { data } = await http.post<unknown, AxiosResponse<Tag>>("/tag", { name, color });
+        return await withRequest(async http => {
+            const { data } = await http.post<unknown, AxiosResponse<Tag>>("/tag", { name, color });
 
-        setTags(tags => [
-            data,
-            ...tags,
-        ]);
+            setTags(tags => [
+                data,
+                ...tags,
+            ]);
 
-        return data;
-    }, [getAvailableRandomTagColor]);
+            return data;
+        })
+    }, [withRequest, getAvailableRandomTagColor]);
 
     useEffect(() => { fetchTags() }, [fetchTags]);
 

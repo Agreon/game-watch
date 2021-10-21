@@ -59,20 +59,18 @@ export const AddInfoSource: React.FC = () => {
 
     const onAddInfoSource = useCallback(async () => {
         setLoading(true);
-        try {
-            const remoteGameId = extractRemoteGameId(type, storeUrl);
+        const remoteGameId = extractRemoteGameId(type, storeUrl);
 
-            console.log("G", remoteGameId);
-            const infoSource = await addInfoSource(type, remoteGameId);
-            setLoading(false);
-            onClose();
-            setStoreUrl("");
-
-            await syncInfoSource(infoSource);
-        } catch (error) {
-            console.error(error);
-            setLoading(false);
+        const infoSource = await addInfoSource(type, remoteGameId);
+        if (!infoSource) {
+            return;
         }
+
+        setLoading(false);
+        onClose();
+        setStoreUrl("");
+
+        await syncInfoSource(infoSource);
     }, [addInfoSource, syncInfoSource, onClose, type, storeUrl]);
 
     return (

@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { http } from "../util/http";
+import { useHttp } from "../util/useHttp";
 
 export enum InfoSourceType {
     Steam = "steam",
@@ -57,16 +57,16 @@ export function useGamesContext() {
 export const GamesProvider: React.FC = ({ children }) => {
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<Game[]>([]);
+    const { withRequest } = useHttp();
 
     const fetchGames = useCallback(async () => {
         setGamesLoading(true);
-        try {
+        await withRequest(async http => {
             const { data } = await http.get<Game[]>('/game');
             setGames(data);
-        } finally {
-            setGamesLoading(false);
-        }
-    }, []);
+        });
+        setGamesLoading(false);
+    }, [withRequest]);
 
     const setGame = useCallback((newGame: Game) => {
         setGames(curr => {
@@ -84,10 +84,11 @@ export const GamesProvider: React.FC = ({ children }) => {
     }, []);
 
     const addGame = useCallback(async (name: string) => {
-        const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
-
-        setGame(data);
-    }, [setGame]);
+        await withRequest(async http => {
+            const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
+            setGame(data);
+        });
+    }, [withRequest, setGame]);
 
     useEffect(() => { fetchGames() }, [fetchGames]);
 

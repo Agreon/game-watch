@@ -17,12 +17,12 @@ export const GameTags: React.FC = () => {
     const { addTagToGame } = useGameContext();
 
     const onAdd = useCallback(async (name: string) => {
-        try {
-            const tag = await addTag(name);
-            await addTagToGame(tag);
-        } finally {
-            setEditMode(EditMode.None);
+        const tag = await addTag(name);
+        if (!tag) {
+            return;
         }
+        await addTagToGame(tag);
+        setEditMode(EditMode.None);
     }, [addTag, addTagToGame]);
 
     switch (editMode) {
