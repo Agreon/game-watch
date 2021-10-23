@@ -24,9 +24,7 @@ const GameTileComponent: React.FC = () => {
     return (
         <Box
             position="relative"
-            marginX={[0, 0, "1rem"]}
             marginY="1rem"
-            height="100%"
             minWidth={["100%", "28rem"]}
             maxWidth={["100vw", "28rem"]}
             overflow="hidden"

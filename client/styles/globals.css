@@ -14,3 +14,16 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.my-masonry-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.my-masonry-grid_column {
+  /* TODO: not on responsive */
+  width: 28rem !important;
+  background-clip: padding-box;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
