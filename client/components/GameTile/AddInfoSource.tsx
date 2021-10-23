@@ -18,22 +18,23 @@ import { InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
-const extractRemoteGameId = (type: InfoSourceType, storeUrl: string) => {
+const extractRemoteGameId = (type: InfoSourceType, url: string) => {
     switch (type) {
         case InfoSourceType.Steam:
-            const parts = storeUrl.split("/");
+            const parts = url.split("/");
             return parts[parts.length - 3];
         case InfoSourceType.Switch:
             // https://www.nintendo.de/Spiele/Nintendo-Switch/Bayonetta-3-2045649.html
             // => Extracts Last part without stuff behind last-
-            const urlParts = storeUrl.split("/");
+            const urlParts = url.split("/");
             const idPart = urlParts[urlParts.length - 1];
             const idParts = idPart.split("-").slice(0, -1);
 
             return idParts.join(" ");
         case InfoSourceType.PsStore:
+        case InfoSourceType.Metacritic:
         default:
-            return storeUrl
+            return url
     }
 }
 
@@ -55,11 +56,11 @@ export const AddInfoSource: React.FC = () => {
     );
 
     const [type, setType] = useState(availableInfoSources[0]);
-    const [storeUrl, setStoreUrl] = useState("");
+    const [url, setUrl] = useState("");
 
     const onAddInfoSource = useCallback(async () => {
         setLoading(true);
-        const remoteGameId = extractRemoteGameId(type, storeUrl);
+        const remoteGameId = extractRemoteGameId(type, url);
 
         const infoSource = await addInfoSource(type, remoteGameId);
         if (!infoSource) {
@@ -68,10 +69,10 @@ export const AddInfoSource: React.FC = () => {
 
         setLoading(false);
         onClose();
-        setStoreUrl("");
+        setUrl("");
 
         await syncInfoSource(infoSource);
-    }, [addInfoSource, syncInfoSource, onClose, type, storeUrl]);
+    }, [addInfoSource, syncInfoSource, onClose, type, url]);
 
     return (
         <>
@@ -96,10 +97,10 @@ export const AddInfoSource: React.FC = () => {
                                 </Select>
                             </FormControl>
                             <FormControl flex="1">
-                                <FormLabel>Store url</FormLabel>
+                                <FormLabel>Url</FormLabel>
                                 <Input
-                                    value={storeUrl}
-                                    onChange={event => setStoreUrl(event.target.value)}
+                                    value={url}
+                                    onChange={event => setUrl(event.target.value)}
                                     ref={initialRef} />
                             </FormControl>
                         </Flex>

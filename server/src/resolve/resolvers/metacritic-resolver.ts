@@ -14,13 +14,9 @@ export class MetacriticResolver implements InfoResolver {
 
         const $ = cheerio.load(data);
 
-        // TODO: No available scores
-        // https://www.metacritic.com/game/playstation-5/disciples-liberation
-        // => Maybe already exclude in search
-
-        const fullName = $(".product_title > h1").text().trim();
-        const criticScore = $(".metascore_w > span").text().trim();
-        const userScore = $(".metascore_w.user").first().text().trim();
+        const fullName = $(".product_title h1").text().trim();
+        const criticScore = $(".metascore_w > span").text().trim() || "TBD";
+        const userScore = $(".metascore_w.user").first().text().trim() || "TBD";
 
         return {
             id,

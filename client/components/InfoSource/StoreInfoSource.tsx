@@ -4,14 +4,14 @@ import {
     StatLabel,
     StatNumber,
     Text,
-    Tooltip
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
-import { LoadingSpinner } from "../LoadingSpinner";
-import { InfoSourceOptions } from "./InfoSourceOptions";
 import { InfoSource } from "../../providers/GamesProvider";
 import Image from 'next/image';
+import { InfoSourceWrapper } from "./InfoSourceWrapper";
+import steamLogo from '../../assets/steam.svg';
+import switchLogo from '../../assets/switch.png';
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
@@ -20,45 +20,35 @@ dayjs.extend(customParseFormat)
  * TODO:
  * - Icon for ps store
  */
-export const SourceName: React.FC<{ name: string, url?: string }> = ({ name, url }) => {
+export const SourceName: React.FC<{ name: string }> = ({ name }) => {
     if (name === "switch") {
         return (
-            <a href={url} target="_blank" rel="noreferrer">
-                <Flex align="center">
-                    <Image alt="source-icon" src="https://assets.nintendo.com/image/upload/f_auto,q_auto/Dev/aem-component-demo/switch-logo-large" height="30px" width="30px" />
-                    <Text fontWeight="bold" ml="0.5rem">Switch</Text>
-                </Flex>
-            </a>
+            <Flex align="center">
+                <Image alt="source-icon" src={switchLogo} height="30px" width="30px" />
+                <Text fontWeight="bold" ml="0.5rem">Switch</Text>
+            </Flex>
         )
     }
 
     if (name === "steam") {
         return (
-            <a href={url} target="_blank" rel="noreferrer">
-                <Flex align="end">
-                    <Image alt="source-icon" src="https://cdn.akamai.steamstatic.com/store/about/icon-steamos.svg" height="30px" width="30px" />
-                    <Text fontWeight="bold" ml="0.5rem">Steam</Text>
-                </Flex>
-            </a>
+            <Flex align="end">
+                <Image alt="source-icon" src={steamLogo} height="30px" width="30px" />
+                <Text fontWeight="bold" ml="0.5rem">Steam</Text>
+            </Flex>
         )
     }
 
     if (name === "psStore") {
         return (
-            <a href={url} target="_blank" rel="noreferrer">
-                <Flex align="end">
-                    <Image alt="source-icon" src="https://gmedia.playstation.com/is/image/SIEPDC/ps-store-blue-bag-icon-01-22sep20" height="30px" width="30px" />
-                    <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
-                </Flex>
-            </a>
+            <Flex align="end">
+                <Image alt="source-icon" src="https://gmedia.playstation.com/is/image/SIEPDC/ps-store-blue-bag-icon-01-22sep20" height="30px" width="30px" />
+                <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
+            </Flex>
         )
     }
 
-    return (
-        <a href={url} target="_blank" rel="noreferrer">
-            <b>{name}</b>
-        </a>
-    )
+    return (<b>{name}</b>)
 }
 
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
@@ -98,38 +88,24 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
     const parsedInitial = useMemo(() => parsePrice(initial), [parsePrice, initial]);
 
     return (
-    <Stat>
-        <StatLabel>Price</StatLabel>
+        <Stat>
+            <StatLabel>Price</StatLabel>
             <StatNumber fontSize="1rem">{hasDiscount ? <Text as="s">{parsedInitial}</Text> : null} {parsedPrice}</StatNumber>
-    </Stat>
+        </Stat>
     )
 }
 export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
     return (
-        <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
-            <Tooltip label={source.data?.fullName} placement="top">
-                <Box flex="1">
-                    <SourceName name={source.type} url={source.data?.storeUrl} />
-                </Box>
-            </Tooltip>
-            {source.loading ? (
-                <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>
-            ) : (
-                <>
-                    {source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-                    {!source.resolveError && source.data !== null &&
-                        <>
-                            <Box flex="1">
-                                <ReleaseDate date={source.data.releaseDate} expectedFormats={expectedDateFormats} />
-                            </Box>
-                            <Box flex="1">
-                                <Price price={source.data.priceInformation?.final} initial={source.data.priceInformation?.initial} />
-                            </Box>
-                        </>
-                    }
-                </>
-            )}
-            <Box><InfoSourceOptions source={source} /></Box>
-        </Flex>
+        <InfoSourceWrapper
+            header={<SourceName name={source.type} />}
+            source={source}
+        >
+            <Box flex="1">
+                <ReleaseDate date={source.data!.releaseDate} expectedFormats={expectedDateFormats} />
+            </Box>
+            <Box flex="1">
+                <Price price={source.data!.priceInformation?.final} initial={source.data!.priceInformation?.initial} />
+            </Box>
+        </InfoSourceWrapper>
     )
 }

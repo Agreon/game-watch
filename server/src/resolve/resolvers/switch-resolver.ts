@@ -19,7 +19,7 @@ export class SwitchResolver implements InfoResolver {
 
                 return {
                     id,
-                    storeUrl: `https://switch.de${game.url}`,
+                    url: `https://nintendo.de${game.url}`,
                     fullName: id,
                     thumbnailUrl: game.image_url_h2x1_s,
                     priceInformation: game.price_regular_f ? {
@@ -47,7 +47,7 @@ export class SwitchResolver implements InfoResolver {
 
             return {
                 id,
-                storeUrl: id,
+                url: id,
                 fullName,
                 thumbnailUrl,
                 priceInformation: price ? {

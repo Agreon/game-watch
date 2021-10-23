@@ -38,7 +38,7 @@ const retrieveDataFromInfoSources = (infoSources: Source[], key: string): string
 /**
  * TODO: If no image is found, loading state is forever, game not deletable
  */
-export const GameTileX: React.FC = () => {
+const GameTileComponent: React.FC = () => {
     const { game, infoSources, syncGame, deleteGame, changeGameName } = useGameContext();
 
     const [loading, setLoading] = useState(false);
@@ -136,9 +136,9 @@ export const GameTileX: React.FC = () => {
                         </Flex>
                     </Skeleton>
                 </Box>
-                <Box padding="1rem">
+                <Box padding={[0, 0, "1rem"]}>
                     <GameName name={game.name ?? fullName ?? game.search} onChange={onChangeName} />
-                    {!loading && <GameTags />}
+                    {(infoSourceLength !== 0 || !loading) && <GameTags />}
                     {infoSourceLength === 0 && (
                         <>
                             {loading && <SkeletonText />}
@@ -152,4 +152,4 @@ export const GameTileX: React.FC = () => {
     )
 }
 
-export const GameTile = React.memo(GameTileX);
+export const GameTile = React.memo(GameTileComponent);

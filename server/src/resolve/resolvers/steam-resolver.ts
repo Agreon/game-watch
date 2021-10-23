@@ -39,7 +39,7 @@ export class SteamResolver implements InfoResolver {
             return {
                 id,
                 fullName: json.name,
-                storeUrl: `https://store.steampowered.com/app/${id}`,
+                url: `https://store.steampowered.com/app/${id}`,
                 thumbnailUrl: json.header_image,
                 releaseDate: json.release_date.date,
                 priceInformation: json.price_overview ? {

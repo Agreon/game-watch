@@ -6,6 +6,7 @@ export enum InfoSourceType {
     Steam = "steam",
     Switch = "switch",
     PsStore = "psStore",
+    Metacritic = "metacritic"
 }
 
 export interface Tag {

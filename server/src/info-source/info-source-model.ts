@@ -13,10 +13,10 @@ export enum InfoSourceType {
 export interface BaseGameData {
     id: string;
     fullName: string;
+    url: string;
 }
 
 export interface StoreGameData extends BaseGameData {
-    storeUrl: string;
     thumbnailUrl: string;
     releaseDate?: string;
 }
@@ -48,7 +48,6 @@ export interface PsStoreGameData extends StoreGameData {
 }
 
 export interface MetacriticData extends BaseGameData {
-    url: string;
     criticScore: string;
     userScore: string;
 }

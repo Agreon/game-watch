@@ -43,7 +43,7 @@ export class PsStoreResolver implements InfoResolver {
 
             return {
                 id: storePage,
-                storeUrl: storePage,
+                url: storePage,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? "",
                 priceInformation: price ? {
