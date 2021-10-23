@@ -17,6 +17,7 @@ import {
 import { InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { useGameContext } from "../../providers/GameProvider";
 
 const extractRemoteGameId = (type: InfoSourceType, url: string) => {
     switch (type) {
@@ -39,7 +40,8 @@ const extractRemoteGameId = (type: InfoSourceType, url: string) => {
 }
 
 export const AddInfoSource: React.FC = () => {
-    const { addInfoSource, syncInfoSource, infoSources } = useInfoSourceContext();
+    const { addInfoSource } = useGameContext();
+    const { syncInfoSource, infoSources } = useInfoSourceContext();
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);

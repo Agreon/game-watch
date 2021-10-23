@@ -1,19 +1,16 @@
-import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useMemo } from "react";
-import { Game, InfoSource, InfoSourceType } from "./GamesProvider";
+import { InfoSource } from "./GamesProvider";
 import { useGameContext } from "./GameProvider";
 import { useHttp } from "../util/useHttp";
 
 export interface InfoSourceCtx {
     infoSources: InfoSource[]
-    addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource | undefined>
     syncInfoSource: (infoSource: InfoSource) => Promise<void>
     disableInfoSource: (infoSource: InfoSource) => Promise<void>
 }
 
 export const InfoSourceContext = React.createContext<InfoSourceCtx>({
     infoSources: [],
-    addInfoSource: async () => ({} as InfoSource),
     syncInfoSource: async () => { },
     disableInfoSource: async () => { },
 });
@@ -24,23 +21,9 @@ export function useInfoSourceContext() {
     return context as InfoSourceCtx;
 }
 
-export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game }) => {
+export const InfoSourceProvider: React.FC<{ infoSources: InfoSource[] }> = ({ children, infoSources }) => {
     const { setGameInfoSource } = useGameContext();
     const { withRequest, handleError } = useHttp();
-
-    const addInfoSource = useCallback(async (type: InfoSourceType, remoteGameId: string) => {
-        return await withRequest(async http => {
-            const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
-                gameId: game.id,
-                type,
-                remoteGameId
-            });
-
-            setGameInfoSource(infoSource);
-
-            return infoSource;
-        });
-    }, [withRequest, game.id, setGameInfoSource]);
 
     const syncInfoSource = useCallback(async (infoSource: InfoSource) => {
         setGameInfoSource({
@@ -81,11 +64,10 @@ export const InfoSourceProvider: React.FC<{ game: Game }> = ({ children, game })
     }, [withRequest, handleError, setGameInfoSource]);
 
     const contextValue = useMemo(() => ({
-        infoSources: game.infoSources,
-        addInfoSource,
+        infoSources,
         syncInfoSource,
         disableInfoSource
-    }), [game.infoSources, addInfoSource, syncInfoSource, disableInfoSource]);
+    }), [infoSources, syncInfoSource, disableInfoSource]);
 
     return (
         <InfoSourceContext.Provider value={contextValue}>

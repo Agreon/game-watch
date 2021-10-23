@@ -20,7 +20,7 @@ export interface GameTileMenuProps {
  * - TODO: Submit btn color
  * - TODO: Highlight setting icon on tile hover
  */
-export const GameTileMenu: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete }) => {
+const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const cancelRef = useRef(null)
 
@@ -50,7 +50,7 @@ export const GameTileMenu: React.FC<GameTileMenuProps> = ({ gameName, onSync, on
                             <Button onClick={() => setDeleteDialogOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button colorScheme="red" onClick={onDeleteSubmit} ml={3}>
+                            <Button colorScheme="red" variant="solid" onClick={onDeleteSubmit} ml={3}>
                                 Delete
                             </Button>
                         </AlertDialogFooter>
@@ -80,3 +80,5 @@ export const GameTileMenu: React.FC<GameTileMenuProps> = ({ gameName, onSync, on
         </>
     )
 }
+
+export const GameTileMenu = React.memo(GameTileMenuComponent);

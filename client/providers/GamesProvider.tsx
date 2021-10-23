@@ -39,7 +39,7 @@ export interface GamesCtx {
     games: Game[]
     gamesLoading: boolean
     addGame: (name: string) => Promise<void>
-    setGame: (game: Game) => void
+    setGame: (id: string, cb: ((current: Game) => Game) | Game) => void
     removeGame: (id: string) => void
 }
 
@@ -69,27 +69,24 @@ export const GamesProvider: React.FC = ({ children }) => {
         setGamesLoading(false);
     }, [withRequest]);
 
-    const setGame = useCallback((newGame: Game) => {
-        setGames(curr => {
-            const foundGame = curr.find(({ id }) => id === newGame.id);
-            if (!foundGame) {
-                return [newGame, ...curr];
-            }
-
-            return curr.map(game => game.id === newGame.id ? newGame : game);
+    const setGame = useCallback((id: string, cb: ((current: Game) => Game) | Game) => {
+        setGames(currentGames => {
+            const currentGame = currentGames.find(game => id === game.id)!;
+            const newGame = typeof cb === "function" ? cb(currentGame) : cb;
+            return currentGames.map(game => game.id === newGame.id ? newGame : game);
         });
     }, []);
 
     const removeGame = useCallback((gameId: string) => {
-        setGames(games => games.filter(({ id }) => id !== gameId))
+        setGames(currentGames => currentGames.filter(({ id }) => id !== gameId))
     }, []);
 
     const addGame = useCallback(async (name: string) => {
         await withRequest(async http => {
             const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
-            setGame(data);
+            setGames(currentGames => [data, ...currentGames]);
         });
-    }, [withRequest, setGame]);
+    }, [withRequest, setGames]);
 
     useEffect(() => { fetchGames() }, [fetchGames]);
 

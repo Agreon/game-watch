@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post } from "@nestjs/common";
 import { IsEnum, IsString } from "class-validator";
 
 import { InfoSource, InfoSourceType } from "./info-source-model";
-import { InfoSourceService } from "./infou-source-service";
+import { InfoSourceService } from "./info-source-service";
 
 export class CreateInfoSourceDto {
     @IsString()

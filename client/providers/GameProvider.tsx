@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { Game, InfoSource, Tag, useGamesContext } from "./GamesProvider";
+import { Game, InfoSource, InfoSourceType, Tag, useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
+import { AxiosResponse } from "axios";
 
 export interface GameCtx {
     game: Game
@@ -12,6 +13,7 @@ export interface GameCtx {
     setGameInfoSource: (infoSource: InfoSource) => void
     addTagToGame: (tag: Tag) => Promise<void>
     removeTagFromGame: (tag: Tag) => Promise<void>
+    addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource | undefined>
 }
 
 export const GameContext = React.createContext<GameCtx>({
@@ -24,6 +26,7 @@ export const GameContext = React.createContext<GameCtx>({
     setGameInfoSource: () => { },
     addTagToGame: async () => { },
     removeTagFromGame: async () => { },
+    addInfoSource: async () => ({} as InfoSource),
 });
 
 export function useGameContext() {
@@ -37,15 +40,17 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     const syncGame = useCallback(async () => {
         await withRequest(async http => {
             const { data } = await http.post<Game>(`/game/${game.id}/sync`);
-            setGame(data);
+            setGame(data.id, data);
         });
-    }, [withRequest, setGame, game]);
+    }, [withRequest, setGame, game.id]);
 
     const changeGameName = useCallback(async (name: string) => {
-        const oldGameName = game.name;
         // Optimistic update
-        game.name = name;
-        setGame(game);
+        const oldGameName = game.name;
+        setGame(game.id, curr => ({
+            ...curr,
+            name
+        }));
 
         await withRequest(
             async http => await http.put<Game>(`/game/${game.id}`, {
@@ -53,8 +58,10 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
                 name
             }),
             (error) => {
-                game.name = oldGameName;
-                setGame(game);
+                setGame(game.id, curr => ({
+                    ...curr,
+                    name: oldGameName
+                }));
                 handleError(error, {
                     description: "Could not change the name. Please try again.",
                 });
@@ -67,51 +74,76 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
             await http.delete(`/game/${game.id}`);
             removeGame(game.id);
         });
-    }, [withRequest, removeGame, game]);
+    }, [withRequest, removeGame, game.id]);
 
     const setGameInfoSource = useCallback((infoSource: InfoSource) => {
-        game.infoSources = [
-            infoSource,
-            ...game.infoSources.filter(({ id }) => id !== infoSource.id),
-        ];
-        setGame(game);
-    }, [setGame, game]);
+        setGame(game.id, curr => {
+            curr.infoSources = [
+                infoSource,
+                ...curr.infoSources.filter(({ id }) => id !== infoSource.id),
+            ];
+            return curr;
+        });
+    }, [setGame, game.id]);
 
     const addTagToGame = useCallback(async (tag: Tag) => {
         const oldGameTags = [...game.tags];
         // Optimistic update
-        game.tags = [...game.tags, tag];
-        setGame(game);
+        setGame(game.id, curr => ({
+            ...curr,
+            tags: [...curr.tags, tag]
+        }));
 
         await withRequest(
             async http => await http.post(`/game/${game.id}/tag/${tag.id}`),
             (error) => {
-                game.tags = oldGameTags;
-                setGame(game);
+                setGame(game.id, curr => ({
+                    ...curr,
+                    tags: oldGameTags
+                }));
                 handleError(error, {
                     description: "Could not add tag. Please try again.",
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game]);
+    }, [withRequest, handleError, setGame, game.id, game.tags]);
 
     const removeTagFromGame = useCallback(async (tag: Tag) => {
         const oldGameTags = [...game.tags];
         // Optimistic update
-        game.tags = game.tags.filter(({ id }) => id !== tag.id);
-        setGame(game);
+        setGame(game.id, curr => ({
+            ...curr,
+            tags: curr.tags.filter(({ id }) => id !== tag.id)
+        }));
 
         await withRequest(
             async http => await http.delete(`/game/${game.id}/tag/${tag.id}`),
             (error) => {
-                game.tags = oldGameTags;
-                setGame(game);
+                setGame(game.id, curr => ({
+                    ...curr,
+                    tags: oldGameTags
+                }));
                 handleError(error, {
                     description: "Could not remove tag. Please try again.",
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game]);
+    }, [withRequest, handleError, setGame, game.id, game.tags]);
+
+    // Move to game context
+    const addInfoSource = useCallback(async (type: InfoSourceType, remoteGameId: string) => {
+        return await withRequest(async http => {
+            const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
+                gameId: game.id,
+                type,
+                remoteGameId
+            });
+
+            setGameInfoSource(infoSource);
+
+            return infoSource;
+        });
+    }, [withRequest, setGameInfoSource, game.id]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
     const infoSources = useMemo(() => game.infoSources, [game.infoSources]);
@@ -125,7 +157,8 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         deleteGame,
         setGameInfoSource,
         addTagToGame,
-        removeTagFromGame
+        removeTagFromGame,
+        addInfoSource
     }), [
         game,
         tags,
@@ -136,6 +169,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         setGameInfoSource,
         addTagToGame,
         removeTagFromGame,
+        addInfoSource
     ]);
 
     return (
