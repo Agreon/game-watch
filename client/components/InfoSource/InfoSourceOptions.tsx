@@ -10,10 +10,6 @@ import { InfoSource } from "../../providers/GamesProvider"
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
-/**
- * TODO:
- * - Edit
- */
 export const InfoSourceOptions: React.FC<{ source: InfoSource }> = ({ source }) => {
     const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
 

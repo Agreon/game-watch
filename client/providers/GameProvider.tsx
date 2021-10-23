@@ -1,12 +1,41 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Game, InfoSource, InfoSourceType, Tag, useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
 
+// TODO: Let users select the priority / image
+const INFO_SOURCE_PRIORITY = [
+    "psStore",
+    "steam",
+    "switch",
+    "metacritic"
+]
+
+const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): string | null => {
+    for (const infoSource of infoSources) {
+        if (infoSource.data?.[key]) {
+            if (key === "thumbnailUrl" && infoSource.type === "psStore") {
+                const url = new URL(infoSource.data[key] as string);
+                url.searchParams.delete("w");
+                url.searchParams.append("w", "460");
+                return url.toString();
+            }
+
+            return infoSource.data[key] as string;
+        }
+    }
+
+    return null;
+}
+
 export interface GameCtx {
     game: Game
     tags: Tag[]
-    infoSources: InfoSource[]
+    loading: boolean
+    allInfoSources: InfoSource[]
+    activeInfoSources: InfoSource[]
+    fullName: string
+    thumbnailUrl: string | null
     syncGame: () => Promise<void>
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
@@ -16,32 +45,28 @@ export interface GameCtx {
     addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource | undefined>
 }
 
-export const GameContext = React.createContext<GameCtx>({
-    game: {} as Game,
-    tags: [],
-    infoSources: [],
-    syncGame: async () => { },
-    changeGameName: async () => { },
-    deleteGame: async () => { },
-    setGameInfoSource: () => { },
-    addTagToGame: async () => { },
-    removeTagFromGame: async () => { },
-    addInfoSource: async () => ({} as InfoSource),
-});
+export const GameContext = React.createContext<GameCtx | undefined>(undefined);
 
 export function useGameContext() {
-    return useContext<GameCtx>(GameContext);
+    const context = useContext(GameContext);
+    if (!context) {
+        throw new Error("GameContext must be used inside GameProvider");
+    }
+    return context;
 }
 
 export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     const { setGame, removeGame } = useGamesContext();
     const { withRequest, handleError } = useHttp();
+    const [loading, setLoading] = useState(false);
 
     const syncGame = useCallback(async () => {
+        setLoading(true);
         await withRequest(async http => {
             const { data } = await http.post<Game>(`/game/${game.id}/sync`);
             setGame(data.id, data);
         });
+        setLoading(false);
     }, [withRequest, setGame, game.id]);
 
     const changeGameName = useCallback(async (name: string) => {
@@ -70,18 +95,19 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     }, [withRequest, handleError, setGame, game]);
 
     const deleteGame = useCallback(async () => {
+        setLoading(true);
         await withRequest(async http => {
             await http.delete(`/game/${game.id}`);
             removeGame(game.id);
         });
+        setLoading(false);
     }, [withRequest, removeGame, game.id]);
 
-    const setGameInfoSource = useCallback((infoSource: InfoSource) => {
+    const setGameInfoSource = useCallback((newInfoSource: InfoSource) => {
         setGame(game.id, curr => {
-            curr.infoSources = [
-                infoSource,
-                ...curr.infoSources.filter(({ id }) => id !== infoSource.id),
-            ];
+            curr.infoSources = curr.infoSources.map(
+                infoSource => infoSource.id === newInfoSource.id ? newInfoSource : infoSource
+            );
             return curr;
         });
     }, [setGame, game.id]);
@@ -146,12 +172,53 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     }, [withRequest, setGameInfoSource, game.id]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
-    const infoSources = useMemo(() => game.infoSources, [game.infoSources]);
+
+    const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
+    const activeInfoSources = useMemo(
+        () => allInfoSources
+            .filter(source => !source.disabled)
+            .sort((a, b) => {
+                const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
+                const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
+                return aPriority - bPriority;
+            })
+        , [allInfoSources]);
+
+    const thumbnailUrl = useMemo(
+        () => retrieveDataFromInfoSources(activeInfoSources, "thumbnailUrl"),
+        [activeInfoSources]
+    );
+
+    const nameFromInfoSource = useMemo(
+        () => retrieveDataFromInfoSources(activeInfoSources, "fullName"),
+        [activeInfoSources]
+    );
+    // Priority: User-defined name, info source name or the initial search
+    const fullName = useMemo(
+        () => game.name ?? nameFromInfoSource ?? game.search,
+        [game.name, nameFromInfoSource, game.search]
+    );
+
+    // Initial load
+    useEffect(() => {
+        (async () => {
+            if (game.justAdded) {
+                await syncGame();
+            }
+        })();
+        // We only want to call the effect then
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [game.justAdded]);
+
 
     const contextValue = useMemo(() => ({
         game,
         tags,
-        infoSources,
+        allInfoSources,
+        activeInfoSources,
+        fullName,
+        thumbnailUrl,
+        loading,
         syncGame,
         changeGameName,
         deleteGame,
@@ -162,7 +229,11 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     }), [
         game,
         tags,
-        infoSources,
+        allInfoSources,
+        activeInfoSources,
+        fullName,
+        thumbnailUrl,
+        loading,
         syncGame,
         changeGameName,
         deleteGame,

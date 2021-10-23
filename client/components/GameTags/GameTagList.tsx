@@ -5,7 +5,7 @@ import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import { useGameContext } from "../../providers/GameProvider";
 
 export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
-    const { tags } = useGameContext();
+    const { tags, loading } = useGameContext();
     const [showEdit, setShowEdit] = useState(false);
 
     return (
@@ -28,16 +28,18 @@ export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
                     </ChakraTag>
                 ))}
             </Box>
-            <Flex align="center" position="absolute" right="0" top="0" height="100%">
-                {tags.length === 0 ? (
-                    <ChakraTag onClick={onEdit} colorScheme="teal" cursor="pointer">
-                        <TagLeftIcon boxSize="12px" as={AddIcon} />
-                        <TagLabel>Add Tags</TagLabel>
-                    </ChakraTag>
-                ) : (
-                    showEdit && <IconButton aria-label="edit" size="sm" icon={<EditIcon />} onClick={onEdit} />
-                )}
-            </Flex>
+            {!loading &&
+                <Flex align="center" position="absolute" right="0" top="0" height="100%">
+                    {tags.length === 0 ? (
+                        <ChakraTag onClick={onEdit} colorScheme="teal" cursor="pointer">
+                            <TagLeftIcon boxSize="12px" as={AddIcon} />
+                            <TagLabel>Add Tags</TagLabel>
+                        </ChakraTag>
+                    ) : (
+                        showEdit && <IconButton aria-label="edit" size="sm" icon={<EditIcon />} onClick={onEdit} />
+                    )}
+                </Flex>
+            }
         </Flex>
     )
 }

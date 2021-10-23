@@ -14,7 +14,7 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import { InfoSourceType } from "../../providers/GamesProvider";
+import { InfoSource, InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { useGameContext } from "../../providers/GameProvider";
@@ -39,9 +39,8 @@ const extractRemoteGameId = (type: InfoSourceType, url: string) => {
     }
 }
 
-export const AddInfoSource: React.FC = () => {
-    const { addInfoSource } = useGameContext();
-    const { syncInfoSource, infoSources } = useInfoSourceContext();
+export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSource) => void }> = ({ syncInfoSource }) => {
+    const { addInfoSource, allInfoSources } = useGameContext();
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);
@@ -49,12 +48,12 @@ export const AddInfoSource: React.FC = () => {
     const availableInfoSources = useMemo(
         () => Object.values(InfoSourceType)
             .filter(type =>
-                !infoSources
+                !allInfoSources
                     .filter(source => !source.disabled)
                     .map(source => source.type)
                     .includes(type)
             ),
-        [infoSources]
+        [allInfoSources]
     );
 
     const [type, setType] = useState(availableInfoSources[0]);

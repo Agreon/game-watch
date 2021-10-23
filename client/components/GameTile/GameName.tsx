@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { ButtonGroup, Editable, EditableInput, EditablePreview, Flex, IconButton, useEditableControls } from "@chakra-ui/react"
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons"
+import { useGameContext } from "../../providers/GameProvider"
 
-// TODO: Let these hover over the name
 const EditableControls: React.FC = () => {
     const {
         isEditing,
@@ -11,27 +11,26 @@ const EditableControls: React.FC = () => {
         getEditButtonProps,
     } = useEditableControls()
 
-    return (
-        isEditing ? (
-            <ButtonGroup justifyContent="center" size="sm" ml="1rem">
-                <IconButton aria-label="submit" icon={<CheckIcon />} {...getSubmitButtonProps()} />
-                <IconButton aria-label="close" icon={<CloseIcon />} {...getCancelButtonProps()} />
-            </ButtonGroup>
-        ) : (
-            <Flex justifyContent="center">
+    return isEditing ? (
+        <ButtonGroup justifyContent="center" size="sm" ml="1rem">
+            <IconButton aria-label="submit" icon={<CheckIcon />} {...getSubmitButtonProps()} />
+            <IconButton aria-label="close" icon={<CloseIcon />} {...getCancelButtonProps()} />
+        </ButtonGroup>
+    ) : (
+            <Flex position="absolute" justifyContent="center" top="auto" bottom="auto" right="0">
                 <IconButton aria-label="edit" size="sm" icon={<EditIcon />} {...getEditButtonProps()} />
             </Flex>
-        )
     )
 }
 
-export const GameName: React.FC<{ name: string, onChange: (value: string) => void }> = ({ name, onChange }) => {
+export const GameName: React.FC = () => {
+    const { fullName, changeGameName } = useGameContext();
     const [showControls, setShowControls] = useState(false);
-    const [value, setValue] = useState(name);
+    const [value, setValue] = useState(fullName);
 
     useEffect(() => {
-        setValue(name);
-    }, [name])
+        setValue(fullName);
+    }, [fullName])
 
     return (
         <Editable
@@ -41,11 +40,11 @@ export const GameName: React.FC<{ name: string, onChange: (value: string) => voi
             submitOnBlur={false}
             selectAllOnFocus={false}
             onChange={setValue}
-            onSubmit={onChange}
+            onSubmit={changeGameName}
             onMouseOver={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
         >
-            <Flex justify="space-between" align="center">
+            <Flex justify="space-between" align="center" position="relative">
                 <EditablePreview width="100%" />
                 <EditableInput />
                 {showControls && <EditableControls />}

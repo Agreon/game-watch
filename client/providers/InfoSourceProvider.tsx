@@ -1,19 +1,13 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { InfoSource } from "./GamesProvider";
-import { useGameContext } from "./GameProvider";
-import { useHttp } from "../util/useHttp";
 
 export interface InfoSourceCtx {
-    infoSources: InfoSource[]
+    source: InfoSource
     syncInfoSource: (infoSource: InfoSource) => Promise<void>
     disableInfoSource: (infoSource: InfoSource) => Promise<void>
 }
 
-export const InfoSourceContext = React.createContext<InfoSourceCtx>({
-    infoSources: [],
-    syncInfoSource: async () => { },
-    disableInfoSource: async () => { },
-});
+export const InfoSourceContext = React.createContext<InfoSourceCtx | undefined>(undefined);
 
 export function useInfoSourceContext() {
     const context = useContext(InfoSourceContext);
@@ -21,53 +15,12 @@ export function useInfoSourceContext() {
     return context as InfoSourceCtx;
 }
 
-export const InfoSourceProvider: React.FC<{ infoSources: InfoSource[] }> = ({ children, infoSources }) => {
-    const { setGameInfoSource } = useGameContext();
-    const { withRequest, handleError } = useHttp();
-
-    const syncInfoSource = useCallback(async (infoSource: InfoSource) => {
-        setGameInfoSource({
-            ...infoSource,
-            loading: true
-        });
-
-        await withRequest(async http => {
-            const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/sync`);
-
-            setGameInfoSource(data);
-        }, error => {
-            setGameInfoSource({
-                ...infoSource,
-                loading: false
-            });
-            handleError(error);
-        });
-    }, [withRequest, setGameInfoSource, handleError]);
-
-    const disableInfoSource = useCallback(async (infoSource: InfoSource) => {
-        setGameInfoSource({
-            ...infoSource,
-            loading: true
-        });
-
-        await withRequest(async http => {
-            const { data } = await http.post<InfoSource>(`/info-source/${infoSource.id}/disable`);
-
-            setGameInfoSource(data);
-        }, error => {
-            setGameInfoSource({
-                ...infoSource,
-                loading: false
-            });
-            handleError(error);
-        });
-    }, [withRequest, handleError, setGameInfoSource]);
-
+export const InfoSourceProvider: React.FC<InfoSourceCtx> = ({ children, source, syncInfoSource, disableInfoSource }) => {
     const contextValue = useMemo(() => ({
-        infoSources,
+        source,
         syncInfoSource,
         disableInfoSource
-    }), [infoSources, syncInfoSource, disableInfoSource]);
+    }), [source, syncInfoSource, disableInfoSource]);
 
     return (
         <InfoSourceContext.Provider value={contextValue}>
@@ -75,3 +28,5 @@ export const InfoSourceProvider: React.FC<{ infoSources: InfoSource[] }> = ({ ch
         </InfoSourceContext.Provider>
     )
 }
+
+// export const InfoSourceProvider = React.memo(InfoSourceProviderComponent);

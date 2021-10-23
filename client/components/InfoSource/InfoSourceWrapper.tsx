@@ -1,16 +1,17 @@
 import React from "react"
-import { InfoSource as Source } from "../../providers/GamesProvider"
 import { Flex, Box } from "@chakra-ui/layout"
 import { Text, Tooltip } from "@chakra-ui/react";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 interface InfoSourceWrapperParams {
-    source: Source;
     header: React.ReactElement;
 }
 
-export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ source, header, children }) => {
+export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ header, children }) => {
+    const { source } = useInfoSourceContext();
+
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
             <Tooltip label={source.data?.fullName} placement="top">

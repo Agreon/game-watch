@@ -1,17 +1,17 @@
 import React from "react"
 import { StoreInfoSource } from "./StoreInfoSource"
-import { InfoSource as Source } from "../../providers/GamesProvider"
+import { InfoSourceType } from "../../providers/GamesProvider"
 import { MetacriticInfoSource } from "./MetacriticInfoSource"
 
-export const InfoSource: React.FC<{ source: Source }> = ({ source }) => {
-    switch (source.type) {
+export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
+    switch (type) {
         case "steam":
-            return <StoreInfoSource source={source} expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
+            return <StoreInfoSource expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
         case "switch":
-            return <StoreInfoSource source={source} expectedDateFormats={["DD.MM.YYYY"]} />
+            return <StoreInfoSource expectedDateFormats={["DD.MM.YYYY"]} />
         case "psStore":
-            return <StoreInfoSource source={source} expectedDateFormats={["D.M.YYYY"]} />
+            return <StoreInfoSource expectedDateFormats={["D.M.YYYY"]} />
         default:
-            return <MetacriticInfoSource source={source} />;
+            return <MetacriticInfoSource />;
     }
 }

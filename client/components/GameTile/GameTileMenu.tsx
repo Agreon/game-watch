@@ -12,15 +12,16 @@ import {
 
 export interface GameTileMenuProps {
     gameName: string
+    highlight: boolean
     onSync: () => Promise<void>
     onDelete: () => Promise<void>
 }
 
 /**
  * - TODO: Submit btn color
- * - TODO: Highlight setting icon on tile hover
+ * TODO: animated entry of button
  */
-const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete }) => {
+const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete, highlight }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const cancelRef = useRef(null)
 
@@ -57,13 +58,15 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
+            {highlight &&
             <Menu>
                 <MenuButton
                     as={IconButton}
                     aria-label="Options"
                     icon={<SettingsIcon />}
-                    variant="ghost"
-                    size="lg"
+                    variant={"ghost"}
+                    color="white"
+                    size="md"
                     _focus={{
                         boxShadow: "none"
                     }}
@@ -77,6 +80,7 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
                     </MenuItem>
                 </MenuList>
             </Menu>
+            }
         </>
     )
 }

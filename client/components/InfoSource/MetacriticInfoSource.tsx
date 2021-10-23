@@ -6,10 +6,10 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { InfoSource } from "../../providers/GamesProvider";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import metacriticLogo from '../../assets/metacritic.svg';
 import Image from 'next/image'
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 const getMetaCriticScoreColor = (score: number) => {
     if (isNaN(score)) {
@@ -39,7 +39,10 @@ const Score: React.FC<{ score: number }> = ({ score }) => {
     )
 }
 
-export const MetacriticInfoSource: React.FC<{ source: InfoSource }> = ({ source }) => {
+// TODO: is jumping on loading state
+export const MetacriticInfoSource: React.FC = () => {
+    const { source } = useInfoSourceContext();
+
     return (
         <InfoSourceWrapper
             header={
@@ -48,7 +51,6 @@ export const MetacriticInfoSource: React.FC<{ source: InfoSource }> = ({ source 
                     <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
                 </Flex>
             }
-            source={source}
         >
             <Box flex="1">
                 <Stat>

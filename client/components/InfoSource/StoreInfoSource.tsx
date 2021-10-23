@@ -7,11 +7,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
-import { InfoSource } from "../../providers/GamesProvider";
 import Image from 'next/image';
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import steamLogo from '../../assets/steam.svg';
 import switchLogo from '../../assets/switch.png';
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
@@ -20,8 +20,8 @@ dayjs.extend(customParseFormat)
  * TODO:
  * - Icon for ps store
  */
-export const SourceName: React.FC<{ name: string }> = ({ name }) => {
-    if (name === "switch") {
+export const SourceName: React.FC<{ type: string }> = ({ type }) => {
+    if (type === "switch") {
         return (
             <Flex align="center">
                 <Image alt="source-icon" src={switchLogo} height="30px" width="30px" />
@@ -30,7 +30,7 @@ export const SourceName: React.FC<{ name: string }> = ({ name }) => {
         )
     }
 
-    if (name === "steam") {
+    if (type === "steam") {
         return (
             <Flex align="end">
                 <Image alt="source-icon" src={steamLogo} height="30px" width="30px" />
@@ -39,7 +39,7 @@ export const SourceName: React.FC<{ name: string }> = ({ name }) => {
         )
     }
 
-    if (name === "psStore") {
+    if (type === "psStore") {
         return (
             <Flex align="end">
                 <Image alt="source-icon" src="https://gmedia.playstation.com/is/image/SIEPDC/ps-store-blue-bag-icon-01-22sep20" height="30px" width="30px" />
@@ -48,7 +48,7 @@ export const SourceName: React.FC<{ name: string }> = ({ name }) => {
         )
     }
 
-    return (<b>{name}</b>)
+    return (<b>{type}</b>)
 }
 
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
@@ -94,11 +94,11 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
         </Stat>
     )
 }
-export const StoreInfoSource: React.FC<{ source: InfoSource, expectedDateFormats: string[] }> = ({ source, expectedDateFormats }) => {
+export const StoreInfoSource: React.FC<{ expectedDateFormats: string[] }> = ({ expectedDateFormats }) => {
+    const { source } = useInfoSourceContext();
     return (
         <InfoSourceWrapper
-            header={<SourceName name={source.type} />}
-            source={source}
+            header={<SourceName type={source.type} />}
         >
             <Box flex="1">
                 <ReleaseDate date={source.data!.releaseDate} expectedFormats={expectedDateFormats} />

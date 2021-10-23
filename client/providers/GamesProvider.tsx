@@ -33,6 +33,7 @@ export interface Game {
     tags: Tag[]
     syncing: boolean;
     updatedAt: string;
+    justAdded?: boolean;
 }
 
 export interface GamesCtx {
@@ -84,7 +85,12 @@ export const GamesProvider: React.FC = ({ children }) => {
     const addGame = useCallback(async (name: string) => {
         await withRequest(async http => {
             const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
-            setGames(currentGames => [data, ...currentGames]);
+            setGames(currentGames => [{
+                ...data,
+                justAdded: true
+            },
+            ...currentGames
+            ]);
         });
     }, [withRequest, setGames]);
 
