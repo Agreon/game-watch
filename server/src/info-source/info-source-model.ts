@@ -7,6 +7,7 @@ export enum InfoSourceType {
     Steam = "steam",
     Switch = "switch",
     PsStore = "psStore",
+    Epic = "epic",
     Metacritic = "metacritic"
 }
 
@@ -47,6 +48,13 @@ export interface PsStoreGameData extends StoreGameData {
     };
 }
 
+export interface EpicGameData extends StoreGameData {
+    priceInformation?: {
+        initial: string;
+        final: string;
+    };
+}
+
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
     userScore: string;
@@ -57,9 +65,10 @@ export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
     [InfoSourceType.Switch]: SwitchGameData;
     [InfoSourceType.PsStore]: PsStoreGameData;
+    [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
-export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | MetacriticData;
+export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
 
 @Entity()
 export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {

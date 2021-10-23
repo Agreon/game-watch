@@ -50,10 +50,10 @@ const GameTileComponent: React.FC = () => {
             <Flex direction="column">
                 <GameThumbnail />
                 <Box padding={[0, 0, "1rem"]}>
-                    <GameName />
+                    <GameName disableEdit={loading} />
                     <GameTags />
-                    {allInfoSources.length === 0 && !loading && <Text size="xl" textAlign="center" my="1" >No sources found :C</Text>}
-                    {loading && <SkeletonText />}
+                    {allInfoSources.length === 0 && !loading && <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>}
+                    {loading && <SkeletonText mt="1rem" />}
                     {!loading && <InfoSourceList activeInfoSources={activeInfoSources} setGameInfoSource={setGameInfoSource} />}
                 </Box>
             </Flex>

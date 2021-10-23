@@ -11,6 +11,7 @@ export default class Document extends NextDocument {
           <link rel="preconnect" href="https://cdn.akamai.steamstatic.com" />
           <link rel="preconnect" href="https://image.api.playstation.com" />
           <link rel="preconnect" href="https://cdn01.nintendo-europe.com" />
+          <link rel="preconnect" href="https://cdn1.epicgames.com" />
         </Head>
         <body>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />

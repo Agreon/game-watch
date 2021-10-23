@@ -9,17 +9,16 @@ import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import Image from 'next/image';
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import steamLogo from '../../assets/steam.svg';
 import switchLogo from '../../assets/switch.png';
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import psLogo from '../../assets/playstation.svg';
+import epicLogo from "../../assets/epic";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
 
-/**
- * TODO:
- * - Icon for ps store
- */
+// TODO: Extract a layer above
 export const SourceName: React.FC<{ type: string }> = ({ type }) => {
     if (type === "switch") {
         return (
@@ -42,8 +41,17 @@ export const SourceName: React.FC<{ type: string }> = ({ type }) => {
     if (type === "psStore") {
         return (
             <Flex align="end">
-                <Image alt="source-icon" src="https://gmedia.playstation.com/is/image/SIEPDC/ps-store-blue-bag-icon-01-22sep20" height="30px" width="30px" />
+                <Image alt="source-icon" src={psLogo} height="30px" width="30px" />
                 <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
+            </Flex>
+        )
+    }
+
+    if (type === "epic") {
+        return (
+            <Flex align="ce">
+                <Image alt="source-icon" src={epicLogo} height="30px" width="30px" />
+                <Text fontWeight="bold" ml="0.5rem">Epic</Text>
             </Flex>
         )
     }
@@ -98,7 +106,7 @@ export const StoreInfoSource: React.FC<{ expectedDateFormats: string[] }> = ({ e
     const { source } = useInfoSourceContext();
     return (
         <InfoSourceWrapper
-            header={<SourceName type={source.type} />}
+            name={<SourceName type={source.type} />}
         >
             <Box flex="1">
                 <ReleaseDate date={source.data!.releaseDate} expectedFormats={expectedDateFormats} />

@@ -8,6 +8,7 @@ const INFO_SOURCE_PRIORITY = [
     "psStore",
     "steam",
     "switch",
+    "epic",
     "metacritic"
 ]
 

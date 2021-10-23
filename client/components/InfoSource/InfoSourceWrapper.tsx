@@ -6,10 +6,10 @@ import { InfoSourceOptions } from "./InfoSourceOptions";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 interface InfoSourceWrapperParams {
-    header: React.ReactElement;
+    name: React.ReactElement;
 }
 
-export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ header, children }) => {
+export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, children }) => {
     const { source } = useInfoSourceContext();
 
     return (
@@ -17,7 +17,7 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ header, c
             <Tooltip label={source.data?.fullName} placement="top">
                 <Box flex="1">
                     <a href={source.data?.url} target="_blank" rel="noreferrer">
-                        {header}
+                        {name}
                     </a>
                 </Box>
             </Tooltip>

@@ -11,6 +11,8 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
             return <StoreInfoSource expectedDateFormats={["DD.MM.YYYY"]} />
         case "psStore":
             return <StoreInfoSource expectedDateFormats={["D.M.YYYY"]} />
+        case "epic":
+            return <StoreInfoSource expectedDateFormats={["D.M.YYYY"]} />
         default:
             return <MetacriticInfoSource />;
     }

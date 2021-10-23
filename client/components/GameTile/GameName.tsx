@@ -23,7 +23,7 @@ const EditableControls: React.FC = () => {
     )
 }
 
-export const GameName: React.FC = () => {
+export const GameName: React.FC<{ disableEdit: boolean }> = ({ disableEdit }) => {
     const { fullName, changeGameName } = useGameContext();
     const [showControls, setShowControls] = useState(false);
     const [value, setValue] = useState(fullName);
@@ -34,6 +34,7 @@ export const GameName: React.FC = () => {
 
     return (
         <Editable
+            isDisabled={disableEdit}
             value={value}
             fontSize="2xl"
             isPreviewFocusable={true}
@@ -47,7 +48,7 @@ export const GameName: React.FC = () => {
             <Flex justify="space-between" align="center" position="relative">
                 <EditablePreview width="100%" />
                 <EditableInput />
-                {showControls && <EditableControls />}
+                {!disableEdit && showControls && <EditableControls />}
             </Flex>
         </Editable>
     )
