@@ -12,12 +12,9 @@ export class MetacriticSearcher implements InfoSearcher {
     private logger = new Logger(MetacriticSearcher.name);
 
     public async search(search: string): Promise<string | null> {
-        console.time("Visit Metacritic");
-
         const { data } = await axios.get<string>(
             `https://www.metacritic.com/search/game/${search}/results`
         );
-        console.timeEnd("Visit Metacritic");
 
         const $ = cheerio.load(data);
 

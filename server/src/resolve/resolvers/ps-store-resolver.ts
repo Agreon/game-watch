@@ -13,13 +13,9 @@ export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
 
     public async resolve(storePage: string): Promise<PsStoreGameData> {
-        console.time("Resolve PsStore");
-
         return await withBrowser(async browser => {
             await browser.goto(storePage);
             await browser.waitForSelector(".psw-t-title-m");
-
-            console.timeEnd("Resolve PsStore");
 
             const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim());
 
@@ -45,7 +41,7 @@ export class PsStoreResolver implements InfoResolver {
                 id: storePage,
                 url: storePage,
                 fullName,
-                thumbnailUrl: thumbnailUrl ?? "",
+                thumbnailUrl: thumbnailUrl ?? undefined,
                 priceInformation: price ? {
                     initial: originalPrice || price,
                     final: price,

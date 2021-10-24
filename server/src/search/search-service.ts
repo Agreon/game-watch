@@ -24,6 +24,7 @@ export class SearchService {
         }
 
         this.logger.debug(`Searching ${type} for '${search}'`);
+        const start = new Date().getTime();
 
         try {
             return await searcherForType.search(search);
@@ -38,6 +39,9 @@ export class SearchService {
             });
             this.logger.warn(error);
             return null;
+        } finally {
+            const duration = new Date().getTime() - start;
+            this.logger.debug(`Searching ${type} took ${duration} ms`);
         }
     }
 }

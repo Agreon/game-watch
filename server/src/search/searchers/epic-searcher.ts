@@ -34,9 +34,7 @@ export class EpicSearcher implements InfoSearcher {
     private logger = new Logger(EpicSearcher.name);
 
     public async search(search: string): Promise<string | null> {
-        console.time("Visit Epic");
         const gameData = await getEpicSearchResponse(search);
-        console.timeEnd("Visit Epic");
 
         if (!matchingName(gameData.title, search)) {
             this.logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping epic`);

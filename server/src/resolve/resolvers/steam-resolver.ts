@@ -15,12 +15,9 @@ export class SteamResolver implements InfoResolver {
     private readonly logger = new Logger(SteamResolver.name);
 
     public async resolve(id: string): Promise<SteamGameData> {
-        console.time("Resolve Steam");
-
         const { data } = await axios.get<any>(
             `https://store.steampowered.com/api/appdetails?appids=${id}`
         );
-        console.timeEnd("Resolve Steam");
 
         const gameData = data[id];
 
@@ -41,7 +38,7 @@ export class SteamResolver implements InfoResolver {
                 fullName: json.name,
                 url: `https://store.steampowered.com/app/${id}`,
                 thumbnailUrl: json.header_image,
-                releaseDate: json.release_date.date,
+                releaseDate: json.release_date.date === "Coming Soon" ? "TBD" : json.release_date.date,
                 priceInformation: json.price_overview ? {
                     initial: json.price_overview.initial_formatted,
                     final: json.price_overview.final_formatted,

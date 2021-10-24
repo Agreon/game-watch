@@ -18,7 +18,7 @@ export interface BaseGameData {
 }
 
 export interface StoreGameData extends BaseGameData {
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
     releaseDate?: string;
 }
 

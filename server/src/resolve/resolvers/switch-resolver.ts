@@ -7,13 +7,11 @@ export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
     public async resolve(id: string): Promise<SwitchGameData> {
-        console.time("Resolve Switch");
 
         return await withBrowser(async (page) => {
             if (!id.includes("/")) {
                 // Just reuse the same search because we have all info there
                 const { docs: results } = await getSwitchSearchResponse(id);
-                console.timeEnd("Resolve Switch");
 
                 const game = results[0];
 
@@ -34,8 +32,6 @@ export class SwitchResolver implements InfoResolver {
 
             await page.goto(id);
             await page.waitForSelector(".release-date > dd");
-
-            console.timeEnd("Resolve Switch");
 
             const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
             const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);

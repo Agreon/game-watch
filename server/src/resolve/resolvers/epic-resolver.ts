@@ -22,8 +22,7 @@ export class EpicResolver implements InfoResolver {
             id,
             fullName,
             url: id,
-            // TODO: Should be nullable
-            thumbnailUrl: thumbnailUrl ?? "",
+            thumbnailUrl,
             releaseDate: releaseDate ?? "TBD",
             priceInformation: price !== "" ? {
                 initial: discountedFromPrice ?? price,

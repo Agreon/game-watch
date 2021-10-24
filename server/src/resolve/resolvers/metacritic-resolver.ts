@@ -8,9 +8,7 @@ export class MetacriticResolver implements InfoResolver {
     public type = InfoSourceType.Metacritic;
 
     public async resolve(id: string): Promise<MetacriticData> {
-        console.time("Resolve Metacritic");
         const { data } = await axios.get<string>(id);
-        console.timeEnd("Resolve Metacritic");
 
         const $ = cheerio.load(data);
 

@@ -40,8 +40,8 @@ export class ResolveService {
             this.logger.warn(error);
             return null;
         } finally {
-            const end = new Date().getTime() - start;
-            console.log("E", end);
+            const duration = new Date().getTime() - start;
+            this.logger.debug(`Resolving ${type} took ${duration} ms`);
         }
     }
 

@@ -33,14 +33,11 @@ export class SwitchSearcher implements InfoSearcher {
     private logger = new Logger(SwitchSearcher.name);
 
     public async search(search: string) {
-        console.time("Visit Switch");
         const userLanguage = "de";
 
         return await withBrowser(async browser => {
             if (userLanguage === "de") {
                 const { numFound, docs: results } = await getSwitchSearchResponse(search);
-
-                console.timeEnd("Visit Switch");
 
                 if (!numFound) {
                     this.logger.debug("No results found");
@@ -63,7 +60,6 @@ export class SwitchSearcher implements InfoSearcher {
 
             await browser.goto(`https://www.nintendo.com/games/game-guide/#filter/:q=${encodeURIComponent(search)}`);
             await browser.waitForSelector(".result-count");
-            console.timeEnd("Visit Switch");
 
             const resultCount = await browser.$eval(".result-count", el => el.innerHTML);
             if (resultCount.includes("0 results")) {

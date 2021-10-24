@@ -10,13 +10,10 @@ export class PsStoreSearcher implements InfoSearcher {
     private logger = new Logger(PsStoreSearcher.name);
 
     public async search(search: string) {
-        console.time("Visit Ps Store");
-
         return await withBrowser(async browser => {
             await browser.goto(
                 `https://store.playstation.com/de-de/search/${encodeURIComponent(search)}/`
             );
-            console.timeEnd("Visit Ps Store");
 
             const content = await browser.content();
             if (content.includes("search-no-results")) {

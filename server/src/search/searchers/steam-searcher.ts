@@ -11,11 +11,9 @@ export class SteamSearcher implements InfoSearcher {
     private logger = new Logger(SteamSearcher.name);
 
     public async search(search: string) {
-        console.time("Visit Steam");
         const { data } = await axios.get<string>(
             `https://store.steampowered.com/search/?term=${encodeURIComponent(search)}`
         );
-        console.timeEnd("Visit Steam");
 
         const $ = cheerio.load(data);
 
