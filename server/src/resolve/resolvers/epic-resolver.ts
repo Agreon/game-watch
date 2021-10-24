@@ -13,7 +13,7 @@ export class EpicResolver implements InfoResolver {
         const $ = cheerio.load(data);
 
         const fullName = $("div[data-component=PDPTitleHeader] > span").first().text().trim();
-        const discountedFromPrice = $("div[data-component=PDPDiscountedFromPrice]").text().trim();
+        const discountedFromPrice = $("div[data-component=PDPDiscountedFromPrice]").first().text().trim();
         const price = $("div[data-component=PriceLayout] span[data-component=Text]").last().text().trim();
         const releaseDate = $("time").first().attr("datetime")?.trim();
         const thumbnailUrl = $("div[data-component=PDPSidebarLogo] img").attr("src");

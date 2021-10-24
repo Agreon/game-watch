@@ -37,6 +37,13 @@ export class MetacriticSearcher implements InfoSearcher {
             return null;
         }
 
+        const criticScore = $(".metascore_w > span").text().trim();
+        if (isNaN(parseInt(criticScore))) {
+            this.logger.debug(`Found score '${fullName}' is not a number. Skipping metacritic`);
+
+            return null;
+        }
+
         return `https://www.metacritic.com${gameLink}`;
     }
 }
