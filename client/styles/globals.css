@@ -23,8 +23,8 @@ a {
 .my-masonry-grid_column {
   width: 28rem !important;
   background-clip: padding-box;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 @media only screen and (max-width: 1000px) {

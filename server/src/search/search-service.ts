@@ -37,7 +37,7 @@ export class SearchService {
                     }
                 }
             });
-            this.logger.warn(error);
+            this.logger.warn(`[${type}]: ${error}`);
             return null;
         } finally {
             const duration = new Date().getTime() - start;

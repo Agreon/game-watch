@@ -35,6 +35,9 @@ export class EpicSearcher implements InfoSearcher {
 
     public async search(search: string): Promise<string | null> {
         const gameData = await getEpicSearchResponse(search);
+        if (!gameData) {
+            return null;
+        }
 
         if (!matchingName(gameData.title, search)) {
             this.logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping epic`);

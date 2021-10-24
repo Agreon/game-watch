@@ -1,4 +1,4 @@
-import { Flex, Box } from "@chakra-ui/layout"
+import { Box } from "@chakra-ui/layout"
 import {
     Stat,
     StatLabel,
@@ -7,57 +7,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
-import Image from 'next/image';
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import steamLogo from '../../assets/steam.svg';
-import switchLogo from '../../assets/switch.png';
-import psLogo from '../../assets/playstation.svg';
-import epicLogo from "../../assets/epic";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
-
-// TODO: Extract a layer above
-export const SourceName: React.FC<{ type: string }> = ({ type }) => {
-    if (type === "switch") {
-        return (
-            <Flex align="center">
-                <Image alt="source-icon" src={switchLogo} height="30px" width="30px" />
-                <Text fontWeight="bold" ml="0.5rem">Switch</Text>
-            </Flex>
-        )
-    }
-
-    if (type === "steam") {
-        return (
-            <Flex align="end">
-                <Image alt="source-icon" src={steamLogo} height="30px" width="30px" />
-                <Text fontWeight="bold" ml="0.5rem">Steam</Text>
-            </Flex>
-        )
-    }
-
-    if (type === "psStore") {
-        return (
-            <Flex align="end">
-                <Image alt="source-icon" src={psLogo} height="30px" width="30px" />
-                <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
-            </Flex>
-        )
-    }
-
-    if (type === "epic") {
-        return (
-            <Flex align="ce">
-                <Image alt="source-icon" src={epicLogo} height="30px" width="30px" />
-                <Text fontWeight="bold" ml="0.5rem">Epic</Text>
-            </Flex>
-        )
-    }
-
-    return (<b>{type}</b>)
-}
 
 const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
     const parsedDate = useMemo(() => {
@@ -102,12 +56,10 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
         </Stat>
     )
 }
-export const StoreInfoSource: React.FC<{ expectedDateFormats: string[] }> = ({ expectedDateFormats }) => {
+export const StoreInfoSource: React.FC<{ expectedDateFormats: string[], name: React.ReactElement }> = ({ expectedDateFormats, name }) => {
     const { source } = useInfoSourceContext();
     return (
-        <InfoSourceWrapper
-            name={<SourceName type={source.type} />}
-        >
+        <InfoSourceWrapper name={name}>
             <Box flex="1">
                 <ReleaseDate date={source.data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
             </Box>
