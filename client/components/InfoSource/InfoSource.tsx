@@ -16,7 +16,7 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
             return <StoreInfoSource
                 name={
                     <Flex align="end">
-                        <Image alt="source-icon" src={steamLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={steamLogo} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Steam</Text>
                     </Flex>
                 }
@@ -25,7 +25,7 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
             return <StoreInfoSource
                 name={
                     <Flex align="center">
-                        <Image alt="source-icon" src={switchLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={switchLogo} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Switch</Text>
                     </Flex>
                 }
@@ -34,7 +34,7 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
             return <StoreInfoSource
                 name={
                     <Flex align="end">
-                        <Image alt="source-icon" src={psLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={psLogo} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
                     </Flex>
                 }
@@ -43,7 +43,7 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
             return <StoreInfoSource
                 name={
                     <Flex align="ce">
-                        <Image alt="source-icon" src={epicLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={epicLogo} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Epic</Text>
                     </Flex>
                 }
