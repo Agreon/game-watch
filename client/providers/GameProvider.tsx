@@ -10,7 +10,7 @@ const INFO_SOURCE_PRIORITY = [
     "switch",
     "epic",
     "metacritic"
-]
+];
 
 const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): string | null => {
     for (const infoSource of infoSources) {
@@ -19,6 +19,13 @@ const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): st
                 const url = new URL(infoSource.data[key] as string);
                 url.searchParams.delete("w");
                 url.searchParams.append("w", "460");
+                return url.toString();
+            }
+
+            if (key === "thumbnailUrl" && infoSource.type === "epic") {
+                const url = new URL(infoSource.data[key] as string);
+                url.searchParams.delete("h");
+                url.searchParams.append("h", "215");
                 return url.toString();
             }
 
@@ -43,7 +50,7 @@ export interface GameCtx {
     setGameInfoSource: (infoSource: InfoSource) => void
     addTagToGame: (tag: Tag) => Promise<void>
     removeTagFromGame: (tag: Tag) => Promise<void>
-    addInfoSource: (type: InfoSourceType, remoteGameId: string) => Promise<InfoSource | undefined>
+    addInfoSource: (type: InfoSourceType, url: string) => Promise<InfoSource | undefined>
 }
 
 export const GameContext = React.createContext<GameCtx | undefined>(undefined);
@@ -106,9 +113,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
 
     const setGameInfoSource = useCallback((newInfoSource: InfoSource) => {
         setGame(game.id, curr => {
-            curr.infoSources = curr.infoSources.map(
-                infoSource => infoSource.id === newInfoSource.id ? newInfoSource : infoSource
-            );
+            curr.infoSources = [...curr.infoSources.filter(({ id }) => newInfoSource.id !== id), newInfoSource];
             return curr;
         });
     }, [setGame, game.id]);
@@ -157,13 +162,12 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         );
     }, [withRequest, handleError, setGame, game.id, game.tags]);
 
-    // Move to game context
-    const addInfoSource = useCallback(async (type: InfoSourceType, remoteGameId: string) => {
+    const addInfoSource = useCallback(async (type: InfoSourceType, url: string) => {
         return await withRequest(async http => {
             const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
                 gameId: game.id,
                 type,
-                remoteGameId
+                url
             });
 
             setGameInfoSource(infoSource);

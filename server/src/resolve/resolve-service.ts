@@ -5,8 +5,11 @@ import { GameDataU, InfoSourceType } from "../info-source/info-source-model";
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType;
-    resolve(id: string): Promise<T>;
+    resolve: (id: string) => Promise<T>;
+    mapUrlToId: (url: string) => Promise<string>;
 }
+
+export class UrlNotMappableError extends Error { }
 
 @Injectable()
 export class ResolveService {
@@ -18,12 +21,10 @@ export class ResolveService {
     ) { }
 
     public async resolveGameInformation(id: string, type: InfoSourceType): Promise<GameDataU | null> {
-        const resolverForType = this.resolvers.find(resolver => resolver.type == type);
-        if (!resolverForType) {
-            throw new Error(`No resolver for type ${type} found`);
-        }
+        const resolverForType = this.getResolverForInfoSourceType(type);
 
         this.logger.debug(`Resolving ${type} for '${id}'`);
+        const start = new Date().getTime();
 
         try {
             return await resolverForType.resolve(id);
@@ -38,6 +39,37 @@ export class ResolveService {
             });
             this.logger.warn(error);
             return null;
+        } finally {
+            const end = new Date().getTime() - start;
+            console.log("E", end);
         }
     }
+
+    public async mapUrlToResolverId(url: string, type: InfoSourceType): Promise<string> {
+        const resolverForType = this.getResolverForInfoSourceType(type);
+
+        try {
+            return await resolverForType.mapUrlToId(url);
+        } catch (error) {
+            Sentry.captureException(error, {
+                contexts: {
+                    resolveParameters: {
+                        url,
+                        type
+                    }
+                }
+            });
+            this.logger.warn(error);
+            throw new UrlNotMappableError();
+        }
+    }
+
+    private getResolverForInfoSourceType(type: InfoSourceType) {
+        const resolverForType = this.resolvers.find(resolver => resolver.type == type);
+        if (!resolverForType) {
+            throw new Error(`No resolver for type ${type} found`);
+        }
+        return resolverForType;
+    }
+
 }

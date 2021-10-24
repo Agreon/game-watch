@@ -18,16 +18,19 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
-            <Flex
-                direction="column"
-                justifyContent="space-between"
+            <Box
                 pt="2rem"
-                paddingX={[0, 0, "2rem"]}
                 mt="4rem"
                 overflow="auto"
-                minHeight="calc(100vh - 4rem)"
             >
-                {children}
+                <Flex
+                    direction="column"
+                    justifyContent="space-between"
+                    minHeight="calc(100vh - 4rem)"
+                    paddingX={[0, 0, "2rem"]}
+                >
+                    {children}
+                </Flex>
                 <Flex
                     justify="center"
                     align="center"
@@ -44,8 +47,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                     >
                         Made by <b>Agreon</b>
                     </a>
-            </Flex>
-            </Flex>
+                </Flex>
+            </Box>
 
         </Flex>
     )

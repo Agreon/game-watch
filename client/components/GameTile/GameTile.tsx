@@ -47,7 +47,7 @@ const GameTileComponent: React.FC = () => {
             }
             <Flex direction="column">
                 <GameThumbnail />
-                <Box padding={[0, 0, "1rem"]}>
+                <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
                     <GameName disableEdit={loading} />
                     <GameTags />
                     {allInfoSources.length === 0 && !loading && <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>}

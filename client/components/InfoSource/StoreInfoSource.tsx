@@ -109,10 +109,10 @@ export const StoreInfoSource: React.FC<{ expectedDateFormats: string[] }> = ({ e
             name={<SourceName type={source.type} />}
         >
             <Box flex="1">
-                <ReleaseDate date={source.data!.releaseDate} expectedFormats={expectedDateFormats} />
+                <ReleaseDate date={source.data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
             </Box>
             <Box flex="1">
-                <Price price={source.data!.priceInformation?.final} initial={source.data!.priceInformation?.initial} />
+                <Price price={source.data?.priceInformation?.final} initial={source.data?.priceInformation?.initial} />
             </Box>
         </InfoSourceWrapper>
     )

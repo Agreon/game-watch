@@ -18,8 +18,9 @@ export class InfoSourceService {
         private readonly infoSourceRepository: EntityRepository<InfoSource>
     ) { }
 
-    public async addInfoSource(gameId: string, type: InfoSourceType, remoteGameId: string) {
+    public async addInfoSource(gameId: string, type: InfoSourceType, url: string) {
         const game = await this.gameRepository.findOneOrFail(gameId);
+        const remoteGameId = await this.resolveService.mapUrlToResolverId(url, type);
 
         // Reuse disabled info sources
         const existingInfoSource = await this.infoSourceRepository.findOne({

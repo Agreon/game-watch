@@ -16,30 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { InfoSource, InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { useGameContext } from "../../providers/GameProvider";
 
-const extractRemoteGameId = (type: InfoSourceType, url: string) => {
-    switch (type) {
-        case InfoSourceType.Steam:
-            const parts = url.split("/");
-            return parts[parts.length - 3];
-        case InfoSourceType.Switch:
-            // https://www.nintendo.de/Spiele/Nintendo-Switch/Bayonetta-3-2045649.html
-            // => Extracts Last part without stuff behind last-
-            const urlParts = url.split("/");
-            const idPart = urlParts[urlParts.length - 1];
-            const idParts = idPart.split("-").slice(0, -1);
-
-            return idParts.join(" ");
-        case InfoSourceType.PsStore:
-        case InfoSourceType.Metacritic:
-        default:
-            return url
-    }
-}
-
-export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSource) => void }> = ({ syncInfoSource }) => {
+export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSource) => Promise<void> }> = ({ syncInfoSource }) => {
     const { addInfoSource, allInfoSources } = useGameContext();
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,9 +40,7 @@ export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSource) 
 
     const onAddInfoSource = useCallback(async () => {
         setLoading(true);
-        const remoteGameId = extractRemoteGameId(type, url);
-
-        const infoSource = await addInfoSource(type, remoteGameId);
+        const infoSource = await addInfoSource(type, url);
         if (!infoSource) {
             return;
         }

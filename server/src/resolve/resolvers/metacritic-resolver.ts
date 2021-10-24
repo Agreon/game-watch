@@ -26,4 +26,12 @@ export class MetacriticResolver implements InfoResolver {
             userScore
         };
     }
+    public async mapUrlToId(url: string): Promise<string> {
+        const { hostname } = new URL(url);
+        if (hostname !== "www.metacritic.com") {
+            throw new Error("Not mappable");
+        }
+
+        return url;
+    }
 }

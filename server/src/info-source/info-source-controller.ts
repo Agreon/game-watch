@@ -1,6 +1,7 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Param, Post } from "@nestjs/common";
 import { IsEnum, IsString } from "class-validator";
 
+import { UrlNotMappableError } from "../resolve/resolve-service";
 import { InfoSource, InfoSourceType } from "./info-source-model";
 import { InfoSourceService } from "./info-source-service";
 
@@ -9,7 +10,7 @@ export class CreateInfoSourceDto {
     public gameId: string;
 
     @IsString()
-    public remoteGameId: string;
+    public url: string;
 
     @IsEnum(InfoSourceType)
     public type: InfoSourceType;
@@ -29,10 +30,16 @@ export class InfoSourceController {
 
     @Post()
     public async create(
-        @Body() { remoteGameId, type, gameId }: CreateInfoSourceDto
+        @Body() { url, type, gameId }: CreateInfoSourceDto
     ): Promise<InfoSource> {
-        // TODO: check remoteGameId
-        return await this.infoSourceService.addInfoSource(gameId, type, remoteGameId);
+        try {
+            return await this.infoSourceService.addInfoSource(gameId, type, url);
+        } catch (error) {
+            if (error instanceof UrlNotMappableError) {
+                throw new BadRequestException();
+            }
+            throw error;
+        }
     }
 
     @Post("/:infoSourceId/sync")

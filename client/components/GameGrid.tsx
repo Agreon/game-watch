@@ -12,7 +12,11 @@ export const GameGrid: React.FC = () => {
     const { games, gamesLoading } = useGamesContext();
 
     if (gamesLoading) {
-        return <Box position="relative" width="100%" mt="5rem"><LoadingSpinner size="xl" /></Box>
+        return (
+            <Box position="relative" width="100%" mt="5rem">
+                <LoadingSpinner size="xl" />
+            </Box>
+        );
     }
 
     return (

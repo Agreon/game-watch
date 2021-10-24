@@ -44,6 +44,6 @@ export class EpicSearcher implements InfoSearcher {
             return null;
         }
 
-        return gameData.title;
+        return `https://www.epicgames.com/store/de-DE/p/${gameData.productSlug.split("/")[0]}`;
     }
 }
