@@ -29,9 +29,10 @@ export class GameController {
 
     @Get()
     public async getAll(
-        @Query("tags") tags?: string[]
+        @Query("tags") tags?: string[],
+        @Query("infoSources") infoSources?: string[]
     ) {
-        return await this.gameService.getGames({ tags });
+        return await this.gameService.getGames({ tags, infoSources });
     }
 
     @Post("/sync")

@@ -39,7 +39,7 @@ export interface Game {
 
 export interface GamesFilter {
     tags: Tag[]
-    infoSources: string[]
+    infoSources: InfoSourceType[]
 }
 
 export interface GamesCtx {
@@ -48,6 +48,7 @@ export interface GamesCtx {
     addGame: (name: string) => Promise<void>
     setGame: (id: string, cb: ((current: Game) => Game) | Game) => void
     removeGame: (id: string) => void
+    filter: GamesFilter,
     setFilter: React.Dispatch<React.SetStateAction<GamesFilter>>
 }
 
@@ -71,7 +72,10 @@ export const GamesProvider: React.FC = ({ children }) => {
         setGamesLoading(true);
         await withRequest(async http => {
             const { data } = await http.get<Game[]>('/game', {
-                params: { tags: filter.tags.map(tag => tag.id) || undefined }
+                params: {
+                    tags: filter.tags.map(tag => tag.id) || undefined,
+                    infoSources: filter.infoSources || undefined
+                }
             });
             setGames(data);
         });
@@ -110,8 +114,9 @@ export const GamesProvider: React.FC = ({ children }) => {
         addGame,
         setGame,
         removeGame,
+        filter,
         setFilter
-    }), [games, gamesLoading, addGame, setGame, removeGame, setFilter]);
+    }), [games, gamesLoading, addGame, setGame, removeGame, filter, setFilter]);
 
     return (
         <GamesContext.Provider value={contextValue}>

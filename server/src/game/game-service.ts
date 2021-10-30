@@ -3,7 +3,6 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
 
-import { User } from "../auth/user-model";
 import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
@@ -152,12 +151,15 @@ export class GameService {
         return game;
     }
 
-
-
-    public async getGames({ tags }: { tags?: string[] }) {
+    // TODO: Tags are also filtered?!
+    public async getGames({ tags, infoSources }: { tags?: string[], infoSources?: string[] }) {
         const query = this.gameRepository.createQueryBuilder()
             .select("*")
+            // .joinAndSelect("tags", "gTags", tags ? {
+            //     id: tags
+            // } : undefined, "innerJoin")
             .leftJoinAndSelect("tags", "tags")
+            // .joinAndSelect("infoSources", "infoSources", infoSources ? { type: infoSources } : undefined, "innerJoin")
             .leftJoinAndSelect("infoSources", "infoSources")
             .orderBy({
                 updatedAt: QueryOrder.DESC,
@@ -165,14 +167,25 @@ export class GameService {
                 tags: { updatedAt: QueryOrder.DESC },
             });
 
+
+        if (infoSources) {
+            // query.where({
+            //     infoSources: {
+            //         type: { $in: infoSources }
+            //     }
+            // });
+        }
         if (tags) {
-            query.where({
-                tags: {
-                    id: { $in: tags }
-                }
-            });
+            // query.where({
+            //     tags: {
+            //         id: { $in: tags }
+            //     }
+            // });
+        } else {
+
         }
 
+        console.log(query.getQuery());
         return await query.getResult();
     }
 }

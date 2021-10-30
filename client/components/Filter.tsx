@@ -7,32 +7,25 @@ import { useTagContext } from '../providers/TagProvider';
 import { Tag as ChakraTag } from "@chakra-ui/react";
 import { TagWithToggleState } from './GameTags/EditGameTags';
 import { InfoSourceType, Tag, useGamesContext } from '../providers/GamesProvider';
-
-const ALL_INFO_SOURCES = [
-    InfoSourceType.PsStore,
-    InfoSourceType.Steam,
-    InfoSourceType.Switch,
-    InfoSourceType.Epic,
-    InfoSourceType.Metacritic,
-];
+import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
     toggled: boolean
 }
 
-export const InfoSourceFilter: React.FC = () => {
-    const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>([]);
-
+export const InfoSourceFilter: React.FC<{
+    filterInfoSources: InfoSourceType[],
+    setFilterInfoSources: React.Dispatch<React.SetStateAction<InfoSourceType[]>>
+}> = ({ filterInfoSources, setFilterInfoSources }) => {
     const sourcesWithToggleState = useMemo(() => {
-        return ALL_INFO_SOURCES.map(source => ({
+        return INFO_SOURCE_PRIORITY.map(source => ({
             type: source,
             toggled: filterInfoSources.some(type => type === source)
         }));
     }, [filterInfoSources]);
 
-
-    const toggleInfSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
+    const toggleInfoSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
         if (selectedSource.toggled) {
             setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type))
         } else {
@@ -47,7 +40,7 @@ export const InfoSourceFilter: React.FC = () => {
                 {sourcesWithToggleState.map(source => (
                     <ChakraTag
                         key={source.type}
-                        onClick={() => toggleInfSource(source)}
+                        onClick={() => toggleInfoSource(source)}
                         variant={source.toggled ? "subtle" : "outline"}
                         colorScheme={source.toggled ? "blue" : "whiteAlpha"}
                         cursor="pointer"
@@ -65,13 +58,14 @@ export const InfoSourceFilter: React.FC = () => {
 /**
  * TODO:
  * - Extract tags to component
+ * - On Outside click / esc
+ * - Cancel
  */
 export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    // TODO: Just set these as defaults and use a themed color everywhere.
-    const popUpBgColor = useColorModeValue('white', 'gray.800');
     const { tags: allTags } = useTagContext();
-    const { setFilter } = useGamesContext();
-    const [filterTags, setFilterTags] = useState<Tag[]>([]);
+    const { filter, setFilter } = useGamesContext();
+    const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>(filter.infoSources);
+    const [filterTags, setFilterTags] = useState<Tag[]>(filter.tags);
 
     const tagsWithToggleState = useMemo(() => {
         return allTags.map(tag => ({
@@ -89,12 +83,12 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }, [setFilterTags]);
 
     const applyFilter = useCallback(() => {
-        setFilter(filter => ({
-            ...filter,
+        setFilter({
+            infoSources: filterInfoSources,
             tags: filterTags
-        }))
+        });
         onClose();
-    }, [onClose, filterTags, setFilter]);
+    }, [onClose, filterTags, filterInfoSources, setFilter]);
 
     return (
         <Flex
@@ -102,16 +96,19 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             direction="column"
             top="100%"
             right="0"
-            bg={popUpBgColor}
+            bg={useColorModeValue('white', 'gray.800')}
+            border="1px"
+            borderColor={useColorModeValue("grey", "white")}
             px="2rem"
-            py="1rem"
+            pt="2rem"
+            pb="1rem"
             width="30rem"
             zIndex="2"
             rounded="lg"
             shadow="lg"
             boxShadow="xl"
         >
-            <InfoSourceFilter />
+            <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
             <Box mt="1rem">
                 <Text fontSize="lg">Tags</Text>
                 <Box ml="-0.5rem" >
@@ -137,15 +134,20 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     )
 }
 
-/**
- * TODO: Some highlight if filter is active
- */
 export const Filter: React.FC = () => {
-    const [showMenu, setShowMenu] = useState(true);
+    const { filter } = useGamesContext();
+    const [showMenu, setShowMenu] = useState(false);
+
+    const filterActive = filter.infoSources.length || filter.tags.length;
 
     return (
         <Flex align="center" height="100%" position="absolute" right="1rem" top="0">
-            <Button variant={showMenu ? "solid" : "ghost"} leftIcon={<EditIcon />} onClick={() => setShowMenu(true)}>
+            <Button
+                leftIcon={<EditIcon />}
+                colorScheme={filterActive ? "teal" : undefined}
+                variant={filterActive ? "outline" : "ghost"}
+                onClick={() => setShowMenu(true)}
+            >
                 Filter
             </Button>
             {showMenu && <FilterMenu onClose={() => setShowMenu(false)} />}
