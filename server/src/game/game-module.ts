@@ -1,6 +1,7 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
+import { AuthModule } from '../auth/auth-module';
 import { InfoSource } from "../info-source/info-source-model";
 import { ResolveModule } from '../resolve/resolve-module';
 import { SearchModule } from '../search/search-module';
@@ -11,6 +12,7 @@ import { GameService } from './game-service';
 
 @Module({
     imports: [
+        AuthModule,
         MikroOrmModule.forFeature([Game, InfoSource, Tag]),
         SearchModule,
         ResolveModule

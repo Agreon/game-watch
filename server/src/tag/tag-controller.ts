@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { IsString } from 'class-validator';
 
+import { UserService } from '../auth/user-service';
 import { Tag } from './tag-model';
 import { TagService } from './tag-service';
 
@@ -15,14 +16,16 @@ export class CreateTagDto {
 @Controller('tag')
 export class TagController {
   constructor(
-    private readonly tagService: TagService
+    private readonly tagService: TagService,
+    private readonly userService: UserService
   ) { }
 
   @Post()
   public async create(
     @Body() { name, color }: CreateTagDto
   ): Promise<Tag> {
-    return await this.tagService.create(name, color);
+    const user = await this.userService.getUserOrFail("");
+    return await this.tagService.create(name, color, user);
   }
 
   @Get()

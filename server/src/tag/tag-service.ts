@@ -3,6 +3,7 @@ import { EntityRepository } from '@mikro-orm/knex';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { ConflictException, Injectable } from '@nestjs/common';
 
+import { User } from '../auth/user-model';
 import { Tag } from './tag-model';
 
 
@@ -13,13 +14,13 @@ export class TagService {
     private readonly tagRepository: EntityRepository<Tag>
   ) { }
 
-  public async create(name: string, color: string) {
+  public async create(name: string, color: string, user: User) {
     let tag = await this.tagRepository.findOne({ name });
     if (tag !== null) {
       throw new ConflictException();
     }
 
-    tag = new Tag({ name, color });
+    tag = new Tag({ name, color, user });
     await this.tagRepository.persistAndFlush(tag);
 
     return tag;

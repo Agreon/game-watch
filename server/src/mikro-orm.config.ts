@@ -3,6 +3,7 @@ import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
 import * as dotenv from "dotenv";
 import path from 'path';
 
+import { User } from "./auth/user-model";
 import { Game } from "./game/game-model";
 import { InfoSource } from "./info-source/info-source-model";
 import { Migration20211012071707 } from "./migrations/Migration20211012071707";
@@ -16,7 +17,7 @@ import { Tag } from "./tag/tag-model";
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 const config: MikroOrmModuleSyncOptions = {
-    entities: [Game, InfoSource, Tag],
+    entities: [Game, InfoSource, Tag, User],
     type: 'postgresql' as keyof typeof Configuration.PLATFORMS,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
