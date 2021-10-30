@@ -9,6 +9,7 @@ export class SwitchResolver implements InfoResolver {
     public async resolve(id: string): Promise<SwitchGameData> {
 
         return await withBrowser(async (page) => {
+            // TODO: Does not accept special chars
             if (!id.includes("/")) {
                 // Just reuse the same search because we have all info there
                 const { docs: results } = await getSwitchSearchResponse(id);
@@ -56,7 +57,7 @@ export class SwitchResolver implements InfoResolver {
     }
     public async mapUrlToId(url: string): Promise<string> {
         const { hostname } = new URL(url);
-        if (hostname !== "nintendo.de") {
+        if (hostname !== "www.nintendo.de") {
             throw new Error("Not mappable");
         }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { IsString } from "class-validator";
 
 import { Game } from "./game-model";
@@ -28,8 +28,10 @@ export class GameController {
     }
 
     @Get()
-    public async getAll() {
-        return await this.gameService.getGames();
+    public async getAll(
+        @Query("tags") tags?: string[]
+    ) {
+        return await this.gameService.getGames({ tags });
     }
 
     @Post("/sync")

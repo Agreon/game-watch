@@ -9,14 +9,15 @@ export interface TagCtx {
     addTag: (name: string) => Promise<Tag | undefined>
 }
 
-export const TagContext = React.createContext<TagCtx>({
-    tags: [],
-    tagsLoading: false,
-    addTag: async () => ({} as Tag),
-});
+export const TagContext = React.createContext<TagCtx | null>(null);
 
 export function useTagContext() {
-    return useContext<TagCtx>(TagContext);
+    const context = useContext(TagContext);
+    if (!context) {
+        throw new Error("TagContext must be used inside TagProvider");
+    }
+
+    return context;
 }
 
 const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", "cyan", "purple", "pink", "linkedin", "facebook", "messenger", "whatsapp", "twitter", "telegram"];

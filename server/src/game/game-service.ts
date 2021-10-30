@@ -1,7 +1,9 @@
-import { EntityRepository, QueryOrder } from "@mikro-orm/core";
+import { QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
+import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
 
+import { User } from "../auth/user-model";
 import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
@@ -20,7 +22,7 @@ export class GameService {
         @InjectRepository(InfoSource)
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
         @InjectRepository(Tag)
-        private readonly tagRepository: EntityRepository<Tag>
+        private readonly tagRepository: EntityRepository<Tag>,
     ) { }
 
     public async createGame(search: string) {
@@ -152,14 +154,25 @@ export class GameService {
 
 
 
-    public async getGames() {
-        return await this.gameRepository.findAll({
-            populate: ["infoSources", "tags"],
-            orderBy: {
+    public async getGames({ tags }: { tags?: string[] }) {
+        const query = this.gameRepository.createQueryBuilder()
+            .select("*")
+            .leftJoinAndSelect("tags", "tags")
+            .leftJoinAndSelect("infoSources", "infoSources")
+            .orderBy({
                 updatedAt: QueryOrder.DESC,
                 infoSources: { type: QueryOrder.DESC },
                 tags: { updatedAt: QueryOrder.DESC },
-            }
-        });
+            });
+
+        if (tags) {
+            query.where({
+                tags: {
+                    id: { $in: tags }
+                }
+            });
+        }
+
+        return await query.getResult();
     }
 }

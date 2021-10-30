@@ -7,6 +7,7 @@ import { GameGrid } from '../components/GameGrid';
 import { AddGame } from '../components/AddGame';
 import { NoGamesYet } from '../components/NoGamesYet';
 import { TagProvider } from '../providers/TagProvider';
+import { Filter } from '../components/Filter';
 
 const Home: NextPage = () => {
   return (
@@ -14,10 +15,11 @@ const Home: NextPage = () => {
       <TagProvider>
       <Box>
         <NoGamesYet />
-        <Flex justify="center">
-          <Box width={["80%", "80%", "80%", "30%"]} ml={["0rem", "0rem", "0rem", "6rem"]}>
-            <AddGame />
-          </Box>
+          <Flex justify="center" position="relative">
+            <Box width={["70%", "70%", "70%", "30%"]} ml={["0rem", "0rem", "0rem", "6rem"]}>
+              <AddGame />
+            </Box>
+            <Filter />
         </Flex>
         <GameGrid />
       </Box>
