@@ -73,8 +73,8 @@ export const GamesProvider: React.FC = ({ children }) => {
         await withRequest(async http => {
             const { data } = await http.get<Game[]>('/game', {
                 params: {
-                    tags: filter.tags.map(tag => tag.id) || undefined,
-                    infoSources: filter.infoSources || undefined
+                    withTags: filter.tags.map(tag => tag.id),
+                    withInfoSources: filter.infoSources
                 }
             });
             setGames(data);

@@ -151,7 +151,7 @@ export class GameService {
         return game;
     }
 
-    public async getGames({ tags, infoSources }: { tags?: string[], infoSources?: string[] }) {
+    public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {
         const knex = this.infoSourceRepository.getKnex();
 
         const query = this.gameRepository.createQueryBuilder("game")
@@ -164,21 +164,21 @@ export class GameService {
                 tags: { updatedAt: QueryOrder.DESC },
             });
 
-        if (tags) {
+        if (withTags) {
             const matchingTagsQuery = knex
                 .count("tag_id")
                 .from("game_tags")
                 .where({
                     "game_id": knex.ref("game.id"),
                 })
-                .andWhere("tag_id", "IN", tags);
+                .andWhere("tag_id", "IN", withTags);
 
             query
                 .withSubQuery(matchingTagsQuery, "game.matchingTags")
                 .andWhere({ 'game.matchingTags': { $gt: 0 } });
         }
 
-        if (infoSources) {
+        if (withInfoSources) {
             const matchingInfoSourcesSubQuery = knex
                 .count("info_source.id")
                 .from("info_source")
@@ -186,7 +186,7 @@ export class GameService {
                     "game_id": knex.ref("game.id"),
                     disabled: false
                 })
-                .andWhere("type", "in", infoSources);
+                .andWhere("type", "in", withInfoSources);
 
             query
                 .withSubQuery(matchingInfoSourcesSubQuery, "game.matchingInfoSources")
