@@ -1,5 +1,6 @@
-import { EntityRepository, QueryOrder } from "@mikro-orm/core";
+import { QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
+import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
 
 import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
@@ -20,7 +21,7 @@ export class GameService {
         @InjectRepository(InfoSource)
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
         @InjectRepository(Tag)
-        private readonly tagRepository: EntityRepository<Tag>
+        private readonly tagRepository: EntityRepository<Tag>,
     ) { }
 
     public async createGame(search: string) {
@@ -150,16 +151,48 @@ export class GameService {
         return game;
     }
 
+    public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {
+        const knex = this.infoSourceRepository.getKnex();
 
-
-    public async getGames() {
-        return await this.gameRepository.findAll({
-            populate: ["infoSources", "tags"],
-            orderBy: {
+        const query = this.gameRepository.createQueryBuilder("game")
+            .select("*")
+            .leftJoinAndSelect("game.tags", "tags")
+            .leftJoinAndSelect("game.infoSources", "infoSources")
+            .orderBy({
                 updatedAt: QueryOrder.DESC,
                 infoSources: { type: QueryOrder.DESC },
                 tags: { updatedAt: QueryOrder.DESC },
-            }
-        });
+            });
+
+        if (withTags) {
+            const matchingTagsQuery = knex
+                .count("tag_id")
+                .from("game_tags")
+                .where({
+                    "game_id": knex.ref("game.id"),
+                })
+                .andWhere("tag_id", "IN", withTags);
+
+            query
+                .withSubQuery(matchingTagsQuery, "game.matchingTags")
+                .andWhere({ 'game.matchingTags': { $gt: 0 } });
+        }
+
+        if (withInfoSources) {
+            const matchingInfoSourcesSubQuery = knex
+                .count("info_source.id")
+                .from("info_source")
+                .where({
+                    "game_id": knex.ref("game.id"),
+                    disabled: false
+                })
+                .andWhere("type", "in", withInfoSources);
+
+            query
+                .withSubQuery(matchingInfoSourcesSubQuery, "game.matchingInfoSources")
+                .andWhere({ 'game.matchingInfoSources': { $gt: 0 } });
+        }
+
+        return await query.getResult();
     }
 }

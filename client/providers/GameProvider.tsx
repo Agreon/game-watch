@@ -4,12 +4,12 @@ import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
 
 // TODO: Let users select the priority / image
-const INFO_SOURCE_PRIORITY = [
-    "psStore",
-    "steam",
-    "switch",
-    "epic",
-    "metacritic"
+export const INFO_SOURCE_PRIORITY = [
+    InfoSourceType.PsStore,
+    InfoSourceType.Steam,
+    InfoSourceType.Switch,
+    InfoSourceType.Epic,
+    InfoSourceType.Metacritic,
 ];
 
 const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): string | null => {

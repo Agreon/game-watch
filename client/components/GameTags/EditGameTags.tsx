@@ -6,7 +6,7 @@ import { Tag } from "../../providers/GamesProvider";
 import { useTagContext } from "../../providers/TagProvider";
 import { useGameContext } from "../../providers/GameProvider";
 
-interface TagWithToggleState extends Tag {
+export interface TagWithToggleState extends Tag {
     toggled: boolean
 }
 

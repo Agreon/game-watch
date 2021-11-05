@@ -37,39 +37,50 @@ export interface Game {
     justAdded?: boolean;
 }
 
+export interface GamesFilter {
+    tags: Tag[]
+    infoSources: InfoSourceType[]
+}
+
 export interface GamesCtx {
     games: Game[]
     gamesLoading: boolean
     addGame: (name: string) => Promise<void>
     setGame: (id: string, cb: ((current: Game) => Game) | Game) => void
     removeGame: (id: string) => void
+    filter: GamesFilter,
+    setFilter: React.Dispatch<React.SetStateAction<GamesFilter>>
 }
 
-export const GamesContext = React.createContext<GamesCtx>({
-    games: [],
-    gamesLoading: false,
-    addGame: async () => { },
-    setGame: async () => { },
-    removeGame: async () => { }
-});
+export const GamesContext = React.createContext<GamesCtx | null>(null);
 
 export function useGamesContext() {
-    return useContext<GamesCtx>(GamesContext);
+    const context = useContext(GamesContext);
+    if (!context) {
+        throw new Error("GamesContext must be used inside GamesProvider");
+    }
+    return context;
 }
 
 export const GamesProvider: React.FC = ({ children }) => {
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<Game[]>([]);
+    const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
     const { withRequest } = useHttp();
 
     const fetchGames = useCallback(async () => {
         setGamesLoading(true);
         await withRequest(async http => {
-            const { data } = await http.get<Game[]>('/game');
+            const { data } = await http.get<Game[]>('/game', {
+                params: {
+                    withTags: filter.tags.map(tag => tag.id),
+                    withInfoSources: filter.infoSources
+                }
+            });
             setGames(data);
         });
         setGamesLoading(false);
-    }, [withRequest]);
+    }, [withRequest, filter]);
 
     const setGame = useCallback((id: string, cb: ((current: Game) => Game) | Game) => {
         setGames(currentGames => {
@@ -102,8 +113,10 @@ export const GamesProvider: React.FC = ({ children }) => {
         gamesLoading,
         addGame,
         setGame,
-        removeGame
-    }), [games, gamesLoading, addGame, setGame, removeGame]);
+        removeGame,
+        filter,
+        setFilter
+    }), [games, gamesLoading, addGame, setGame, removeGame, filter, setFilter]);
 
     return (
         <GamesContext.Provider value={contextValue}>

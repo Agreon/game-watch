@@ -30,7 +30,7 @@ export const AddGame: React.FC = () => {
     }, [searchGame]);
 
     return (
-        <Flex>
+        <Flex align="center">
             <Input
                 ref={inputRef}
                 value={name}
