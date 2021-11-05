@@ -6,8 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger, useColorModeValue } from "@cha
 import { useTagContext } from '../providers/TagProvider';
 import { Tag as ChakraTag } from "@chakra-ui/react";
 import { TagWithToggleState } from './GameTags/EditGameTags';
-import { InfoSourceType, Tag, useGamesContext } from '../providers/GamesProvider';
+import { useGamesContext } from '../providers/GamesProvider';
 import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
+import { InfoSourceType, TagDto } from 'game-watch-shared';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
@@ -63,7 +64,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();
     const { filter, setFilter } = useGamesContext();
     const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>(filter.infoSources);
-    const [filterTags, setFilterTags] = useState<Tag[]>(filter.tags);
+    const [filterTags, setFilterTags] = useState<TagDto[]>(filter.tags);
 
     const tagsWithToggleState = useMemo(() => {
         return allTags.map(tag => ({

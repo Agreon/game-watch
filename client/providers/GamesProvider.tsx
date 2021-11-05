@@ -1,52 +1,23 @@
 import { AxiosResponse } from "axios";
+import { CreateGameDto, GameDto, InfoSourceType, TagDto } from "game-watch-shared";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHttp } from "../util/useHttp";
 
-export enum InfoSourceType {
-    Steam = "steam",
-    Switch = "switch",
-    PsStore = "psStore",
-    Epic = "epic",
-    Metacritic = "metacritic"
-}
-
-export interface Tag {
-    id: string;
-    name: string;
-    color: string;
-}
-
-// TOOD: We need a monorepo
-export interface InfoSource {
-    id: string
-    type: InfoSourceType
-    disabled: boolean
-    resolveError: boolean
-    data: Record<string, any> | null
-    loading: boolean
-}
-
-export interface Game {
-    id: string
-    search: string
-    name: string | null
-    infoSources: InfoSource[]
-    tags: Tag[]
-    syncing: boolean;
-    updatedAt: string;
+// TODO: Uncool
+export interface GameWithLoadingState extends GameDto {
     justAdded?: boolean;
 }
 
 export interface GamesFilter {
-    tags: Tag[]
+    tags: TagDto[]
     infoSources: InfoSourceType[]
 }
 
 export interface GamesCtx {
-    games: Game[]
+    games: GameWithLoadingState[]
     gamesLoading: boolean
     addGame: (name: string) => Promise<void>
-    setGame: (id: string, cb: ((current: Game) => Game) | Game) => void
+    setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
     filter: GamesFilter,
     setFilter: React.Dispatch<React.SetStateAction<GamesFilter>>
@@ -64,14 +35,14 @@ export function useGamesContext() {
 
 export const GamesProvider: React.FC = ({ children }) => {
     const [gamesLoading, setGamesLoading] = useState(false);
-    const [games, setGames] = useState<Game[]>([]);
+    const [games, setGames] = useState<GameDto[]>([]);
     const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
     const { withRequest } = useHttp();
 
     const fetchGames = useCallback(async () => {
         setGamesLoading(true);
         await withRequest(async http => {
-            const { data } = await http.get<Game[]>('/game', {
+            const { data } = await http.get<GameDto[]>('/game', {
                 params: {
                     withTags: filter.tags.map(tag => tag.id),
                     withInfoSources: filter.infoSources
@@ -82,7 +53,7 @@ export const GamesProvider: React.FC = ({ children }) => {
         setGamesLoading(false);
     }, [withRequest, filter]);
 
-    const setGame = useCallback((id: string, cb: ((current: Game) => Game) | Game) => {
+    const setGame = useCallback((id: string, cb: ((current: GameDto) => GameDto) | GameDto) => {
         setGames(currentGames => {
             const currentGame = currentGames.find(game => id === game.id)!;
             const newGame = typeof cb === "function" ? cb(currentGame) : cb;
@@ -96,12 +67,13 @@ export const GamesProvider: React.FC = ({ children }) => {
 
     const addGame = useCallback(async (name: string) => {
         await withRequest(async http => {
-            const { data } = await http.post<unknown, AxiosResponse<Game>>("/game", { search: name });
-            setGames(currentGames => [{
-                ...data,
-                justAdded: true
-            },
-            ...currentGames
+            const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>("/game", { search: name });
+            setGames(currentGames => [
+                {
+                    ...data,
+                    justAdded: true
+                },
+                ...currentGames
             ]);
         });
     }, [withRequest, setGames]);

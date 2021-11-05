@@ -1,4 +1,5 @@
-import { InfoSourceType, SwitchGameData } from "../../info-source/info-source-model";
+import { InfoSourceType, SwitchGameData } from "game-watch-shared";
+
 import { getSwitchSearchResponse } from "../../search/searchers/switch-searcher";
 import { withBrowser } from "../../util/with-browser";
 import { InfoResolver } from "../resolve-service";

@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import * as Sentry from '@sentry/node';
-
-import { InfoSourceType } from "../info-source/info-source-model";
+import { InfoSourceType } from "game-watch-shared";
 
 export interface InfoSearcher {
     type: InfoSourceType;

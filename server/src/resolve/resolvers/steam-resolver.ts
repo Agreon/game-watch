@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import axios from "axios";
+import { InfoSourceType, SteamGameData } from "game-watch-shared";
 
-import { InfoSourceType, SteamGameData } from "../../info-source/info-source-model";
 import { InfoResolver } from "../resolve-service";
 
 

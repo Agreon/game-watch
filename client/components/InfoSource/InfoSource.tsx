@@ -1,6 +1,5 @@
 import React from "react"
 import { StoreInfoSource } from "./StoreInfoSource"
-import { InfoSourceType } from "../../providers/GamesProvider"
 import { MetacriticInfoSource } from "./MetacriticInfoSource"
 import steamLogo from '../../assets/steam.svg';
 import switchLogo from '../../assets/switch.png';
@@ -9,11 +8,17 @@ import epicLogo from "../../assets/epic";
 import Image from 'next/image';
 import { Flex } from "@chakra-ui/layout"
 import { Text, } from "@chakra-ui/react";
+import { InfoSourceType, MetacriticData } from "game-watch-shared";
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
-export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
-    switch (type) {
-        case "steam":
+// TODO: Type discrimnation does not work
+export const InfoSource: React.FC = () => {
+    const { source } = useInfoSourceContext();
+
+    switch (source.type) {
+        case InfoSourceType.Steam:
             return <StoreInfoSource
+                data={source.data}
                 name={
                     <Flex align="end">
                         <Image alt="source-icon" priority={true} src={steamLogo} height="30px" width="30px" />
@@ -21,8 +26,9 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
                     </Flex>
                 }
                 expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
-        case "switch":
+        case InfoSourceType.Switch:
             return <StoreInfoSource
+                data={source.data}
                 name={
                     <Flex align="center">
                         <Image alt="source-icon" priority={true} src={switchLogo} height="30px" width="30px" />
@@ -30,8 +36,9 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
                     </Flex>
                 }
                 expectedDateFormats={["DD.MM.YYYY"]} />
-        case "psStore":
+        case InfoSourceType.PsStore:
             return <StoreInfoSource
+                data={source.data}
                 name={
                     <Flex align="end">
                         <Image alt="source-icon" priority={true} src={psLogo} height="30px" width="30px" />
@@ -39,8 +46,9 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
                     </Flex>
                 }
                 expectedDateFormats={["D.M.YYYY"]} />
-        case "epic":
+        case InfoSourceType.Epic:
             return <StoreInfoSource
+                data={source.data}
                 name={
                     <Flex align="ce">
                         <Image alt="source-icon" priority={true} src={epicLogo} height="30px" width="30px" />
@@ -48,7 +56,7 @@ export const InfoSource: React.FC<{ type: InfoSourceType }> = ({ type }) => {
                     </Flex>
                 }
                 expectedDateFormats={["YYYY-MM-DD"]} />
-        default:
-            return <MetacriticInfoSource />;
+        case InfoSourceType.Metacritic:
+            return <MetacriticInfoSource data={source.data as MetacriticData} />;
     }
 }

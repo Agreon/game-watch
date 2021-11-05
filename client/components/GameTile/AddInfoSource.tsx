@@ -14,11 +14,11 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import { InfoSource, InfoSourceType } from "../../providers/GamesProvider";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useGameContext } from "../../providers/GameProvider";
+import { InfoSourceDto, InfoSourceType } from "game-watch-shared";
 
-export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSource) => Promise<void> }> = ({ syncInfoSource }) => {
+export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSourceDto) => Promise<void> }> = ({ syncInfoSource }) => {
     const { addInfoSource, allInfoSources } = useGameContext();
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();

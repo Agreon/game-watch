@@ -1,7 +1,14 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Game, InfoSource, InfoSourceType, Tag, useGamesContext } from "./GamesProvider";
+import { GameWithLoadingState, useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
+import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, StoreGameData, TagDto } from "game-watch-shared";
+
+// TODO: Uncool
+export interface InfoSourceWithLoadingState extends InfoSourceDto {
+    loading?: boolean;
+}
+
 
 // TODO: Let users select the priority / image
 export const INFO_SOURCE_PRIORITY = [
@@ -12,24 +19,29 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Metacritic,
 ];
 
-const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): string | null => {
+const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string): string | null => {
     for (const infoSource of infoSources) {
-        if (infoSource.data?.[key]) {
-            if (key === "thumbnailUrl" && infoSource.type === "psStore") {
-                const url = new URL(infoSource.data[key] as string);
+        if (!infoSource.data) {
+            continue;
+        }
+        const valueForKey = (infoSource.data as any)[key] as string | undefined;
+
+        if (valueForKey) {
+            if (infoSource.type === "psStore" && key === "thumbnailUrl") {
+                const url = new URL(valueForKey);
                 url.searchParams.delete("w");
                 url.searchParams.append("w", "460");
                 return url.toString();
             }
 
-            if (key === "thumbnailUrl" && infoSource.type === "epic") {
-                const url = new URL(infoSource.data[key] as string);
+            if (infoSource.type === "epic" && key === "thumbnailUrl") {
+                const url = new URL(valueForKey);
                 url.searchParams.delete("h");
                 url.searchParams.append("h", "215");
                 return url.toString();
             }
 
-            return infoSource.data[key] as string;
+            return valueForKey;
         }
     }
 
@@ -37,20 +49,20 @@ const retrieveDataFromInfoSources = (infoSources: InfoSource[], key: string): st
 }
 
 export interface GameCtx {
-    game: Game
-    tags: Tag[]
+    game: GameDto
+    tags: TagDto[]
     loading: boolean
-    allInfoSources: InfoSource[]
-    activeInfoSources: InfoSource[]
+    allInfoSources: InfoSourceDto[]
+    activeInfoSources: InfoSourceDto[]
     fullName: string
     thumbnailUrl: string | null
     syncGame: () => Promise<void>
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
-    setGameInfoSource: (infoSource: InfoSource) => void
-    addTagToGame: (tag: Tag) => Promise<void>
-    removeTagFromGame: (tag: Tag) => Promise<void>
-    addInfoSource: (type: InfoSourceType, url: string) => Promise<InfoSource | undefined>
+    setGameInfoSource: (infoSource: InfoSourceDto) => void
+    addTagToGame: (tag: TagDto) => Promise<void>
+    removeTagFromGame: (tag: TagDto) => Promise<void>
+    addInfoSource: (type: InfoSourceType, url: string) => Promise<InfoSourceDto | undefined>
 }
 
 export const GameContext = React.createContext<GameCtx | undefined>(undefined);
@@ -63,7 +75,7 @@ export function useGameContext() {
     return context;
 }
 
-export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
+export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ children, game }) => {
     const { setGame, removeGame } = useGamesContext();
     const { withRequest, handleError } = useHttp();
     const [loading, setLoading] = useState(false);
@@ -71,7 +83,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
     const syncGame = useCallback(async () => {
         setLoading(true);
         await withRequest(async http => {
-            const { data } = await http.post<Game>(`/game/${game.id}/sync`);
+            const { data } = await http.post<GameDto>(`/game/${game.id}/sync`);
             setGame(data.id, data);
         });
         setLoading(false);
@@ -86,7 +98,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         }));
 
         await withRequest(
-            async http => await http.put<Game>(`/game/${game.id}`, {
+            async http => await http.put<GameDto>(`/game/${game.id}`, {
                 ...game,
                 name
             }),
@@ -111,14 +123,14 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         setLoading(false);
     }, [withRequest, removeGame, game.id]);
 
-    const setGameInfoSource = useCallback((newInfoSource: InfoSource) => {
+    const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
             curr.infoSources = [...curr.infoSources.filter(({ id }) => newInfoSource.id !== id), newInfoSource];
             return curr;
         });
     }, [setGame, game.id]);
 
-    const addTagToGame = useCallback(async (tag: Tag) => {
+    const addTagToGame = useCallback(async (tag: TagDto) => {
         const oldGameTags = [...game.tags];
         // Optimistic update
         setGame(game.id, curr => ({
@@ -140,7 +152,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
         );
     }, [withRequest, handleError, setGame, game.id, game.tags]);
 
-    const removeTagFromGame = useCallback(async (tag: Tag) => {
+    const removeTagFromGame = useCallback(async (tag: TagDto) => {
         const oldGameTags = [...game.tags];
         // Optimistic update
         setGame(game.id, curr => ({
@@ -164,7 +176,7 @@ export const GameProvider: React.FC<{ game: Game }> = ({ children, game }) => {
 
     const addInfoSource = useCallback(async (type: InfoSourceType, url: string) => {
         return await withRequest(async http => {
-            const { data: infoSource } = await http.post<unknown, AxiosResponse<InfoSource>>(`/info-source`, {
+            const { data: infoSource } = await http.post<CreateInfoSourceDto, AxiosResponse<InfoSourceDto>>(`/info-source`, {
                 gameId: game.id,
                 type,
                 url

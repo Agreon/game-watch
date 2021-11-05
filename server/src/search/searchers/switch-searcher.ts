@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import axios from "axios";
+import { InfoSourceType } from "game-watch-shared";
 
-import { InfoSourceType } from "../../info-source/info-source-model";
 import { matchingName } from "../../util/matching-name";
 import { withBrowser } from "../../util/with-browser";
 import { InfoSearcher } from "../search-service";

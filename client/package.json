@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "game-watch-shared": "0.0.1",
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.8",
     "@emotion/react": "^11",

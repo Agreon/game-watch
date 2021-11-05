@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as cheerio from 'cheerio';
+import { EpicGameData, InfoSourceType } from "game-watch-shared";
 
-import { EpicGameData, InfoSourceType } from "../../info-source/info-source-model";
 import { InfoResolver } from "../resolve-service";
 
 export class EpicResolver implements InfoResolver {

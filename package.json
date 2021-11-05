@@ -1,0 +1,9 @@
+{
+    "name": "game-watch",
+    "private": "true",
+    "workspaces": [
+        "shared",
+        "client",
+        "server"
+    ]
+}

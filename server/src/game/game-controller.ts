@@ -1,18 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import { IsString } from "class-validator";
+import { CreateGameDto, UpdateGameDto } from "game-watch-shared";
 
 import { Game } from "./game-model";
 import { GameService } from "./game-service";
-
-export class CreateGameDto {
-    @IsString()
-    public search: string;
-}
-
-export class UpdateGameDto {
-    @IsString()
-    public name: string;
-}
 
 @Controller("/game")
 export class GameController {
@@ -31,7 +21,7 @@ export class GameController {
     public async getAll(
         @Query("withTags") withTags?: string[],
         @Query("withInfoSources") withInfoSources?: string[]
-    ) {
+    ): Promise<Game[]> {
         return await this.gameService.getGames({ withTags, withInfoSources });
     }
 

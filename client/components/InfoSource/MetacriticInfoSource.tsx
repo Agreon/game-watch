@@ -9,7 +9,7 @@ import React, { useMemo } from "react";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import metacriticLogo from '../../assets/metacritic.svg';
 import Image from 'next/image'
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { MetacriticData } from "game-watch-shared";
 
 const getMetaCriticScoreColor = (score: number) => {
     if (isNaN(score)) {
@@ -40,9 +40,7 @@ const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displ
 }
 
 // TODO: is jumping on loading state
-export const MetacriticInfoSource: React.FC = () => {
-    const { source } = useInfoSourceContext();
-
+export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = ({ data }) => {
     return (
         <InfoSourceWrapper
             name={
@@ -55,13 +53,13 @@ export const MetacriticInfoSource: React.FC = () => {
             <Box flex="1">
                 <Stat>
                     <StatLabel>Critic Score</StatLabel>
-                    <Score score={parseInt(source.data?.criticScore)} displayScore={parseInt(source.data?.criticScore)} />
+                    <Score score={parseInt(data?.criticScore ?? "")} displayScore={parseInt(data?.criticScore ?? "")} />
                 </Stat>
             </Box>
             <Box flex="1">
                 <Stat>
                     <StatLabel>User Score</StatLabel>
-                    <Score score={parseInt(source.data?.userScore) * 10} displayScore={parseInt(source.data?.userScore)} />
+                    <Score score={parseInt(data?.userScore ?? "") * 10} displayScore={parseInt(data?.userScore ?? "")} />
                 </Stat>
             </Box>
         </InfoSourceWrapper>

@@ -1,10 +1,11 @@
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable, Logger } from "@nestjs/common";
+import { InfoSourceType } from "game-watch-shared";
 
 import { Game } from "../game/game-model";
 import { ResolveService } from "../resolve/resolve-service";
-import { InfoSource, InfoSourceType } from "./info-source-model";
+import { InfoSource } from "./info-source-model";
 
 @Injectable()
 export class InfoSourceService {

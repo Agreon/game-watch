@@ -1,26 +1,8 @@
 import { BadRequestException, Body, Controller, Param, Post } from "@nestjs/common";
-import { IsEnum, IsString } from "class-validator";
+import { CreateInfoSourceDto, InfoSourceDto } from "game-watch-shared";
 
 import { UrlNotMappableError } from "../resolve/resolve-service";
-import { InfoSource, InfoSourceType } from "./info-source-model";
 import { InfoSourceService } from "./info-source-service";
-
-export class CreateInfoSourceDto {
-    @IsString()
-    public gameId: string;
-
-    @IsString()
-    public url: string;
-
-    @IsEnum(InfoSourceType)
-    public type: InfoSourceType;
-}
-
-export class UpdateInfoSourceDto {
-    @IsString()
-    public search: string;
-}
-
 
 @Controller("/info-source")
 export class InfoSourceController {
@@ -31,7 +13,7 @@ export class InfoSourceController {
     @Post()
     public async create(
         @Body() { url, type, gameId }: CreateInfoSourceDto
-    ): Promise<InfoSource> {
+    ): Promise<InfoSourceDto> {
         try {
             return await this.infoSourceService.addInfoSource(gameId, type, url);
         } catch (error) {
@@ -45,14 +27,14 @@ export class InfoSourceController {
     @Post("/:infoSourceId/sync")
     public async syncInfoSource(
         @Param("infoSourceId") infoSourceId: string
-    ) {
+    ): Promise<InfoSourceDto> {
         return await this.infoSourceService.syncInfoSource(infoSourceId);
     }
 
     @Post("/:infoSourceId/disable")
     public async disableInfoSource(
         @Param("infoSourceId") infoSourceId: string
-    ) {
+    ): Promise<InfoSourceDto> {
         return await this.infoSourceService.disableInfoSource(infoSourceId);
     }
 }

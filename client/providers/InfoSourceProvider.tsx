@@ -1,10 +1,11 @@
+import { InfoSourceDto } from "game-watch-shared";
 import React, { useContext, useMemo } from "react";
-import { InfoSource } from "./GamesProvider";
+import { InfoSourceWithLoadingState } from "./GameProvider";
 
 export interface InfoSourceCtx {
-    source: InfoSource
-    syncInfoSource: (infoSource: InfoSource) => Promise<void>
-    disableInfoSource: (infoSource: InfoSource) => Promise<void>
+    source: InfoSourceWithLoadingState
+    syncInfoSource: (infoSource: InfoSourceDto) => Promise<void>
+    disableInfoSource: (infoSource: InfoSourceDto) => Promise<void>
 }
 
 export const InfoSourceContext = React.createContext<InfoSourceCtx | undefined>(undefined);
