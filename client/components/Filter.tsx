@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Button } from '@chakra-ui/button';
 import { EditIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { useColorModeValue } from "@chakra-ui/react";
+import { Popover, PopoverContent, PopoverTrigger, useColorModeValue } from "@chakra-ui/react";
 import { useTagContext } from '../providers/TagProvider';
 import { Tag as ChakraTag } from "@chakra-ui/react";
 import { TagWithToggleState } from './GameTags/EditGameTags';
@@ -58,9 +58,7 @@ export const InfoSourceFilter: React.FC<{
 /**
  * TODO:
  * - Extract tags to component
- * - On Outside click / esc
- * - Cancel
- */
+*/
 export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();
     const { filter, setFilter } = useGamesContext();
@@ -91,22 +89,15 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }, [onClose, filterTags, filterInfoSources, setFilter]);
 
     return (
-        <Flex
-            position="absolute"
+        <PopoverContent
             direction="column"
-            top="100%"
-            right="0"
             bg={useColorModeValue('white', 'gray.800')}
-            border="1px"
-            borderColor={useColorModeValue("grey", "white")}
             px="2rem"
             pt="2rem"
             pb="1rem"
+            mr="3rem"
             width="30rem"
-            zIndex="2"
             rounded="lg"
-            shadow="lg"
-            boxShadow="xl"
         >
             <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
             <Box mt="1rem">
@@ -128,9 +119,10 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </Box>
             </Box>
             <Flex justify="end">
+                <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
                 <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>
             </Flex>
-        </Flex>
+        </PopoverContent>
     )
 }
 
@@ -142,15 +134,24 @@ export const Filter: React.FC = () => {
 
     return (
         <Flex align="center" height="100%" position="absolute" right="1rem" top="0">
-            <Button
-                leftIcon={<EditIcon />}
-                colorScheme={filterActive ? "teal" : undefined}
-                variant={filterActive ? "outline" : "ghost"}
-                onClick={() => setShowMenu(true)}
+            <Popover
+                returnFocusOnClose={false}
+                isOpen={showMenu}
+                onClose={() => setShowMenu(false)}
+                placement="bottom"
             >
-                Filter
-            </Button>
-            {showMenu && <FilterMenu onClose={() => setShowMenu(false)} />}
+                <PopoverTrigger>
+                    <Button
+                        leftIcon={<EditIcon />}
+                        colorScheme={filterActive ? "teal" : undefined}
+                        variant={filterActive ? "outline" : "ghost"}
+                        onClick={() => setShowMenu(true)}
+                    >
+                        Filter
+                    </Button>
+                </PopoverTrigger>
+                <FilterMenu onClose={() => setShowMenu(false)} />
+            </Popover>
         </Flex>
     )
 }

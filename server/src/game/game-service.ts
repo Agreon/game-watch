@@ -151,41 +151,48 @@ export class GameService {
         return game;
     }
 
-    // TODO: Tags are also filtered?!
     public async getGames({ tags, infoSources }: { tags?: string[], infoSources?: string[] }) {
-        const query = this.gameRepository.createQueryBuilder()
+        const knex = this.infoSourceRepository.getKnex();
+
+        const query = this.gameRepository.createQueryBuilder("game")
             .select("*")
-            // .joinAndSelect("tags", "gTags", tags ? {
-            //     id: tags
-            // } : undefined, "innerJoin")
-            .leftJoinAndSelect("tags", "tags")
-            // .joinAndSelect("infoSources", "infoSources", infoSources ? { type: infoSources } : undefined, "innerJoin")
-            .leftJoinAndSelect("infoSources", "infoSources")
+            .leftJoinAndSelect("game.tags", "tags")
+            .leftJoinAndSelect("game.infoSources", "infoSources")
             .orderBy({
                 updatedAt: QueryOrder.DESC,
                 infoSources: { type: QueryOrder.DESC },
                 tags: { updatedAt: QueryOrder.DESC },
             });
 
+        if (tags) {
+            const matchingTagsQuery = knex
+                .count("tag_id")
+                .from("game_tags")
+                .where({
+                    "game_id": knex.ref("game.id"),
+                })
+                .andWhere("tag_id", "IN", tags);
+
+            query
+                .withSubQuery(matchingTagsQuery, "game.matchingTags")
+                .andWhere({ 'game.matchingTags': { $gt: 0 } });
+        }
 
         if (infoSources) {
-            // query.where({
-            //     infoSources: {
-            //         type: { $in: infoSources }
-            //     }
-            // });
-        }
-        if (tags) {
-            // query.where({
-            //     tags: {
-            //         id: { $in: tags }
-            //     }
-            // });
-        } else {
+            const matchingInfoSourcesSubQuery = knex
+                .count("info_source.id")
+                .from("info_source")
+                .where({
+                    "game_id": knex.ref("game.id"),
+                    disabled: false
+                })
+                .andWhere("type", "in", infoSources);
 
+            query
+                .withSubQuery(matchingInfoSourcesSubQuery, "game.matchingInfoSources")
+                .andWhere({ 'game.matchingInfoSources': { $gt: 0 } });
         }
 
-        console.log(query.getQuery());
         return await query.getResult();
     }
 }
