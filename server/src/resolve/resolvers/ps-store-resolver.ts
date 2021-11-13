@@ -20,20 +20,20 @@ export class PsStoreResolver implements InfoResolver {
             await browser.goto(storePage);
             await browser.waitForSelector(".psw-t-title-m");
 
-            const { data } = await axios.get<string>(
-                storePage
-            );
+            // const { data } = await axios.get<string>(
+            //     storePage
+            // );
 
-            console.time("LOAD");
-            const $ = cheerio.load(data);
+            // console.time("LOAD");
+            // const $ = cheerio.load(data);
 
-            const script = (($("#__NEXT_DATA__")[0] as any).children[0] as any).data as string;
+            // const script = (($("#__NEXT_DATA__")[0] as any).children[0] as any).data as string;
 
-            // const script = $("#__NEXT_DATA__").children()[0].data;
-            const content = JSON.parse(script);
-            console.timeEnd("LOAD");
+            // // const script = $("#__NEXT_DATA__").children()[0].data;
+            // const content = JSON.parse(script);
+            // console.timeEnd("LOAD");
 
-            console.log(content.props.pageProps.batarangs["game-title"]);
+            // console.log(content.props.pageProps.batarangs["game-title"]);
 
             // pdp-cta
             // basePrices, discountPrice, name
