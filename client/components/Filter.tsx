@@ -97,7 +97,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             pt="2rem"
             pb="1rem"
             mr="3rem"
-            width="30rem"
+            width={["100vw", "100vw", "30rem"]}
             rounded="lg"
         >
             <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
@@ -134,7 +134,7 @@ export const Filter: React.FC = () => {
     const filterActive = filter.infoSources.length || filter.tags.length;
 
     return (
-        <Flex align="center" height="100%" position="absolute" right="1rem" top="0">
+        <Flex align="center" height="100%">
             <Popover
                 returnFocusOnClose={false}
                 isOpen={showMenu}
@@ -148,7 +148,7 @@ export const Filter: React.FC = () => {
                         variant={filterActive ? "outline" : "ghost"}
                         onClick={() => setShowMenu(true)}
                     >
-                        Filter
+                        <Text display={["none", "none", "block"]}>Filter</Text>
                     </Button>
                 </PopoverTrigger>
                 <FilterMenu onClose={() => setShowMenu(false)} />

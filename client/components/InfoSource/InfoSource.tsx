@@ -11,7 +11,7 @@ import { Text, } from "@chakra-ui/react";
 import { InfoSourceType, MetacriticData } from "game-watch-shared";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
-// TODO: Type discrimnation does not work
+// TODO: Type discrimination does not work
 export const InfoSource: React.FC = () => {
     const { source } = useInfoSourceContext();
 

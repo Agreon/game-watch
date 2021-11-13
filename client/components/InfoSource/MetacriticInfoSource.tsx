@@ -16,11 +16,11 @@ const getMetaCriticScoreColor = (score: number) => {
         return "rgb(53, 57, 59)";
     }
 
-    if (score > 70) {
+    if (score > 74) {
         return "rgb(102, 163, 41)";
     }
 
-    if (score > 50) {
+    if (score > 49) {
         return "rgb(173, 130, 0)";
     }
 
@@ -59,7 +59,7 @@ export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = (
             <Box flex="1">
                 <Stat>
                     <StatLabel>User Score</StatLabel>
-                    <Score score={parseInt(data?.userScore ?? "") * 10} displayScore={parseInt(data?.userScore ?? "")} />
+                    <Score score={parseFloat(data?.userScore ?? "") * 10} displayScore={parseFloat(data?.userScore ?? "")} />
                 </Stat>
             </Box>
         </InfoSourceWrapper>
