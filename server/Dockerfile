@@ -15,10 +15,15 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY package.json yarn.lock ./
+COPY shared/package.json shared/package.json
+COPY server/package.json server/package.json
 RUN yarn install --frozen-lockfile
 
 COPY . .
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+RUN yarn workspace game-watch-shared build && \
+    yarn workspace game-watch-server build && \
+    yarn install --frozen-lockfile --production --ignore-scripts --prefer-offline
+
 RUN chmod -R o+rwx node_modules/puppeteer/.local-chromium
 
 ENV NODE_ENV production
@@ -27,4 +32,4 @@ EXPOSE 3000
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["yarn", "start:prod"]
+CMD ["yarn", "workspace", "game-watch-server", "start:prod"]

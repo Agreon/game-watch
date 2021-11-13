@@ -12,7 +12,9 @@ services:
       - $DATABASE_PORT:5432
 
   server:
-    build: ./server
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -29,7 +31,9 @@ services:
       - $SERVER_PORT:$SERVER_PORT
 
   client:
-    build: ./client
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
     depends_on:
       - server
     ports:
