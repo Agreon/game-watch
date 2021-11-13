@@ -2,11 +2,11 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React, { useCallback, useMemo } from "react";
 import { Tag as ChakraTag, TagLabel, TagLeftIcon, IconButton } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { Tag } from "../../providers/GamesProvider";
 import { useTagContext } from "../../providers/TagProvider";
 import { useGameContext } from "../../providers/GameProvider";
+import { TagDto } from "game-watch-shared";
 
-export interface TagWithToggleState extends Tag {
+export interface TagWithToggleState extends TagDto {
     toggled: boolean
 }
 

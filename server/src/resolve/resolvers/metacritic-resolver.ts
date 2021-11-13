@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as cheerio from 'cheerio';
+import { InfoSourceType, MetacriticData } from "game-watch-shared";
 
-import { InfoSourceType, MetacriticData } from "../../info-source/info-source-model";
 import { InfoResolver } from "../resolve-service";
 
 export class MetacriticResolver implements InfoResolver {

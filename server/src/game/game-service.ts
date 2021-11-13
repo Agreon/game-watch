@@ -2,8 +2,9 @@ import { QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
+import { InfoSourceType } from "game-watch-shared";
 
-import { InfoSource, InfoSourceType } from "../info-source/info-source-model";
+import { InfoSource } from "../info-source/info-source-model";
 import { ResolveService } from "../resolve/resolve-service";
 import { SearchService } from "../search/search-service";
 import { Tag } from "../tag/tag-model";

@@ -9,6 +9,7 @@ import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { StoreGameData } from "game-watch-shared";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
@@ -56,15 +57,18 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
         </Stat>
     )
 }
-export const StoreInfoSource: React.FC<{ expectedDateFormats: string[], name: React.ReactElement }> = ({ expectedDateFormats, name }) => {
-    const { source } = useInfoSourceContext();
+export const StoreInfoSource: React.FC<{
+    expectedDateFormats: string[],
+    data: StoreGameData | null,
+    name: React.ReactElement
+}> = ({ expectedDateFormats, data, name }) => {
     return (
         <InfoSourceWrapper name={name}>
             <Box flex="1">
-                <ReleaseDate date={source.data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
+                <ReleaseDate date={data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
             </Box>
             <Box flex="1">
-                <Price price={source.data?.priceInformation?.final} initial={source.data?.priceInformation?.initial} />
+                <Price price={data?.priceInformation?.final} initial={data?.priceInformation?.initial} />
             </Box>
         </InfoSourceWrapper>
     )

@@ -3,25 +3,26 @@ import React, { useCallback } from "react";
 import { AddInfoSource } from "../GameTile/AddInfoSource";
 import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
-import { InfoSource as Source } from "../../providers/GamesProvider";
 import { useHttp } from "../../util/useHttp";
+import { InfoSourceDto } from "game-watch-shared";
+import { InfoSourceWithLoadingState } from "../../providers/GameProvider";
 
 interface InfoSourceListProps {
-    activeInfoSources: Source[];
-    setGameInfoSource: (source: Source) => void;
+    activeInfoSources: InfoSourceDto[];
+    setGameInfoSource: (source: InfoSourceWithLoadingState) => void;
 }
 
 const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSources, setGameInfoSource }) => {
     const { withRequest, handleError } = useHttp();
 
-    const syncInfoSource = useCallback(async (infoSource: Source) => {
+    const syncInfoSource = useCallback(async (infoSource: InfoSourceDto) => {
         setGameInfoSource({
             ...infoSource,
             loading: true
         });
 
         await withRequest(async http => {
-            const { data } = await http.post<Source>(`/info-source/${infoSource.id}/sync`);
+            const { data } = await http.post<InfoSourceDto>(`/info-source/${infoSource.id}/sync`);
 
             setGameInfoSource(data);
         }, error => {
@@ -33,14 +34,14 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
         });
     }, [withRequest, setGameInfoSource, handleError]);
 
-    const disableInfoSource = useCallback(async (infoSource: Source) => {
+    const disableInfoSource = useCallback(async (infoSource: InfoSourceDto) => {
         setGameInfoSource({
             ...infoSource,
             loading: true
         });
 
         await withRequest(async http => {
-            const { data } = await http.post<Source>(`/info-source/${infoSource.id}/disable`);
+            const { data } = await http.post<InfoSourceDto>(`/info-source/${infoSource.id}/disable`);
 
             setGameInfoSource(data);
         }, error => {
@@ -62,7 +63,7 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
                         syncInfoSource={syncInfoSource}
                         disableInfoSource={disableInfoSource}
                     >
-                        <InfoSource type={source.type} />
+                        <InfoSource />
                     </InfoSourceProvider>
                 )}
             </Box>

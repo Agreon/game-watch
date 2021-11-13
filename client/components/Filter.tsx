@@ -6,8 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger, useColorModeValue } from "@cha
 import { useTagContext } from '../providers/TagProvider';
 import { Tag as ChakraTag } from "@chakra-ui/react";
 import { TagWithToggleState } from './GameTags/EditGameTags';
-import { InfoSourceType, Tag, useGamesContext } from '../providers/GamesProvider';
+import { useGamesContext } from '../providers/GamesProvider';
 import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
+import { InfoSourceType, TagDto } from 'game-watch-shared';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
@@ -63,7 +64,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();
     const { filter, setFilter } = useGamesContext();
     const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>(filter.infoSources);
-    const [filterTags, setFilterTags] = useState<Tag[]>(filter.tags);
+    const [filterTags, setFilterTags] = useState<TagDto[]>(filter.tags);
 
     const tagsWithToggleState = useMemo(() => {
         return allTags.map(tag => ({
@@ -96,7 +97,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             pt="2rem"
             pb="1rem"
             mr="3rem"
-            width="30rem"
+            width={["100vw", "100vw", "30rem"]}
             rounded="lg"
         >
             <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
@@ -133,7 +134,7 @@ export const Filter: React.FC = () => {
     const filterActive = filter.infoSources.length || filter.tags.length;
 
     return (
-        <Flex align="center" height="100%" position="absolute" right="1rem" top="0">
+        <Flex align="center" height="100%">
             <Popover
                 returnFocusOnClose={false}
                 isOpen={showMenu}
@@ -147,7 +148,7 @@ export const Filter: React.FC = () => {
                         variant={filterActive ? "outline" : "ghost"}
                         onClick={() => setShowMenu(true)}
                     >
-                        Filter
+                        <Text display={["none", "none", "block"]}>Filter</Text>
                     </Button>
                 </PopoverTrigger>
                 <FilterMenu onClose={() => setShowMenu(false)} />

@@ -1,12 +1,12 @@
 import { AxiosResponse } from "axios";
+import { CreateTagDto, TagDto } from "game-watch-shared";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHttp } from "../util/useHttp";
-import { Tag } from "./GamesProvider";
 
 export interface TagCtx {
-    tags: Tag[]
+    tags: TagDto[]
     tagsLoading: boolean
-    addTag: (name: string) => Promise<Tag | undefined>
+    addTag: (name: string) => Promise<TagDto | undefined>
 }
 
 export const TagContext = React.createContext<TagCtx | null>(null);
@@ -24,7 +24,7 @@ const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", 
 
 export const TagProvider: React.FC = ({ children }) => {
     const [tagsLoading, setTagsLoading] = useState(false);
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tags, setTags] = useState<TagDto[]>([]);
     const { withRequest } = useHttp();
 
     const fetchTags = useCallback(async () => {
@@ -50,7 +50,7 @@ export const TagProvider: React.FC = ({ children }) => {
         const color = getAvailableRandomTagColor();
 
         return await withRequest(async http => {
-            const { data } = await http.post<unknown, AxiosResponse<Tag>>("/tag", { name, color });
+            const { data } = await http.post<CreateTagDto, AxiosResponse<TagDto>>("/tag", { name, color });
 
             setTags(tags => [
                 data,

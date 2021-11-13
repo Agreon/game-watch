@@ -1,16 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { IsString } from 'class-validator';
+import { CreateTagDto, TagDto } from 'game-watch-shared';
 
-import { Tag } from './tag-model';
 import { TagService } from './tag-service';
-
-export class CreateTagDto {
-  @IsString()
-  public name: string;
-
-  @IsString()
-  public color: string;
-}
 
 @Controller('tag')
 export class TagController {
@@ -21,12 +12,12 @@ export class TagController {
   @Post()
   public async create(
     @Body() { name, color }: CreateTagDto
-  ): Promise<Tag> {
+  ): Promise<TagDto> {
     return await this.tagService.create(name, color);
   }
 
   @Get()
-  public async getAll(): Promise<Tag[]> {
+  public async getAll(): Promise<TagDto[]> {
     return await this.tagService.getAll();
   }
 }
