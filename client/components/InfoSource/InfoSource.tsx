@@ -8,7 +8,7 @@ import epicLogo from "../../assets/epic";
 import Image from 'next/image';
 import { Flex } from "@chakra-ui/layout"
 import { Text, } from "@chakra-ui/react";
-import { InfoSourceType, MetacriticData } from "game-watch-shared";
+import { InfoSourceType, MetacriticData } from "@game-watch/shared";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 // TODO: Type discrimination does not work

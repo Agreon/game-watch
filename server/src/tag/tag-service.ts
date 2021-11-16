@@ -1,10 +1,8 @@
+import { Tag } from '@game-watch/database';
 import { QueryOrder } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/knex';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { ConflictException, Injectable } from '@nestjs/common';
-
-import { Tag } from './tag-model';
-
 
 @Injectable()
 export class TagService {

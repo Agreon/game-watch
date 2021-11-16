@@ -1,5 +1,5 @@
+import { CreateTagDto, TagDto } from '@game-watch/shared';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateTagDto, TagDto } from 'game-watch-shared';
 
 import { TagService } from './tag-service';
 

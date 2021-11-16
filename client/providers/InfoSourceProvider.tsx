@@ -1,4 +1,4 @@
-import { InfoSourceDto } from "game-watch-shared";
+import { InfoSourceDto } from "@game-watch/shared";
 import React, { useContext, useMemo } from "react";
 import { InfoSourceWithLoadingState } from "./GameProvider";
 

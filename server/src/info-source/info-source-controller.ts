@@ -1,7 +1,7 @@
+import { CreateInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
 import { BadRequestException, Body, Controller, Param, Post } from "@nestjs/common";
-import { CreateInfoSourceDto, InfoSourceDto } from "game-watch-shared";
 
-import { UrlNotMappableError } from "../resolve/resolve-service";
+import { UrlNotMappableError } from "../mapper/mapper-service";
 import { InfoSourceService } from "./info-source-service";
 
 @Controller("/info-source")

@@ -1,18 +1,18 @@
+import { Game, InfoSource } from "@game-watch/database";
+import { QueueType } from "@game-watch/queue";
+import { InfoSourceType } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable, Logger } from "@nestjs/common";
-import { InfoSourceType } from "game-watch-shared";
+import { Injectable } from "@nestjs/common";
 
-import { Game } from "../game/game-model";
-import { ResolveService } from "../resolve/resolve-service";
-import { InfoSource } from "./info-source-model";
+import { MapperService } from "../mapper/mapper-service";
+import { QueueService } from "../queue/queue-service";
 
 @Injectable()
 export class InfoSourceService {
-    private readonly logger = new Logger(InfoSourceService.name);
-
     public constructor(
-        private readonly resolveService: ResolveService,
+        private readonly mapperService: MapperService,
+        private readonly queueService: QueueService,
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
@@ -21,7 +21,7 @@ export class InfoSourceService {
 
     public async addInfoSource(gameId: string, type: InfoSourceType, url: string) {
         const game = await this.gameRepository.findOneOrFail(gameId);
-        const remoteGameId = await this.resolveService.mapUrlToResolverId(url, type);
+        const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
         // Reuse disabled info sources
         const existingInfoSource = await this.infoSourceRepository.findOne({
@@ -55,18 +55,9 @@ export class InfoSourceService {
     public async syncInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
 
-        const resolvedGameData = await this.resolveService.resolveGameInformation(
-            infoSource.remoteGameId,
-            infoSource.type
-        );
+        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id });
 
-        if (!resolvedGameData) {
-            infoSource.resolveError = true;
-        } else {
-            infoSource.resolveError = false;
-            infoSource.data = resolvedGameData;
-        }
-
+        infoSource.syncing = true;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;

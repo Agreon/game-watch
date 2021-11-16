@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useGameContext } from "../../providers/GameProvider";
-import { InfoSourceDto, InfoSourceType } from "game-watch-shared";
+import { InfoSourceDto, InfoSourceType } from "@game-watch/shared";
 
 export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSourceDto) => Promise<void> }> = ({ syncInfoSource }) => {
     const { addInfoSource, allInfoSources } = useGameContext();

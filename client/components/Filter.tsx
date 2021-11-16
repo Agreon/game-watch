@@ -8,7 +8,7 @@ import { Tag as ChakraTag } from "@chakra-ui/react";
 import { TagWithToggleState } from './GameTags/EditGameTags';
 import { useGamesContext } from '../providers/GamesProvider';
 import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
-import { InfoSourceType, TagDto } from 'game-watch-shared';
+import { InfoSourceType, TagDto } from '@game-watch/shared';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType

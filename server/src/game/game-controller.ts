@@ -1,7 +1,7 @@
+import { Game } from "@game-watch/database";
+import { CreateGameDto, UpdateGameDto } from "@game-watch/shared";
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import { CreateGameDto, UpdateGameDto } from "game-watch-shared";
 
-import { Game } from "./game-model";
 import { GameService } from "./game-service";
 
 @Controller("/game")
@@ -25,16 +25,11 @@ export class GameController {
         return await this.gameService.getGames({ withTags, withInfoSources });
     }
 
-    @Post("/sync")
-    public async syncAll(): Promise<void> {
-        await this.gameService.syncAllGames();
-    }
-
     @Post("/:id/sync")
     public async sync(
         @Param("id") id: string
-    ): Promise<Game> {
-        return await this.gameService.syncGame(id);
+    ): Promise<void> {
+        await this.gameService.syncGame(id);
     }
 
     @Post("/:id/tag/:tagId")

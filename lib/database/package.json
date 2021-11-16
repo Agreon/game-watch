@@ -1,0 +1,34 @@
+{
+    "version": "0.0.1",
+    "name": "@game-watch/database",
+    "private": true,
+    "main": "dist/main.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "dependencies": {
+        "@game-watch/shared": "0.0.1",
+        "@mikro-orm/core": "^4.5.9",
+        "@mikro-orm/migrations": "^4.5.9",
+        "@mikro-orm/nestjs": "^4.3.0",
+        "@mikro-orm/postgresql": "^4.5.9",
+        "dotenv": "^10.0.0",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "@mikro-orm/cli": "^4.5.9",
+        "eslint": "7.32.0",
+        "ts-loader": "^9.2.3",
+        "ts-node": "^10.2.1",
+        "tsconfig-paths": "^3.10.1",
+        "@types/uuid": "^8.3.1",
+        "typescript": "^4.4.4"
+    },
+    "mikro-orm": {
+        "useTsNode": true,
+        "configPaths": [
+            "./src/mikro-orm.config.ts"
+        ]
+    }
+}

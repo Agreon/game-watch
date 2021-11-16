@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { GameWithLoadingState, useGamesContext } from "./GamesProvider";
+import React, { useCallback, useContext, useMemo, useState } from "react";
+import { useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
-import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, StoreGameData, TagDto } from "game-watch-shared";
+import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
 
 // TODO: Uncool
 export interface InfoSourceWithLoadingState extends InfoSourceDto {
@@ -75,7 +75,7 @@ export function useGameContext() {
     return context;
 }
 
-export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ children, game }) => {
+export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) => {
     const { setGame, removeGame } = useGamesContext();
     const { withRequest, handleError } = useHttp();
     const [loading, setLoading] = useState(false);
@@ -215,18 +215,6 @@ export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ childre
         () => game.name ?? nameFromInfoSource ?? game.search,
         [game.name, nameFromInfoSource, game.search]
     );
-
-    // Initial load
-    useEffect(() => {
-        (async () => {
-            if (game.justAdded) {
-                await syncGame();
-            }
-        })();
-        // We only want to call the effect then
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [game.justAdded]);
-
 
     const contextValue = useMemo(() => ({
         game,

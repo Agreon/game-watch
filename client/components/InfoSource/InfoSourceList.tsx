@@ -4,7 +4,7 @@ import { AddInfoSource } from "../GameTile/AddInfoSource";
 import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
 import { useHttp } from "../../util/useHttp";
-import { InfoSourceDto } from "game-watch-shared";
+import { InfoSourceDto } from "@game-watch/shared";
 import { InfoSourceWithLoadingState } from "../../providers/GameProvider";
 
 interface InfoSourceListProps {

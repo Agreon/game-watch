@@ -9,7 +9,7 @@ import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { StoreGameData } from "game-watch-shared";
+import { StoreGameData } from "@game-watch/shared";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
