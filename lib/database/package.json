@@ -18,8 +18,8 @@
     },
     "devDependencies": {
         "@mikro-orm/cli": "^4.5.9",
+        "@types/node": "^16.0.0",
         "eslint": "7.32.0",
-        "ts-loader": "^9.2.3",
         "ts-node": "^10.2.1",
         "tsconfig-paths": "^3.10.1",
         "@types/uuid": "^8.3.1",

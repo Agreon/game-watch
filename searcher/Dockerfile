@@ -22,7 +22,13 @@ COPY lib/queue/package.json lib/queue/package.json
 COPY searcher/package.json searcher/package.json
 RUN yarn install --frozen-lockfile
 
-COPY . .
+COPY lib/shared lib/shared
+COPY lib/database lib/database
+COPY lib/service lib/service
+COPY lib/queue lib/queue
+COPY searcher searcher
+COPY tsconfig.json tsconfig.json
+
 RUN yarn workspace @game-watch/shared build && \
     yarn workspace @game-watch/database build && \
     yarn workspace @game-watch/service build && \

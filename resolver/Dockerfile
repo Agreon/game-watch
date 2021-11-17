@@ -22,8 +22,13 @@ COPY lib/queue/package.json lib/queue/package.json
 COPY resolver/package.json resolver/package.json
 RUN yarn install --frozen-lockfile
 
-# TODO: This copy is taking also the client with it
-COPY . .
+COPY lib/shared lib/shared
+COPY lib/database lib/database
+COPY lib/service lib/service
+COPY lib/queue lib/queue
+COPY resolver resolver
+COPY tsconfig.json tsconfig.json
+
 RUN yarn workspace @game-watch/shared build && \
     yarn workspace @game-watch/database build && \
     yarn workspace @game-watch/service build && \

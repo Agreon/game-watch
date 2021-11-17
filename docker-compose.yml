@@ -25,6 +25,8 @@ services:
       - SENTRY_DSN=$SENTRY_DSN
       - SERVER_PORT=$SERVER_PORT
       - CORS_ORIGIN=$CORS_ORIGIN
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
     depends_on:
       - db
     ports:
@@ -40,6 +42,8 @@ services:
       - DATABASE_USER=$DATABASE_USER
       - DATABASE_PASSWORD=$DATABASE_PASSWORD
       - DATABASE_NAME=$DATABASE_NAME
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
     depends_on:
       - redis
 
@@ -53,6 +57,8 @@ services:
       - DATABASE_USER=$DATABASE_USER
       - DATABASE_PASSWORD=$DATABASE_PASSWORD
       - DATABASE_NAME=$DATABASE_NAME
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
     depends_on:
       - redis
 

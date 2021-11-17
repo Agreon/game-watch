@@ -1,4 +1,6 @@
 import { Processor, Queue, QueueOptions, Worker } from "bullmq";
+import * as dotenv from "dotenv";
+import path from 'path';
 
 export enum QueueType {
     SearchGame = "search-game",
@@ -12,10 +14,11 @@ export type QueueParams = {
     [QueueType.ResolveSource]: { sourceId: string },
 };
 
+dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env") });
+
 const getQueueConnectionOptions = () => ({
-    host: "localhost",
-    // host: "redis",
-    password: "test"
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD
 });
 
 export const createWorkerForQueue = <T extends QueueType>(

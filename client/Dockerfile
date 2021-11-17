@@ -11,7 +11,10 @@ RUN yarn install --frozen-lockfile
 # Rebuild the source code only when needed
 FROM node:alpine AS builder
 WORKDIR /app
-COPY . .
+COPY package.json yarn.lock ./
+COPY lib/shared lib/shared
+COPY client client
+COPY tsconfig.json tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/lib/shared/node_modules ./lib/shared/node_modules
