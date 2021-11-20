@@ -5,7 +5,7 @@ import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import { useGameContext } from "../../providers/GameProvider";
 
 export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
-    const { tags, loading } = useGameContext();
+    const { tags, loading, game } = useGameContext();
     const [showEdit, setShowEdit] = useState(false);
 
     return (
@@ -28,7 +28,7 @@ export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
                     </Tag>
                 ))}
             </Box>
-            {!loading &&
+            {!loading && !game.syncing &&
                 <Flex align="center" position="absolute" right="0" top="0" height="100%">
                     {tags.length === 0 ? (
                     <Tag onClick={onEdit} colorScheme="teal" cursor="pointer">

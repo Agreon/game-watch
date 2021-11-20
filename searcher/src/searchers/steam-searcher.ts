@@ -2,15 +2,13 @@ import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher } from '../search-service';
+import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from "../util/matching-name";
 
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;
-    // TODO: Use cool logger
-    private logger = console;
 
-    public async search(search: string) {
+    public async search(search: string, { logger }: InfoSearcherContext) {
         const { data } = await axios.get<string>(
             `https://store.steampowered.com/search/?term=${encodeURIComponent(search)}`
         );
@@ -19,7 +17,7 @@ export class SteamSearcher implements InfoSearcher {
 
         const resultRow = $(".search_result_row");
         if (!resultRow.length) {
-            this.logger.debug("No results found");
+            logger.debug("No search results found");
 
             return null;
         }
@@ -28,12 +26,10 @@ export class SteamSearcher implements InfoSearcher {
         const fullName = ($(".search_result_row .title")[0].children[0] as any).data as string;
 
         if (!matchingName(fullName, search)) {
-            this.logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping steam`);
+            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
             return null;
         }
-
-        this.logger.debug(`Found appId to game '${gameId}'`);
 
         return gameId ?? null;
     }

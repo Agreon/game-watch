@@ -81,12 +81,4 @@ export class PsStoreResolver implements InfoResolver {
             };
         });
     }
-    public async mapUrlToId(url: string): Promise<string> {
-        const { hostname } = new URL(url);
-        if (hostname !== "store.playstation.com") {
-            throw new Error("Not mappable");
-        }
-
-        return url;
-    }
 }

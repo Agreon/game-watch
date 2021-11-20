@@ -18,18 +18,25 @@ export class GameController {
     }
 
     @Get()
-    public async getAll(
+    public async getAllGames(
         @Query("withTags") withTags?: string[],
         @Query("withInfoSources") withInfoSources?: string[]
     ): Promise<Game[]> {
         return await this.gameService.getGames({ withTags, withInfoSources });
     }
 
+    @Get("/:id")
+    public async getGame(
+        @Param("id") id: string
+    ): Promise<Game> {
+        return await this.gameService.getGame(id);
+    }
+
     @Post("/:id/sync")
     public async sync(
         @Param("id") id: string
-    ): Promise<void> {
-        await this.gameService.syncGame(id);
+    ): Promise<Game> {
+        return await this.gameService.syncGame(id);
     }
 
     @Post("/:id/tag/:tagId")

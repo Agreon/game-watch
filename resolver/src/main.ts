@@ -1,16 +1,22 @@
-import { Game, InfoSource, mikroOrmConfig } from "@game-watch/database";
+import { mikroOrmConfig } from "@game-watch/database";
 import { createWorkerForQueue, QueueType } from "@game-watch/queue";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { createLogger } from "@game-watch/service";
+import { MikroORM } from "@mikro-orm/core";
 import { Worker } from "bullmq";
 
+import { resolveGame } from "./resolve-game";
 import { ResolveService } from "./resolve-service";
+import { resolveSource } from "./resolve-source";
 import { EpicResolver } from "./resolvers/epic-resolver";
 import { MetacriticResolver } from "./resolvers/metacritic-resolver";
 import { PsStoreResolver } from "./resolvers/ps-store-resolver";
 import { SteamResolver } from "./resolvers/steam-resolver";
 import { SwitchResolver } from "./resolvers/switch-resolver";
 
-let worker: Worker | undefined;
+const logger = createLogger("Resolver");
+
+let resolveGameWorker: Worker | undefined;
+let resolveSourceWorker: Worker | undefined;
 
 const resolveService = new ResolveService([
     new SteamResolver(),
@@ -20,96 +26,53 @@ const resolveService = new ResolveService([
     new MetacriticResolver(),
 ]);
 
-const resolveGame = async (
-    { gameId, em }: { gameId: string, em: EntityManager }
-) => {
-    console.time("Resolve");
-
-    const game = await em.findOneOrFail(Game, gameId, ["infoSources"]);
-    const infoSources = await game.infoSources.loadItems();
-
-    const resolvePromises = infoSources
-        .filter(infoSource => !infoSource.disabled)
-        .map(async source => {
-            const resolvedGameData = await resolveService.resolveGameInformation(
-                source.remoteGameId,
-                source.type
-            );
-            if (!resolvedGameData) {
-                source.resolveError = true;
-                console.warn(`Source ${source.type} could not be resolved`);
-
-                return;
-            }
-
-            source.resolveError = false;
-            source.data = resolvedGameData;
-            await em.persistAndFlush(source);
-        });
-
-    await Promise.all(resolvePromises);
-    game.syncing = false;
-
-    await em.persistAndFlush(game);
-
-    console.timeEnd("Resolve");
-};
-
-const resolveSource = async (
-    { sourceId, em }: { sourceId: string, em: EntityManager }
-) => {
-    const source = await em.findOneOrFail(InfoSource, sourceId);
-
-    const resolvedGameData = await resolveService.resolveGameInformation(
-        source.remoteGameId,
-        source.type
-    );
-    if (!resolvedGameData) {
-        source.resolveError = true;
-        console.warn(`Source ${source.type} could not be resolved`);
-
-        return;
-    }
-
-    source.data = resolvedGameData;
-    source.resolveError = false;
-    source.syncing = false;
-
-    await em.persistAndFlush(source);
-};
-
-
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
-    worker = createWorkerForQueue(QueueType.ResolveGame, async ({ data: { gameId } }) => {
-        await resolveGame({
-            gameId,
-            em: orm.em,
-        });
+    resolveGameWorker = createWorkerForQueue(QueueType.ResolveGame, async ({ data: { gameId } }) => {
+        const gameScopedLogger = logger.child({ gameId });
+
+        try {
+            await resolveGame({
+                gameId,
+                resolveService,
+                logger: gameScopedLogger,
+                em: orm.em.fork(),
+            });
+        } catch (error) {
+            // Need to wrap this because otherwise the error is swallowed by the worker.
+            logger.error(error);
+            throw error;
+        }
     });
 
-    // worker = new Worker<{ sourceId: string }>(
-    //     "resolveSource",
-    //     async ({ data: { sourceId } }) => {
-    //         await resolveSource({
-    //             sourceId,
-    //             em: orm.em,
-    //         });
+    resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId } }) => {
+        const sourceScopedLogger = logger.child({ sourceId });
 
-    //     }, {
-    //     connection: queueConnectionOptions,
-    //     // TODO: env
-    //     concurrency: 1
-    // });
+        try {
+            await resolveSource({
+                sourceId,
+                resolveService,
+                logger: sourceScopedLogger,
+                em: orm.em.fork(),
+            });
+        } catch (error) {
+            // Need to wrap this because otherwise the error is swallowed by the worker.
+            logger.error(error);
+            throw error;
+        }
+    });
 
-    console.log("Listening for events");
+    logger.info("Listening for events");
 };
 
 main().catch(error => {
-    if (worker) {
-        worker.close();
+    if (resolveGameWorker) {
+        resolveGameWorker.close();
     }
-    console.error(error);
+    if (resolveSourceWorker) {
+        resolveSourceWorker.close();
+    }
+    logger.error(error);
     process.exit(1);
 });

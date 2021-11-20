@@ -5,20 +5,20 @@ import { InfoSource } from "./InfoSource";
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
 import { useHttp } from "../../util/useHttp";
 import { InfoSourceDto } from "@game-watch/shared";
-import { InfoSourceWithLoadingState } from "../../providers/GameProvider";
 
 interface InfoSourceListProps {
     activeInfoSources: InfoSourceDto[];
-    setGameInfoSource: (source: InfoSourceWithLoadingState) => void;
+    setGameInfoSource: (source: InfoSourceDto) => void;
+    disabledAdd: boolean;
 }
 
-const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSources, setGameInfoSource }) => {
+const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSources, setGameInfoSource, disabledAdd }) => {
     const { withRequest, handleError } = useHttp();
 
     const syncInfoSource = useCallback(async (infoSource: InfoSourceDto) => {
         setGameInfoSource({
             ...infoSource,
-            loading: true
+            syncing: true
         });
 
         await withRequest(async http => {
@@ -28,7 +28,7 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
         }, error => {
             setGameInfoSource({
                 ...infoSource,
-                loading: false
+                syncing: false
             });
             handleError(error);
         });
@@ -37,7 +37,7 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
     const disableInfoSource = useCallback(async (infoSource: InfoSourceDto) => {
         setGameInfoSource({
             ...infoSource,
-            loading: true
+            syncing: true
         });
 
         await withRequest(async http => {
@@ -47,7 +47,7 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
         }, error => {
             setGameInfoSource({
                 ...infoSource,
-                loading: false
+                syncing: false
             });
             handleError(error);
         });
@@ -62,12 +62,13 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
                         source={source}
                         syncInfoSource={syncInfoSource}
                         disableInfoSource={disableInfoSource}
+                        setGameInfoSource={setGameInfoSource}
                     >
                         <InfoSource />
                     </InfoSourceProvider>
                 )}
             </Box>
-            <AddInfoSource syncInfoSource={syncInfoSource} />
+            {!disabledAdd && <AddInfoSource syncInfoSource={syncInfoSource} />}
         </>
     )
 }

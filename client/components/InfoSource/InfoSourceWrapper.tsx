@@ -21,7 +21,7 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, chi
                     </a>
                 </Box>
             </Tooltip>
-            {source.loading ? (
+            {source.syncing ? (
                 <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>
             ) : (
                 <>

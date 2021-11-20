@@ -1,4 +1,4 @@
-import { Processor, Queue, QueueOptions, Worker } from "bullmq";
+import { Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker } from "bullmq";
 import * as dotenv from "dotenv";
 import path from 'path';
 
@@ -16,11 +16,14 @@ export type QueueParams = {
 
 dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env") });
 
-const getQueueConnectionOptions = () => ({
+const QUEUE_CONNECTION_OPTIONS = {
     host: process.env.REDIS_HOST,
     password: process.env.REDIS_PASSWORD
-});
+};
 
+/**
+ * TODO: Add error handlers!
+ */
 export const createWorkerForQueue = <T extends QueueType>(
     type: T,
     processor: Processor<QueueParams[T]>,
@@ -29,13 +32,35 @@ export const createWorkerForQueue = <T extends QueueType>(
     type,
     processor,
     {
-        connection: getQueueConnectionOptions(),
+        connection: QUEUE_CONNECTION_OPTIONS,
+        ...options,
+    }
+);
+
+export const createSchedulerForQueue = <T extends QueueType>(
+    type: T,
+    options?: QueueSchedulerOptions
+) => new QueueScheduler(
+    type,
+    {
+        connection: QUEUE_CONNECTION_OPTIONS,
         ...options
     }
 );
 
 export const createQueue = (type: QueueType, options?: QueueOptions) =>
     new Queue(type, {
-        connection: getQueueConnectionOptions(),
-        ...options
+        connection: QUEUE_CONNECTION_OPTIONS,
+        ...options,
+        defaultJobOptions: {
+            removeOnComplete: true,
+            removeOnFail: true,
+            // TODO: Not sure about that
+            timeout: 60000,
+            attempts: 2,
+            backoff: {
+                type: "exponential",
+                delay: 1000
+            }
+        }
     });

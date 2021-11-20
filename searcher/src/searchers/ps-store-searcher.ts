@@ -1,15 +1,13 @@
 import { withBrowser } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 
-import { InfoSearcher } from "../search-service";
+import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
-    // TODO: Use cool logger
-    private logger = console;
 
-    public async search(search: string) {
+    public async search(search: string, { logger }: InfoSearcherContext) {
         return await withBrowser(async browser => {
             await browser.goto(
                 `https://store.playstation.com/de-de/search/${encodeURIComponent(search)}/`
@@ -17,7 +15,7 @@ export class PsStoreSearcher implements InfoSearcher {
 
             const content = await browser.content();
             if (content.includes("search-no-results")) {
-                this.logger.debug("No results found");
+                logger.debug("No results found");
 
                 return null;
             }
@@ -31,12 +29,12 @@ export class PsStoreSearcher implements InfoSearcher {
             );
 
             if (!matchingName(fullName, search)) {
-                this.logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping PsStore`);
+                logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
                 return null;
             }
 
-            this.logger.debug(`Found link to game '${href}'`);
+            logger.debug(`Found link to game '${href}'`);
 
             return `https://store.playstation.com${href}`;
         });

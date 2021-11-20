@@ -10,6 +10,7 @@ import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { InfoSourceDto } from "@game-watch/shared";
 
+// TODO: Disable options on sync
 export const InfoSourceOptions: React.FC<{ source: InfoSourceDto }> = ({ source }) => {
     const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
 

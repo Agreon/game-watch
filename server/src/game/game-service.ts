@@ -40,6 +40,8 @@ export class GameService {
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
+        return game;
     }
 
     public async addTagToGame(gameId: string, tagId: string) {
@@ -76,10 +78,15 @@ export class GameService {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
 
         for (const source of game.infoSources) {
+            await this.queueService.removeRepeatableInfoSourceResolveJob(source);
             this.infoSourceRepository.remove(source);
         }
 
         await this.gameRepository.removeAndFlush(game);
+    }
+
+    public async getGame(gameId: string) {
+        return await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
     }
 
     public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {

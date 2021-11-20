@@ -1,7 +1,7 @@
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 
-import { InfoSearcher } from "../search-service";
+import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface EpicSearchResponse {
@@ -20,27 +20,29 @@ export interface EpicSearchResponse {
     }
 }
 
+// TODO: Seems to be flaky
 export const getEpicSearchResponse = async (search: string): Promise<EpicSearchResponse> => {
-    const { data } = await axios.get<any>(
+    const { data } = await axios.get(
         `https://www.epicgames.com/graphql?operationName=searchStoreQuery&variables={"category":"games/edition/base|software/edition/base|editors|bundles/games","count":1,"country":"DE","keywords":"${encodeURIComponent(search)}","locale":"de-DE","sortBy":"relevancy","sortDir":"DESC","withPrice":true}&extensions={"persistedQuery":{"version":1,"sha256Hash":"f45c217481a66dd17324fbb288509bac7a2d81762e72518cb9d448a0aec43350"}}`
     );
+
+    console.log(data);
 
     return data.data.Catalog.searchStore.elements[0];
 };
 
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
-    // TODO: Use cool logger
-    private logger = console;
 
-    public async search(search: string): Promise<string | null> {
+    public async search(search: string, { logger }: InfoSearcherContext): Promise<string | null> {
+        logger.debug(encodeURIComponent(search));
         const gameData = await getEpicSearchResponse(search);
         if (!gameData) {
             return null;
         }
 
         if (!matchingName(gameData.title, search)) {
-            this.logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping epic`);
+            logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
 
             return null;
         }

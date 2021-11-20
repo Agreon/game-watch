@@ -17,6 +17,7 @@ const GameTileComponent: React.FC = () => {
         fullName,
         syncGame,
         deleteGame,
+        game
     } = useGameContext();
 
     const [highlightMenu, setHighlightMenu] = useState(false);
@@ -48,11 +49,22 @@ const GameTileComponent: React.FC = () => {
             <Flex direction="column">
                 <GameThumbnail />
                 <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
-                    <GameName disableEdit={loading} />
-                    <GameTags />
-                    {allInfoSources.length === 0 && !loading && <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>}
-                    {loading && <SkeletonText mt="1rem" />}
-                    {!loading && <InfoSourceList activeInfoSources={activeInfoSources} setGameInfoSource={setGameInfoSource} />}
+                    <GameName disableEdit={loading || game.syncing} />
+                    {allInfoSources.length === 0 ?
+                        (game.syncing ?
+                            <SkeletonText mt="1rem" />
+                            : <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                        )
+                        : (
+                            <>
+                                <GameTags />
+                                <InfoSourceList
+                                    activeInfoSources={activeInfoSources}
+                                    setGameInfoSource={setGameInfoSource}
+                                    disabledAdd={loading || game.syncing} />
+                            </>
+                        )
+                    }
                 </Box>
             </Flex>
         </Box>

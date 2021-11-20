@@ -31,13 +31,4 @@ export class EpicResolver implements InfoResolver {
         };
 
     }
-
-    public async mapUrlToId(url: string): Promise<string> {
-        const { hostname } = new URL(url);
-        if (hostname !== "www.epicgames.com") {
-            throw new Error("Not mappable");
-        }
-
-        return url;
-    }
 }

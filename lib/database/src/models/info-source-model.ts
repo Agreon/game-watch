@@ -1,5 +1,5 @@
 import { GameData, InfoSourceType } from "@game-watch/shared";
-import { Entity, Enum, IdentifiedReference, ManyToOne, Property } from "@mikro-orm/core";
+import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
@@ -13,7 +13,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     public remoteGameId: string;
 
     @Property()
-    public syncing: boolean = false;
+    public syncing: boolean = true;
 
     @Property()
     public disabled: boolean = false;
@@ -28,11 +28,14 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     public game!: IdentifiedReference<Game>;
 
     public constructor(
-        { type, remoteGameId, data }: { type: T, remoteGameId: string, data?: GameData[T] }
+        { type, remoteGameId, data, game }: { type: T, remoteGameId: string, data?: GameData[T], game?: Game }
     ) {
         super();
         this.type = type;
         this.remoteGameId = remoteGameId;
         this.data = data ?? null;
+        if (game) {
+            this.game = Reference.create(game);
+        }
     }
 }

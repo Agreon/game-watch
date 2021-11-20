@@ -32,13 +32,16 @@ export class InfoSourceService {
             existingInfoSource.disabled = false;
             existingInfoSource.data = null;
             existingInfoSource.resolveError = false;
+            existingInfoSource.syncing = true;
             existingInfoSource.remoteGameId = remoteGameId;
 
             await this.infoSourceRepository.persistAndFlush(existingInfoSource);
 
+            await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: existingInfoSource.id });
+            await this.queueService.createRepeatableInfoSourceResolveJob(existingInfoSource);
+
             return existingInfoSource;
         }
-
 
         const infoSource = new InfoSource({
             type,
@@ -49,7 +52,14 @@ export class InfoSourceService {
 
         await this.gameRepository.persistAndFlush(game);
 
+        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: infoSource.id });
+        await this.queueService.createRepeatableInfoSourceResolveJob(infoSource);
+
         return infoSource;
+    }
+
+    public async getInfoSource(id: string) {
+        return await this.infoSourceRepository.findOneOrFail(id);
     }
 
     public async syncInfoSource(id: string) {
@@ -63,9 +73,10 @@ export class InfoSourceService {
         return infoSource;
     }
 
-
     public async disableInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
+        await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
+
         infoSource.disabled = true;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 

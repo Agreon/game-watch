@@ -1,13 +1,9 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
 import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
 
-// TODO: Uncool
-export interface InfoSourceWithLoadingState extends InfoSourceDto {
-    loading?: boolean;
-}
 
 
 // TODO: Let users select the priority / image
@@ -88,6 +84,28 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
         });
         setLoading(false);
     }, [withRequest, setGame, game.id]);
+
+    const [polling, setPolling] = useState(false);
+    useEffect(() => {
+        if (!game.syncing || polling) {
+            return;
+        }
+        setPolling(true);
+        (async () => {
+            await withRequest(async http => {
+                do {
+                    const { data } = await http.get<GameDto>(`/game/${game.id}`);
+                    setGame(data.id, data);
+                    if (data.syncing === false) {
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                } while (true)
+            });
+            setPolling(false);
+        }
+        )();
+    }, [game, polling, setGame, withRequest]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update
@@ -190,7 +208,7 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
 
     const tags = useMemo(() => game.tags, [game.tags]);
 
-    const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
+    const allInfoSources = useMemo(() => game.infoSources.filter(source => source.data !== null), [game.infoSources]);
     const activeInfoSources = useMemo(
         () => allInfoSources
             .filter(source => !source.disabled)

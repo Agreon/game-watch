@@ -12,6 +12,7 @@
         "resolver"
     ],
     "scripts": {
+        "build": "yarn workspaces run build",
         "mikro-orm": "yarn workspace @game-watch/database mikro-orm"
     },
     "devDependencies": {

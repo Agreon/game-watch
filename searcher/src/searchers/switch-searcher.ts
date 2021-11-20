@@ -2,7 +2,7 @@ import { withBrowser } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 
-import { InfoSearcher } from "../search-service";
+import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface SwitchSearchResponse {
@@ -29,10 +29,9 @@ export const getSwitchSearchResponse = async (search: string) => {
 
 export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
-    // TODO: Use cool logger
-    private logger = console;
 
-    public async search(search: string) {
+
+    public async search(search: string, { logger }: InfoSearcherContext) {
         const userLanguage = "de";
 
         return await withBrowser(async browser => {
@@ -40,7 +39,7 @@ export class SwitchSearcher implements InfoSearcher {
                 const { numFound, docs: results } = await getSwitchSearchResponse(search);
 
                 if (!numFound) {
-                    this.logger.debug("No results found");
+                    logger.debug("No search results found");
 
                     return null;
 
@@ -49,7 +48,7 @@ export class SwitchSearcher implements InfoSearcher {
                 const gameData = results[0];
 
                 if (!matchingName(gameData.title, search)) {
-                    this.logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping switch`);
+                    logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
 
                     return null;
                 }
@@ -63,7 +62,7 @@ export class SwitchSearcher implements InfoSearcher {
 
             const resultCount = await browser.$eval(".result-count", el => el.innerHTML);
             if (resultCount.includes("0 results")) {
-                this.logger.debug("No results found");
+                logger.debug("No results found");
 
                 return null;
             }
@@ -72,13 +71,10 @@ export class SwitchSearcher implements InfoSearcher {
             const fullName = await browser.$eval("game-tile > h3", el => el.textContent!.trim());
 
             if (!matchingName(fullName, search)) {
-                this.logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping switch`);
+                logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
                 return null;
             }
-
-
-            this.logger.debug(`Found link to game '${gameLink}'`);
 
             return `https://www.nintendo.com${gameLink}`;
         });

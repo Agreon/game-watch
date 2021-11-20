@@ -19,5 +19,4 @@ export class SteamMapper implements UrlMapper {
 
         return gameId;
     }
-
 }
