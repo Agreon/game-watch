@@ -18,6 +18,7 @@ export const GameThumbnail: React.FC = () => {
                 <Flex position="relative" justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                     {thumbnailUrl &&
                         <Image
+                        quality={100}
                             alt=""
                             priority={true}
                             layout="fill"

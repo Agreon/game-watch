@@ -36,6 +36,7 @@ export default function Header() {
                             alt="Github"
                             width={32}
                             height={32}
+                            quality={100}
                         />
                     </a>
                 </Box>

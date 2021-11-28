@@ -21,7 +21,7 @@ export const InfoSource: React.FC = () => {
                 data={source.data}
                 name={
                     <Flex align="end">
-                        <Image alt="source-icon" priority={true} src={steamLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Steam</Text>
                     </Flex>
                 }
@@ -31,7 +31,7 @@ export const InfoSource: React.FC = () => {
                 data={source.data}
                 name={
                     <Flex align="center">
-                        <Image alt="source-icon" priority={true} src={switchLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Switch</Text>
                     </Flex>
                 }
@@ -41,7 +41,7 @@ export const InfoSource: React.FC = () => {
                 data={source.data}
                 name={
                     <Flex align="end">
-                        <Image alt="source-icon" priority={true} src={psLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={psLogo} quality={100} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
                     </Flex>
                 }
@@ -51,7 +51,7 @@ export const InfoSource: React.FC = () => {
                 data={source.data}
                 name={
                     <Flex align="ce">
-                        <Image alt="source-icon" priority={true} src={epicLogo} height="30px" width="30px" />
+                        <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height="30px" width="30px" />
                         <Text fontWeight="bold" ml="0.5rem">Epic</Text>
                     </Flex>
                 }

@@ -45,7 +45,7 @@ export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = (
         <InfoSourceWrapper
             name={
                 <Flex align="center">
-                    <Image src={metacriticLogo} priority={true} alt="metacritic" height="30px" width="30px" />
+                    <Image src={metacriticLogo} priority={true} alt="metacritic" quality={100} height="30px" width="30px" />
                     <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
                 </Flex>
             }
