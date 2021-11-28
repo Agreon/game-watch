@@ -68,7 +68,7 @@ const InfoSourceListComponent: React.FC<InfoSourceListProps> = ({ activeInfoSour
                     </InfoSourceProvider>
                 )}
             </Box>
-            {!disabledAdd && <AddInfoSource syncInfoSource={syncInfoSource} />}
+            {!disabledAdd && <AddInfoSource />}
         </>
     )
 }

@@ -21,9 +21,6 @@ const QUEUE_CONNECTION_OPTIONS = {
     password: process.env.REDIS_PASSWORD
 };
 
-/**
- * TODO: Add error handlers!
- */
 export const createWorkerForQueue = <T extends QueueType>(
     type: T,
     processor: Processor<QueueParams[T]>,
@@ -34,7 +31,7 @@ export const createWorkerForQueue = <T extends QueueType>(
     {
         connection: QUEUE_CONNECTION_OPTIONS,
         ...options,
-    }
+    },
 );
 
 export const createSchedulerForQueue = <T extends QueueType>(

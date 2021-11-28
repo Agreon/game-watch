@@ -19,7 +19,6 @@ export class QueueService implements OnModuleDestroy {
         await this.queues[type].add(type, payload);
     }
 
-
     public async createRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
         await this.queues[QueueType.ResolveSource].add(
             QueueType.ResolveSource,

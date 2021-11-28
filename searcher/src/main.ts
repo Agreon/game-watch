@@ -57,17 +57,23 @@ const main = async () => {
         } catch (error) {
             // Need to wrap this because otherwise the error is swallowed by the worker.
             logger.error(error);
+            Sentry.captureException(error, { tags: { gameId } });
             throw error;
         }
+    });
+
+    worker.on("error", error => {
+        logger.error(error);
+        Sentry.captureException(error);
     });
 
     logger.info("Listening for events");
 };
 
 main().catch(error => {
+    logger.error(error);
     if (worker) {
         worker.close();
     }
-    logger.error(error);
     process.exit(1);
 });
