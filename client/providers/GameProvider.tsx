@@ -1,13 +1,9 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { GameWithLoadingState, useGamesContext } from "./GamesProvider";
+import { useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
-import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, StoreGameData, TagDto } from "game-watch-shared";
+import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
 
-// TODO: Uncool
-export interface InfoSourceWithLoadingState extends InfoSourceDto {
-    loading?: boolean;
-}
 
 
 // TODO: Let users select the priority / image
@@ -75,7 +71,7 @@ export function useGameContext() {
     return context;
 }
 
-export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ children, game }) => {
+export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) => {
     const { setGame, removeGame } = useGamesContext();
     const { withRequest, handleError } = useHttp();
     const [loading, setLoading] = useState(false);
@@ -88,6 +84,28 @@ export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ childre
         });
         setLoading(false);
     }, [withRequest, setGame, game.id]);
+
+    const [polling, setPolling] = useState(false);
+    useEffect(() => {
+        if (!game.syncing || polling) {
+            return;
+        }
+        setPolling(true);
+        (async () => {
+            await withRequest(async http => {
+                do {
+                    const { data } = await http.get<GameDto>(`/game/${game.id}`);
+                    setGame(data.id, data);
+                    if (data.syncing === false) {
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                } while (true)
+            });
+            setPolling(false);
+        }
+        )();
+    }, [game, polling, setGame, withRequest]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update
@@ -190,7 +208,7 @@ export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ childre
 
     const tags = useMemo(() => game.tags, [game.tags]);
 
-    const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
+    const allInfoSources = useMemo(() => game.infoSources.filter(source => source.data !== null), [game.infoSources]);
     const activeInfoSources = useMemo(
         () => allInfoSources
             .filter(source => !source.disabled)
@@ -215,18 +233,6 @@ export const GameProvider: React.FC<{ game: GameWithLoadingState }> = ({ childre
         () => game.name ?? nameFromInfoSource ?? game.search,
         [game.name, nameFromInfoSource, game.search]
     );
-
-    // Initial load
-    useEffect(() => {
-        (async () => {
-            if (game.justAdded) {
-                await syncGame();
-            }
-        })();
-        // We only want to call the effect then
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [game.justAdded]);
-
 
     const contextValue = useMemo(() => ({
         game,

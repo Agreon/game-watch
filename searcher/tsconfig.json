@@ -1,0 +1,21 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./"
+  },
+  "references": [
+    {
+      "path": "../lib/shared",
+    },
+    {
+      "path": "../lib/database"
+    },
+    {
+      "path": "../lib/service"
+    },
+    {
+      "path": "../lib/queue"
+    }
+  ]
+}

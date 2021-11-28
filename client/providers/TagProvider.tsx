@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { CreateTagDto, TagDto } from "game-watch-shared";
+import { CreateTagDto, TagDto } from "@game-watch/shared";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHttp } from "../util/useHttp";
 

@@ -2,10 +2,19 @@
     "name": "game-watch",
     "private": "true",
     "workspaces": [
-        "shared",
+        "lib/database",
+        "lib/shared",
+        "lib/service",
+        "lib/queue",
         "client",
-        "server"
+        "server",
+        "searcher",
+        "resolver"
     ],
+    "scripts": {
+        "build": "yarn workspaces run build",
+        "mikro-orm": "yarn workspace @game-watch/database mikro-orm"
+    },
     "devDependencies": {
         "yarn-deduplicate": "^3.1.0"
     }

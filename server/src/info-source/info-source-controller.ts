@@ -1,7 +1,7 @@
-import { BadRequestException, Body, Controller, Param, Post } from "@nestjs/common";
-import { CreateInfoSourceDto, InfoSourceDto } from "game-watch-shared";
+import { CreateInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
+import { BadRequestException, Body, Controller, Get, Param, Post } from "@nestjs/common";
 
-import { UrlNotMappableError } from "../resolve/resolve-service";
+import { UrlNotMappableError } from "../mapper/mapper-service";
 import { InfoSourceService } from "./info-source-service";
 
 @Controller("/info-source")
@@ -24,17 +24,24 @@ export class InfoSourceController {
         }
     }
 
-    @Post("/:infoSourceId/sync")
-    public async syncInfoSource(
-        @Param("infoSourceId") infoSourceId: string
-    ): Promise<InfoSourceDto> {
-        return await this.infoSourceService.syncInfoSource(infoSourceId);
+    @Get("/:id")
+    public async getInfoSource(
+        @Param("id") id: string
+    ) {
+        return await this.infoSourceService.getInfoSource(id);
     }
 
-    @Post("/:infoSourceId/disable")
-    public async disableInfoSource(
-        @Param("infoSourceId") infoSourceId: string
+    @Post("/:id/sync")
+    public async syncInfoSource(
+        @Param("id") id: string
     ): Promise<InfoSourceDto> {
-        return await this.infoSourceService.disableInfoSource(infoSourceId);
+        return await this.infoSourceService.syncInfoSource(id);
+    }
+
+    @Post("/:id/disable")
+    public async disableInfoSource(
+        @Param("id") id: string
+    ): Promise<InfoSourceDto> {
+        return await this.infoSourceService.disableInfoSource(id);
     }
 }

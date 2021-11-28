@@ -9,7 +9,7 @@ import React, { useMemo } from "react";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import metacriticLogo from '../../assets/metacritic.svg';
 import Image from 'next/image'
-import { MetacriticData } from "game-watch-shared";
+import { MetacriticData } from "@game-watch/shared";
 
 const getMetaCriticScoreColor = (score: number) => {
     if (isNaN(score)) {

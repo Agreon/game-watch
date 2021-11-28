@@ -1,5 +1,5 @@
 {
-  "name": "game-watch-client",
+  "name": "@game-watch/client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "game-watch-shared": "0.0.1",
+    "@game-watch/shared": "0.0.1",
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.8",
     "@emotion/react": "^11",
@@ -21,13 +21,12 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-masonry-css": "^1.0.16",
-    "sharp": "^0.29.1",
-    "yarn": "^1.22.15"
+    "sharp": "^0.29.1"
   },
   "devDependencies": {
     "@types/react": "17.0.27",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
-    "typescript": "4.4.3"
+    "typescript": "^4.4.4"
   }
 }

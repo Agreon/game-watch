@@ -1,22 +1,16 @@
+import { Game, InfoSource, Tag } from "@game-watch/database";
+import { QueueType } from "@game-watch/queue";
 import { QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
-import { ConflictException, Injectable, Logger } from "@nestjs/common";
-import { InfoSourceType } from "game-watch-shared";
+import { ConflictException, Injectable } from "@nestjs/common";
 
-import { InfoSource } from "../info-source/info-source-model";
-import { ResolveService } from "../resolve/resolve-service";
-import { SearchService } from "../search/search-service";
-import { Tag } from "../tag/tag-model";
-import { Game } from "./game-model";
+import { QueueService } from "../queue/queue-service";
 
 @Injectable()
 export class GameService {
-    private readonly logger = new Logger(GameService.name);
-
     public constructor(
-        private readonly searchService: SearchService,
-        private readonly resolveService: ResolveService,
+        private readonly queueService: QueueService,
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
@@ -34,13 +28,20 @@ export class GameService {
         game = new Game({ search });
         await this.gameRepository.persistAndFlush(game);
 
+        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
         return game;
     }
 
     public async syncGame(gameId: string) {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
 
-        return await this.syncGameInfoSources(game);
+        game.syncing = true;
+        await this.gameRepository.persistAndFlush(game);
+
+        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
+        return game;
     }
 
     public async addTagToGame(gameId: string, tagId: string) {
@@ -77,79 +78,15 @@ export class GameService {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
 
         for (const source of game.infoSources) {
+            await this.queueService.removeRepeatableInfoSourceResolveJob(source);
             this.infoSourceRepository.remove(source);
         }
 
         await this.gameRepository.removeAndFlush(game);
     }
 
-    public async syncAllGames() {
-        const games = await this.gameRepository.findAll(["infoSources"]);
-
-        // TODO: use p-queue
-        for (const game of games) {
-            await this.syncGameInfoSources(game);
-        }
-    }
-
-    private async syncGameInfoSources(game: Game) {
-        this.logger.debug(`Syncing InfoSources for ${game.search} (${game.id})`);
-        console.time("Sync");
-        const existingInfoSources = await game.infoSources.loadItems();
-
-        // Resolve for existing sources
-        const resolvePromises = existingInfoSources
-            .filter(infoSource => !infoSource.disabled)
-            .map(
-                async source => {
-                    const resolvedGameData = await this.resolveService.resolveGameInformation(
-                        source.remoteGameId,
-                        source.type
-                    );
-                    if (!resolvedGameData) {
-                        source.resolveError = true;
-                        this.logger.warn(`Source ${source.type} for game ${game.id} is not resolvable anymore`);
-
-                        return;
-                    }
-
-                    source.data = resolvedGameData;
-                }
-            );
-
-        // Resolve for possible new sources
-        const sourcesToSearch = Object.values(InfoSourceType).filter(
-            (type => !existingInfoSources.map(({ type }) => type).includes(type))
-        );
-        const searchAndResolvePromises = sourcesToSearch.map(
-            async sourceType => {
-                const remoteGameId = await this.searchService.searchForGameInSource(game.search, sourceType);
-                if (!remoteGameId) {
-                    this.logger.debug(`No store game information found in '${sourceType}' for '${game.search}'`);
-                    return null;
-                }
-
-                const resolvedGameData = await this.resolveService.resolveGameInformation(remoteGameId, sourceType);
-                if (!resolvedGameData) {
-                    this.logger.debug(`'${remoteGameId}' could not be resolved in '${sourceType}' for '${game.search}'`);
-
-                    return;
-                }
-
-                game.infoSources.add(new InfoSource({
-                    type: sourceType,
-                    remoteGameId: remoteGameId,
-                    data: resolvedGameData,
-                }));
-            }
-        );
-
-        await Promise.all([...resolvePromises, ...searchAndResolvePromises]);
-
-        await this.gameRepository.persistAndFlush(game);
-
-        console.timeEnd("Sync");
-        return game;
+    public async getGame(gameId: string) {
+        return await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
     }
 
     public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {

@@ -1,12 +1,7 @@
 import { AxiosResponse } from "axios";
-import { CreateGameDto, GameDto, InfoSourceType, TagDto } from "game-watch-shared";
+import { CreateGameDto, GameDto, InfoSourceType, TagDto } from "@game-watch/shared";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHttp } from "../util/useHttp";
-
-// TODO: Uncool
-export interface GameWithLoadingState extends GameDto {
-    justAdded?: boolean;
-}
 
 export interface GamesFilter {
     tags: TagDto[]
@@ -14,7 +9,7 @@ export interface GamesFilter {
 }
 
 export interface GamesCtx {
-    games: GameWithLoadingState[]
+    games: GameDto[]
     gamesLoading: boolean
     addGame: (name: string) => Promise<void>
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
@@ -69,10 +64,7 @@ export const GamesProvider: React.FC = ({ children }) => {
         await withRequest(async http => {
             const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>("/game", { search: name });
             setGames(currentGames => [
-                {
-                    ...data,
-                    justAdded: true
-                },
+                data,
                 ...currentGames
             ]);
         });

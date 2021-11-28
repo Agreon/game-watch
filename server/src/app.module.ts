@@ -1,15 +1,15 @@
+import { mikroOrmConfig } from '@game-watch/database';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
 import { LoggerMiddleware } from './LoggerMiddleware';
-import config from './mikro-orm.config';
 import { TagModule } from './tag/tag-module';
 
 @Module({
   imports: [
-    MikroOrmModule.forRoot(config),
+    MikroOrmModule.forRoot(mikroOrmConfig),
     GameModule,
     InfoSourceModule,
     TagModule,

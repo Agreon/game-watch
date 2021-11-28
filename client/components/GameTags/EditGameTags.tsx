@@ -4,7 +4,7 @@ import { Tag as ChakraTag, TagLabel, TagLeftIcon, IconButton } from "@chakra-ui/
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useTagContext } from "../../providers/TagProvider";
 import { useGameContext } from "../../providers/GameProvider";
-import { TagDto } from "game-watch-shared";
+import { TagDto } from "@game-watch/shared";
 
 export interface TagWithToggleState extends TagDto {
     toggled: boolean
