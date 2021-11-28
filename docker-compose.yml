@@ -27,6 +27,7 @@ services:
       - CORS_ORIGIN=$CORS_ORIGIN
       - REDIS_HOST=redis
       - REDIS_PASSWORD=$REDIS_PASSWORD
+      - SYNC_SOURCES_AT=$SYNC_SOURCES_AT
     depends_on:
       - db
     ports:
