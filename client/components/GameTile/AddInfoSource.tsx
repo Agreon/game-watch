@@ -16,9 +16,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useGameContext } from "../../providers/GameProvider";
-import { InfoSourceDto, InfoSourceType } from "@game-watch/shared";
+import { InfoSourceType } from "@game-watch/shared";
 
-export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSourceDto) => Promise<void> }> = ({ syncInfoSource }) => {
+// TODO: Does not trigger refresh yet
+export const AddInfoSource: React.FC = () => {
     const { addInfoSource, allInfoSources } = useGameContext();
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,9 +49,7 @@ export const AddInfoSource: React.FC<{ syncInfoSource: (infoSource: InfoSourceDt
         setLoading(false);
         onClose();
         setUrl("");
-
-        await syncInfoSource(infoSource);
-    }, [addInfoSource, syncInfoSource, onClose, type, url]);
+    }, [addInfoSource, onClose, type, url]);
 
     return (
         <>

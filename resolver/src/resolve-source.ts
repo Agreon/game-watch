@@ -26,18 +26,20 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);
 
-        source.resolveError = true;
-        source.syncing = false;
-        await em.persistAndFlush(source);
+        await em.nativeUpdate(InfoSource, sourceId, {
+            resolveError: true,
+            syncing: false,
+        });
 
         return;
     }
     logger.info(`Resolved source information in ${source.type}`);
 
-    source.resolveError = false;
-    source.syncing = false;
-    source.data = resolvedGameData;
-    await em.persistAndFlush(source);
+    await em.nativeUpdate(InfoSource, sourceId, {
+        resolveError: false,
+        syncing: false,
+        data: resolvedGameData
+    });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Resolving source took ${duration} ms`);

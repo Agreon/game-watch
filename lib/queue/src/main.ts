@@ -1,4 +1,4 @@
-import { Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker } from "bullmq";
+import { Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker, WorkerOptions } from "bullmq";
 import * as dotenv from "dotenv";
 import path from 'path';
 

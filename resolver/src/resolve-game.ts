@@ -1,4 +1,4 @@
-import { Game } from "@game-watch/database";
+import { Game, InfoSource } from "@game-watch/database";
 import { Logger } from "@game-watch/service";
 import { EntityManager } from "@mikro-orm/core";
 
@@ -31,21 +31,23 @@ export const resolveGame = async ({ gameId, resolveService, em, logger }: Params
         if (!resolvedGameData) {
             logger.warn(`Source ${source.type} could not be resolved`);
 
-            source.resolveError = true;
-            await em.persistAndFlush(source);
+            await em.nativeUpdate(InfoSource, source.id, {
+                resolveError: true,
+                syncing: false,
+            });
 
             return;
         }
-        logger.info(`Resolved game information in ${source.type}`);
+        logger.info(`Resolved source information in ${source.type}`);
 
-        source.resolveError = false;
-        source.syncing = false;
-        source.data = resolvedGameData;
-        await em.persistAndFlush(source);
+        await em.nativeUpdate(InfoSource, source.id, {
+            resolveError: false,
+            syncing: false,
+            data: resolvedGameData
+        });
     }));
 
-    game.syncing = false;
-    await em.persistAndFlush(game);
+    await em.nativeUpdate(Game, game.id, { syncing: false });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Resolving for game took ${duration} ms`);

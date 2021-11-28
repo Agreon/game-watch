@@ -1,34 +1,55 @@
 import { withBrowser } from "@game-watch/service";
 import { InfoSourceType, SwitchGameData } from "@game-watch/shared";
+import axios from "axios";
 
 import { InfoResolver } from "../resolve-service";
+
+export interface SwitchSearchResponse {
+    response: {
+        numFound: number;
+        docs: Array<{
+            url: string;
+            title: string;
+            pretty_date_s: string;
+            price_discounted_f?: number;
+            price_regular_f?: number;
+            image_url_h2x1_s: string;
+        }>
+    }
+}
+
+export const getSwitchSearchResponse = async (search: string) => {
+    const { data: { response } } = await axios.get<SwitchSearchResponse>(
+        `https://searching.nintendo-europe.com/de/select?q=${search}&fq=type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc&start=0&rows=1&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)`
+    );
+
+    return response;
+};
 
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
     public async resolve(id: string): Promise<SwitchGameData> {
-
         return await withBrowser(async (page) => {
             // TODO: Does not accept special chars
-            // if (!id.includes("/")) {
-            //     // Just reuse the same search because we have all info there
-            //     const { docs: results } = await getSwitchSearchResponse(id);
+            if (!id.includes("/")) {
+                // Just reuse the same search because we have all info there
+                const { docs: results } = await getSwitchSearchResponse(id);
 
-            //     const game = results[0];
+                const game = results[0];
 
-            //     return {
-            //         id,
-            //         url: `https://nintendo.de${game.url}`,
-            //         fullName: id,
-            //         thumbnailUrl: game.image_url_h2x1_s,
-            //         priceInformation: game.price_regular_f ? {
-            //             initial: `${game.price_regular_f}€`,
-            //             final: `${game.price_discounted_f ?? game.price_regular_f}€`,
-            //         } : undefined,
-            //         releaseDate: game.pretty_date_s,
-            //     };
-
-            // }
+                return {
+                    id,
+                    url: `https://nintendo.de${game.url}`,
+                    fullName: id,
+                    thumbnailUrl: game.image_url_h2x1_s,
+                    priceInformation: game.price_regular_f ? {
+                        initial: `${game.price_regular_f}€`,
+                        final: `${game.price_discounted_f ?? game.price_regular_f}€`,
+                    } : undefined,
+                    releaseDate: game.pretty_date_s,
+                };
+            }
 
 
             await page.goto(id);

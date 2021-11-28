@@ -38,23 +38,23 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
         }
         logger.info(`Found game information in ${sourceType} for '${game.search}': '${remoteGameId}'`);
 
-        const newInfoSource = new InfoSource({
+        const newSource = new InfoSource({
             type: sourceType,
             remoteGameId,
             game,
         });
 
-        await em.persistAndFlush(newInfoSource);
+        await em.nativeInsert(newSource);
 
         // Add nightly job
         await resolveSourceQueue.add(
             QueueType.ResolveSource,
-            { sourceId: newInfoSource.id },
+            { sourceId: newSource.id },
             {
                 repeat: {
                     cron: process.env.SYNC_SOURCES_AT
                 },
-                jobId: newInfoSource.id,
+                jobId: newSource.id,
                 priority: 2
             }
         );
