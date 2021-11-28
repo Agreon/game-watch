@@ -4,6 +4,9 @@
     "outDir": "./dist",
     "baseUrl": "./"
   },
+  "include": [
+    "./src/**/*.ts"
+  ],
   "references": [
     {
       "path": "../lib/shared",
