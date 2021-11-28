@@ -11,16 +11,12 @@ import { AppModule } from './app.module';
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 const serverPort = process.env.SERVER_PORT;
-const sentryDsn = process.env.SENTRY_DSN;
 const corsOrigin = process.env.CORS_ORIGIN || true;
-
-if (!serverPort || !sentryDsn) {
-  throw new Error("Environment is not complete");
-}
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.SENTRY_ENVIRONMENT,
+  initialScope: { tags: { service: "server" } },
   tracesSampleRate: 1.0,
 });
 

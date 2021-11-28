@@ -2,7 +2,10 @@ import { mikroOrmConfig } from "@game-watch/database";
 import { createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger } from "@game-watch/service";
 import { MikroORM } from "@mikro-orm/core";
+import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
+import * as dotenv from "dotenv";
+import path from 'path';
 
 import { resolveGame } from "./resolve-game";
 import { ResolveService } from "./resolve-service";
@@ -12,6 +15,15 @@ import { MetacriticResolver } from "./resolvers/metacritic-resolver";
 import { PsStoreResolver } from "./resolvers/ps-store-resolver";
 import { SteamResolver } from "./resolvers/steam-resolver";
 import { SwitchResolver } from "./resolvers/switch-resolver";
+
+dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.SENTRY_ENVIRONMENT,
+    initialScope: { tags: { service: "resolver" } },
+    tracesSampleRate: 1.0,
+});
 
 const logger = createLogger("Resolver");
 

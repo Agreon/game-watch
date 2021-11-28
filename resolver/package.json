@@ -24,11 +24,11 @@
         "@sentry/node": "^6.13.3",
         "@sentry/tracing": "^6.13.3",
         "axios": "^0.24.0",
+        "bullmq": "^1.52.1",
         "cheerio": "^1.0.0-rc.10",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
-        "@mikro-orm/cli": "^4.5.9",
         "@types/node": "^16.0.0",
         "@typescript-eslint/eslint-plugin": "^4.28.2",
         "@typescript-eslint/parser": "^4.28.2",

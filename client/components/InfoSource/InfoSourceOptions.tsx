@@ -9,16 +9,19 @@ import { useCallback } from "react";
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { InfoSourceDto } from "@game-watch/shared";
+import { useGameContext } from "../../providers/GameProvider";
 
-// TODO: Disable options on sync
 export const InfoSourceOptions: React.FC<{ source: InfoSourceDto }> = ({ source }) => {
+    const { loading, game } = useGameContext();
     const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
 
     const onRemove = useCallback(() => disableInfoSource(source), [source, disableInfoSource]);
     const onSync = useCallback(() => syncInfoSource(source), [source, syncInfoSource]);
 
     return (
-        <Menu>
+        <Menu
+            isOpen={(!loading && !game.syncing) ? undefined : false}
+        >
             <MenuButton
                 as={IconButton}
                 aria-label="Options"

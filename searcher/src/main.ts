@@ -2,7 +2,10 @@ import { mikroOrmConfig } from "@game-watch/database";
 import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger } from "@game-watch/service";
 import { MikroORM } from "@mikro-orm/core";
+import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
+import * as dotenv from "dotenv";
+import path from 'path';
 
 import { searchForGame } from "./search-for-game";
 import { SearchService } from "./search-service";
@@ -11,6 +14,15 @@ import { MetacriticSearcher } from "./searchers/metacritic-searcher";
 import { PsStoreSearcher } from "./searchers/ps-store-searcher";
 import { SteamSearcher } from "./searchers/steam-searcher";
 import { SwitchSearcher } from "./searchers/switch-searcher";
+
+dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.SENTRY_ENVIRONMENT,
+    initialScope: { tags: { service: "searcher" } },
+    tracesSampleRate: 1.0,
+});
 
 const logger = createLogger("Searcher");
 
