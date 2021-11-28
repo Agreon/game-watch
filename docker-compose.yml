@@ -76,7 +76,5 @@ services:
     image: bitnami/redis:6.2.6
     environment:
       - REDIS_PASSWORD=$REDIS_PASSWORD
-    # volumes:
-      # - /opt/var/game-watch/redis-data:/bitnami/redis/data
     ports:
       - 6379:6379
