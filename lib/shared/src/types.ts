@@ -13,16 +13,19 @@ export interface BaseGameData {
     url: string;
 }
 
+interface PriceInformation {
+    initial: string;
+    final: string;
+}
+
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl?: string;
     releaseDate?: string;
-    priceInformation?: Record<string, string>;
+    priceInformation?: PriceInformation;
 }
 
 export interface SteamGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
+    priceInformation?: PriceInformation & {
         discountPercentage: string;
     };
     categories?: string[];
@@ -30,27 +33,15 @@ export interface SteamGameData extends StoreGameData {
     controllerSupport?: string;
 }
 
-export interface SwitchGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-    };
-}
+export type SwitchGameData = StoreGameData;
 
 export interface PsStoreGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
+    priceInformation?: PriceInformation & {
         discountDescription?: string;
     };
 }
 
-export interface EpicGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-    };
-}
+export type EpicGameData = StoreGameData;
 
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
@@ -66,3 +57,11 @@ export type GameData = {
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
+
+export enum NotificationType {
+    NewStoreEntry = "new-store-entry",
+    ReleaseDateChanged = "release-date-changed",
+    GameReleased = "game-released",
+    GameReduced = "game-reduced",
+    NewMetacriticRating = "new-metacritic-rating"
+}
