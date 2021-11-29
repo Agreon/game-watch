@@ -1,4 +1,4 @@
-import { InfoSource } from "@game-watch/database";
+import { Game, InfoSource } from "@game-watch/database";
 import { createSchedulerForQueue, QueueParams, QueueType } from "@game-watch/queue";
 import { Injectable, OnModuleDestroy } from "@nestjs/common";
 import { Queue, QueueScheduler } from "bullmq";
@@ -35,7 +35,27 @@ export class QueueService implements OnModuleDestroy {
 
     public async removeRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
         await this.queues[QueueType.ResolveSource].removeRepeatableByKey(
-            `resolve-source:${infoSource.id}:::${process.env.SYNC_SOURCES_AT}`
+            `${QueueType.ResolveSource}:${infoSource.id}:::${process.env.SYNC_SOURCES_AT}`
+        );
+    }
+
+    public async createRepeatableGameSearchJob(game: Game) {
+        await this.queues[QueueType.SearchGame].add(
+            QueueType.ResolveGame,
+            { gameId: game.id },
+            {
+                repeat: {
+                    cron: process.env.SYNC_SOURCES_AT
+                },
+                jobId: game.id,
+                priority: 2
+            }
+        );
+    }
+
+    public async removeRepeatableGameSearchJob(game: Game) {
+        await this.queues[QueueType.SearchGame].removeRepeatableByKey(
+            `${QueueType.SearchGame}:${game.id}:::${process.env.SYNC_SOURCES_AT}`
         );
     }
 

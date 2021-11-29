@@ -34,6 +34,7 @@ export const resolveGame = async ({ gameId, resolveService, em, logger }: Params
             await em.nativeUpdate(InfoSource, source.id, {
                 resolveError: true,
                 syncing: false,
+                updatedAt: new Date()
             });
 
             return;
@@ -43,11 +44,16 @@ export const resolveGame = async ({ gameId, resolveService, em, logger }: Params
         await em.nativeUpdate(InfoSource, source.id, {
             resolveError: false,
             syncing: false,
-            data: resolvedGameData
+            data: resolvedGameData,
+            updatedAt: new Date()
         });
     }));
 
-    await em.nativeUpdate(Game, game.id, { syncing: false });
+
+    await em.nativeUpdate(Game, game.id, {
+        syncing: false,
+        updatedAt: new Date()
+    });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Resolving for game took ${duration} ms`);

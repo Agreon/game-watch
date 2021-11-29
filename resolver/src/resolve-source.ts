@@ -29,6 +29,7 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
         await em.nativeUpdate(InfoSource, sourceId, {
             resolveError: true,
             syncing: false,
+            updatedAt: new Date()
         });
 
         return;
@@ -38,7 +39,8 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
     await em.nativeUpdate(InfoSource, sourceId, {
         resolveError: false,
         syncing: false,
-        data: resolvedGameData
+        data: resolvedGameData,
+        updatedAt: new Date()
     });
 
     const duration = new Date().getTime() - startTime;

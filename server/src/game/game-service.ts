@@ -29,6 +29,7 @@ export class GameService {
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+        await this.queueService.createRepeatableGameSearchJob(game);
 
         return game;
     }
@@ -82,6 +83,7 @@ export class GameService {
             this.infoSourceRepository.remove(source);
         }
 
+        await this.queueService.removeRepeatableGameSearchJob(game);
         await this.gameRepository.removeAndFlush(game);
     }
 
