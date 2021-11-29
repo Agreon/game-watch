@@ -2,8 +2,8 @@
     "name": "game-watch",
     "private": "true",
     "workspaces": [
-        "lib/database",
         "lib/shared",
+        "lib/database",
         "lib/service",
         "lib/queue",
         "client",

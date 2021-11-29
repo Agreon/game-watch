@@ -21,7 +21,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             <Box
                 pt="2rem"
                 mt="4rem"
-                overflow="auto"
+                overflowX="hidden"
+                overflowY="auto"
             >
                 <Flex
                     direction="column"

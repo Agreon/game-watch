@@ -64,14 +64,15 @@ services:
     depends_on:
       - redis
 
-  client:
-    build:
-      context: .
-      dockerfile: ./client/Dockerfile
-    depends_on:
-      - server
-    ports:
-      - $CLIENT_SERVER_PORT:3000
+  # Currently handled by vercel
+  # client:
+  #   build:
+  #     context: .
+  #     dockerfile: ./client/Dockerfile
+  #   depends_on:
+  #     - server
+  #   ports:
+  #     - $CLIENT_SERVER_PORT:3000
 
   redis:
     image: bitnami/redis:6.2.6
