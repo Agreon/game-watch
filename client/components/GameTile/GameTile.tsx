@@ -42,8 +42,8 @@ const GameTileComponent: React.FC = () => {
             onMouseLeave={() => setHighlightMenu(false)}
         >
             {!loading &&
-                <Box position="absolute" right="0" top="0" zIndex="1">
-                <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
+                <Box position="absolute" right="0" top="0" zIndex="3">
+                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
                 </Box>
             }
             <Flex direction="column">

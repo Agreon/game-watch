@@ -6,7 +6,7 @@ import { useHttp } from "../util/useHttp";
 export interface TagCtx {
     tags: TagDto[]
     tagsLoading: boolean
-    addTag: (name: string) => Promise<TagDto | undefined>
+    addTag: (name: string) => Promise<TagDto | Error>
 }
 
 export const TagContext = React.createContext<TagCtx | null>(null);

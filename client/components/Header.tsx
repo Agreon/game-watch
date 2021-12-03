@@ -12,7 +12,7 @@ export default function Header() {
             justify={["space-between", "space-between", "center"]}
             align="center"
             position="absolute"
-            zIndex="2"
+            zIndex="1500"
             bg={useColorModeValue('white', 'gray.800')}
             width="100%"
             padding="1rem"

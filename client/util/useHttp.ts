@@ -1,5 +1,5 @@
 import { useToast, UseToastOptions } from "@chakra-ui/toast";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosError } from "axios";
 import { useCallback, useMemo } from "react";
 
 export function useHttp() {
@@ -20,16 +20,17 @@ export function useHttp() {
     const withRequest = useCallback(
         async <T>(
             request: (http: AxiosInstance) => Promise<T>,
-            errorHandler?: (error: unknown) => void
-        ): Promise<T | undefined> => {
+            errorHandler?: (error: AxiosError) => void,
+        ): Promise<T | Error> => {
             try {
                 return await request(http);
-            } catch (error) {
+            } catch (error: any) {
                 if (errorHandler) {
                     errorHandler(error);
-                    return;
+                    return error;
                 }
                 handleError(error)
+                return error;
             }
         }, [http, handleError]);
 

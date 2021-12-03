@@ -1,4 +1,4 @@
-import { Flex, Box } from "@chakra-ui/layout"
+import { Box } from "@chakra-ui/layout"
 import {
     Stat,
     StatLabel,
@@ -6,9 +6,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { InfoSourceWrapper } from "./InfoSourceWrapper";
-import metacriticLogo from '../../assets/metacritic.svg';
-import Image from 'next/image'
+import { InfoSourceWrapper, PreviewInfoSourceWrapper } from "./InfoSourceWrapper";
 import { MetacriticData } from "@game-watch/shared";
 
 const getMetaCriticScoreColor = (score: number) => {
@@ -42,14 +40,7 @@ const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displ
 // TODO: is jumping on loading state
 export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = ({ data }) => {
     return (
-        <InfoSourceWrapper
-            name={
-                <Flex align="center">
-                    <Image src={metacriticLogo} priority={true} alt="metacritic" quality={100} height="30px" width="30px" />
-                    <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
-                </Flex>
-            }
-        >
+        <InfoSourceWrapper>
             <Box flex="1">
                 <Stat>
                     <StatLabel>Critic Score</StatLabel>
@@ -64,5 +55,24 @@ export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = (
             </Box>
         </InfoSourceWrapper>
     )
+}
 
+
+export const MetacriticInfoSourcePreview: React.FC<{ data: MetacriticData | null }> = ({ data }) => {
+    return (
+        <PreviewInfoSourceWrapper>
+            <Box flex="1">
+                <Stat>
+                    <StatLabel>Critic Score</StatLabel>
+                    <Score score={parseInt(data?.criticScore ?? "")} displayScore={parseInt(data?.criticScore ?? "")} />
+                </Stat>
+            </Box>
+            <Box flex="1">
+                <Stat>
+                    <StatLabel>User Score</StatLabel>
+                    <Score score={parseFloat(data?.userScore ?? "") * 10} displayScore={parseFloat(data?.userScore ?? "")} />
+                </Stat>
+            </Box>
+        </PreviewInfoSourceWrapper>
+    )
 }

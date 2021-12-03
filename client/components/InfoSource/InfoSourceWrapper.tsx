@@ -1,15 +1,18 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { Flex, Box } from "@chakra-ui/layout"
-import { Text, Tooltip } from "@chakra-ui/react";
+import {
+    IconButton,
+    Text,
+    Tooltip,
+    useColorModeValue
+} from "@chakra-ui/react";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { SourceTypeLogo } from "./SourceTypeLogo";
+import { DeleteIcon } from "@chakra-ui/icons";
 
-interface InfoSourceWrapperParams {
-    name: React.ReactElement;
-}
-
-export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, children }) => {
+export const InfoSourceWrapper: React.FC = ({ children }) => {
     const { source } = useInfoSourceContext();
 
     return (
@@ -17,7 +20,7 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, chi
             <Tooltip label={source.data?.fullName} placement="top">
                 <Box flex="1">
                     <a href={source.data?.url} target="_blank" rel="noreferrer">
-                        {name}
+                        {SourceTypeLogo[source.type]}
                     </a>
                 </Box>
             </Tooltip>
@@ -29,7 +32,59 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, chi
                     {!source.resolveError && source.data !== null && children}
                 </>
             )}
-            <Box><InfoSourceOptions source={source} /></Box>
+            <Box><InfoSourceOptions /></Box>
+        </Flex>
+    )
+}
+
+// TODO: RM margin
+// TODO: Responsiveness below 540px => Let store-logo flow above?
+export const PreviewInfoSourceWrapper: React.FC = ({ children }) => {
+    const { source, disableInfoSource } = useInfoSourceContext();
+    const onRemove = useCallback(() => disableInfoSource(), [disableInfoSource]);
+
+    return (
+        <Flex
+            p="1rem"
+            pr="1.5rem"
+            align="center"
+            justify="space-between"
+            position="relative"
+            minHeight="8rem"
+            mb="2rem"
+            bg={useColorModeValue('white', 'gray.800')}
+            borderWidth="1px"
+            rounded="lg"
+            shadow="lg"
+            boxShadow="xl"
+            _hover={{
+                // borderColor: useColorModeValue("grey", "white")
+            }}
+            transition="border-color 0.15s ease"
+        >
+            <Box flex="0.8">
+                <a href={source.data?.url}>
+                    {SourceTypeLogo[source.type]}
+                </a>
+            </Box>
+            {source.syncing ? (
+                <LoadingSpinner size="lg" disableBackdrop />
+            ) : (
+                <>
+                    {source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                    {!source.resolveError && source.data !== null && (
+                        <Flex flex="2" direction="column">
+                            <Box mb="1rem"><Text fontWeight="bold" fontSize="xl">{source.data?.fullName}</Text></Box>
+                            <Flex>
+                                {children}
+                            </Flex>
+                        </Flex>
+                    )}
+                </>
+            )}
+            <Box>
+                <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />
+            </Box>
         </Flex>
     )
 }

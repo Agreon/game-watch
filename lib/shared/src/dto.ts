@@ -24,6 +24,7 @@ export interface GameDto {
     search: string
     name: string | null
     syncing: boolean
+    setupCompleted: boolean
     infoSources: InfoSourceDto[]
     tags: TagDto[]
 }

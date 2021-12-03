@@ -8,15 +8,14 @@ import {
 import { useCallback } from "react";
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { InfoSourceDto } from "@game-watch/shared";
 import { useGameContext } from "../../providers/GameProvider";
 
-export const InfoSourceOptions: React.FC<{ source: InfoSourceDto }> = ({ source }) => {
+export const InfoSourceOptions: React.FC = () => {
     const { loading, game } = useGameContext();
     const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
 
-    const onRemove = useCallback(() => disableInfoSource(source), [source, disableInfoSource]);
-    const onSync = useCallback(() => syncInfoSource(source), [source, syncInfoSource]);
+    const onRemove = useCallback(() => disableInfoSource(), [disableInfoSource]);
+    const onSync = useCallback(() => syncInfoSource(), [syncInfoSource]);
 
     return (
         <Menu
