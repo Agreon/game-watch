@@ -13,6 +13,7 @@ export interface InfoSourceDto<T extends InfoSourceType = InfoSourceType> {
     id: string
     type: T
     remoteGameId: string;
+    remoteGameName: string;
     syncing: boolean
     disabled: boolean
     resolveError: boolean

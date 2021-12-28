@@ -23,6 +23,10 @@ export class SteamSearcher implements InfoSearcher {
         }
 
         const gameId = resultRow.attr("data-ds-appid");
+        if (!gameId) {
+            return null;
+        }
+
         const fullName = ($(".search_result_row .title")[0].children[0] as any).data as string;
 
         if (!matchingName(fullName, search)) {
@@ -31,6 +35,10 @@ export class SteamSearcher implements InfoSearcher {
             return null;
         }
 
-        return gameId ?? null;
+
+        return {
+            remoteGameId: gameId,
+            remoteGameName: fullName
+        };
     }
 }

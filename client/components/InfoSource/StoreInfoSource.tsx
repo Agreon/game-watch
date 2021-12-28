@@ -56,6 +56,7 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
         </Stat>
     )
 }
+
 export const StoreInfoSource: React.FC<{
     expectedDateFormats: string[],
     data: StoreGameData | null,
@@ -70,20 +71,4 @@ export const StoreInfoSource: React.FC<{
             </Box>
         </InfoSourceWrapper>
     )
-}
-
-export const StoreInfoSourcePreview: React.FC<{
-    expectedDateFormats: string[],
-    source: InfoSourceDto<StoreInfoSourceT>
-}> = ({ expectedDateFormats, source }) => {
-    return (
-        <PreviewInfoSourceWrapper>
-            <Box flex="1">
-                <ReleaseDate date={source.data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
-            </Box>
-            <Box flex="1">
-                <Price price={source.data?.priceInformation?.final} initial={source.data?.priceInformation?.initial} />
-            </Box>
-        </PreviewInfoSourceWrapper>
-    );
 }

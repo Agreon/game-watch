@@ -2,7 +2,7 @@ import { withBrowser } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
+import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface SwitchSearchResponse {
@@ -31,7 +31,7 @@ export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
 
 
-    public async search(search: string, { logger }: InfoSearcherContext) {
+    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
         const userLanguage = "de";
 
         return await withBrowser(async browser => {
@@ -53,7 +53,10 @@ export class SwitchSearcher implements InfoSearcher {
                     return null;
                 }
 
-                return gameData.title;
+                return {
+                    remoteGameId: gameData.title,
+                    remoteGameName: gameData.title
+                };
             }
 
 
@@ -76,7 +79,10 @@ export class SwitchSearcher implements InfoSearcher {
                 return null;
             }
 
-            return `https://www.nintendo.com${gameLink}`;
+            return {
+                remoteGameId: `https://www.nintendo.com${gameLink}`,
+                remoteGameName: fullName
+            };
         });
     }
 }

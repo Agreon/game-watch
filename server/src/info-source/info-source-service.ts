@@ -45,7 +45,9 @@ export class InfoSourceService {
 
         const infoSource = new InfoSource({
             type,
-            remoteGameId
+            remoteGameId,
+            // This field is only used for display on the initial search.
+            remoteGameName: "",
         });
 
         game.infoSources.add(infoSource);

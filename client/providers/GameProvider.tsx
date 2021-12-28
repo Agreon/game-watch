@@ -228,9 +228,8 @@ export const GameProvider: React.FC<{
     const tags = useMemo(() => game.tags, [game.tags]);
 
     const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
-    // const allInfoSources = useMemo(() => game.infoSources.filter(source => source.data !== null), [game.infoSources]);
     const activeInfoSources = useMemo(
-        () => allInfoSources
+        () => [...allInfoSources]
             .filter(source => !source.disabled)
             .sort((a, b) => {
                 const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);

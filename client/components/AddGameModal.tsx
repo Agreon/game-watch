@@ -10,15 +10,16 @@ import {
     ModalHeader,
     ModalOverlay,
     Select,
+    useBreakpointValue,
 } from "@chakra-ui/react";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import { useGameContext } from "../providers/GameProvider";
-import { InfoSourcePreview } from "./InfoSource/InfoSource";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAction } from "../util/useAction";
 import { InfoSourceType } from "@game-watch/shared";
+import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
 
 export const PlaceholderMap: Record<InfoSourceType, string> = {
     [InfoSourceType.Steam]: "https://store.steampowered.com/app/...",
@@ -32,7 +33,6 @@ const AddSource: React.FC = () => {
     const { availableInfoSources, addInfoSource } = useGameContext();
     const [type, setType] = useState(availableInfoSources[0]);
     const [url, setUrl] = useState("");
-
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
         onSuccess: () => {
@@ -87,16 +87,13 @@ interface AddGameModalProps {
 /**
  * - TODO: Let users edit the provided name beforehand?
  * - TODO: Option to disable search for more?
- * - TODO: Show sources before they are resolved?
  */
 export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => {
     const { game, setGameInfoSource, setupGame } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose })
 
-    // We need a loading state for the preview-cards for when one is added later.
-    const activeInfoSources = game.infoSources.filter(
-        source => !source.disabled && (game.syncing ? !source.syncing : true)
-    );
+    // We use the direct infoSource so that they are sorted by date.
+    const activeInfoSources = game.infoSources.filter(source => !source.disabled);
 
     return (
         <Modal
@@ -105,9 +102,12 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
             isOpen={show}
             motionPreset='none'
             size="2xl"
+            scrollBehavior={useBreakpointValue(["inside", "inside", "outside"])}
         >
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent
+                maxWidth="48rem"
+            >
                 <ModalHeader>
                     Add Game
                 </ModalHeader>
@@ -125,9 +125,9 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             </Flex>
                             <Flex direction="column" my="1rem">
                                 {activeInfoSources.map(source =>
-                                    <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource}>
+                                    <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource} disablePolling={true}>
                                         <Fade in={true}>
-                                            <Box mb="2rem">
+                                            <Box mb="1rem">
                                                 <InfoSourcePreview />
                                             </Box>
                                         </Fade>

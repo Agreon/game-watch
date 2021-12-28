@@ -102,7 +102,15 @@ export class GameService {
     }
 
     public async getGame(gameId: string) {
-        return await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+        return await this.gameRepository.findOneOrFail(
+            gameId,
+            ["infoSources", "tags"],
+            {
+                infoSources: {
+                    createdAt: QueryOrder.ASC,
+                    id: QueryOrder.ASC
+                }
+            });
     }
 
     public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {
@@ -115,7 +123,7 @@ export class GameService {
             .leftJoinAndSelect("game.infoSources", "infoSources")
             .orderBy({
                 createdAt: QueryOrder.DESC,
-                infoSources: { type: QueryOrder.DESC },
+                infoSources: { createdAt: QueryOrder.DESC },
                 tags: { updatedAt: QueryOrder.DESC },
             });
 

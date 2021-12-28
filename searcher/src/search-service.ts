@@ -6,9 +6,14 @@ export interface InfoSearcherContext {
     logger: Logger
 }
 
+export interface SearchResponse {
+    remoteGameId: string;
+    remoteGameName: string
+}
+
 export interface InfoSearcher {
     type: InfoSourceType;
-    search(name: string, context: InfoSearcherContext): Promise<string | null>;
+    search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>;
 }
 
 export class SearchService {
@@ -20,7 +25,7 @@ export class SearchService {
         search: string,
         type: InfoSourceType,
         context: InfoSearcherContext
-    ): Promise<string | null> {
+    ): Promise<SearchResponse | null> {
         const logger = context.logger.child({ service: SearchService.name, });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);

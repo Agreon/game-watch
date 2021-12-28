@@ -14,7 +14,7 @@ import { AddGameModal } from "./AddGameModal";
 /**
 // width={["100%", "100%", "80%", "60%", "50%", "35%"]}
  */
-export const AddGame: React.FC = () => {
+export const AddGameInput: React.FC = () => {
     const { addGame, setGame, removeGame, games } = useGamesContext();
     const [name, setName] = useState("");
     const { isOpen, onOpen, onClose } = useDisclosure();
