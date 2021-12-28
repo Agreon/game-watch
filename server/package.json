@@ -33,6 +33,7 @@
     "dotenv": "^10.0.0",
     "nestjs-pino": "^2.4.0",
     "pino-http": "^6.5.0",
+    "pino-pretty": "^7.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
