@@ -7,8 +7,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
-import { InfoSourceWrapper, PreviewInfoSourceWrapper } from "./InfoSourceWrapper";
-import { InfoSourceDto, StoreInfoSource as StoreInfoSourceT, StoreGameData } from "@game-watch/shared";
+import { InfoSourceWrapper } from "./InfoSourceWrapper";
+import { StoreGameData } from "@game-watch/shared";
 
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
