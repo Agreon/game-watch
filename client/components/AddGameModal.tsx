@@ -125,7 +125,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             </Flex>
                             <Flex direction="column" my="1rem">
                                 {activeInfoSources.map(source =>
-                                    <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource} disablePolling={true}>
+                                    <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource} disablePolling={!!source.remoteGameName}>
                                         <Fade in={true}>
                                             <Box mb="1rem">
                                                 <InfoSourcePreview />

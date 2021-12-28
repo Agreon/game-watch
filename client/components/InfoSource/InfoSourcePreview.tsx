@@ -8,11 +8,14 @@ import {
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { SourceTypeLogo } from "./SourceTypeLogo";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { LoadingSpinner } from "../LoadingSpinner";
 
-// TODO: Responsiveness below 540px => Let store-logo flow above?
 export const InfoSourcePreview: React.FC = () => {
     const { source, disableInfoSource } = useInfoSourceContext();
     const onRemove = useCallback(() => disableInfoSource(), [disableInfoSource]);
+
+    // The remoteGameName will not be available on a custom add.
+    const name = source.remoteGameName || source.data?.fullName;
 
     return (
         <Flex
@@ -37,11 +40,17 @@ export const InfoSourcePreview: React.FC = () => {
                     {SourceTypeLogo[source.type]}
                 </a>
             </Box>
-            <Flex justify="space-between" flex="2" position="relative" align="center" width="100%">
-                <Box>
-                    <a href={source.data?.url} target="_blank" rel="noreferrer">
-                        <Text fontWeight="bold" fontSize="xl">{source.remoteGameName}</Text>
-                    </a>
+            <Flex justify="space-between" flex="2" align="center" width="100%">
+                <Box width="100%" position="relative">
+                    {!name ? (
+                        <LoadingSpinner size="lg" />
+                    ) : (
+                        <a href={source.data?.url} target="_blank" rel="noreferrer">
+                                <Text fontWeight="bold" fontSize="xl">
+                                    {name}
+                                </Text>
+                            </a>
+                    )}
                 </Box>
                 <Box pl="0.5rem">
                     <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />
