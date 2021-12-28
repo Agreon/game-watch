@@ -49,15 +49,15 @@ const AddSource: React.FC = () => {
             <Box mb="1rem">
                 <Text fontSize="xl">Add further information sources:</Text>
             </Box>
-            <Flex>
-                <FormControl flex="0.3" mr="1rem">
+            <Flex direction={["column", "row"]}>
+                <FormControl flex="0.3" mr="1rem" mb={["0.5rem", 0]}>
                     <Select onChange={event => setType(event.target.value as InfoSourceType)}>
                         {availableInfoSources.map(source => (
                             <option key={source} value={source}>{source}</option>
                         ))}
                     </Select>
                 </FormControl>
-                <FormControl flex="1" mr="1rem">
+                <FormControl flex="1" mr="1rem" mb={["0.5rem", 0]}>
                     <Input
                         value={url}
                         disabled={loading}
@@ -65,7 +65,7 @@ const AddSource: React.FC = () => {
                         onChange={event => setUrl(event.target.value)}
                     />
                 </FormControl>
-                <FormControl flex="0">
+                <FormControl display="flex" flex="0" mb={["0.5rem", 0]} justifyContent={["end", "unset"]}>
                     <Button
                         onClick={() => onAdd({ type, url })}
                         disabled={loading}
