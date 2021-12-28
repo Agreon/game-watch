@@ -14,29 +14,19 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useGameContext } from "../../providers/GameProvider";
 import { InfoSourceType } from "@game-watch/shared";
 import { useAction } from "../../util/useAction";
+import { PlaceholderMap } from "../AddGameModal";
 
 export const AddInfoSource: React.FC = () => {
-    const { allInfoSources, addInfoSource } = useGameContext();
+    const { availableInfoSources, addInfoSource } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [url, setUrl] = useState("");
-    const initialRef = useRef(null);
-
-    const availableInfoSources = useMemo(
-        () => Object.values(InfoSourceType)
-            .filter(type =>
-                !allInfoSources
-                    .filter(source => !source.disabled)
-                    .map(source => source.type)
-                    .includes(type)
-            ),
-        [allInfoSources]
-    );
-
     const [type, setType] = useState(availableInfoSources[0]);
+    const [url, setUrl] = useState("");
+
+    const initialRef = useRef(null);
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
         onSuccess: () => {
@@ -71,6 +61,8 @@ export const AddInfoSource: React.FC = () => {
                                 <FormLabel>Url</FormLabel>
                                 <Input
                                     value={url}
+                                    disabled={loading}
+                                    placeholder={PlaceholderMap[type]}
                                     onChange={event => setUrl(event.target.value)}
                                     ref={initialRef} />
                             </FormControl>

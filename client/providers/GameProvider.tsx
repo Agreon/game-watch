@@ -47,6 +47,7 @@ export interface GameCtx {
     loading: boolean
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
+    availableInfoSources: InfoSourceType[]
     fullName: string
     thumbnailUrl: string | null
     setupGame: () => Promise<void>
@@ -238,6 +239,17 @@ export const GameProvider: React.FC<{
             })
         , [allInfoSources]);
 
+    const availableInfoSources = useMemo(
+        () => Object.values(InfoSourceType)
+            .filter(type =>
+                !allInfoSources
+                    .filter(source => !source.disabled)
+                    .map(source => source.type)
+                    .includes(type)
+            ),
+        [allInfoSources]
+    );
+
     const thumbnailUrl = useMemo(
         () => retrieveDataFromInfoSources(activeInfoSources, "thumbnailUrl"),
         [activeInfoSources]
@@ -258,6 +270,7 @@ export const GameProvider: React.FC<{
         tags,
         allInfoSources,
         activeInfoSources,
+        availableInfoSources,
         fullName,
         thumbnailUrl,
         loading,
@@ -274,6 +287,7 @@ export const GameProvider: React.FC<{
         tags,
         allInfoSources,
         activeInfoSources,
+        availableInfoSources,
         fullName,
         thumbnailUrl,
         loading,

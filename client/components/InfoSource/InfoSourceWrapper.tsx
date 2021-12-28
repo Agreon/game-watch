@@ -37,7 +37,6 @@ export const InfoSourceWrapper: React.FC = ({ children }) => {
     )
 }
 
-// TODO: RM margin
 // TODO: Responsiveness below 540px => Let store-logo flow above?
 export const PreviewInfoSourceWrapper: React.FC = ({ children }) => {
     const { source, disableInfoSource } = useInfoSourceContext();
@@ -51,7 +50,6 @@ export const PreviewInfoSourceWrapper: React.FC = ({ children }) => {
             justify="space-between"
             position="relative"
             minHeight="8rem"
-            mb="2rem"
             bg={useColorModeValue('white', 'gray.800')}
             borderWidth="1px"
             rounded="lg"
@@ -63,7 +61,7 @@ export const PreviewInfoSourceWrapper: React.FC = ({ children }) => {
             transition="border-color 0.15s ease"
         >
             <Box flex="0.8">
-                <a href={source.data?.url}>
+                <a href={source.data?.url} target="_blank" rel="noreferrer">
                     {SourceTypeLogo[source.type]}
                 </a>
             </Box>
@@ -74,7 +72,11 @@ export const PreviewInfoSourceWrapper: React.FC = ({ children }) => {
                     {source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
                     {!source.resolveError && source.data !== null && (
                         <Flex flex="2" direction="column">
-                            <Box mb="1rem"><Text fontWeight="bold" fontSize="xl">{source.data?.fullName}</Text></Box>
+                                <Box mb="1rem">
+                                    <a href={source.data?.url} target="_blank" rel="noreferrer">
+                                        <Text fontWeight="bold" fontSize="xl">{source.data?.fullName}</Text>
+                                    </a>
+                                </Box>
                             <Flex>
                                 {children}
                             </Flex>
