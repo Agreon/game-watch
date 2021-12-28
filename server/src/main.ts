@@ -6,6 +6,7 @@ import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
 import * as dotenv from "dotenv";
+import { Logger } from "nestjs-pino";
 import path from 'path';
 
 import { AppModule } from './app.module';
@@ -26,12 +27,15 @@ Sentry.init({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: true,
+    bufferLogs: true,
     cors: {
       allowedHeaders: "*",
       methods: "*",
       origin: corsOrigin
     }
   });
+  const logger = app.get(Logger);
+  app.useLogger(logger);
 
   const orm = app.get<MikroORM>(MikroORM);
   const migrator = orm.getMigrator();
@@ -43,7 +47,7 @@ async function bootstrap() {
 
   await app.listen(serverPort as string);
 
-  console.log(`Listening on ${serverPort}`);
+  logger.log(`Listening on ${serverPort}`);
 
   const queueService = app.get(QueueService);
   await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
@@ -53,7 +57,7 @@ async function bootstrap() {
       return;
     }
 
-    console.log(`Deleting unfinished game '${gameId}'`);
+    logger.log(`Deleting unfinished game '${gameToDelete.search}'`);
     await em.nativeDelete(Game, gameId);
   });
 }
