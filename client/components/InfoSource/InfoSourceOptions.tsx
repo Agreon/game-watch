@@ -5,7 +5,6 @@ import {
     MenuButton,
     MenuItem
 } from "@chakra-ui/react";
-import { useCallback } from "react";
 import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { useGameContext } from "../../providers/GameProvider";
@@ -13,9 +12,6 @@ import { useGameContext } from "../../providers/GameProvider";
 export const InfoSourceOptions: React.FC = () => {
     const { loading, game } = useGameContext();
     const { disableInfoSource, syncInfoSource } = useInfoSourceContext();
-
-    const onRemove = useCallback(() => disableInfoSource(), [disableInfoSource]);
-    const onSync = useCallback(() => syncInfoSource(), [syncInfoSource]);
 
     return (
         <Menu
@@ -29,10 +25,10 @@ export const InfoSourceOptions: React.FC = () => {
                 size="sm"
             />
             <MenuList>
-                <MenuItem icon={<DownloadIcon />} onClick={onSync}>
+                <MenuItem icon={<DownloadIcon />} onClick={syncInfoSource}>
                     Sync
                 </MenuItem>
-                <MenuItem icon={<ViewOffIcon />} onClick={onRemove}>
+                <MenuItem icon={<ViewOffIcon />} onClick={disableInfoSource}>
                     Remove
                 </MenuItem>
             </MenuList>

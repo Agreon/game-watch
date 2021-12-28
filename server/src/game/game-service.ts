@@ -29,7 +29,11 @@ export class GameService {
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
-        await this.queueService.createRepeatableGameSearchJob(game);
+        await this.queueService.addToQueue(
+            QueueType.DeleteUnfinishedGameAdds,
+            { gameId: game.id },
+            { delay: 1000 * 60 * 60 }
+        );
 
         return game;
     }
@@ -50,6 +54,7 @@ export class GameService {
 
         game.setupCompleted = true;
         await this.gameRepository.persistAndFlush(game);
+        await this.queueService.createRepeatableGameSearchJob(game);
 
         return game;
     }

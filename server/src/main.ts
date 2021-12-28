@@ -1,5 +1,7 @@
+import { Game } from '@game-watch/database';
+import { QueueType } from '@game-watch/queue';
 import { MikroORM } from '@mikro-orm/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
@@ -7,6 +9,7 @@ import * as dotenv from "dotenv";
 import path from 'path';
 
 import { AppModule } from './app.module';
+import { QueueService } from './queue/queue-service';
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
@@ -29,6 +32,8 @@ async function bootstrap() {
       origin: corsOrigin
     }
   });
+  // TODO: Use pino
+  // const logger = app.get(Logger);
 
   const orm = app.get<MikroORM>(MikroORM);
   const migrator = orm.getMigrator();
@@ -40,6 +45,23 @@ async function bootstrap() {
 
   await app.listen(serverPort as string);
 
-  console.log("Listening on", serverPort);
+  // logger.log(`Listening on ${serverPort}`);
+  console.log(`Listening on ${serverPort}`);
+
+  const queueService = app.get(QueueService);
+  // TODO: Error wrapper?
+  await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
+    // const gameScopedLogger = logger.child({ gameId });
+    const em = orm.em.fork();
+    const gameToDelete = await em.findOneOrFail(Game, gameId);
+    if (gameToDelete.setupCompleted) {
+      return;
+    }
+
+    console.log(`Deleting unfinished game '${gameId}'`);
+    await em.nativeDelete(Game, gameId);
+  });
+
+
 }
 bootstrap();

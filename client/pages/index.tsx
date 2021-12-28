@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       <Box>
         <NoGamesYet />
           <Flex justify={["space-between", "center"]} align="center" position="relative">
-            <Box width={["80%", "70%", "70%", "30%"]} ml={["0.5rem", "0rem", "0rem", "6rem"]}>
+            <Box width={["80%", "70%", "70%", "30%"]} >
               <AddGame />
             </Box>
             <Box position={["initial", "initial", "absolute"]} ml="1rem" right="1rem" top="0">

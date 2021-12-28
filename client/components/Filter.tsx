@@ -59,6 +59,7 @@ export const InfoSourceFilter: React.FC<{
 /**
  * TODO:
  * - Extract tags to component
+ * - Move it to a Modal
 */
 export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();

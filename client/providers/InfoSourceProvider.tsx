@@ -31,18 +31,23 @@ export const InfoSourceProvider: React.FC<{
         (async () => {
             await withRequest(async http => {
                 do {
-                    const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
-                    setGameInfoSource(data);
-                    if (data.syncing === false) {
-                        break;
+                    try {
+                        const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
+                        setGameInfoSource(data);
+                        if (data.syncing === false) {
+                            break;
+                        }
+                    } catch (error) {
+                        handleError(error);
+                    } finally {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
                     }
-                    await new Promise(resolve => setTimeout(resolve, 1000));
                 } while (true)
             });
             setPolling(false);
         }
         )();
-    }, [source, polling, setGameInfoSource, withRequest]);
+    }, [source, polling, handleError, setGameInfoSource, withRequest]);
 
 
     const syncInfoSource = useCallback(async () => {

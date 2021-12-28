@@ -217,7 +217,7 @@ export const GameProvider: React.FC<{
         }, error => {
             if (error.response?.status === 400) {
                 return handleError(error, {
-                    description: "Could not extract the game id. Make sure to pass a complete url.",
+                    description: "Could not extract the game id. Make sure to pass the complete url.",
                 });
             }
             handleError(error);
