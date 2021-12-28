@@ -1,7 +1,7 @@
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
+import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface EpicSearchResponse {
@@ -34,7 +34,7 @@ export const getEpicSearchResponse = async (search: string): Promise<EpicSearchR
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
 
-    public async search(search: string, { logger }: InfoSearcherContext): Promise<string | null> {
+    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
         logger.debug(encodeURIComponent(search));
         const gameData = await getEpicSearchResponse(search);
         if (!gameData) {
@@ -47,6 +47,9 @@ export class EpicSearcher implements InfoSearcher {
             return null;
         }
 
-        return `https://www.epicgames.com/store/de-DE/p/${gameData.productSlug.split("/")[0]}`;
+        return {
+            remoteGameId: `https://www.epicgames.com/store/de-DE/p/${gameData.productSlug.split("/")[0]}`,
+            remoteGameName: gameData.title
+        };
     }
 }

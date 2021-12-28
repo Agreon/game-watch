@@ -56,10 +56,6 @@ export const InfoSourceFilter: React.FC<{
     );
 }
 
-/**
- * TODO:
- * - Extract tags to component
-*/
 export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();
     const { filter, setFilter } = useGamesContext();

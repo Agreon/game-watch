@@ -2,11 +2,13 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import { Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
 import { GameTileMenu } from "./GameTileMenu";
-import { InfoSourceList } from "../InfoSource/InfoSourceList";
 import { GameName } from "./GameName";
 import { GameTags } from "../GameTags/GameTags";
 import { useGameContext } from "../../providers/GameProvider";
 import { GameThumbnail } from './GameThumbnail';
+import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
+import { InfoSource } from "../InfoSource/InfoSource";
+import { AddInfoSource } from "./AddInfoSource";
 
 const GameTileComponent: React.FC = () => {
     const {
@@ -42,8 +44,8 @@ const GameTileComponent: React.FC = () => {
             onMouseLeave={() => setHighlightMenu(false)}
         >
             {!loading &&
-                <Box position="absolute" right="0" top="0" zIndex="1">
-                <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
+                <Box position="absolute" right="0" top="0" zIndex="3">
+                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
                 </Box>
             }
             <Flex direction="column">
@@ -58,10 +60,18 @@ const GameTileComponent: React.FC = () => {
                         : (
                             <>
                                 <GameTags />
-                                <InfoSourceList
-                                    activeInfoSources={activeInfoSources}
-                                    setGameInfoSource={setGameInfoSource}
-                                    disabledAdd={loading || game.syncing} />
+                                <Box>
+                                    {activeInfoSources.map(source =>
+                                        <InfoSourceProvider
+                                            key={source.id}
+                                            source={source}
+                                            setGameInfoSource={setGameInfoSource}
+                                        >
+                                            <InfoSource />
+                                        </InfoSourceProvider>
+                                    )}
+                                </Box>
+                                {!(loading || game.syncing) && <AddInfoSource />}
                             </>
                         )
                     }

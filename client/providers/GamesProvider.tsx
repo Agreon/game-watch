@@ -11,7 +11,7 @@ export interface GamesFilter {
 export interface GamesCtx {
     games: GameDto[]
     gamesLoading: boolean
-    addGame: (name: string) => Promise<void>
+    addGame: (search: string) => Promise<GameDto | Error>
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
     filter: GamesFilter,
@@ -60,13 +60,15 @@ export const GamesProvider: React.FC = ({ children }) => {
         setGames(currentGames => currentGames.filter(({ id }) => id !== gameId))
     }, []);
 
-    const addGame = useCallback(async (name: string) => {
-        await withRequest(async http => {
-            const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>("/game", { search: name });
+    const addGame = useCallback(async (search: string) => {
+        return await withRequest(async http => {
+            const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>("/game", { search });
             setGames(currentGames => [
                 data,
                 ...currentGames
             ]);
+
+            return data;
         });
     }, [withRequest, setGames]);
 

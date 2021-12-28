@@ -6,12 +6,14 @@ export enum QueueType {
     SearchGame = "search-game",
     ResolveGame = "resolve-game",
     ResolveSource = "resolve-source",
+    DeleteUnfinishedGameAdds = "delete-unfinished-game-adds"
 }
 
 export type QueueParams = {
     [QueueType.SearchGame]: { gameId: string },
     [QueueType.ResolveGame]: { gameId: string },
     [QueueType.ResolveSource]: { sourceId: string },
+    [QueueType.DeleteUnfinishedGameAdds]: { gameId: string },
 };
 
 dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env") });

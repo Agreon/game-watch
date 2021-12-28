@@ -31,16 +31,16 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
     await Promise.all(sourcesToSearch.map(async sourceType => {
         logger.info(`Searching ${sourceType} for '${game.search}'`);
 
-        const remoteGameId = await searchService.searchForGameInSource(game.search, sourceType, { logger });
-        if (!remoteGameId) {
+        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger });
+        if (!searchResponse) {
             logger.info(`No store game information found in '${sourceType}' for '${game.search}'`);
             return;
         }
-        logger.info(`Found game information in ${sourceType} for '${game.search}': '${remoteGameId}'`);
+        logger.info(`Found game information in ${sourceType} for '${game.search}': '${searchResponse.remoteGameId}'`);
 
         const newSource = new InfoSource({
+            ...searchResponse,
             type: sourceType,
-            remoteGameId,
             game,
         });
 
@@ -59,6 +59,11 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
             }
         );
     }));
+
+    await em.nativeUpdate(Game, game.id, {
+        syncing: false,
+        updatedAt: new Date()
+    });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Searching for game took ${duration} ms`);

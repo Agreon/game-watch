@@ -1,7 +1,6 @@
 import Puppeteer, { Page } from "puppeteer";
 
 export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
-    // TODO: Set user language
     const browser = await Puppeteer.launch({
         headless: true,
         args: [

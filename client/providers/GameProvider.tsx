@@ -1,10 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useGamesContext } from "./GamesProvider";
 import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
 import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
-
-
 
 // TODO: Let users select the priority / image
 export const INFO_SOURCE_PRIORITY = [
@@ -50,15 +47,17 @@ export interface GameCtx {
     loading: boolean
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
+    availableInfoSources: InfoSourceType[]
     fullName: string
     thumbnailUrl: string | null
+    setupGame: () => Promise<void>
     syncGame: () => Promise<void>
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
     setGameInfoSource: (infoSource: InfoSourceDto) => void
     addTagToGame: (tag: TagDto) => Promise<void>
     removeTagFromGame: (tag: TagDto) => Promise<void>
-    addInfoSource: (type: InfoSourceType, url: string) => Promise<InfoSourceDto | undefined>
+    addInfoSource: (params: { type: InfoSourceType, url: string }) => Promise<void | Error>
 }
 
 export const GameContext = React.createContext<GameCtx | undefined>(undefined);
@@ -71,8 +70,11 @@ export function useGameContext() {
     return context;
 }
 
-export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) => {
-    const { setGame, removeGame } = useGamesContext();
+export const GameProvider: React.FC<{
+    game: GameDto,
+    setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
+    removeGame: (id: string) => void
+}> = ({ children, game, setGame, removeGame }) => {
     const { withRequest, handleError } = useHttp();
     const [loading, setLoading] = useState(false);
 
@@ -94,18 +96,23 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
         (async () => {
             await withRequest(async http => {
                 do {
-                    const { data } = await http.get<GameDto>(`/game/${game.id}`);
-                    setGame(data.id, data);
-                    if (data.syncing === false) {
-                        break;
+                    try {
+                        const { data } = await http.get<GameDto>(`/game/${game.id}`);
+                        setGame(data.id, data);
+                        if (data.syncing === false) {
+                            break;
+                        }
+                    } catch (error) {
+                        handleError(error);
+                    } finally {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
                     }
-                    await new Promise(resolve => setTimeout(resolve, 1000));
                 } while (true)
             });
             setPolling(false);
         }
         )();
-    }, [game, polling, setGame, withRequest]);
+    }, [game, handleError, polling, setGame, withRequest]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update
@@ -131,6 +138,13 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
             }
         );
     }, [withRequest, handleError, setGame, game]);
+
+    const setupGame = useCallback(async () => {
+        await withRequest(async http => {
+            const { data } = await http.post<GameDto>(`/game/${game.id}/setup`);
+            setGame(data.id, data);
+        });
+    }, [withRequest, setGame, game.id]);
 
     const deleteGame = useCallback(async () => {
         setLoading(true);
@@ -180,7 +194,7 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
 
         await withRequest(
             async http => await http.delete(`/game/${game.id}/tag/${tag.id}`),
-            (error) => {
+            error => {
                 setGame(game.id, curr => ({
                     ...curr,
                     tags: oldGameTags
@@ -192,25 +206,30 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
         );
     }, [withRequest, handleError, setGame, game.id, game.tags]);
 
-    const addInfoSource = useCallback(async (type: InfoSourceType, url: string) => {
+    const addInfoSource = useCallback(async (params: { type: InfoSourceType, url: string }) => {
         return await withRequest(async http => {
             const { data: infoSource } = await http.post<CreateInfoSourceDto, AxiosResponse<InfoSourceDto>>(`/info-source`, {
                 gameId: game.id,
-                type,
-                url
+                type: params.type,
+                url: params.url
             });
 
             setGameInfoSource(infoSource);
-
-            return infoSource;
+        }, error => {
+            if (error.response?.status === 400) {
+                return handleError(error, {
+                    description: "Could not extract the game id. Make sure to pass the complete url.",
+                });
+            }
+            handleError(error);
         });
-    }, [withRequest, setGameInfoSource, game.id]);
+    }, [withRequest, setGameInfoSource, game.id, handleError]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
 
-    const allInfoSources = useMemo(() => game.infoSources.filter(source => source.data !== null), [game.infoSources]);
+    const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
     const activeInfoSources = useMemo(
-        () => allInfoSources
+        () => [...allInfoSources]
             .filter(source => !source.disabled)
             .sort((a, b) => {
                 const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
@@ -218,6 +237,17 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
                 return aPriority - bPriority;
             })
         , [allInfoSources]);
+
+    const availableInfoSources = useMemo(
+        () => Object.values(InfoSourceType)
+            .filter(type =>
+                !allInfoSources
+                    .filter(source => !source.disabled)
+                    .map(source => source.type)
+                    .includes(type)
+            ),
+        [allInfoSources]
+    );
 
     const thumbnailUrl = useMemo(
         () => retrieveDataFromInfoSources(activeInfoSources, "thumbnailUrl"),
@@ -239,9 +269,11 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
         tags,
         allInfoSources,
         activeInfoSources,
+        availableInfoSources,
         fullName,
         thumbnailUrl,
         loading,
+        setupGame,
         syncGame,
         changeGameName,
         deleteGame,
@@ -254,9 +286,11 @@ export const GameProvider: React.FC<{ game: GameDto }> = ({ children, game }) =>
         tags,
         allInfoSources,
         activeInfoSources,
+        availableInfoSources,
         fullName,
         thumbnailUrl,
         loading,
+        setupGame,
         syncGame,
         changeGameName,
         deleteGame,
