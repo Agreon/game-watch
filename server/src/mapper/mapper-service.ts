@@ -32,7 +32,7 @@ export class MapperService {
                     }
                 }
             });
-            this.logger.warn(error);
+            this.logger.warn(`[${type}]: ${error}`);
             throw new UrlNotMappableError();
         }
     }

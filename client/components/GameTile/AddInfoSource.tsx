@@ -14,42 +14,26 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useGameContext } from "../../providers/GameProvider";
 import { InfoSourceType } from "@game-watch/shared";
+import { useAction } from "../../util/useAction";
+import { PlaceholderMap } from "../AddGameModal";
 
-// TODO: Does not trigger refresh yet
 export const AddInfoSource: React.FC = () => {
-    const { addInfoSource, allInfoSources } = useGameContext();
-    const [loading, setLoading] = useState(false);
+    const { availableInfoSources, addInfoSource } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const initialRef = useRef(null);
-
-    const availableInfoSources = useMemo(
-        () => Object.values(InfoSourceType)
-            .filter(type =>
-                !allInfoSources
-                    .filter(source => !source.disabled)
-                    .map(source => source.type)
-                    .includes(type)
-            ),
-        [allInfoSources]
-    );
-
     const [type, setType] = useState(availableInfoSources[0]);
     const [url, setUrl] = useState("");
 
-    const onAddInfoSource = useCallback(async () => {
-        setLoading(true);
-        const infoSource = await addInfoSource(type, url);
-        if (!infoSource) {
-            return;
-        }
+    const initialRef = useRef(null);
 
-        setLoading(false);
-        onClose();
-        setUrl("");
-    }, [addInfoSource, onClose, type, url]);
+    const { loading, execute: onAdd } = useAction(addInfoSource, {
+        onSuccess: () => {
+            onClose();
+            setUrl("");
+        }
+    })
 
     return (
         <>
@@ -77,6 +61,8 @@ export const AddInfoSource: React.FC = () => {
                                 <FormLabel>Url</FormLabel>
                                 <Input
                                     value={url}
+                                    disabled={loading}
+                                    placeholder={PlaceholderMap[type]}
                                     onChange={event => setUrl(event.target.value)}
                                     ref={initialRef} />
                             </FormControl>
@@ -84,7 +70,7 @@ export const AddInfoSource: React.FC = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose} mr="1rem">Cancel</Button>
-                        <Button loading={loading} colorScheme="teal" onClick={onAddInfoSource} >
+                        <Button loading={loading} colorScheme="teal" onClick={() => onAdd({ type, url })} >
                             Add
                         </Button>
                     </ModalFooter>

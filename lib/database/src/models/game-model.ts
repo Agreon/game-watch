@@ -17,6 +17,9 @@ export class Game extends BaseEntity<Game> {
     public syncing: boolean = true;
 
     @Property()
+    public setupCompleted: boolean = false;
+
+    @Property()
     public description: string = "";
 
     @OneToMany(() => InfoSource, infoSource => infoSource.game)

@@ -3,13 +3,13 @@ import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
+import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export class MetacriticSearcher implements InfoSearcher {
     public type = InfoSourceType.Metacritic;
 
-    public async search(search: string, { logger }: InfoSearcherContext): Promise<string | null> {
+    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
         const { data } = await axios.get<string>(
             `https://www.metacritic.com/search/game/${search}/results`
         );
@@ -42,6 +42,10 @@ export class MetacriticSearcher implements InfoSearcher {
             return null;
         }
 
-        return `https://www.metacritic.com${gameLink}`;
+        return {
+            remoteGameId: `https://www.metacritic.com${gameLink}`,
+            remoteGameName: fullName,
+        };
+
     }
 }

@@ -1,7 +1,10 @@
 import { Flex } from "@chakra-ui/layout";
 import { Spinner, ThemeTypings } from "@chakra-ui/react";
 
-export const LoadingSpinner: React.FC<{ size: ThemeTypings["components"]["Spinner"]["sizes"] }> = ({ size }) => (
+export const LoadingSpinner: React.FC<{
+    size: ThemeTypings["components"]["Spinner"]["sizes"]
+    disableBackdrop?: boolean
+}> = ({ size, disableBackdrop }) => (
     <Flex
         position="absolute"
         width="100%"
@@ -9,7 +12,7 @@ export const LoadingSpinner: React.FC<{ size: ThemeTypings["components"]["Spinne
         justify="center"
         align="center"
         zIndex="1"
-        backgroundColor="rgba(186, 186, 186, 0.21)"
+        backgroundColor={disableBackdrop ? undefined : "rgba(186, 186, 186, 0.21)"}
     >
         <Spinner
             thickness="4px"

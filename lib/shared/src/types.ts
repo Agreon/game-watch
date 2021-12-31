@@ -6,6 +6,7 @@ export enum InfoSourceType {
     Epic = "epic",
     Metacritic = "metacritic"
 }
+export type StoreInfoSource = InfoSourceType.Steam | InfoSourceType.Switch | InfoSourceType.PsStore | InfoSourceType.Epic;
 
 export interface BaseGameData {
     id: string;

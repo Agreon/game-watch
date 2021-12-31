@@ -20,7 +20,7 @@ export class GameService {
     ) { }
 
     public async createGame(search: string) {
-        let game = await this.gameRepository.findOne({ search });
+        let game = await this.gameRepository.findOne({ search, setupCompleted: true });
         if (game !== null) {
             throw new ConflictException();
         }
@@ -29,7 +29,11 @@ export class GameService {
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
-        await this.queueService.createRepeatableGameSearchJob(game);
+        await this.queueService.addToQueue(
+            QueueType.DeleteUnfinishedGameAdds,
+            { gameId: game.id },
+            { delay: 1000 * 60 * 60 }
+        );
 
         return game;
     }
@@ -41,6 +45,16 @@ export class GameService {
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
+        return game;
+    }
+
+    public async setupGame(gameId: string) {
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+
+        game.setupCompleted = true;
+        await this.gameRepository.persistAndFlush(game);
+        await this.queueService.createRepeatableGameSearchJob(game);
 
         return game;
     }
@@ -88,7 +102,15 @@ export class GameService {
     }
 
     public async getGame(gameId: string) {
-        return await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+        return await this.gameRepository.findOneOrFail(
+            gameId,
+            ["infoSources", "tags"],
+            {
+                infoSources: {
+                    createdAt: QueryOrder.ASC,
+                    id: QueryOrder.ASC
+                }
+            });
     }
 
     public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {
@@ -96,11 +118,12 @@ export class GameService {
 
         const query = this.gameRepository.createQueryBuilder("game")
             .select("*")
+            .where({ setupCompleted: true })
             .leftJoinAndSelect("game.tags", "tags")
             .leftJoinAndSelect("game.infoSources", "infoSources")
             .orderBy({
-                updatedAt: QueryOrder.DESC,
-                infoSources: { type: QueryOrder.DESC },
+                createdAt: QueryOrder.DESC,
+                infoSources: { createdAt: QueryOrder.DESC },
                 tags: { updatedAt: QueryOrder.DESC },
             });
 
@@ -108,7 +131,7 @@ export class GameService {
             const matchingTagsQuery = knex
                 .count("tag_id")
                 .from("game_tags")
-                .where({
+                .andWhere({
                     "game_id": knex.ref("game.id"),
                 })
                 .andWhere("tag_id", "IN", withTags);
@@ -122,7 +145,7 @@ export class GameService {
             const matchingInfoSourcesSubQuery = knex
                 .count("info_source.id")
                 .from("info_source")
-                .where({
+                .andWhere({
                     "game_id": knex.ref("game.id"),
                     disabled: false
                 })

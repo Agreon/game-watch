@@ -14,6 +14,9 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     public remoteGameId: string;
 
     @Property()
+    public remoteGameName: string;
+
+    @Property()
     public syncing: boolean = true;
 
     @Property()
@@ -32,11 +35,18 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     public notifications = new Collection<Notification, InfoSource<T>>(this);
 
     public constructor(
-        { type, remoteGameId, data, game }: { type: T, remoteGameId: string, data?: GameData[T], game?: Game }
+        { type, remoteGameId, remoteGameName, data, game }: {
+            type: T;
+            remoteGameId: string;
+            remoteGameName: string;
+            data?: GameData[T];
+            game?: Game;
+        }
     ) {
         super();
         this.type = type;
         this.remoteGameId = remoteGameId;
+        this.remoteGameName = remoteGameName;
         this.data = data ?? null;
         if (game) {
             this.game = Reference.create(game);

@@ -13,7 +13,8 @@ export class SteamResolver implements InfoResolver {
 
     public async resolve(id: string): Promise<SteamGameData> {
         const { data } = await axios.get<any>(
-            `https://store.steampowered.com/api/appdetails?appids=${id}`
+            `https://store.steampowered.com/api/appdetails?appids=${id}`,
+            { headers: { 'Accept-Language': 'de' } }
         );
 
         const gameData = data[id];

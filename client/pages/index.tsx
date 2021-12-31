@@ -4,7 +4,7 @@ import { Box, Flex } from "@chakra-ui/layout";
 
 import { GamesProvider } from '../providers/GamesProvider';
 import { GameGrid } from '../components/GameGrid';
-import { AddGame } from '../components/AddGame';
+import { AddGameInput } from '../components/AddGameInput';
 import { NoGamesYet } from '../components/NoGamesYet';
 import { TagProvider } from '../providers/TagProvider';
 import { Filter } from '../components/Filter';
@@ -16,8 +16,8 @@ const Home: NextPage = () => {
       <Box>
         <NoGamesYet />
           <Flex justify={["space-between", "center"]} align="center" position="relative">
-            <Box width={["80%", "70%", "70%", "30%"]} ml={["0.5rem", "0rem", "0rem", "6rem"]}>
-              <AddGame />
+            <Box width={["80%", "70%", "70%", "30%"]} >
+              <AddGameInput />
             </Box>
             <Box position={["initial", "initial", "absolute"]} ml="1rem" right="1rem" top="0">
               <Filter />

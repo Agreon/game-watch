@@ -56,13 +56,13 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
         </Stat>
     )
 }
+
 export const StoreInfoSource: React.FC<{
     expectedDateFormats: string[],
     data: StoreGameData | null,
-    name: React.ReactElement
-}> = ({ expectedDateFormats, data, name }) => {
+}> = ({ expectedDateFormats, data }) => {
     return (
-        <InfoSourceWrapper name={name}>
+        <InfoSourceWrapper>
             <Box flex="1">
                 <ReleaseDate date={data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
             </Box>
