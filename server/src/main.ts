@@ -57,7 +57,7 @@ async function bootstrap() {
       return;
     }
 
-    logger.log(`Deleting unfinished game '${gameToDelete.search}'`);
+    logger.log(`Deleting unfinished game '${gameToDelete.id}'`);
     await em.nativeDelete(Game, gameId);
   });
 }
