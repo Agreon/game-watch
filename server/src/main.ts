@@ -61,4 +61,5 @@ async function bootstrap() {
     await em.nativeDelete(Game, gameId);
   });
 }
+
 bootstrap();

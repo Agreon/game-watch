@@ -1,9 +1,10 @@
 import { withBrowser } from "@game-watch/service";
-import { InfoSourceType, PsStoreGameData } from "@game-watch/shared";
+import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
 import { InfoResolver } from "../resolve-service";
+import { parseCurrencyValue } from "../util/parse-currency-value";
 
 /**
  * TODO:
@@ -14,6 +15,8 @@ import { InfoResolver } from "../resolve-service";
 */
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
+
+
 
     public async resolve(storePage: string): Promise<PsStoreGameData> {
         return await withBrowser(async browser => {
@@ -72,13 +75,23 @@ export class PsStoreResolver implements InfoResolver {
                 url: storePage,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
-                priceInformation: price ? {
-                    initial: originalPrice || price,
-                    final: price,
-                    discountDescription: discountDescription || ""
-                } : undefined,
+                priceInformation: this.getPriceInformation({ price, originalPrice }),
                 releaseDate,
             };
         });
+    }
+
+    private getPriceInformation({ price, originalPrice }: Record<string, any>): StorePriceInformation | undefined {
+        const initial = parseCurrencyValue(originalPrice || price);
+        const final = parseCurrencyValue(price);
+
+        if (!initial || !final) {
+            return undefined;
+        }
+
+        return {
+            initial,
+            final,
+        };
     }
 }

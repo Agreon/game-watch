@@ -1,8 +1,9 @@
 import { withBrowser } from "@game-watch/service";
-import { InfoSourceType, SwitchGameData } from "@game-watch/shared";
+import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-watch/shared";
 import axios from "axios";
 
 import { InfoResolver } from "../resolve-service";
+import { parseCurrencyValue } from "../util/parse-currency-value";
 
 export interface SwitchSearchResponse {
     response: {
@@ -31,7 +32,7 @@ export class SwitchResolver implements InfoResolver {
 
     public async resolve(id: string): Promise<SwitchGameData> {
         return await withBrowser(async (page) => {
-            // TODO: Does not accept special chars
+            // TODO: Does not accept special chars " "
             if (!id.includes("/")) {
                 // Just reuse the same search because we have all info there
                 const { docs: results } = await getSwitchSearchResponse(id);
@@ -44,8 +45,8 @@ export class SwitchResolver implements InfoResolver {
                     fullName: id,
                     thumbnailUrl: game.image_url_h2x1_s,
                     priceInformation: game.price_regular_f ? {
-                        initial: `${game.price_regular_f}€`,
-                        final: `${game.price_discounted_f ?? game.price_regular_f}€`,
+                        initial: game.price_regular_f,
+                        final: game.price_discounted_f ?? game.price_regular_f
                     } : undefined,
                     releaseDate: game.pretty_date_s,
                 };
@@ -68,12 +69,22 @@ export class SwitchResolver implements InfoResolver {
                 url: id,
                 fullName,
                 thumbnailUrl,
-                priceInformation: price ? {
-                    initial: price,
-                    final: salePrice || price
-                } : undefined,
+                priceInformation: this.getPriceInformation({ price, salePrice }),
                 releaseDate,
             };
         });
+    }
+
+    private getPriceInformation({ price, salePrice }: Record<string, any>): StorePriceInformation | undefined {
+        const final = parseCurrencyValue(salePrice || price);
+        // We consider a missing final value as failure
+        if (!final) {
+            return undefined;
+        }
+
+        return {
+            initial: parseCurrencyValue(price),
+            final,
+        };
     }
 }

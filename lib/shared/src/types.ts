@@ -14,21 +14,19 @@ export interface BaseGameData {
     url: string;
 }
 
-interface PriceInformation {
-    initial: string;
-    final: string;
+export interface StorePriceInformation {
+    initial?: number;
+    final: number;
+    discountPercentage?: number;
 }
 
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl?: string;
     releaseDate?: string;
-    priceInformation?: PriceInformation;
+    priceInformation?: StorePriceInformation;
 }
 
 export interface SteamGameData extends StoreGameData {
-    priceInformation?: PriceInformation & {
-        discountPercentage: string;
-    };
     categories?: string[];
     genres?: string[];
     controllerSupport?: string;
@@ -36,11 +34,7 @@ export interface SteamGameData extends StoreGameData {
 
 export type SwitchGameData = StoreGameData;
 
-export interface PsStoreGameData extends StoreGameData {
-    priceInformation?: PriceInformation & {
-        discountDescription?: string;
-    };
-}
+export type PsStoreGameData = StoreGameData;
 
 export type EpicGameData = StoreGameData;
 

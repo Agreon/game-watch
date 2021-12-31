@@ -33,21 +33,18 @@ const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ da
     )
 }
 
-const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial }) => {
-    const parsePrice = useCallback((price?: string) => {
+const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial }) => {
+    const formatPrice = useCallback((price?: number) => {
         if (!price) {
             return "TBA";
         }
 
-        if (price[0] === '€') {
-            return price.slice(1) + "€"
-        }
-        return price;
+        return `${price}€`;
     }, []);
 
     const hasDiscount = useMemo(() => price && initial && price !== initial, [price, initial]);
-    const parsedPrice = useMemo(() => parsePrice(price), [parsePrice, price]);
-    const parsedInitial = useMemo(() => parsePrice(initial), [parsePrice, initial]);
+    const parsedPrice = useMemo(() => formatPrice(price), [formatPrice, price]);
+    const parsedInitial = useMemo(() => formatPrice(initial), [formatPrice, initial]);
 
     return (
         <Stat>

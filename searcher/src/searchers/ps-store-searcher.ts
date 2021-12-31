@@ -4,6 +4,7 @@ import { InfoSourceType } from "@game-watch/shared";
 import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
+// TODO: Voice of cards finds addon pack for whatever reason?
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
