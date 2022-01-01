@@ -5,20 +5,6 @@ import * as cheerio from 'cheerio';
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 
-export interface SwitchSearchResponse {
-    response: {
-        numFound: number;
-        docs: Array<{
-            url: string;
-            title: string;
-            pretty_date_s: string;
-            price_discounted_f?: number;
-            price_regular_f?: number;
-            image_url_h2x1_s: string;
-        }>
-    }
-}
-
 // American site
 
 // await page.goto(id);

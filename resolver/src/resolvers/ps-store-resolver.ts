@@ -1,7 +1,5 @@
 import { withBrowser } from "@game-watch/service";
 import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
-import axios from "axios";
-import * as cheerio from 'cheerio';
 
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
@@ -15,8 +13,6 @@ import { parseCurrencyValue } from "../util/parse-currency-value";
 */
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
-
-
 
     public async resolve(storePage: string): Promise<PsStoreGameData> {
         return await withBrowser(async browser => {
@@ -58,9 +54,9 @@ export class PsStoreResolver implements InfoResolver {
             const originalPrice = await browser.evaluate(
                 () => document.querySelector('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]')?.textContent?.trim()
             );
-            const discountDescription = await browser.evaluate(
-                () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
-            );
+            // const discountDescription = await browser.evaluate(
+            //     () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
+            // );
 
             const releaseDate = await browser.evaluate(
                 () => document.querySelector('dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]')?.textContent?.trim()
