@@ -1,6 +1,6 @@
-import { withBrowser } from "@game-watch/service";
 import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-watch/shared";
 import axios from "axios";
+import * as cheerio from 'cheerio';
 
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
@@ -19,71 +19,76 @@ export interface SwitchSearchResponse {
     }
 }
 
-export const getSwitchSearchResponse = async (search: string) => {
-    const { data: { response } } = await axios.get<SwitchSearchResponse>(
-        `https://searching.nintendo-europe.com/de/select?q=${search}&fq=type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc&start=0&rows=1&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)`
-    );
+// American site
 
-    return response;
+// await page.goto(id);
+// await page.waitForSelector(".release-date > dd");
+
+// const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
+// const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
+
+// const price = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
+// const salePrice = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
+
+// const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
+
+// return {
+//     id,
+//     url: id,
+//     fullName,
+//     thumbnailUrl,
+//     priceInformation: this.getPriceInformation({ price, salePrice }),
+//     releaseDate,
+// };
+
+const extract = (content: string, regex: RegExp) => {
+    const result = new RegExp(regex).exec(content);
+
+    return result ? result[0] : undefined;
 };
 
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
     public async resolve(id: string): Promise<SwitchGameData> {
-        return await withBrowser(async (page) => {
-            // TODO: Does not accept special chars " "
-            if (!id.includes("/")) {
-                // Just reuse the same search because we have all info there
-                const { docs: results } = await getSwitchSearchResponse(id);
+        const { data } = await axios.get<string>(id);
+        const $ = cheerio.load(data);
 
-                const game = results[0];
+        const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
 
-                return {
-                    id,
-                    url: `https://nintendo.de${game.url}`,
-                    fullName: id,
-                    thumbnailUrl: game.image_url_h2x1_s,
-                    priceInformation: game.price_regular_f ? {
-                        initial: game.price_regular_f,
-                        final: game.price_discounted_f ?? game.price_regular_f
-                    } : undefined,
-                    releaseDate: game.pretty_date_s,
-                };
-            }
+        const fullName = extract(data, /(?<=gameTitle": ").+\b/);
+        if (!fullName) {
+            throw new Error("Could not find name of game");
+        }
 
-
-            await page.goto(id);
-            await page.waitForSelector(".release-date > dd");
-
-            const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
-            const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
-
-            const price = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
-            const salePrice = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
-
-            const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
-
-            return {
-                id,
-                url: id,
-                fullName,
-                thumbnailUrl,
-                priceInformation: this.getPriceInformation({ price, salePrice }),
-                releaseDate,
-            };
-        });
+        return {
+            id,
+            url: id,
+            fullName,
+            thumbnailUrl,
+            releaseDate: extract(data, /(?<=Erscheinungsdatum: )\d+/),
+            priceInformation: await this.getPriceInformation(data),
+        };
     }
 
-    private getPriceInformation({ price, salePrice }: Record<string, any>): StorePriceInformation | undefined {
-        const final = parseCurrencyValue(salePrice || price);
-        // We consider a missing final value as failure
-        if (!final) {
+    private async getPriceInformation(pageContents: string): Promise<StorePriceInformation | undefined> {
+        const priceId = extract(pageContents, /(?<=offdeviceNsuID": ").\d+/);
+        if (!priceId) {
+            return undefined;
+        }
+
+        const { data } = await axios.get<any>(`https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`);
+        const { regular_price, discount_price } = data.prices[0];
+
+        const initial = parseCurrencyValue(regular_price.raw_value);
+        const final = parseCurrencyValue((discount_price || regular_price).raw_value);
+
+        if (!initial || !final) {
             return undefined;
         }
 
         return {
-            initial: parseCurrencyValue(price),
+            initial,
             final,
         };
     }

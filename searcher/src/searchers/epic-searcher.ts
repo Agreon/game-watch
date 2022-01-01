@@ -1,55 +1,35 @@
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
+import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
-
-export interface EpicSearchResponse {
-    title: string;
-    releaseDate: string | null;
-    productSlug: string;
-    keyImages: Array<{
-        type: string;
-        url: string;
-    }>;
-    price: {
-        totalPrice: {
-            discountPrice: number;
-            originalPrice: number;
-        }
-    }
-}
-
-// TODO: Seems to be flaky
-export const getEpicSearchResponse = async (search: string): Promise<EpicSearchResponse> => {
-    const { data } = await axios.get(
-        `https://www.epicgames.com/graphql?operationName=searchStoreQuery&variables={"category":"games/edition/base|software/edition/base|editors|bundles/games","count":1,"country":"DE","keywords":"${encodeURIComponent(search)}","locale":"de-DE","sortBy":"relevancy","sortDir":"DESC","withPrice":true}&extensions={"persistedQuery":{"version":1,"sha256Hash":"f45c217481a66dd17324fbb288509bac7a2d81762e72518cb9d448a0aec43350"}}`
-    );
-
-    console.log(data);
-
-    return data.data.Catalog.searchStore.elements[0];
-};
 
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
 
     public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
-        logger.debug(encodeURIComponent(search));
-        const gameData = await getEpicSearchResponse(search);
-        if (!gameData) {
+        const { data } = await axios.get<string>(`https://www.epicgames.com/store/de/browse?q=${encodeURIComponent(search)}&sortBy=relevancy&sortDir=DESC&count=1`);
+
+        const $ = cheerio.load(data);
+
+        const gameLink = $("div[data-component=DiscoverCardLayout] > a").first().attr("href")?.trim();
+        if (!gameLink) {
+            logger.debug("No results found");
+
             return null;
         }
 
-        if (!matchingName(gameData.title, search)) {
-            logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
+        const fullName = $("div[data-component=DirectionAuto]").first().text().trim();
+        if (!matchingName(fullName, search)) {
+            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
             return null;
         }
 
         return {
-            remoteGameId: `https://www.epicgames.com/store/de-DE/p/${gameData.productSlug.split("/")[0]}`,
-            remoteGameName: gameData.title
+            remoteGameId: `https://www.epicgames.com${gameLink}`,
+            remoteGameName: fullName
         };
     }
 }
