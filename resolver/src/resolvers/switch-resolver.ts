@@ -52,7 +52,7 @@ export class SwitchResolver implements InfoResolver {
             url: id,
             fullName,
             thumbnailUrl,
-            releaseDate: extract(data, /(?<=Erscheinungsdatum: )\d+/),
+            releaseDate: extract(data, /(?<=Erscheinungsdatum: )[\d.]+/),
             priceInformation: await this.getPriceInformation(data),
         };
     }
