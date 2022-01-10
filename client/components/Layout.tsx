@@ -1,10 +1,14 @@
 import Head from 'next/head'
 import React, { PropsWithChildren } from 'react'
 import Header from './Header'
-import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
-
+import { Flex, Box, useColorModeValue, useDisclosure, Fade, SlideFade, Slide } from "@chakra-ui/react";
+import { Notifications } from './Notifications/Notifications';
+import { NotificationProvider } from '../providers/NotificationProvider';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
+    // TODO: Move into provider?
+    const { isOpen: showNotifications, onToggle: toggleNotifications } = useDisclosure();
+
     return (
         <Flex
             direction="column"
@@ -17,10 +21,31 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 <meta name="description" content="Overview of game release dates, prices and news" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Header />
+            <NotificationProvider>
+                <Header toggleNotifications={toggleNotifications} />
+                <Slide
+                    direction="right"
+                    in={showNotifications}
+                    style={{
+                        marginTop: "4rem",
+                        zIndex: 4
+                    }}
+                >
+                    <Box
+                        position="absolute"
+                        zIndex="4"
+                        bg="black"
+                        right="0"
+                        height="calc(100vh - 4rem)"
+                        width="25rem"
+                    >
+                        <Notifications />
+                    </Box>
+                </Slide>
+            </NotificationProvider>
             <Box
-                pt="2rem"
                 mt="4rem"
+                pt="2rem"
                 overflowX="hidden"
                 overflowY="auto"
             >

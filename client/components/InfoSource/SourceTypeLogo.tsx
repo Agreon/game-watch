@@ -40,3 +40,37 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
         </Flex>
     )
 }
+
+
+export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
+    [InfoSourceType.Steam]: (
+        <Flex align="start">
+            <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height="20px" width="20px" />
+            <Text fontWeight="bold" ml="0.5rem">Steam</Text>
+        </Flex>
+    ),
+    [InfoSourceType.Switch]: (
+        <Flex align="center">
+            <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height="20px" width="20px" />
+            <Text fontWeight="bold" ml="0.5rem">Switch</Text>
+        </Flex>
+    ),
+    [InfoSourceType.PsStore]: (
+        <Flex align="start">
+            <Image alt="source-icon" priority={true} src={psLogo} quality={100} height="22px" width="22px" />
+            <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
+        </Flex>
+    ),
+    [InfoSourceType.Epic]: (
+        <Flex align="center">
+            <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height="20px" width="20px" />
+            <Text fontWeight="bold" ml="0.5rem">Epic</Text>
+        </Flex>
+    ),
+    [InfoSourceType.Metacritic]: (
+        <Flex align="start">
+            <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="20px" width="20px" />
+            <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
+        </Flex>
+    )
+}

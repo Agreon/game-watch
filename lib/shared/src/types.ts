@@ -17,7 +17,6 @@ export interface BaseGameData {
 export interface StorePriceInformation {
     initial?: number;
     final: number;
-    discountPercentage?: number;
 }
 
 export interface StoreGameData extends BaseGameData {
@@ -60,3 +59,13 @@ export enum NotificationType {
     GameReduced = "game-reduced",
     NewMetacriticRating = "new-metacritic-rating"
 }
+
+export const StoreNotifications = [NotificationType.NewStoreEntry, NotificationType.ReleaseDateChanged, NotificationType.GameReleased, NotificationType.GameReduced];
+
+export type NotificationData = {
+    [NotificationType.NewStoreEntry]: StoreGameData,
+    [NotificationType.ReleaseDateChanged]: { releaseDate: string },
+    [NotificationType.GameReleased]: unknown,
+    [NotificationType.GameReduced]: StorePriceInformation,
+    [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },
+};

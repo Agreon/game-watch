@@ -4,7 +4,6 @@ import { MetacriticInfoSource } from "./MetacriticInfoSource"
 import { InfoSourceType, MetacriticData } from "@game-watch/shared";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
-// TODO: Type discrimination does not work
 export const InfoSource: React.FC = () => {
     const { source } = useInfoSourceContext();
 

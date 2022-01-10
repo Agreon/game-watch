@@ -6,6 +6,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
 import { LoggerMiddleware } from './LoggerMiddleware';
+import { NotificationModule } from './notification/notification-module';
 import { TagModule } from './tag/tag-module';
 
 @Module({
@@ -31,6 +32,7 @@ import { TagModule } from './tag/tag-module';
     GameModule,
     InfoSourceModule,
     TagModule,
+    NotificationModule
   ],
   controllers: [],
   providers: [],

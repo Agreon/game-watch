@@ -1,15 +1,14 @@
-import { NotificationType } from "@game-watch/shared";
+import { NotificationData, NotificationType } from "@game-watch/shared";
 import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
 import { InfoSource } from "./info-source-model";
 
-// TODO: Do we need extra data?
 @Entity()
-export class Notification extends BaseEntity<Notification> {
+export class Notification<T extends NotificationType = NotificationType> extends BaseEntity<Notification<T>> {
     @Enum(() => NotificationType)
-    public type!: NotificationType;
+    public type!: T;
 
     @Property()
     public read: boolean = false;
@@ -20,11 +19,15 @@ export class Notification extends BaseEntity<Notification> {
     @ManyToOne(() => InfoSource, { wrappedReference: true })
     public infoSource!: IdentifiedReference<InfoSource>;
 
+    @Property({ columnType: "json" })
+    public data!: NotificationData[T];
+
     public constructor(
-        { type, game, infoSource }: { type: NotificationType, game: Game, infoSource: InfoSource }
+        { type, data, game, infoSource }: { type: T, data: NotificationData[T], game: Game, infoSource: InfoSource }
     ) {
         super();
         this.type = type;
+        this.data = data;
         this.game = Reference.create(game);
         this.infoSource = Reference.create(infoSource);
     }

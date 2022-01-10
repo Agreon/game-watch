@@ -1,4 +1,4 @@
-import { Game, InfoSource, Tag } from "@game-watch/database";
+import { Game, InfoSource, Notification, Tag } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
 import { QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
@@ -17,6 +17,8 @@ export class GameService {
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
         @InjectRepository(Tag)
         private readonly tagRepository: EntityRepository<Tag>,
+        @InjectRepository(Notification)
+        private readonly notificationRepository: EntityRepository<Notification>,
     ) { }
 
     public async createGame(search: string) {
@@ -90,7 +92,11 @@ export class GameService {
     }
 
     public async deleteGame(gameId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources"]);
+        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "notifications"]);
+
+        for (const notification of game.notifications) {
+            this.notificationRepository.remove(notification);
+        }
 
         for (const source of game.infoSources) {
             await this.queueService.removeRepeatableInfoSourceResolveJob(source);

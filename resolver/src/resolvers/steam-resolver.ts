@@ -43,7 +43,7 @@ export class SteamResolver implements InfoResolver {
         };
     }
 
-    private getPriceInformation({ initial, final, discount_percent }: Record<string, any>): StorePriceInformation | undefined {
+    private getPriceInformation({ initial, final }: Record<string, any>): StorePriceInformation | undefined {
         if (!initial || !final) {
             return undefined;
         }
@@ -51,7 +51,6 @@ export class SteamResolver implements InfoResolver {
         return {
             initial: initial / 100,
             final: final / 100,
-            discountPercentage: discount_percent,
         };
     }
 }

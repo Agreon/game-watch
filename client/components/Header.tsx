@@ -3,9 +3,12 @@ import Image from 'next/image'
 import githubIconLight from '../assets/github-icon-light.png'
 import githubIconDark from '../assets/github-icon-dark.png'
 import { Box, Flex } from '@chakra-ui/layout'
+import { useNotificationContext } from '../providers/NotificationProvider'
+import { BellIcon } from '@chakra-ui/icons'
 
-export default function Header() {
-    const { colorMode, toggleColorMode } = useColorMode()
+export default function Header({ toggleNotifications }: { toggleNotifications: () => void }) {
+    const { notifications } = useNotificationContext();
+    const { colorMode } = useColorMode()
 
     return (
         <Flex
@@ -39,8 +42,11 @@ export default function Header() {
                         />
                     </a>
                 </Box>
-                <Button onClick={toggleColorMode}>
-                    {colorMode === "light" ? "Darker" : "Lighter"}
+                <Button
+                    leftIcon={<BellIcon />}
+                    onClick={toggleNotifications}
+                >
+                    <Text mt="0.2rem">Notifications ({notifications.length})</Text>
                 </Button>
             </Flex>
         </Flex>
