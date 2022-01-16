@@ -66,7 +66,6 @@ export const createGameReleasedNotification = async (
 
 };
 
-
 export const createGameReducedNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
@@ -75,7 +74,7 @@ export const createGameReducedNotification = async (
 
     if (existingData?.priceInformation &&
         storeData.priceInformation &&
-        existingData.priceInformation.final !== storeData.priceInformation.final
+        existingData.priceInformation.final < storeData.priceInformation.final
     ) {
         await em.nativeInsert(new Notification({
             game,
