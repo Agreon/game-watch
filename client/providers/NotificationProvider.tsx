@@ -1,9 +1,10 @@
 import { NotificationDto } from "@game-watch/shared";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useHttp } from "../util/useHttp";
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
+    markInfoSourceAsRead: (id: string) => Promise<void>
 }
 
 export const NotificationContext = React.createContext<NotificationCtx | undefined>(undefined);
@@ -36,9 +37,17 @@ export const NotificationProvider: React.FC<{}> = ({ children }) => {
         )();
     }, [setNotifications, handleError, withRequest]);
 
+    const markInfoSourceAsRead = useCallback(async (notificationId: string) => {
+        await withRequest(async http => {
+            await http.post(`/notification/${notificationId}/read`);
+            setNotifications(currentNotifications => currentNotifications.filter(({ id }) => id !== notificationId));
+        });
+    }, [withRequest]);
+
     const contextValue = useMemo(() => ({
         notifications,
-    }), [notifications]);
+        markInfoSourceAsRead,
+    }), [notifications, markInfoSourceAsRead]);
 
     return (
         <NotificationContext.Provider value={contextValue}>

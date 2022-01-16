@@ -6,7 +6,10 @@ import { Notifications } from './Notifications/Notifications';
 import { NotificationProvider } from '../providers/NotificationProvider';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
-    // TODO: Move into provider?
+    /**
+     * TODO: OnOutsideclick
+     */
+// TODO: Move into provider?
     const { isOpen: showNotifications, onToggle: toggleNotifications } = useDisclosure();
 
     return (

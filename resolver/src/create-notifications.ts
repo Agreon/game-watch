@@ -104,7 +104,6 @@ const methodMap: Record<NotificationType, (params: NotificationCreateParams) => 
 
 
 // TODO: Move into service?
-// TODO: Skip on initial sync => Pass-through flag
 export const createNotifications = async (
     { infoSource, ...params }: NotificationCreateParams
 ) => {

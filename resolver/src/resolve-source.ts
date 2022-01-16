@@ -2,6 +2,7 @@ import { InfoSource } from "@game-watch/database";
 import { Logger } from "@game-watch/service";
 import { EntityManager } from "@mikro-orm/core";
 
+import { createNotifications } from "./create-notifications";
 import { ResolveService } from "./resolve-service";
 
 interface Params {
@@ -14,7 +15,7 @@ interface Params {
 export const resolveSource = async ({ sourceId, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail(InfoSource, sourceId);
+    const source = await em.findOneOrFail(InfoSource, sourceId, ["game"]);
 
     logger.info(`Resolving ${source.type}`);
 
@@ -35,6 +36,8 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
         return;
     }
     logger.info(`Resolved source information in ${source.type}`);
+
+    await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em });
 
     await em.nativeUpdate(InfoSource, sourceId, {
         resolveError: false,

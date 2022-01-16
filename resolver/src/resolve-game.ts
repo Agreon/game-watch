@@ -43,6 +43,7 @@ export const resolveGame = async ({ gameId, resolveService, em, logger }: Params
         }
         logger.info(`Resolved source information in ${source.type}`);
 
+        // TODO: Remove here
         await createNotifications({ infoSource: source, game, resolvedGameData, em });
 
         await em.nativeUpdate(InfoSource, source.id, {

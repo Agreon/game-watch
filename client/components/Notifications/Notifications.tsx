@@ -5,7 +5,6 @@ import { NotificationDto, NotificationType } from "@game-watch/shared";
 import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
 import { useColorModeValue, Tooltip } from "@chakra-ui/react";
 
-
 const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.NewStoreEntry]: "New store entry",
     [NotificationType.ReleaseDateChanged]: "New release date",
@@ -25,6 +24,7 @@ function isNotificationOfType<T extends NotificationType, TValue extends Notific
 const getNotificationText = (notification: NotificationDto) => {
     const { game } = notification;
 
+    // TODO: Scroll-To-Game Effect with simple html links?
     // TODO: Set the name as soon as user completed game
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
 
@@ -49,9 +49,6 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 }
 
-/**
- * TODO: OnOutsideclick
- */
 export const Notifications: React.FC<{}> = () => {
     const { notifications } = useNotificationContext();
 

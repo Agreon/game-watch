@@ -1,5 +1,5 @@
 import { Notification } from "@game-watch/database";
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Param, Post } from "@nestjs/common";
 
 import { NotificationService } from "./notification-service";
 
@@ -12,5 +12,12 @@ export class NotificationController {
     @Get()
     public async getAll(): Promise<Notification[]> {
         return await this.notificationService.getNotifications();
+    }
+
+    @Post(":/id/read")
+    public async markNotificationAsRead(
+        @Param("id") id: string
+    ): Promise<Notification> {
+        return await this.notificationService.markNotificationAsRead(id);
     }
 }
