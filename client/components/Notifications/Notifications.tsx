@@ -13,7 +13,6 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.NewMetacriticRating]: "Game rated",
 }
 
-
 function isNotificationOfType<T extends NotificationType, TValue extends NotificationType>(
     notification: NotificationDto<NotificationType>,
     type: TValue
@@ -25,7 +24,6 @@ const getNotificationText = (notification: NotificationDto) => {
     const { game } = notification;
 
     // TODO: Scroll-To-Game Effect with simple html links?
-    // TODO: Set the name as soon as user completed game
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
 
     if (isNotificationOfType(notification, NotificationType.GameReduced)) {
@@ -33,6 +31,8 @@ const getNotificationText = (notification: NotificationDto) => {
         return <>{gameName} {`was reduced from ${initial}€ to ${final}€!`}</>;
     }
 
+    // TODO: Date needs to be parsed
+    // => Maybe just parse the date on incoming data in resolver? => Needs to be done anyway for comparison.
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
         const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY")
         return <>{gameName} {`will be released on (${formattedDate})!`}</>;
@@ -49,6 +49,7 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 }
 
+// TODO: Show small Collapse button?
 export const Notifications: React.FC<{}> = () => {
     const { notifications } = useNotificationContext();
 

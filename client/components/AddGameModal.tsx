@@ -13,8 +13,8 @@ import {
     useBreakpointValue,
 } from "@chakra-ui/react";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import React, { useState } from "react";
-import { useGameContext } from "../providers/GameProvider";
+import React, { useCallback, useState } from "react";
+import { INFO_SOURCE_PRIORITY, useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAction } from "../util/useAction";
@@ -85,8 +85,8 @@ interface AddGameModalProps {
 }
 
 /**
- * - TODO: Let users edit the provided name beforehand?
- * - TODO: Option to disable search for more?
+ * - TODO: Let users edit the provided name beforehand
+ * - TODO: Option to disable search for more
  */
 export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => {
     const { game, setGameInfoSource, setupGame } = useGameContext();
@@ -94,6 +94,21 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
 
     // We use the direct infoSource so that they are sorted by date.
     const activeInfoSources = game.infoSources.filter(source => !source.disabled);
+
+    const onAddGame = useCallback(async () => {
+        if (!activeInfoSources.length) {
+            return await onAdd({ name: game.search })
+        }
+
+        const foundSourcesByImagePriority = activeInfoSources.sort((a, b) => {
+            const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
+            const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
+            return aPriority - bPriority;
+        });
+
+        // We take the first name for now, later the user can decide.
+        await onAdd({ name: foundSourcesByImagePriority[0].remoteGameName });
+    }, [onAdd, activeInfoSources, game]);
 
     return (
         <Modal
@@ -145,7 +160,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                                     <Button
                                         colorScheme="teal"
                                         size="lg"
-                                        onClick={onAdd}
+                                    onClick={onAddGame}
                                         disabled={loading || game.syncing}
                                         loading={loading}
                                     >

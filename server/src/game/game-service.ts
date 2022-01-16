@@ -51,10 +51,11 @@ export class GameService {
         return game;
     }
 
-    public async setupGame(gameId: string) {
+    public async setupGame(gameId: string, name: string) {
         const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
 
         game.setupCompleted = true;
+        game.name = name;
         await this.gameRepository.persistAndFlush(game);
         await this.queueService.createRepeatableGameSearchJob(game);
 
