@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
+import { parseDate } from "../util/parse-date";
 
 // American site
 
@@ -47,12 +48,14 @@ export class SwitchResolver implements InfoResolver {
             throw new Error("Could not find name of game");
         }
 
+        const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
+
         return {
             id,
             url: id,
             fullName,
             thumbnailUrl,
-            releaseDate: extract(data, /(?<=Erscheinungsdatum: )[\d.]+/),
+            releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
             priceInformation: await this.getPriceInformation(data),
         };
     }

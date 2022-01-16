@@ -9,21 +9,10 @@ export const InfoSource: React.FC = () => {
 
     switch (source.type) {
         case InfoSourceType.Steam:
-            return <StoreInfoSource
-                data={source.data}
-                expectedDateFormats={["D MMM, YYYY", "D MMMM, YYYY"]} />
         case InfoSourceType.Switch:
-            return <StoreInfoSource
-                data={source.data}
-                expectedDateFormats={["DD.MM.YYYY"]} />
         case InfoSourceType.PsStore:
-            return <StoreInfoSource
-                data={source.data}
-                expectedDateFormats={["D.M.YYYY"]} />
         case InfoSourceType.Epic:
-            return <StoreInfoSource
-                data={source.data}
-                expectedDateFormats={["YYYY-MM-DD"]} />
+            return <StoreInfoSource data={source.data} />
         case InfoSourceType.Metacritic:
             return <MetacriticInfoSource data={source.data as MetacriticData} />;
     }

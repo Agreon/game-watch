@@ -1,15 +1,8 @@
 import { Game, InfoSource, Notification } from "@game-watch/database";
-import { Logger } from "@game-watch/service";
 import { GameData, InfoSourceType, MetacriticData, NotificationType, StoreGameData, StoreNotifications } from "@game-watch/shared";
 import { EntityManager } from "@mikro-orm/core";
+import dayjs from "dayjs";
 
-export const RelevantNotificationsMap: Record<InfoSourceType, NotificationType[]> = {
-    [InfoSourceType.Steam]: StoreNotifications,
-    [InfoSourceType.Switch]: StoreNotifications,
-    [InfoSourceType.PsStore]: StoreNotifications,
-    [InfoSourceType.Epic]: StoreNotifications,
-    [InfoSourceType.Metacritic]: [NotificationType.NewMetacriticRating]
-};
 
 export interface NotificationCreateParams<T extends InfoSourceType = InfoSourceType> {
     game: Game,
@@ -18,7 +11,6 @@ export interface NotificationCreateParams<T extends InfoSourceType = InfoSourceT
     em: EntityManager,
 }
 
-// TODO: I want correct types here
 export const createNewStoreEntryNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
@@ -38,10 +30,7 @@ export const createReleaseDateChangedNotification = async (
     const existingData = infoSource.data as StoreGameData | null;
     const storeData = resolvedGameData as StoreGameData;
 
-    // TODO: this field shouldnt be nullable
-    if ((!existingData?.releaseDate || existingData.releaseDate === "TBD") &&
-        (storeData.releaseDate && storeData.releaseDate !== "TBD")
-    ) {
+    if (!!existingData?.releaseDate && !!storeData.releaseDate && existingData.releaseDate !== storeData.releaseDate) {
         await em.nativeInsert(new Notification({
             game,
             infoSource,
@@ -51,10 +40,29 @@ export const createReleaseDateChangedNotification = async (
     }
 };
 
-// TODO
 export const createGameReleasedNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
+    const storeData = resolvedGameData as StoreGameData;
+    if (!storeData.releaseDate || dayjs(storeData.releaseDate).isAfter(dayjs())) {
+        return;
+    }
+
+    const existingNotification = await em.findOne(Notification, {
+        game,
+        infoSource,
+        type: NotificationType.GameReleased
+    });
+    if (existingNotification) {
+        return;
+    }
+
+    await em.nativeInsert(new Notification({
+        game,
+        infoSource,
+        type: NotificationType.GameReleased,
+        data: {}
+    }));
 
 };
 
@@ -100,7 +108,16 @@ export const createNewMetacriticRatingNotification = async (
     }
 };
 
-const methodMap: Record<NotificationType, (params: NotificationCreateParams) => Promise<void>> = {
+const RelevantNotificationsMap: Record<InfoSourceType, NotificationType[]> = {
+    [InfoSourceType.Steam]: StoreNotifications,
+    [InfoSourceType.Switch]: StoreNotifications,
+    [InfoSourceType.PsStore]: StoreNotifications,
+    [InfoSourceType.Epic]: StoreNotifications,
+    [InfoSourceType.Metacritic]: [NotificationType.NewMetacriticRating]
+};
+
+
+const NotificationCreationMethodsMap: Record<NotificationType, (params: NotificationCreateParams) => Promise<void>> = {
     [NotificationType.NewStoreEntry]: createNewStoreEntryNotification,
     [NotificationType.ReleaseDateChanged]: createReleaseDateChangedNotification,
     [NotificationType.GameReleased]: createGameReleasedNotification,
@@ -109,12 +126,11 @@ const methodMap: Record<NotificationType, (params: NotificationCreateParams) => 
 };
 
 
-// TODO: Move into service?
 export const createNotifications = async (
     { infoSource, ...params }: NotificationCreateParams
 ) => {
     for (const notificationType of RelevantNotificationsMap[infoSource.type]) {
-        await methodMap[notificationType]({
+        await NotificationCreationMethodsMap[notificationType]({
             infoSource,
             ...params
         });

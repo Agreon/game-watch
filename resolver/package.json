@@ -26,6 +26,7 @@
         "axios": "^0.24.0",
         "bullmq": "^1.52.1",
         "cheerio": "^1.0.0-rc.10",
+        "dayjs": "^1.10.7",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {

@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
+import { parseDate } from "../util/parse-date";
 
 export class EpicResolver implements InfoResolver {
     public type = InfoSourceType.Epic;
@@ -23,7 +24,7 @@ export class EpicResolver implements InfoResolver {
         }
 
         const discountedFromPrice = $("div[data-component=PDPDiscountedFromPrice]").first().text().trim();
-        const releaseDate = $("time").first().attr("datetime")?.trim();
+        const releaseDate = $("time").first().attr("datetime");
         const thumbnailUrl = $("div[data-component=PDPSidebarLogo] img").attr("src");
 
         return {
@@ -31,7 +32,7 @@ export class EpicResolver implements InfoResolver {
             fullName,
             url: id,
             thumbnailUrl,
-            releaseDate: releaseDate ?? "TBD",
+            releaseDate: parseDate(releaseDate, ["YYYY-MM-DD"]),
             priceInformation: this.getPriceInformation({ price, discountedFromPrice, })
         };
     }

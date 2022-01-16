@@ -21,7 +21,7 @@ export interface StorePriceInformation {
 
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl?: string;
-    releaseDate?: string;
+    releaseDate?: Date;
     priceInformation?: StorePriceInformation;
 }
 
@@ -64,7 +64,7 @@ export const StoreNotifications = [NotificationType.NewStoreEntry, NotificationT
 
 export type NotificationData = {
     [NotificationType.NewStoreEntry]: StoreGameData,
-    [NotificationType.ReleaseDateChanged]: { releaseDate: string },
+    [NotificationType.ReleaseDateChanged]: { releaseDate: Date },
     [NotificationType.GameReleased]: unknown,
     [NotificationType.GameReduced]: StorePriceInformation,
     [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },

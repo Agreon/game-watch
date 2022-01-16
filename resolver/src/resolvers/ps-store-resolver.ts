@@ -3,6 +3,7 @@ import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-wa
 
 import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
+import { parseDate } from "../util/parse-date";
 
 /**
  * TODO:
@@ -72,7 +73,7 @@ export class PsStoreResolver implements InfoResolver {
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
                 priceInformation: this.getPriceInformation({ price, originalPrice }),
-                releaseDate,
+                releaseDate: parseDate(releaseDate, ["D.M.YYYY"]),
             };
         });
     }

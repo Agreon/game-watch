@@ -2,6 +2,7 @@ import { InfoSourceType, SteamGameData, StorePriceInformation } from "@game-watc
 import axios from "axios";
 
 import { InfoResolver } from "../resolve-service";
+import { parseDate } from "../util/parse-date";
 
 /**
  * TODO:
@@ -30,12 +31,15 @@ export class SteamResolver implements InfoResolver {
             // TODO: We need to open the site to get the price.
         }
 
+        // The dots make problems with dayjs parsing.
+        const releaseDate = json.release_date.date.replace(/\.|\,/g, "");
+
         return {
             id,
             fullName: json.name,
             url: `https://store.steampowered.com/app/${id}`,
             thumbnailUrl: json.header_image,
-            releaseDate: json.release_date.date === "Coming Soon" ? "TBD" : json.release_date.date,
+            releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de"),
             priceInformation: json.price_overview ? this.getPriceInformation(json.price_overview) : undefined,
             controllerSupport: json.controller_support,
             categories: json.categories ? Object.values(json.categories).map(({ description }) => description) : undefined,
