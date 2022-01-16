@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React, { PropsWithChildren } from 'react'
 import Header from './Header'
 import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
-
+import { NotificationSidebar } from './Notifications/NotificationSidebar';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
     return (
@@ -18,9 +18,10 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
+            <NotificationSidebar />
             <Box
-                pt="2rem"
                 mt="4rem"
+                pt="2rem"
                 overflowX="hidden"
                 overflowY="auto"
             >

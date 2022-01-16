@@ -13,41 +13,29 @@ import { StoreGameData } from "@game-watch/shared";
 var customParseFormat = require('dayjs/plugin/customParseFormat')
 dayjs.extend(customParseFormat)
 
-const ReleaseDate: React.FC<{ date: string, expectedFormats: string[] }> = ({ date, expectedFormats }) => {
-    const parsedDate = useMemo(() => {
-        for (const format of expectedFormats) {
-            const parsedDate = dayjs(date, format);
-            if (parsedDate.isValid()) {
-                return parsedDate.format("DD MMM, YYYY")
-            }
-        }
-
-        return date;
-    }, [date, expectedFormats]);
+const ReleaseDate: React.FC<{ date?: Date }> = ({ date }) => {
+    const formattedDate = useMemo(() => date ? dayjs(date).format("DD MMM, YYYY") : "TBD", [date]);
 
     return (
         <Stat>
             <StatLabel>Release Date</StatLabel>
-            <StatNumber fontSize="1rem">{parsedDate}</StatNumber>
+            <StatNumber fontSize="1rem">{formattedDate}</StatNumber>
         </Stat>
     )
 }
 
-const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial }) => {
-    const parsePrice = useCallback((price?: string) => {
+const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial }) => {
+    const formatPrice = useCallback((price?: number) => {
         if (!price) {
             return "TBA";
         }
 
-        if (price[0] === '€') {
-            return price.slice(1) + "€"
-        }
-        return price;
+        return `${price}€`;
     }, []);
 
     const hasDiscount = useMemo(() => price && initial && price !== initial, [price, initial]);
-    const parsedPrice = useMemo(() => parsePrice(price), [parsePrice, price]);
-    const parsedInitial = useMemo(() => parsePrice(initial), [parsePrice, initial]);
+    const parsedPrice = useMemo(() => formatPrice(price), [formatPrice, price]);
+    const parsedInitial = useMemo(() => formatPrice(initial), [formatPrice, initial]);
 
     return (
         <Stat>
@@ -57,14 +45,11 @@ const Price: React.FC<{ price?: string, initial?: string }> = ({ price, initial 
     )
 }
 
-export const StoreInfoSource: React.FC<{
-    expectedDateFormats: string[],
-    data: StoreGameData | null,
-}> = ({ expectedDateFormats, data }) => {
+export const StoreInfoSource: React.FC<{ data: StoreGameData | null, }> = ({ data }) => {
     return (
         <InfoSourceWrapper>
             <Box flex="1">
-                <ReleaseDate date={data?.releaseDate || "TBD"} expectedFormats={expectedDateFormats} />
+                <ReleaseDate date={data?.releaseDate} />
             </Box>
             <Box flex="1">
                 <Price price={data?.priceInformation?.final} initial={data?.priceInformation?.initial} />

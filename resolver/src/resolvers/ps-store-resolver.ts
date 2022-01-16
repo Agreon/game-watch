@@ -1,9 +1,9 @@
 import { withBrowser } from "@game-watch/service";
-import { InfoSourceType, PsStoreGameData } from "@game-watch/shared";
-import axios from "axios";
-import * as cheerio from 'cheerio';
+import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
 
 import { InfoResolver } from "../resolve-service";
+import { parseCurrencyValue } from "../util/parse-currency-value";
+import { parseDate } from "../util/parse-date";
 
 /**
  * TODO:
@@ -55,9 +55,9 @@ export class PsStoreResolver implements InfoResolver {
             const originalPrice = await browser.evaluate(
                 () => document.querySelector('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]')?.textContent?.trim()
             );
-            const discountDescription = await browser.evaluate(
-                () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
-            );
+            // const discountDescription = await browser.evaluate(
+            //     () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
+            // );
 
             const releaseDate = await browser.evaluate(
                 () => document.querySelector('dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]')?.textContent?.trim()
@@ -72,13 +72,23 @@ export class PsStoreResolver implements InfoResolver {
                 url: storePage,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
-                priceInformation: price ? {
-                    initial: originalPrice || price,
-                    final: price,
-                    discountDescription: discountDescription || ""
-                } : undefined,
-                releaseDate,
+                priceInformation: this.getPriceInformation({ price, originalPrice }),
+                releaseDate: parseDate(releaseDate, ["D.M.YYYY"]),
             };
         });
+    }
+
+    private getPriceInformation({ price, originalPrice }: Record<string, any>): StorePriceInformation | undefined {
+        const initial = parseCurrencyValue(originalPrice || price);
+        const final = parseCurrencyValue(price);
+
+        if (!initial || !final) {
+            return undefined;
+        }
+
+        return {
+            initial,
+            final,
+        };
     }
 }

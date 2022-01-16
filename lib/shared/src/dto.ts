@@ -1,7 +1,7 @@
 
 import { IsEnum, IsString } from "class-validator";
 
-import { GameData, InfoSourceType } from "./types";
+import { GameData, InfoSourceType, NotificationData, NotificationType } from "./types";
 
 export interface TagDto {
     id: string;
@@ -28,6 +28,16 @@ export interface GameDto {
     setupCompleted: boolean
     infoSources: InfoSourceDto[]
     tags: TagDto[]
+}
+
+export interface NotificationDto<T extends NotificationType = NotificationType> {
+    id: string;
+    createdAt: string;
+    type: T;
+    read: boolean;
+    data: NotificationData[T];
+    game: GameDto;
+    infoSource: InfoSourceDto;
 }
 
 export class CreateGameDto {

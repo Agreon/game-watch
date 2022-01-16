@@ -1,4 +1,4 @@
-import { Game, InfoSource, Tag } from '@game-watch/database';
+import { Game, InfoSource, Notification, Tag } from '@game-watch/database';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
@@ -8,7 +8,7 @@ import { GameService } from './game-service';
 
 @Module({
     imports: [
-        MikroOrmModule.forFeature([Game, InfoSource, Tag]),
+        MikroOrmModule.forFeature([Game, InfoSource, Tag, Notification]),
         QueueModule
     ],
     providers: [

@@ -11,6 +11,7 @@ interface Params {
     logger: Logger;
 }
 
+
 export const resolveGame = async ({ gameId, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 

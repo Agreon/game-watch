@@ -14,44 +14,28 @@ export interface BaseGameData {
     url: string;
 }
 
+export interface StorePriceInformation {
+    initial?: number;
+    final: number;
+}
+
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl?: string;
-    releaseDate?: string;
-    priceInformation?: Record<string, string>;
+    releaseDate?: Date;
+    priceInformation?: StorePriceInformation;
 }
 
 export interface SteamGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-        discountPercentage: string;
-    };
     categories?: string[];
     genres?: string[];
     controllerSupport?: string;
 }
 
-export interface SwitchGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-    };
-}
+export type SwitchGameData = StoreGameData;
 
-export interface PsStoreGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-        discountDescription?: string;
-    };
-}
+export type PsStoreGameData = StoreGameData;
 
-export interface EpicGameData extends StoreGameData {
-    priceInformation?: {
-        initial: string;
-        final: string;
-    };
-}
+export type EpicGameData = StoreGameData;
 
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
@@ -67,3 +51,21 @@ export type GameData = {
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
+
+export enum NotificationType {
+    NewStoreEntry = "new-store-entry",
+    ReleaseDateChanged = "release-date-changed",
+    GameReleased = "game-released",
+    GameReduced = "game-reduced",
+    NewMetacriticRating = "new-metacritic-rating"
+}
+
+export const StoreNotifications = [NotificationType.NewStoreEntry, NotificationType.ReleaseDateChanged, NotificationType.GameReleased, NotificationType.GameReduced];
+
+export type NotificationData = {
+    [NotificationType.NewStoreEntry]: StoreGameData,
+    [NotificationType.ReleaseDateChanged]: { releaseDate: Date },
+    [NotificationType.GameReleased]: unknown,
+    [NotificationType.GameReduced]: StorePriceInformation,
+    [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },
+};

@@ -19,6 +19,7 @@ export interface SwitchSearchResponse {
     }
 }
 
+// TODO: Does not accept special chars " "?
 export const getSwitchSearchResponse = async (search: string) => {
     const { data: { response } } = await axios.get<SwitchSearchResponse>(
         `https://searching.nintendo-europe.com/de/select?q=${search}&fq=type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc&start=0&rows=1&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)`
@@ -54,7 +55,7 @@ export class SwitchSearcher implements InfoSearcher {
                 }
 
                 return {
-                    remoteGameId: gameData.title,
+                    remoteGameId: `https://nintendo.de${gameData.url}`,
                     remoteGameName: gameData.title
                 };
             }
