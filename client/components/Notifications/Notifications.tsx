@@ -3,7 +3,7 @@ import { useNotificationContext } from "../../providers/NotificationProvider";
 import dayjs from "dayjs";
 import { NotificationDto, NotificationType } from "@game-watch/shared";
 import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
-import { IconButton, useColorModeValue, Tooltip } from "@chakra-ui/react";
+import { IconButton, Tooltip } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 
 const NotificationTypeNames: Record<NotificationType, string> = {
@@ -32,8 +32,6 @@ const getNotificationText = (notification: NotificationDto) => {
         return <>{gameName} {`was reduced from ${initial}€ to ${final}€!`}</>;
     }
 
-    // TODO: Date needs to be parsed
-    // => Maybe just parse the date on incoming data in resolver? => Needs to be done anyway for comparison.
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
         const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY")
         return <>{gameName} {`will be released on (${formattedDate})!`}</>;
@@ -50,17 +48,13 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 }
 
-// TODO: Show small Collapse button?
+// TODO: Use https://chakra-ui.com/docs/overlay/drawer ?
 // TODO: Better distinguish from background
 export const Notifications: React.FC<{}> = () => {
     const { notifications, markNotificationAsRead } = useNotificationContext();
 
     return (
-        <Box
-            pt="1rem"
-            bg={useColorModeValue('white', 'gray.800')}
-            height="100%"
-        >
+        <Box height="100%" >
             <Box overflowY="auto" height="100%">
                 <Flex direction="column" >
                     {notifications.map(notification => (

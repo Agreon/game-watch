@@ -1,12 +1,13 @@
 import Head from 'next/head'
 import React, { PropsWithChildren, useCallback, useEffect, useRef } from 'react'
 import Header from './Header'
-import { Flex, Box, useColorModeValue, useDisclosure, Fade, SlideFade, Slide } from "@chakra-ui/react";
+import { Flex, Box, useColorModeValue, useDisclosure, Text, Slide, Button, Kbd } from "@chakra-ui/react";
 import { Notifications } from './Notifications/Notifications';
 import { NotificationProvider } from '../providers/NotificationProvider';
+import { ArrowForwardIcon } from '@chakra-ui/icons';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
-    // TODO: Move into provider?
+    // TODO: Move into provider / component
     const { isOpen: showNotifications, onToggle: toggleNotifications, onClose } = useDisclosure();
 
     const notificationBarRef = useRef<HTMLDivElement | null>(null);
@@ -59,11 +60,25 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                         ref={notificationBarRef}
                         position="absolute"
                         zIndex="4"
-                        bg="black"
+                        bg="gray.800"
                         right="0"
                         height="calc(100vh - 4rem)"
                         width="25rem"
                     >
+                        <Flex p="0.5rem" align="center" justifyContent="space-between">
+                            <Text fontWeight="bold" ml="0.5rem">
+                                Notifications
+                            </Text>
+                            <Button
+                                rightIcon={<ArrowForwardIcon />}
+                                onClick={onClose}
+                                size="sm"
+                                colorScheme='teal'
+                                variant='ghost'
+                            >
+                                Collapse<Kbd ml="0.5rem">Esc</Kbd>
+                            </Button>
+                        </Flex>
                         <Notifications />
                     </Box>
                 </Slide>
