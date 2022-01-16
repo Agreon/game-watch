@@ -6,8 +6,8 @@ import { Box, Flex } from '@chakra-ui/layout'
 import { useNotificationContext } from '../providers/NotificationProvider'
 import { BellIcon } from '@chakra-ui/icons'
 
-export default function Header({ toggleNotifications }: { toggleNotifications: () => void }) {
-    const { notifications } = useNotificationContext();
+export default function Header() {
+    const { notifications, openNotificationSidebar } = useNotificationContext();
     const { colorMode } = useColorMode()
 
     return (
@@ -44,7 +44,7 @@ export default function Header({ toggleNotifications }: { toggleNotifications: (
                 </Box>
                 <Button
                     leftIcon={<BellIcon />}
-                    onClick={toggleNotifications}
+                    onClick={openNotificationSidebar}
                 >
                     <Text mt="0.2rem">Notifications ({notifications.length})</Text>
                 </Button>

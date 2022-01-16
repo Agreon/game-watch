@@ -1,10 +1,15 @@
+import { useDisclosure } from "@chakra-ui/react";
 import { NotificationDto } from "@game-watch/shared";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useHttp } from "../util/useHttp";
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
     markNotificationAsRead: (id: string) => Promise<void>
+    showNotificationSidebar: boolean
+    notificationSidebarRef: React.MutableRefObject<HTMLDivElement | null>
+    openNotificationSidebar: () => void
+    closeNotificationSidebar: () => void
 }
 
 export const NotificationContext = React.createContext<NotificationCtx | undefined>(undefined);
@@ -44,10 +49,42 @@ export const NotificationProvider: React.FC<{}> = ({ children }) => {
         });
     }, [withRequest]);
 
+    const { isOpen: showNotificationSidebar, onOpen: openNotificationSidebar, onClose: closeNotificationSidebar } = useDisclosure();
+
+    const notificationSidebarRef = useRef<HTMLDivElement | null>(null);
+
+    // Close sidebar on outside click
+    const handleClick = useCallback((event) => {
+        if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target)) {
+            closeNotificationSidebar();
+        }
+    }, [notificationSidebarRef, closeNotificationSidebar]);
+
+    // Close sidebar on escape
+    const handleKeyDown = useCallback((event) => {
+        if (event.keyCode === 27) {
+            closeNotificationSidebar();
+        }
+    }, [closeNotificationSidebar]);
+
+    useEffect(() => {
+        document.addEventListener('click', handleClick, true);
+        document.addEventListener('keydown', handleKeyDown, true);
+        return () => {
+            document.removeEventListener('click', handleClick, true);
+            document.removeEventListener('keydown', handleKeyDown, true);
+        };
+    }, [handleClick, handleKeyDown]);
+
+
     const contextValue = useMemo(() => ({
         notifications,
         markNotificationAsRead,
-    }), [notifications, markNotificationAsRead]);
+        showNotificationSidebar,
+        openNotificationSidebar,
+        closeNotificationSidebar,
+        notificationSidebarRef
+    }), [notifications, markNotificationAsRead, showNotificationSidebar, notificationSidebarRef, openNotificationSidebar, closeNotificationSidebar]);
 
     return (
         <NotificationContext.Provider value={contextValue}>
