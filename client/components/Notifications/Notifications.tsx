@@ -3,7 +3,8 @@ import { useNotificationContext } from "../../providers/NotificationProvider";
 import dayjs from "dayjs";
 import { NotificationDto, NotificationType } from "@game-watch/shared";
 import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
-import { useColorModeValue, Tooltip } from "@chakra-ui/react";
+import { IconButton, useColorModeValue, Tooltip } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.NewStoreEntry]: "New store entry",
@@ -50,8 +51,9 @@ const getNotificationText = (notification: NotificationDto) => {
 }
 
 // TODO: Show small Collapse button?
+// TODO: Better distinguish from background
 export const Notifications: React.FC<{}> = () => {
-    const { notifications } = useNotificationContext();
+    const { notifications, markNotificationAsRead } = useNotificationContext();
 
     return (
         <Box
@@ -59,36 +61,47 @@ export const Notifications: React.FC<{}> = () => {
             bg={useColorModeValue('white', 'gray.800')}
             height="100%"
         >
-            <Flex direction="column" mt="1rem">
-                {notifications.map(notification => (
-                    <Flex
-                        key={notification.id}
-                        mb="0.5rem"
-                        mx="0.5rem"
-                        direction="column"
-                        p="1rem"
-                        rounded="lg"
-                        bg={'gray.700'}
-                    >
-                        <Flex justify="space-between" align="center" pb="1rem">
-                            <Tooltip label={dayjs(notification.createdAt).format("DD.MM. HH:mm")} placement="right">
-                                <Text fontSize="lg" fontWeight="bold">
-                                    {NotificationTypeNames[notification.type]}
-                                </Text>
-                            </Tooltip>
-                            <Box>
-                                <a href={notification.infoSource.data?.url} target="_blank" rel="noreferrer">
-                                    {SourceTypeLogoSmall[notification.infoSource.type]}
-                                </a>
+            <Box overflowY="auto" height="100%">
+                <Flex direction="column" >
+                    {notifications.map(notification => (
+                        <Flex
+                            key={notification.id}
+                            mb="0.5rem"
+                            mx="0.5rem"
+                            direction="column"
+                            p="1rem"
+                            rounded="lg"
+                            bg={'gray.700'}
+                            position="relative"
+                        >
+                            <Flex align="center" pb="1rem">
+                                <Tooltip label={dayjs(notification.createdAt).format("DD.MM. HH:mm")} placement="right">
+                                    <Text fontSize="lg" fontWeight="bold">
+                                        {NotificationTypeNames[notification.type]}
+                                    </Text>
+                                </Tooltip>
+                                <Box ml="1rem">
+                                    <a href={notification.infoSource.data?.url} target="_blank" rel="noreferrer">
+                                        {SourceTypeLogoSmall[notification.infoSource.type]}
+                                    </a>
+                                </Box>
+                            </Flex>
+                            <Box position="absolute" right="0.5rem" top="0.5rem">
+                                <IconButton
+                                    icon={<CheckCircleIcon />}
+                                    onClick={() => markNotificationAsRead(notification.id)}
+                                    size="sm"
+                                    variant="ghost"
+                                    aria-label='Delete'
+                                />
                             </Box>
-
+                            <Box>
+                                {getNotificationText(notification)}
+                            </Box>
                         </Flex>
-                        <Box>
-                            {getNotificationText(notification)}
-                        </Box>
-                    </Flex>
-                ))}
+                    ))}
             </Flex>
+            </Box>
         </Box>
     )
 }

@@ -14,7 +14,7 @@ export class NotificationController {
         return await this.notificationService.getNotifications();
     }
 
-    @Post(":/id/read")
+    @Post("/:id/read")
     public async markNotificationAsRead(
         @Param("id") id: string
     ): Promise<Notification> {

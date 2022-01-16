@@ -65,12 +65,18 @@ export const createGameReducedNotification = async (
     const existingData = infoSource.data as StoreGameData | null;
     const storeData = resolvedGameData as StoreGameData;
 
-    if (storeData.priceInformation && existingData?.priceInformation?.final !== storeData.priceInformation.final) {
+    if (existingData?.priceInformation &&
+        storeData.priceInformation &&
+        existingData.priceInformation.final !== storeData.priceInformation.final
+    ) {
         await em.nativeInsert(new Notification({
             game,
             infoSource: infoSource,
             type: NotificationType.GameReduced,
-            data: storeData.priceInformation,
+            data: {
+                initial: existingData.priceInformation.final,
+                final: storeData.priceInformation.final
+            },
         }));
     }
 };

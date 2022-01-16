@@ -50,9 +50,9 @@ export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
         </Flex>
     ),
     [InfoSourceType.Switch]: (
-        <Flex align="center">
+        <Flex align="center" mt="-0.2rem">
             <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height="20px" width="20px" />
-            <Text fontWeight="bold" ml="0.5rem">Switch</Text>
+            <Text fontWeight="bold" ml="0.5rem" mt="0.2rem">Switch</Text>
         </Flex>
     ),
     [InfoSourceType.PsStore]: (

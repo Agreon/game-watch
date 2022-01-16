@@ -14,7 +14,7 @@ export class NotificationService {
         return await this.notificationRepository.find(
             { read: false },
             ["game", "infoSource"],
-            { createdAt: QueryOrder.DESC },
+            { createdAt: QueryOrder.DESC, id: QueryOrder.DESC },
         );
     }
 
