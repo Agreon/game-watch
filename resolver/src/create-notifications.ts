@@ -30,9 +30,17 @@ export const createReleaseDateChangedNotification = async (
     const storeData = resolvedGameData as StoreGameData;
 
     if (
-        !!existingData?.releaseDate &&
-        !!storeData.releaseDate &&
-        !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day")
+        // Never had a date
+        (
+            !existingData?.releaseDate &&
+            storeData.releaseDate
+        ) ||
+        // Or date changed
+        (
+            !!existingData?.releaseDate &&
+            !!storeData.releaseDate &&
+            !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day")
+        )
     ) {
         await em.nativeInsert(new Notification({
             game,
@@ -95,6 +103,7 @@ export const createGameReducedNotification = async (
     }
 };
 
+// TODO: Is triggered, even though no rating is shown?
 export const createNewMetacriticRatingNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
