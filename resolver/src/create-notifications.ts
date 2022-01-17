@@ -3,7 +3,6 @@ import { GameData, InfoSourceType, MetacriticData, NotificationType, StoreGameDa
 import { EntityManager } from "@mikro-orm/core";
 import dayjs from "dayjs";
 
-
 export interface NotificationCreateParams<T extends InfoSourceType = InfoSourceType> {
     game: Game,
     infoSource: InfoSource<T>,
@@ -30,7 +29,11 @@ export const createReleaseDateChangedNotification = async (
     const existingData = infoSource.data as StoreGameData | null;
     const storeData = resolvedGameData as StoreGameData;
 
-    if (!!existingData?.releaseDate && !!storeData.releaseDate && existingData.releaseDate !== storeData.releaseDate) {
+    if (
+        !!existingData?.releaseDate &&
+        !!storeData.releaseDate &&
+        !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day")
+    ) {
         await em.nativeInsert(new Notification({
             game,
             infoSource,
@@ -44,7 +47,11 @@ export const createGameReleasedNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
     const storeData = resolvedGameData as StoreGameData;
-    if (!storeData.releaseDate || dayjs(storeData.releaseDate).isAfter(dayjs())) {
+    if (
+        !storeData.releaseDate ||
+        dayjs(storeData.releaseDate).isAfter(dayjs()) ||
+        dayjs(game.createdAt).isAfter(storeData.releaseDate)
+    ) {
         return;
     }
 
@@ -87,7 +94,6 @@ export const createGameReducedNotification = async (
         }));
     }
 };
-
 
 export const createNewMetacriticRatingNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
