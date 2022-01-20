@@ -41,6 +41,7 @@ const getNotificationText = (notification: NotificationDto) => {
 
     switch (notification.type) {
         case NotificationType.NewStoreEntry:
+            return <>{gameName} was added to the store!</>;
         case NotificationType.GameReleased:
             return <>{gameName} is now available!</>;
         case NotificationType.NewMetacriticRating:
