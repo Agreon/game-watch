@@ -1,4 +1,5 @@
-import { Button, useColorModeValue, useColorMode, Text } from '@chakra-ui/react'
+import React from "react";
+import { IconButton, useColorModeValue, useColorMode, Text } from '@chakra-ui/react'
 import Image from 'next/image'
 import githubIconLight from '../assets/github-icon-light.png'
 import githubIconDark from '../assets/github-icon-dark.png'
@@ -42,12 +43,22 @@ export default function Header() {
                         />
                     </a>
                 </Box>
-                <Button
-                    leftIcon={<BellIcon />}
-                    onClick={openNotificationSidebar}
-                >
-                    <Text mt="0.2rem">Notifications ({notifications.length})</Text>
-                </Button>
+                <Box position="relative">
+                    <IconButton
+                        aria-label="notifications"
+                        icon={<BellIcon w={6} h={6} />}
+                        onClick={openNotificationSidebar}
+                        variant="ghost"
+                        _focus={{
+                            boxShadow: "none"
+                        }}
+                    />
+                    {notifications.length > 0 &&
+                        <Box position="absolute" bg="teal" rounded="3xl" mr="0.25rem" mt="0.1rem" top="0" right="0" width="1rem" height="1rem" display="flex" justifyContent="center" >
+                            <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
+                        </Box>
+                    }
+                </Box>
             </Flex>
         </Flex>
     )
