@@ -1,0 +1,19 @@
+{
+    "version": "0.0.1",
+    "name": "@game-watch/service",
+    "private": true,
+    "main": "dist/main.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "devDependencies": {
+        "eslint": "7.32.0",
+        "typescript": "^4.4.4"
+    },
+    "dependencies": {
+        "puppeteer": "^10.4.0",
+        "pino": "^7.2.0",
+        "pino-pretty": "^7.2.0"
+    }
+}

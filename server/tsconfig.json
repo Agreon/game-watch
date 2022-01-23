@@ -1,22 +1,21 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true
-  }
+    "baseUrl": "./"
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../lib/shared",
+    },
+    {
+      "path": "../lib/database"
+    },
+    {
+      "path": "../lib/queue"
+    }
+  ]
 }

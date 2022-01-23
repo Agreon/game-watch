@@ -18,7 +18,7 @@ export const GameTags: React.FC = () => {
 
     const onAdd = useCallback(async (name: string) => {
         const tag = await addTag(name);
-        if (!tag) {
+        if (tag instanceof Error) {
             return;
         }
         await addTagToGame(tag);

@@ -1,18 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { IsString } from "class-validator";
+import { Game } from "@game-watch/database";
+import { CreateGameDto, UpdateGameDto } from "@game-watch/shared";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 
-import { Game } from "./game-model";
 import { GameService } from "./game-service";
-
-export class CreateGameDto {
-    @IsString()
-    public search: string;
-}
-
-export class UpdateGameDto {
-    @IsString()
-    public name: string;
-}
 
 @Controller("/game")
 export class GameController {
@@ -28,13 +18,18 @@ export class GameController {
     }
 
     @Get()
-    public async getAll() {
-        return await this.gameService.getGames();
+    public async getAllGames(
+        @Query("withTags") withTags?: string[],
+        @Query("withInfoSources") withInfoSources?: string[]
+    ): Promise<Game[]> {
+        return await this.gameService.getGames({ withTags, withInfoSources });
     }
 
-    @Post("/sync")
-    public async syncAll(): Promise<void> {
-        await this.gameService.syncAllGames();
+    @Get("/:id")
+    public async getGame(
+        @Param("id") id: string
+    ): Promise<Game> {
+        return await this.gameService.getGame(id);
     }
 
     @Post("/:id/sync")
@@ -42,6 +37,14 @@ export class GameController {
         @Param("id") id: string
     ): Promise<Game> {
         return await this.gameService.syncGame(id);
+    }
+
+    @Post("/:id/setup")
+    public async setup(
+        @Param("id") id: string,
+        @Body() { name }: UpdateGameDto
+    ): Promise<Game> {
+        return await this.gameService.setupGame(id, name);
     }
 
     @Post("/:id/tag/:tagId")

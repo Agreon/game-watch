@@ -12,7 +12,9 @@ services:
       - $DATABASE_PORT:5432
 
   server:
-    build: ./server
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -23,14 +25,58 @@ services:
       - SENTRY_DSN=$SENTRY_DSN
       - SERVER_PORT=$SERVER_PORT
       - CORS_ORIGIN=$CORS_ORIGIN
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
+      - SYNC_SOURCES_AT=$SYNC_SOURCES_AT
     depends_on:
       - db
     ports:
       - $SERVER_PORT:$SERVER_PORT
 
-  client:
-    build: ./client
+  searcher:
+    build:
+      context: .
+      dockerfile: ./searcher/Dockerfile
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=$DATABASE_USER
+      - DATABASE_PASSWORD=$DATABASE_PASSWORD
+      - DATABASE_NAME=$DATABASE_NAME
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
+      - SYNC_SOURCES_AT=$SYNC_SOURCES_AT
     depends_on:
-      - server
+      - redis
+
+  resolver:
+    build:
+      context: .
+      dockerfile: ./resolver/Dockerfile
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=$DATABASE_USER
+      - DATABASE_PASSWORD=$DATABASE_PASSWORD
+      - DATABASE_NAME=$DATABASE_NAME
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=$REDIS_PASSWORD
+    depends_on:
+      - redis
+
+  # Currently handled by vercel
+  # client:
+  #   build:
+  #     context: .
+  #     dockerfile: ./client/Dockerfile
+  #   depends_on:
+  #     - server
+  #   ports:
+  #     - $CLIENT_SERVER_PORT:3000
+
+  redis:
+    image: bitnami/redis:6.2.6
+    environment:
+      - REDIS_PASSWORD=$REDIS_PASSWORD
     ports:
-      - $CLIENT_SERVER_PORT:3000
+      - 6379:6379

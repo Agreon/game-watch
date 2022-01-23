@@ -2,11 +2,13 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import { Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
 import { GameTileMenu } from "./GameTileMenu";
-import { InfoSourceList } from "../InfoSource/InfoSourceList";
 import { GameName } from "./GameName";
 import { GameTags } from "../GameTags/GameTags";
 import { useGameContext } from "../../providers/GameProvider";
 import { GameThumbnail } from './GameThumbnail';
+import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
+import { InfoSource } from "../InfoSource/InfoSource";
+import { AddInfoSource } from "./AddInfoSource";
 
 const GameTileComponent: React.FC = () => {
     const {
@@ -17,6 +19,7 @@ const GameTileComponent: React.FC = () => {
         fullName,
         syncGame,
         deleteGame,
+        game
     } = useGameContext();
 
     const [highlightMenu, setHighlightMenu] = useState(false);
@@ -41,18 +44,37 @@ const GameTileComponent: React.FC = () => {
             onMouseLeave={() => setHighlightMenu(false)}
         >
             {!loading &&
-                <Box position="absolute" right="0" top="0" zIndex="1">
-                <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
+                <Box position="absolute" right="0" top="0" zIndex="3">
+                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
                 </Box>
             }
             <Flex direction="column">
                 <GameThumbnail />
                 <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
-                    <GameName disableEdit={loading} />
-                    <GameTags />
-                    {allInfoSources.length === 0 && !loading && <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>}
-                    {loading && <SkeletonText mt="1rem" />}
-                    {!loading && <InfoSourceList activeInfoSources={activeInfoSources} setGameInfoSource={setGameInfoSource} />}
+                    <GameName disableEdit={loading || game.syncing} />
+                    {allInfoSources.length === 0 ?
+                        (game.syncing ?
+                            <SkeletonText mt="1rem" />
+                            : <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                        )
+                        : (
+                            <>
+                                <GameTags />
+                                <Box>
+                                    {activeInfoSources.map(source =>
+                                        <InfoSourceProvider
+                                            key={source.id}
+                                            source={source}
+                                            setGameInfoSource={setGameInfoSource}
+                                        >
+                                            <InfoSource />
+                                        </InfoSourceProvider>
+                                    )}
+                                </Box>
+                                {!(loading || game.syncing) && <AddInfoSource />}
+                            </>
+                        )
+                    }
                 </Box>
             </Flex>
         </Box>

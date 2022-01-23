@@ -1,21 +1,17 @@
+import { Game, InfoSource, Notification, Tag, User } from '@game-watch/database';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
 import { AuthModule } from '../auth/auth-module';
-import { InfoSource } from "../info-source/info-source-model";
-import { ResolveModule } from '../resolve/resolve-module';
-import { SearchModule } from '../search/search-module';
-import { Tag } from '../tag/tag-model';
+import { QueueModule } from '../queue/queue-module';
 import { GameController } from './game-controller';
-import { Game } from './game-model';
 import { GameService } from './game-service';
 
 @Module({
     imports: [
+        MikroOrmModule.forFeature([Game, InfoSource, Tag, Notification, User]),
         AuthModule,
-        MikroOrmModule.forFeature([Game, InfoSource, Tag]),
-        SearchModule,
-        ResolveModule
+        QueueModule
     ],
     providers: [
         GameService

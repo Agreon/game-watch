@@ -1,11 +1,8 @@
+import { Tag, User } from '@game-watch/database';
 import { QueryOrder } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/knex';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { ConflictException, Injectable } from '@nestjs/common';
-
-import { User } from '../auth/user-model';
-import { Tag } from './tag-model';
-
 
 @Injectable()
 export class TagService {
@@ -15,7 +12,7 @@ export class TagService {
   ) { }
 
   public async create(name: string, color: string, user: User) {
-    let tag = await this.tagRepository.findOne({ name });
+    let tag = await this.tagRepository.findOne({ name, user });
     if (tag !== null) {
       throw new ConflictException();
     }

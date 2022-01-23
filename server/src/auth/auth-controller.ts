@@ -1,7 +1,7 @@
+import { User } from "@game-watch/database/src/models/user-model";
 import { Body, Controller, Post } from "@nestjs/common";
 import { IsEmail, IsString } from "class-validator";
 
-import { User } from "./user-model";
 import { UserService } from "./user-service";
 
 export class RegisterDto implements Partial<User> {

@@ -1,26 +1,8 @@
-import { BadRequestException, Body, Controller, Param, Post } from "@nestjs/common";
-import { IsEnum, IsString } from "class-validator";
+import { CreateInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
+import { BadRequestException, Body, Controller, Get, Param, Post } from "@nestjs/common";
 
-import { UrlNotMappableError } from "../resolve/resolve-service";
-import { InfoSource, InfoSourceType } from "./info-source-model";
+import { UrlNotMappableError } from "../mapper/mapper-service";
 import { InfoSourceService } from "./info-source-service";
-
-export class CreateInfoSourceDto {
-    @IsString()
-    public gameId: string;
-
-    @IsString()
-    public url: string;
-
-    @IsEnum(InfoSourceType)
-    public type: InfoSourceType;
-}
-
-export class UpdateInfoSourceDto {
-    @IsString()
-    public search: string;
-}
-
 
 @Controller("/info-source")
 export class InfoSourceController {
@@ -31,7 +13,7 @@ export class InfoSourceController {
     @Post()
     public async create(
         @Body() { url, type, gameId }: CreateInfoSourceDto
-    ): Promise<InfoSource> {
+    ): Promise<InfoSourceDto> {
         try {
             return await this.infoSourceService.addInfoSource(gameId, type, url);
         } catch (error) {
@@ -42,17 +24,24 @@ export class InfoSourceController {
         }
     }
 
-    @Post("/:infoSourceId/sync")
-    public async syncInfoSource(
-        @Param("infoSourceId") infoSourceId: string
+    @Get("/:id")
+    public async getInfoSource(
+        @Param("id") id: string
     ) {
-        return await this.infoSourceService.syncInfoSource(infoSourceId);
+        return await this.infoSourceService.getInfoSource(id);
     }
 
-    @Post("/:infoSourceId/disable")
+    @Post("/:id/sync")
+    public async syncInfoSource(
+        @Param("id") id: string
+    ): Promise<InfoSourceDto> {
+        return await this.infoSourceService.syncInfoSource(id);
+    }
+
+    @Post("/:id/disable")
     public async disableInfoSource(
-        @Param("infoSourceId") infoSourceId: string
-    ) {
-        return await this.infoSourceService.disableInfoSource(infoSourceId);
+        @Param("id") id: string
+    ): Promise<InfoSourceDto> {
+        return await this.infoSourceService.disableInfoSource(id);
     }
 }

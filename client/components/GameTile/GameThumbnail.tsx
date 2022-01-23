@@ -6,18 +6,19 @@ import { LoadingSpinner } from "../LoadingSpinner";
 import { useGameContext } from "../../providers/GameProvider";
 
 export const GameThumbnail: React.FC = () => {
-    const { loading, thumbnailUrl } = useGameContext();
+    const { loading, game, thumbnailUrl } = useGameContext();
 
     const [imageLoading, setImageLoading] = useState(false);
     useEffect(() => { setImageLoading(true) }, []);
 
     return (
         <Box position="relative">
-            {(loading || (thumbnailUrl !== null && imageLoading)) && <LoadingSpinner size="xl" />}
-            <Skeleton isLoaded={!loading && (thumbnailUrl !== null ? !imageLoading : true)}>
+            {(loading || game.syncing || (thumbnailUrl !== null && imageLoading)) && <LoadingSpinner size="xl" />}
+            <Skeleton isLoaded={thumbnailUrl !== null ? !imageLoading : true}>
                 <Flex position="relative" justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                     {thumbnailUrl &&
                         <Image
+                        quality={100}
                             alt=""
                             priority={true}
                             layout="fill"

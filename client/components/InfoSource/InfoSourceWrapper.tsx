@@ -1,15 +1,15 @@
 import React from "react"
 import { Flex, Box } from "@chakra-ui/layout"
-import { Text, Tooltip } from "@chakra-ui/react";
+import {
+    Text,
+    Tooltip
+} from "@chakra-ui/react";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { SourceTypeLogo } from "./SourceTypeLogo";
 
-interface InfoSourceWrapperParams {
-    name: React.ReactElement;
-}
-
-export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, children }) => {
+export const InfoSourceWrapper: React.FC = ({ children }) => {
     const { source } = useInfoSourceContext();
 
     return (
@@ -17,11 +17,11 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, chi
             <Tooltip label={source.data?.fullName} placement="top">
                 <Box flex="1">
                     <a href={source.data?.url} target="_blank" rel="noreferrer">
-                        {name}
+                        {SourceTypeLogo[source.type]}
                     </a>
                 </Box>
             </Tooltip>
-            {source.loading ? (
+            {source.syncing ? (
                 <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>
             ) : (
                 <>
@@ -29,7 +29,8 @@ export const InfoSourceWrapper: React.FC<InfoSourceWrapperParams> = ({ name, chi
                     {!source.resolveError && source.data !== null && children}
                 </>
             )}
-            <Box><InfoSourceOptions source={source} /></Box>
+            <Box><InfoSourceOptions /></Box>
         </Flex>
     )
 }
+

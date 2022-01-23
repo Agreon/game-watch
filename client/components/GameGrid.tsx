@@ -9,7 +9,7 @@ import Masonry from "react-masonry-css";
  * TODO: Set custom breakpoints as default to use everywhere!
  */
 export const GameGrid: React.FC = () => {
-    const { games, gamesLoading } = useGamesContext();
+    const { games, setGame, removeGame, gamesLoading } = useGamesContext();
 
     if (gamesLoading) {
         return (
@@ -18,6 +18,8 @@ export const GameGrid: React.FC = () => {
             </Box>
         );
     }
+
+    const setupGames = games.filter(game => game.setupCompleted);
 
     return (
         <Masonry
@@ -30,8 +32,8 @@ export const GameGrid: React.FC = () => {
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
         >
-            {games.map(game =>
-                <GameProvider key={game.id} game={game}>
+            {setupGames.map(game =>
+                <GameProvider key={game.id} game={game} setGame={setGame} removeGame={removeGame}>
                     <GameTile />
                 </GameProvider>
             )}
