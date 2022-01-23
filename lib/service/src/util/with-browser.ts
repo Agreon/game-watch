@@ -21,6 +21,7 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
     try {
         return await method(page);
     } finally {
+        await page.close();
         await browser.close();
     }
 };
