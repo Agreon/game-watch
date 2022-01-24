@@ -10,6 +10,7 @@ import { Logger } from "nestjs-pino";
 import path from 'path';
 
 import { AppModule } from './app.module';
+import { GameService } from './game/game-service';
 import { QueueService } from './queue/queue-service';
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
@@ -50,6 +51,7 @@ async function bootstrap() {
   logger.log(`Listening on ${serverPort}`);
 
   const queueService = app.get(QueueService);
+  const gameService = app.get(GameService);
   await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
     const em = orm.em.fork();
     const gameToDelete = await em.findOneOrFail(Game, gameId);
@@ -58,7 +60,7 @@ async function bootstrap() {
     }
 
     logger.log(`Deleting unfinished game '${gameToDelete.id}'`);
-    await em.nativeDelete(Game, gameId);
+    await gameService.deleteGame(gameToDelete.id);
   });
 }
 

@@ -1,7 +1,7 @@
 import { mikroOrmConfig } from "@game-watch/database";
-import { createWorkerForQueue, QueueType } from "@game-watch/queue";
+import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger } from "@game-watch/service";
-import { MikroORM } from "@mikro-orm/core";
+import { MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
 import * as dotenv from "dotenv";
@@ -64,6 +64,8 @@ const main = async () => {
         Sentry.captureException(error);
     });
 
+    const resolveSourceQueue = createQueue(QueueType.ResolveSource);
+
     resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId } }) => {
         const sourceScopedLogger = logger.child({ sourceId });
 
@@ -75,6 +77,14 @@ const main = async () => {
                 em: orm.em.fork(),
             });
         } catch (error) {
+            if (error instanceof NotFoundError) {
+                logger.warn(`Source '${sourceId}' could not be found in database`);
+
+                resolveSourceQueue.removeRepeatableByKey(
+                    `${QueueType.ResolveSource}:${sourceId}:::${process.env.SYNC_SOURCES_AT}`
+                );
+                return;
+            }
             // Need to wrap this because otherwise the error is swallowed by the worker.
             logger.error(error);
             Sentry.captureException(error, { tags: { sourceId } });
