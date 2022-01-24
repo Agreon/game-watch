@@ -15,7 +15,7 @@ const Home: NextPage = () => {
       <TagProvider>
       <Box>
         <NoGamesYet />
-          <Flex justify={["space-between", "center"]} align="center" position="relative" pX="0.5rem">
+          <Flex justify={["space-between", "center"]} align="center" position="relative" pl="0.5rem" pr="0.5rem">
             <Box width={["80%", "70%", "70%", "30%"]} >
               <AddGameInput />
             </Box>
