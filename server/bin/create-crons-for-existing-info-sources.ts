@@ -1,6 +1,11 @@
 import { InfoSource, mikroOrmConfig } from "@game-watch/database";
 import { createQueue, QueueType } from "@game-watch/queue";
+import { parseEnvironment } from "@game-watch/service";
 import { MikroORM } from "@mikro-orm/core";
+
+import { EnvironmentStructure } from "../src/environment";
+
+const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 
 const main = async () => {
     const queue = createQueue(QueueType.ResolveSource);
@@ -16,7 +21,7 @@ const main = async () => {
             { sourceId: infoSource.id },
             {
                 repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
+                    cron: SYNC_SOURCES_AT
                 },
                 jobId: infoSource.id,
                 priority: 2

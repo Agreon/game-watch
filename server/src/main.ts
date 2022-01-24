@@ -1,5 +1,6 @@
 import { Game } from '@game-watch/database';
 import { QueueType } from '@game-watch/queue';
+import { parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -10,17 +11,17 @@ import { Logger } from "nestjs-pino";
 import path from 'path';
 
 import { AppModule } from './app.module';
+import { EnvironmentStructure } from './environment';
 import { GameService } from './game/game-service';
 import { QueueService } from './queue/queue-service';
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
-const serverPort = process.env.SERVER_PORT;
-const corsOrigin = process.env.CORS_ORIGIN || true;
+const { SENTRY_DSN, SENTRY_ENVIRONMENT, CORS_ORIGIN, SERVER_PORT } = parseEnvironment(EnvironmentStructure, process.env);
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.SENTRY_ENVIRONMENT,
+  dsn: SENTRY_DSN,
+  environment: SENTRY_ENVIRONMENT,
   initialScope: { tags: { service: "server" } },
   tracesSampleRate: 1.0,
 });
@@ -32,7 +33,7 @@ async function bootstrap() {
     cors: {
       allowedHeaders: "*",
       methods: "*",
-      origin: corsOrigin
+      origin: CORS_ORIGIN
     }
   });
   const logger = app.get(Logger);
@@ -46,9 +47,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(serverPort as string);
+  await app.listen(SERVER_PORT);
 
-  logger.log(`Listening on ${serverPort}`);
+  logger.log(`Listening on ${SERVER_PORT}`);
 
   const queueService = app.get(QueueService);
   const gameService = app.get(GameService);
