@@ -1,8 +1,13 @@
 import { User } from "@game-watch/database/src/models/user-model";
 import { Body, Controller, Post } from "@nestjs/common";
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsString, IsUUID } from "class-validator";
 
 import { UserService } from "./user-service";
+
+export class CreateUserDto {
+    @IsUUID()
+    public uuid: string;
+}
 
 export class RegisterDto implements Partial<User> {
     @IsEmail()
@@ -18,6 +23,12 @@ export class AuthController {
     public constructor(
         private readonly userService: UserService
     ) { }
+
+    public async create(
+        @Body() { uuid }: CreateUserDto
+    ) {
+
+    }
 
     @Post("/register")
     public async register(

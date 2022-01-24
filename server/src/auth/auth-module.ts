@@ -2,6 +2,7 @@ import { User } from "@game-watch/database";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
 
+import { AuthController } from "./auth-controller";
 import { UserService } from "./user-service";
 
 @Module({
@@ -12,7 +13,7 @@ import { UserService } from "./user-service";
         UserService
     ],
     controllers: [
-
+        AuthController
     ],
     exports: [UserService]
 })
