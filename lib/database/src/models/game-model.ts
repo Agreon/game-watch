@@ -6,9 +6,7 @@ import { Notification } from "./notification-model";
 import { Tag } from "./tag-model";
 import { User } from "./user-model";
 
-
 @Entity()
-// @Filter<Game>({name: "tags", cond: (tagIds: string[]) => ({tags}), args: [{}]})
 export class Game extends BaseEntity<Game> {
     @Property()
     public search!: string;

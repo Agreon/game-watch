@@ -1,8 +1,10 @@
 import { Notification } from "@game-watch/database";
-import { Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 
+import { JwtAccessTokenGuard } from "../auth/jwt-access-token-guard";
 import { NotificationService } from "./notification-service";
 
+@UseGuards(JwtAccessTokenGuard)
 @Controller("/notification")
 export class NotificationController {
     public constructor(

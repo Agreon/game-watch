@@ -1,9 +1,11 @@
 import { Game } from "@game-watch/database";
 import { CreateGameDto, UpdateGameDto } from "@game-watch/shared";
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 
+import { JwtAccessTokenGuard } from "../auth/jwt-access-token-guard";
 import { GameService } from "./game-service";
 
+@UseGuards(JwtAccessTokenGuard)
 @Controller("/game")
 export class GameController {
     public constructor(

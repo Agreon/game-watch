@@ -7,16 +7,20 @@ import { Environment } from "../environment";
 
 @Injectable()
 export class JwtService {
+    private jwtPrivateKey: string;
+
     public constructor(
         private readonly jwtService: NestJwtService,
-        private readonly configService: ConfigService<Environment>
-    ) { }
+        private readonly configService: ConfigService<Environment, true>
+    ) {
+        this.jwtPrivateKey = Buffer.from(configService.get<string>("JWT_PRIVATE_KEY"), "base64").toString();
+    }
 
     public async createJwtAccessTokenForUser(user: User) {
         return await this.jwtService.signAsync(
-            { userId: user.id },
+            { sub: user.id, typ: "jwt" },
             {
-                privateKey: this.configService.get("JWT_PRIVATE_KEY"),
+                privateKey: this.jwtPrivateKey,
                 expiresIn: this.configService.get("JWT_ACCESS_TOKEN_EXPIRES_IN")
             }
         );
@@ -24,9 +28,9 @@ export class JwtService {
 
     public async createJwtRefreshTokenForUser(user: User) {
         return await this.jwtService.signAsync(
-            { userId: user.id },
+            { sub: user.id, typ: "refresh" },
             {
-                privateKey: this.configService.get("JWT_PRIVATE_KEY"),
+                privateKey: this.jwtPrivateKey,
                 expiresIn: this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")
             }
         );

@@ -1,9 +1,11 @@
 import { CreateInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
-import { BadRequestException, Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 
+import { JwtAccessTokenGuard } from "../auth/jwt-access-token-guard";
 import { UrlNotMappableError } from "../mapper/mapper-service";
 import { InfoSourceService } from "./info-source-service";
 
+@UseGuards(JwtAccessTokenGuard)
 @Controller("/info-source")
 export class InfoSourceController {
     public constructor(

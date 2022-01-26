@@ -1,5 +1,5 @@
-import { User, UserState } from "@game-watch/database";
-import { CreateUserDto, RegisterUserDto } from "@game-watch/shared";
+import { User } from "@game-watch/database";
+import { CreateUserDto, RegisterUserDto, UserState } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";

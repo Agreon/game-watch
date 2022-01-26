@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import * as dotenv from "dotenv";
 import { Logger } from "nestjs-pino";
 import path from 'path';
@@ -31,11 +32,19 @@ async function bootstrap() {
     bodyParser: true,
     bufferLogs: true,
     cors: {
-      allowedHeaders: "*",
-      methods: "*",
-      origin: CORS_ORIGIN
+      // allowedHeaders: "*",
+      // methods: "*",
+      credentials: true,
+      origin: true
+      // origin: CORS_ORIGIN
     }
   });
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   const logger = app.get(Logger);
   app.useLogger(logger);
 
@@ -43,8 +52,8 @@ async function bootstrap() {
   const migrator = orm.getMigrator();
   await migrator.up();
 
+  app.use(cookieParser());
   app.use(compression());
-
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(SERVER_PORT);

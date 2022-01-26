@@ -1,23 +1,18 @@
+import { UserState } from "@game-watch/shared";
 import { Collection, Entity, Enum, OneToMany, Property } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
 import { Tag } from "./tag-model";
 
-export enum UserState {
-    Trial = "Trial",
-    Registered = "Registered",
-    Completed = "Completed",
-    Disabled = "Disabled"
-}
-
 @Entity()
 export class User extends BaseEntity<User> {
-    @Property({ unique: true })
-    public username!: string;
+    @Property({ unique: true, nullable: true })
+    public username: string | null = null;
 
-    @Property()
-    public password!: string;
+    // TODO: Don't return on default query
+    @Property({ nullable: true })
+    public password: string | null = null;
 
     @Enum(() => UserState)
     public state: UserState = UserState.Trial;

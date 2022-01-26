@@ -6,9 +6,12 @@ import githubIconDark from '../assets/github-icon-dark.png'
 import { Box, Flex } from '@chakra-ui/layout'
 import { useNotificationContext } from '../providers/NotificationProvider'
 import { BellIcon } from '@chakra-ui/icons'
+import { useUserContext } from "../providers/UserProvider";
+import { UserState } from "@game-watch/shared";
 
 export default function Header() {
-    const { notifications, openNotificationSidebar } = useNotificationContext();
+    const { user } = useUserContext();
+    const { notifications, openNotificationSidebar } = useNotificationContext()
     const { colorMode } = useColorMode()
 
     return (
@@ -28,6 +31,11 @@ export default function Header() {
                 right="0"
                 mr="1rem"
             >
+                {user.state === UserState.Trial &&
+                    <Box mr="1rem">
+                        Save
+                    </Box>
+                }
                 <Box mr="1rem" mt="0.25rem">
                     <a
                         href="https://github.com/Agreon/game-watch"
