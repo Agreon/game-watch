@@ -6,7 +6,6 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
-        "prebuild": "rimraf dist && rimraf tsconfig.tsbuildinfo",
         "build": "tsc -b .",
         "start:dev": "ts-node-dev src/main.ts",
         "start:prod": "node dist/main.js",

@@ -5,7 +5,6 @@
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
     "scripts": {
-        "prebuild": "rimraf dist && rimraf tsconfig.tsbuildinfo",
         "build": "tsc -b ."
     },
     "dependencies": {

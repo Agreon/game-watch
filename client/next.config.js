@@ -3,7 +3,6 @@ module.exports = {
   reactStrictMode: true,
   images: {
     domains: [
-      'cdn03.nintendo-europe.com',
       'fs-prod-cdn.nintendo-europe.com',
       'cdn.akamai.steamstatic.com',
       'image.api.playstation.com',
