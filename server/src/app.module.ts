@@ -18,7 +18,7 @@ import { TagModule } from './tag/tag-module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [() => parseEnvironment(EnvironmentStructure, process.env)]
+      validate: (config) => parseEnvironment(EnvironmentStructure, config),
     }),
     AuthModule,
     MikroOrmModule.forRoot(mikroOrmConfig),

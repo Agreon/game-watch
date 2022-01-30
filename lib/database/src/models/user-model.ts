@@ -10,8 +10,7 @@ export class User extends BaseEntity<User> {
     @Property({ unique: true, nullable: true })
     public username: string | null = null;
 
-    // TODO: Don't return on default query
-    @Property({ nullable: true })
+    @Property({ nullable: true, lazy: true })
     public password: string | null = null;
 
     @Enum(() => UserState)

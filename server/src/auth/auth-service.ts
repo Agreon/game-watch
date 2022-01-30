@@ -36,13 +36,13 @@ export class AuthService {
     }
 
     public async validateUser(username: string, password: string): Promise<User | null> {
-        const userWithEmail = await this.userRepository.findOneOrFail({ username });
+        const user = await this.userRepository.findOne({ username }, ["password"]);
 
-        if (userWithEmail.password !== await this.hashPassword(password)) {
+        if (!user?.password || await bcrypt.compare(password, user.password) === false) {
             return null;
         }
 
-        return userWithEmail;
+        return user;
     }
 
     private async hashPassword(password: string): Promise<string> {

@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 interface UseActionOptions<R> {
     onSuccess?: (result: R) => void;
-    onError?: (result: Error) => void
+    onError?: (error: Error) => void
 }
 
 export const useAction = <T, R>(

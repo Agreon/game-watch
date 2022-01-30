@@ -15,7 +15,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
         configService: ConfigService<Environment, true>
     ) {
         super({
-            jwtFromRequest: (request: Request) => { console.log("COOKIE", request.cookies); return request.cookies?.[JWT_ACCESS_TOKEN_NAME]; },
+            jwtFromRequest: (request: Request) => request.cookies?.[JWT_ACCESS_TOKEN_NAME],
             ignoreExpiration: false,
             secretOrKey: Buffer.from(configService.get<string>("JWT_PUBLIC_KEY"), "base64").toString()
         });

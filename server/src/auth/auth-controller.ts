@@ -22,7 +22,6 @@ export class AuthController {
     private accessTokenCookieOptions: CookieOptions;
     private refreshTokenCookieOptions: CookieOptions;
 
-
     public constructor(
         private readonly authService: AuthService,
         private readonly jwtService: JwtService,
@@ -99,7 +98,6 @@ export class AuthController {
         return await this.setJwtCookiesForUser(registeredUser, response);
     }
 
-
     @Post("/refresh")
     @UseGuards(JwtRefreshTokenGuard)
     @HttpCode(HttpStatus.OK)
@@ -121,7 +119,7 @@ export class AuthController {
     }
 
     @Post("/logout")
-    @UseGuards(LocalAuthGuard)
+    @UseGuards(JwtRefreshTokenGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     public async logoutUser(
         @Res() response: Response,

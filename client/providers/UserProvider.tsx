@@ -8,8 +8,8 @@ import { useHttp } from "../util/useHttp"
 
 export interface UserCtx {
     user: UserDto
-    registerUser: (params: RegisterUserDto) => Promise<void>
-    loginUser: (params: { username: string, password: string }) => Promise<void>
+    registerUser: (params: Omit<RegisterUserDto, "id">) => Promise<void | Error>
+    loginUser: (params: { username: string, password: string }) => Promise<void | Error>
     logoutUser: () => Promise<void>
 }
 
@@ -48,11 +48,12 @@ export const setLocalStoredUser = (data: LocalUserData | null) => {
 
 export const UserProvider: React.FC = ({ children }) => {
     const { withRequest } = useHttp()
+    const { withRequest: withRequestWithoutLogout } = useHttp(false)
     const [user, setUser] = useState<UserDto | null>(null)
 
     useEffect(() => {
         async function fetchUser() {
-            await withRequest(async http => {
+            await withRequestWithoutLogout(async http => {
                 try {
                     const { data } = await http.get("/auth/user")
                     setLocalStoredUser(data)
@@ -83,10 +84,10 @@ export const UserProvider: React.FC = ({ children }) => {
             })
         }
         fetchUser()
-    }, [withRequest])
+    }, [withRequestWithoutLogout])
 
     const registerUser = useCallback(async (params: Omit<RegisterUserDto, "id">) => {
-        await withRequest(async http => {
+        return await withRequest(async http => {
             const { data } = await http.post<UserDto>("/auth/register", {
                 id: user?.id,
                 ...params
@@ -94,16 +95,16 @@ export const UserProvider: React.FC = ({ children }) => {
 
             setLocalStoredUser(data)
             setUser(data)
-        })
+        }, () => { })
     }, [withRequest, user])
 
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
-        await withRequest(async http => {
+        return await withRequest(async http => {
             const { data } = await http.post<UserDto>("/auth/login", params)
 
             setLocalStoredUser(data)
             setUser(data)
-        })
+        }, () => { })
     }, [withRequest])
 
     const logoutUser = useCallback(async () => {

@@ -5,7 +5,7 @@ import { setLocalStoredUser } from "../providers/UserProvider";
 
 axios.defaults.withCredentials = true
 
-export function useHttp() {
+export function useHttp(logoutOnAuthFailure: boolean = true) {
     const toast = useToast();
     const http = useMemo(() => {
         const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL })
@@ -13,18 +13,18 @@ export function useHttp() {
         client.interceptors.response.use(
             undefined,
             async (error) => {
-                if (error.response?.status === 401 && error.config.url !== "/auth/refresh") {
-                    try {
-                        await client.post("/auth/refresh");
-                    } catch (error) {
-                        console.log("Refresh did not work :/");
+                if (error.response?.status === 401 && error.config.url !== "/auth/login") {
+                    if (logoutOnAuthFailure && (error.config.url === "/auth/refresh" || error.config.url === "/auth/logout")) {
+                        setLocalStoredUser(null)
+                        location.href = "/?loggedOut=true"
+                        return;
+                    }
 
-                        // TODO
-                        // setLocalStoredUser(null)
-                        // location.href = "/?loggedOut=true"
-                        // return;
+                    if (!logoutOnAuthFailure && error.config.url === "/auth/refresh") {
                         throw error;
                     }
+
+                    await client.post("/auth/refresh");
 
                     return await client.request(error.config);
                 }
@@ -34,7 +34,7 @@ export function useHttp() {
         );
 
         return client;
-    }, []);
+    }, [logoutOnAuthFailure]);
 
     const handleError = useCallback((error: unknown, toastOptions?: Partial<UseToastOptions>) => {
         console.error(error);
