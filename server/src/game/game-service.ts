@@ -1,6 +1,6 @@
 import { Game, InfoSource, Notification, Tag, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
-import { QueryOrder } from "@mikro-orm/core";
+import { IdentifiedReference, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable } from "@nestjs/common";
@@ -15,19 +15,17 @@ export class GameService {
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
-        @InjectRepository(Tag)
-        private readonly tagRepository: EntityRepository<Tag>,
         @InjectRepository(Notification)
         private readonly notificationRepository: EntityRepository<Notification>,
     ) { }
 
-    public async createGame(search: string) {
-        let game = await this.gameRepository.findOne({ search, setupCompleted: true });
+    public async createGame(search: string, user: IdentifiedReference<User>) {
+        let game = await this.gameRepository.findOne({ search, setupCompleted: true, user });
         if (game !== null) {
             throw new ConflictException();
         }
 
-        game = new Game({ search, user: {} as User });
+        game = new Game({ search, user });
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
@@ -40,8 +38,8 @@ export class GameService {
         return game;
     }
 
-    public async syncGame(gameId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+    public async syncGame(id: string) {
+        const game = await this.gameRepository.findOneOrFail(id);
 
         game.syncing = true;
         await this.gameRepository.persistAndFlush(game);
@@ -51,20 +49,20 @@ export class GameService {
         return game;
     }
 
-    public async setupGame(gameId: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+    public async setupGame(id: string, name: string) {
+        const game = await this.gameRepository.findOneOrFail(id);
 
         game.setupCompleted = true;
         game.name = name;
         await this.gameRepository.persistAndFlush(game);
+
         await this.queueService.createRepeatableGameSearchJob(game);
 
         return game;
     }
 
-    public async addTagToGame(gameId: string, tagId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
-        const tag = await this.tagRepository.findOneOrFail(tagId);
+    public async addTagToGame(id: string, tag: Tag) {
+        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
 
         game.tags.add(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -72,9 +70,8 @@ export class GameService {
         return game;
     }
 
-    public async removeTagFromGame(gameId: string, tagId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
-        const tag = await this.tagRepository.findOneOrFail(tagId);
+    public async removeTagFromGame(id: string, tag: Tag) {
+        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
 
         game.tags.remove(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -83,8 +80,8 @@ export class GameService {
     }
 
 
-    public async updateGameName(gameId: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "tags"]);
+    public async updateGameName(id: string, name: string) {
+        const game = await this.gameRepository.findOneOrFail(id);
 
         game.name = name;
         await this.gameRepository.persistAndFlush(game);
@@ -92,8 +89,8 @@ export class GameService {
         return game;
     }
 
-    public async deleteGame(gameId: string) {
-        const game = await this.gameRepository.findOneOrFail(gameId, ["infoSources", "notifications"]);
+    public async deleteGame(id: string) {
+        const game = await this.gameRepository.findOneOrFail(id, ["infoSources", "notifications"]);
 
         for (const notification of game.notifications) {
             this.notificationRepository.remove(notification);
@@ -108,30 +105,36 @@ export class GameService {
         await this.gameRepository.removeAndFlush(game);
     }
 
-    public async getGame(gameId: string) {
-        return await this.gameRepository.findOneOrFail(
-            gameId,
+    public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
+        const game = await this.gameRepository.findOneOrFail(
+            id,
             ["infoSources", "tags"],
             {
                 infoSources: {
                     createdAt: QueryOrder.ASC,
                     id: QueryOrder.ASC
+                },
+                tags: {
+                    createdAt: QueryOrder.DESC
                 }
             });
+
+        return game as Game & { infoSources: InfoSource[], tags: Tag[] };
     }
 
-    public async getGames({ withTags, withInfoSources }: { withTags?: string[], withInfoSources?: string[] }) {
+    // https://mikro-orm.io/docs/collections#filtering-collections?
+    public async getGames({ withTags, withInfoSources, user }: { withTags?: string[], withInfoSources?: string[], user: IdentifiedReference<User> }) {
         const knex = this.infoSourceRepository.getKnex();
 
         const query = this.gameRepository.createQueryBuilder("game")
             .select("*")
-            .where({ setupCompleted: true })
+            .where({ setupCompleted: true, user })
             .leftJoinAndSelect("game.tags", "tags")
             .leftJoinAndSelect("game.infoSources", "infoSources")
             .orderBy({
                 createdAt: QueryOrder.DESC,
                 infoSources: { createdAt: QueryOrder.DESC },
-                tags: { updatedAt: QueryOrder.DESC },
+                tags: { createdAt: QueryOrder.DESC },
             });
 
         if (withTags) {
@@ -163,6 +166,6 @@ export class GameService {
                 .andWhere({ 'game.matchingInfoSources': { $gt: 0 } });
         }
 
-        return await query.getResult();
+        return await query.getResult() as Array<Game & { infoSources: InfoSource[], tags: Tag[] }>;
     }
 }

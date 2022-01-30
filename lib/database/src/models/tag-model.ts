@@ -18,10 +18,10 @@ export class Tag extends BaseEntity<Tag> {
     @ManyToOne(() => User, { wrappedReference: true })
     public user!: IdentifiedReference<User>;
 
-    public constructor({ name, color, user }: { name: string, color: string, user: User }) {
+    public constructor({ name, color, user }: { name: string, color: string, user: IdentifiedReference<User> }) {
         super();
         this.name = name;
         this.color = color;
-        this.user = wrap(user).toReference();
+        this.user = user;
     }
 }

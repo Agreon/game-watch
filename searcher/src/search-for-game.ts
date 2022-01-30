@@ -42,6 +42,7 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
             ...searchResponse,
             type: sourceType,
             game,
+            user: game.user,
         });
 
         await em.nativeInsert(newSource);

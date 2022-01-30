@@ -8,10 +8,13 @@ export class Migration20220126072903 extends Migration {
     this.addSql('alter table "user" add constraint "user_username_unique" unique ("username");');
 
     this.addSql('alter table "game" add column "user_id" varchar(255) not null');
+    this.addSql('alter table "info_source" add column "user_id" varchar(255) not null');
     this.addSql('alter table "tag" add column "user_id" varchar(255) not null');
-
-    this.addSql('alter table "tag" add constraint "tag_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "notification" add column "user_id" varchar(255) not null');
 
     this.addSql('alter table "game" add constraint "game_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "info_source" add constraint "info_source_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "tag" add constraint "tag_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "notification" add constraint "notification_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade;');
   }
 }

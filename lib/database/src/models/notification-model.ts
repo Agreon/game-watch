@@ -4,6 +4,7 @@ import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } fro
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
 import { InfoSource } from "./info-source-model";
+import { User } from "./user-model";
 
 @Entity()
 export class Notification<T extends NotificationType = NotificationType> extends BaseEntity<Notification<T>> {
@@ -22,13 +23,23 @@ export class Notification<T extends NotificationType = NotificationType> extends
     @Property({ columnType: "json" })
     public data!: NotificationData[T];
 
+    @ManyToOne(() => User, { wrappedReference: true })
+    public user!: IdentifiedReference<User>;
+
     public constructor(
-        { type, data, game, infoSource }: { type: T, data: NotificationData[T], game: Game, infoSource: InfoSource }
+        { type, data, game, infoSource }: {
+            type: T;
+            data: NotificationData[T];
+            game: Game;
+            infoSource: InfoSource;
+        },
+
     ) {
         super();
         this.type = type;
         this.data = data;
         this.game = Reference.create(game);
         this.infoSource = Reference.create(infoSource);
+        this.user = game.user;
     }
 }

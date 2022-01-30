@@ -1,4 +1,4 @@
-import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, OneToMany, Property, wrap } from "@mikro-orm/core";
+import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, OneToMany, Property, Reference, wrap } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { InfoSource } from "./info-source-model";
@@ -35,9 +35,9 @@ export class Game extends BaseEntity<Game> {
     @ManyToOne(() => User, { wrappedReference: true })
     public user!: IdentifiedReference<User>;
 
-    public constructor({ search, user }: { search: string, user: User }) {
+    public constructor({ search, user }: { search: string, user: IdentifiedReference<User> }) {
         super();
         this.search = search;
-        this.user = wrap(user).toReference();
+        this.user = user;
     }
 }

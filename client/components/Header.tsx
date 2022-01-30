@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, useColorModeValue, useColorMode, Text, useDisclosure, Button, AlertIcon } from '@chakra-ui/react'
+import { IconButton, useColorModeValue, useColorMode, Text, useDisclosure, Button, AlertIcon, useBreakpointValue } from '@chakra-ui/react'
 import Image from 'next/image'
 import githubIconLight from '../assets/github-icon-light.png'
 import githubIconDark from '../assets/github-icon-dark.png'
@@ -27,7 +27,7 @@ export default function Header() {
             padding="1rem"
             boxShadow="lg"
         >
-            <Text fontSize="2xl">GameWatch</Text>
+            <Text fontSize="2xl">{useBreakpointValue(["GW", "GameWatch"])}</Text>
             <Flex
                 align="center"
                 position="absolute"
@@ -51,9 +51,9 @@ export default function Header() {
                         </Button>
                     </Box>
                     : <Flex align="center" mr="1.5rem">
-                        <Text>Hey {user.username}!</Text>
+                        <Text display={["none", "none", "block"]}>Hey {user.username}!</Text>
                         <Button
-                            ml="1rem"
+                            ml="0.5rem"
                             aria-label="logout"
                             size="sm"
                             onClick={logoutUser}
