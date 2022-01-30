@@ -53,6 +53,7 @@ export const NotificationProvider: React.FC<{}> = ({ children }) => {
 
     const notificationSidebarRef = useRef<HTMLDivElement | null>(null);
 
+    // TODO: https://chakra-ui.com/docs/hooks/use-outside-click?
     // Close sidebar on outside click
     const handleClick = useCallback((event) => {
         if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target)) {
