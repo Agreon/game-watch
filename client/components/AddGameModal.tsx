@@ -149,19 +149,21 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                                     }
                                 </Box>
                             </Flex>
-                            {!game.syncing &&
-                                <Flex justify="flex-end">
-                                    <Button
-                                        colorScheme="teal"
-                                        size="lg"
-                                        onClick={onAddGame}
-                                        disabled={loading || game.syncing}
-                                        loading={loading}
-                                    >
-                                        Save
-                                    </Button>
-                                </Flex>
-                            }
+                            <Flex justify="flex-end">
+                                <Button size="lg" onClick={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    ml="1rem"
+                                    size="lg"
+                                    loading={loading}
+                                    colorScheme="teal"
+                                    disabled={loading}
+                                    onClick={onAddGame}
+                                >
+                                    {game.syncing ? "Save right away" : "Save"}
+                                </Button>
+                            </Flex>
                         </Flex>
                     </Flex>
                 </ModalBody>

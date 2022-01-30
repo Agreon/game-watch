@@ -15,21 +15,15 @@ services:
     build:
       context: .
       dockerfile: ./server/Dockerfile
+    env_file: .env
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
-      - DATABASE_USER=$DATABASE_USER
-      - DATABASE_PASSWORD=$DATABASE_PASSWORD
-      - DATABASE_NAME=$DATABASE_NAME
-      - SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
-      - SENTRY_DSN=$SENTRY_DSN
-      - SERVER_PORT=$SERVER_PORT
-      - CORS_ORIGIN=$CORS_ORIGIN
       - REDIS_HOST=redis
-      - REDIS_PASSWORD=$REDIS_PASSWORD
-      - SYNC_SOURCES_AT=$SYNC_SOURCES_AT
+      - REDIS_PORT=6379
     depends_on:
       - db
+      - redis
     ports:
       - $SERVER_PORT:$SERVER_PORT
 
@@ -37,31 +31,27 @@ services:
     build:
       context: .
       dockerfile: ./searcher/Dockerfile
+    env_file: .env
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
-      - DATABASE_USER=$DATABASE_USER
-      - DATABASE_PASSWORD=$DATABASE_PASSWORD
-      - DATABASE_NAME=$DATABASE_NAME
       - REDIS_HOST=redis
-      - REDIS_PASSWORD=$REDIS_PASSWORD
-      - SYNC_SOURCES_AT=$SYNC_SOURCES_AT
+      - REDIS_PORT=6379
     depends_on:
+      - db
       - redis
-
   resolver:
     build:
       context: .
       dockerfile: ./resolver/Dockerfile
+    env_file: .env
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
-      - DATABASE_USER=$DATABASE_USER
-      - DATABASE_PASSWORD=$DATABASE_PASSWORD
-      - DATABASE_NAME=$DATABASE_NAME
       - REDIS_HOST=redis
-      - REDIS_PASSWORD=$REDIS_PASSWORD
+      - REDIS_PORT=6379
     depends_on:
+      - db
       - redis
 
   # Currently handled by vercel

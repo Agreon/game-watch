@@ -3,6 +3,7 @@ import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
 import * as dotenv from "dotenv";
 import path from 'path';
 
+import { EnvironmentStructure } from "./environment";
 import { Migration20211012071707 } from "./migrations/Migration20211012071707";
 import { Migration20211016065028 } from "./migrations/Migration20211016065028";
 import { Migration20211016134626 } from "./migrations/Migration20211016134626";
@@ -19,18 +20,29 @@ import { InfoSource } from "./models/info-source-model";
 import { Notification } from "./models/notification-model";
 import { Tag } from "./models/tag-model";
 import { User } from "./models/user-model";
+import { parseEnvironment } from "./parse-environment";
 
+// If used for cli command
 dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env") });
+
+const {
+    DATABASE_USER,
+    DATABASE_HOST,
+    DATABASE_NAME,
+    DATABASE_PASSWORD,
+    DATABASE_PORT,
+    ENABLE_MIKRO_ORM_DEBUGGING,
+} = parseEnvironment(EnvironmentStructure, process.env);
 
 const config: MikroOrmModuleSyncOptions = {
     entities: [Game, InfoSource, Tag, Notification, User],
     type: 'postgresql' as keyof typeof Configuration.PLATFORMS,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    dbName: process.env.DATABASE_NAME,
-    host: process.env.DATABASE_HOST,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    port: parseInt(process.env.DATABASE_PORT!, 10),
+    user: DATABASE_USER,
+    password: DATABASE_PASSWORD,
+    dbName: DATABASE_NAME,
+    host: DATABASE_HOST,
+    debug: ENABLE_MIKRO_ORM_DEBUGGING,
+    port: DATABASE_PORT,
     migrations: {
         path: './src/migrations',
         migrationsList: [

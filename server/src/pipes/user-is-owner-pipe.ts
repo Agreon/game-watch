@@ -4,7 +4,6 @@ import { ArgumentMetadata, ForbiddenException, forwardRef, Inject, Injectable, S
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 
-
 @Injectable({ scope: Scope.REQUEST })
 export class UserIsOwner {
     public constructor(

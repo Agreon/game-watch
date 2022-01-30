@@ -1,10 +1,9 @@
 import { Game } from '@game-watch/database';
 import { QueueType } from '@game-watch/queue';
-import { parseEnvironment } from '@game-watch/service';
+import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as Sentry from '@sentry/node';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import * as dotenv from "dotenv";
@@ -18,14 +17,12 @@ import { QueueService } from './queue/queue-service';
 
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
-const { SENTRY_DSN, SENTRY_ENVIRONMENT, CORS_ORIGIN, SERVER_PORT } = parseEnvironment(EnvironmentStructure, process.env);
+const {
+  CORS_ORIGIN,
+  SERVER_PORT,
+} = parseEnvironment(EnvironmentStructure, process.env);
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: SENTRY_ENVIRONMENT,
-  initialScope: { tags: { service: "server" } },
-  tracesSampleRate: 1.0,
-});
+initializeSentry("Server");
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

@@ -70,7 +70,7 @@ export const UserProvider: React.FC = ({ children }) => {
                         const { data } = await http.post<UserDto>(
                             "/auth/create",
                             // TODO: We shouldn't use the same route for two things
-                            { id: localUserData?.id || uuidV4() }
+                            { id: localUserData?.state === UserState.Trial ? localUserData?.id : uuidV4() }
                         )
 
                         setLocalStoredUser(data)
@@ -98,6 +98,7 @@ export const UserProvider: React.FC = ({ children }) => {
         }, () => { })
     }, [withRequest, user])
 
+    // TODO: We need to refetch the games(and tags)! => useeffect  in providers
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
         return await withRequest(async http => {
             const { data } = await http.post<UserDto>("/auth/login", params)
