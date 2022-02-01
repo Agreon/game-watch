@@ -1,5 +1,4 @@
 import { mikroOrmConfig } from '@game-watch/database';
-import { parseEnvironment } from '@game-watch/service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -11,6 +10,7 @@ import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
 import { LoggerMiddleware } from './LoggerMiddleware';
 import { NotificationModule } from './notification/notification-module';
+import { parseEnvironment } from './parse-environment';
 import { TagModule } from './tag/tag-module';
 
 
