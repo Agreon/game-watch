@@ -13,12 +13,11 @@ import { NotificationModule } from './notification/notification-module';
 import { parseEnvironment } from './parse-environment';
 import { TagModule } from './tag/tag-module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validate: (config) => parseEnvironment(EnvironmentStructure, config),
+      validate: () => parseEnvironment(EnvironmentStructure, process.env),
     }),
     AuthModule,
     MikroOrmModule.forRoot(mikroOrmConfig),
