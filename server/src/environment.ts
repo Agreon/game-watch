@@ -2,6 +2,8 @@ import * as t from "io-ts";
 import { IntFromString } from "io-ts-types";
 
 export const EnvironmentStructure = t.type({
+    SENTRY_DSN: t.string,
+    SENTRY_ENVIRONMENT: t.string,
     SERVER_PORT: t.string,
     CORS_ORIGIN: t.string,
     SYNC_SOURCES_AT: t.string,

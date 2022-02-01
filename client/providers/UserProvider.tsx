@@ -98,7 +98,6 @@ export const UserProvider: React.FC = ({ children }) => {
         }, () => { })
     }, [withRequest, user])
 
-    // TODO: We need to refetch the games(and tags)! => useeffect  in providers
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
         return await withRequest(async http => {
             const { data } = await http.post<UserDto>("/auth/login", params)
