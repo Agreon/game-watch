@@ -42,8 +42,6 @@ export class AuthController {
             sameSite: "none",
             maxAge: ms(configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
         };
-
-        console.log(this.accessTokenCookieOptions);
     }
 
     @Post("/create")
