@@ -17,6 +17,6 @@ export class SteamMapper implements UrlMapper {
             throw new Error("Could not extract gameId");
         }
 
-        return gameId;
+        return encodeURIComponent(gameId);
     }
 }

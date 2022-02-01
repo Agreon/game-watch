@@ -1,5 +1,5 @@
 
-import { IsString } from "class-validator";
+import { IsString, Length } from "class-validator";
 
 import { InfoSourceDto } from "./info-source";
 import { TagDto } from "./tag";
@@ -16,10 +16,12 @@ export interface GameDto {
 
 export class CreateGameDto {
     @IsString()
+    @Length(1, 255)
     public search: string;
 }
 
 export class UpdateGameDto {
     @IsString()
+    @Length(1, 255)
     public name: string;
 }

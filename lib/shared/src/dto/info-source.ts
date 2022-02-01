@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from "class-validator";
+import { IsEnum, IsString, Length } from "class-validator";
 
 import { GameData, InfoSourceType } from "../types";
 
@@ -18,6 +18,7 @@ export class CreateInfoSourceDto {
     public gameId: string;
 
     @IsString()
+    @Length(1, 255)
     public url: string;
 
     @IsEnum(InfoSourceType)

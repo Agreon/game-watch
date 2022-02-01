@@ -1,11 +1,13 @@
+import * as dotenv from "dotenv";
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+
 import { mikroOrmConfig } from "@game-watch/database";
 import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
 import { MikroORM } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
-import * as dotenv from "dotenv";
-import path from 'path';
 
 import { EnvironmentStructure } from "./environment";
 import { searchForGame } from "./search-for-game";
@@ -15,8 +17,6 @@ import { MetacriticSearcher } from "./searchers/metacritic-searcher";
 import { PsStoreSearcher } from "./searchers/ps-store-searcher";
 import { SteamSearcher } from "./searchers/steam-searcher";
 import { SwitchSearcher } from "./searchers/switch-searcher";
-
-dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 const { SEARCH_GAME_CONCURRENCY } = parseEnvironment(EnvironmentStructure, process.env);
 

@@ -1,4 +1,7 @@
-import { Game } from '@game-watch/database';
+import * as dotenv from "dotenv";
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+
 import { QueueType } from '@game-watch/queue';
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
@@ -6,16 +9,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import * as dotenv from "dotenv";
 import { Logger } from "nestjs-pino";
-import path from 'path';
 
 import { AppModule } from './app.module';
 import { EnvironmentStructure } from './environment';
 import { GameService } from './game/game-service';
 import { QueueService } from './queue/queue-service';
-
-dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 const {
   CORS_ORIGIN,
@@ -29,17 +28,10 @@ async function bootstrap() {
     bodyParser: true,
     bufferLogs: true,
     cors: {
-      // allowedHeaders: "*",
-      // methods: "*",
+      methods: "*",
       credentials: true,
-      origin: true
-      // origin: CORS_ORIGIN
+      origin: CORS_ORIGIN
     }
-  });
-  app.enableCors({
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
   });
 
   const logger = app.get(Logger);
@@ -60,8 +52,7 @@ async function bootstrap() {
   const queueService = app.get(QueueService);
   const gameService = app.get(GameService);
   await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
-    const em = orm.em.fork();
-    const gameToDelete = await em.findOneOrFail(Game, gameId);
+    const gameToDelete = await gameService.getGame(gameId);
     if (gameToDelete.setupCompleted) {
       return;
     }

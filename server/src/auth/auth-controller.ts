@@ -95,6 +95,8 @@ export class AuthController {
 
         const registeredUser = await this.authService.registerUser({ id, username, password });
 
+        delete (registeredUser as any).password;
+
         return await this.setJwtCookiesForUser(registeredUser, response);
     }
 

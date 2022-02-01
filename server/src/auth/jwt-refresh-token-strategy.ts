@@ -37,6 +37,9 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
             throw new UnauthorizedException();
         }
 
+        user.lastTokenRefresh = new Date();
+        await this.userRepository.persistAndFlush(user);
+
         return user;
     }
 }

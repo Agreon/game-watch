@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from "class-validator";
+import { IsString, IsUUID, Length } from "class-validator";
 
 export class CreateUserDto {
     @IsUUID()
@@ -10,8 +10,10 @@ export class RegisterUserDto {
     public id: string;
 
     @IsString()
+    @Length(1, 255)
     public username: string;
 
     @IsString()
+    @Length(8, 255)
     public password: string;
 }

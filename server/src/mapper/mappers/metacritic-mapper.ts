@@ -6,11 +6,11 @@ export class MetacriticMapper implements UrlMapper {
     public type = InfoSourceType.Metacritic;
 
     public async mapUrlToId(url: string): Promise<string> {
-        const { hostname } = new URL(url);
-        if (hostname !== "www.metacritic.com") {
+        const mapped = new URL(url);
+        if (mapped.hostname !== "www.metacritic.com") {
             throw new Error("Not mappable");
         }
 
-        return url;
+        return mapped.href;
     }
 }

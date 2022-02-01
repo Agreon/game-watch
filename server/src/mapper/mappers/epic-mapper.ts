@@ -6,11 +6,11 @@ export class EpicResolver implements UrlMapper {
     public type = InfoSourceType.Epic;
 
     public async mapUrlToId(url: string): Promise<string> {
-        const { hostname } = new URL(url);
-        if (hostname !== "www.epicgames.com") {
+        const mapped = new URL(url);
+        if (mapped.hostname !== "www.epicgames.com") {
             throw new Error("Not mappable");
         }
 
-        return url;
+        return mapped.href;
     }
 }

@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 export interface TagDto {
     id: string;
@@ -8,8 +8,12 @@ export interface TagDto {
 
 export class CreateTagDto {
     @IsString()
+    @IsNotEmpty()
+    @MaxLength(255)
     public name: string;
 
     @IsString()
+    @IsNotEmpty()
+    @MaxLength(255)
     public color: string;
 }

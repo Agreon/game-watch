@@ -22,6 +22,9 @@ export class User extends BaseEntity<User> {
     @OneToMany(() => Tag, tag => tag.user)
     public tags = new Collection<Tag>(this);
 
+    @Property()
+    public lastTokenRefresh: Date = new Date();
+
     public constructor({ id }: { id: string }) {
         super();
         this.id = id;
