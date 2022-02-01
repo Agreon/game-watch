@@ -4,6 +4,7 @@ import { Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Pr
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
 import { Notification } from "./notification-model";
+import { User } from "./user-model";
 
 @Entity()
 export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {
@@ -31,14 +32,18 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     @ManyToOne(() => Game, { wrappedReference: true })
     public game!: IdentifiedReference<Game>;
 
+    @ManyToOne(() => User, { wrappedReference: true })
+    public user!: IdentifiedReference<User>;
+
     @OneToMany(() => Notification, notification => notification.infoSource)
     public notifications = new Collection<Notification, InfoSource<T>>(this);
 
     public constructor(
-        { type, remoteGameId, remoteGameName, data, game }: {
+        { type, remoteGameId, remoteGameName, data, game, user }: {
             type: T;
             remoteGameId: string;
             remoteGameName: string;
+            user: IdentifiedReference<User>;
             data?: GameData[T];
             game?: Game;
         }
@@ -47,6 +52,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
         this.type = type;
         this.remoteGameId = remoteGameId;
         this.remoteGameName = remoteGameName;
+        this.user = user;
         this.data = data ?? null;
         if (game) {
             this.game = Reference.create(game);

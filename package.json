@@ -13,6 +13,7 @@
     ],
     "scripts": {
         "build": "yarn workspaces run build",
+        "clean": "rm -rf ./**/dist && rm -rf ./**/node_modules && rm -rf ./node_modules",
         "mikro-orm": "yarn workspace @game-watch/database mikro-orm"
     },
     "devDependencies": {

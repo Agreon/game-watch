@@ -10,7 +10,7 @@ export default class Document extends NextDocument {
           <link rel="preconnect" href={process.env.NEXT_PUBLIC_SERVER_URL} />
           <link rel="preconnect" href="https://cdn.akamai.steamstatic.com" />
           <link rel="preconnect" href="https://image.api.playstation.com" />
-          <link rel="preconnect" href="https://cdn03.nintendo-europe.com" />
+          <link rel="preconnect" href="https://fs-prod-cdn.nintendo-europe.com" />
           <link rel="preconnect" href="https://cdn1.epicgames.com" />
         </Head>
         <body>

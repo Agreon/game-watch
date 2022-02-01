@@ -1,15 +1,21 @@
 import React from "react";
-import { IconButton, useColorModeValue, useColorMode, Text } from '@chakra-ui/react'
+import { IconButton, useColorModeValue, useColorMode, Text, useDisclosure, Button, AlertIcon, useBreakpointValue } from '@chakra-ui/react'
 import Image from 'next/image'
 import githubIconLight from '../assets/github-icon-light.png'
 import githubIconDark from '../assets/github-icon-dark.png'
 import { Box, Flex } from '@chakra-ui/layout'
 import { useNotificationContext } from '../providers/NotificationProvider'
-import { BellIcon } from '@chakra-ui/icons'
+import { BellIcon, WarningIcon } from '@chakra-ui/icons'
+import { useUserContext } from "../providers/UserProvider";
+import { UserState } from "@game-watch/shared";
+import { AuthModal } from "./Auth/AuthModal";
 
 export default function Header() {
-    const { notifications, openNotificationSidebar } = useNotificationContext();
+    const { user, logoutUser } = useUserContext()
+    const { notifications, openNotificationSidebar } = useNotificationContext()
     const { colorMode } = useColorMode()
+
+    const { isOpen: showAuthModal, onOpen: openAuthModal, onClose: closeAuthModal } = useDisclosure();
 
     return (
         <Flex
@@ -21,13 +27,43 @@ export default function Header() {
             padding="1rem"
             boxShadow="lg"
         >
-            <Text fontSize="2xl">GameWatch</Text>
+            <Text fontSize="2xl">{useBreakpointValue(["GW", "GameWatch"])}</Text>
             <Flex
                 align="center"
                 position="absolute"
                 right="0"
                 mr="1rem"
             >
+                {user.state === UserState.Trial ?
+                    <Box mr="1.5rem">
+                        <AuthModal
+                            show={showAuthModal}
+                            onClose={closeAuthModal}
+                        />
+                        <Button
+                            aria-label="save-data"
+                            leftIcon={<WarningIcon />}
+                            onClick={openAuthModal}
+                            variant="outline"
+                            colorScheme="orange"
+                        >
+                            Save Data
+                        </Button>
+                    </Box>
+                    : <Flex align="center" mr="1.5rem">
+                        <Text display={["none", "none", "block"]}>Hey {user.username}!</Text>
+                        <Button
+                            ml="0.5rem"
+                            aria-label="logout"
+                            size="sm"
+                            onClick={logoutUser}
+                            variant="outline"
+                            colorScheme="teal"
+                        >
+                            Logout
+                        </Button>
+                    </Flex>
+                }
                 <Box mr="1rem" mt="0.25rem">
                     <a
                         href="https://github.com/Agreon/game-watch"

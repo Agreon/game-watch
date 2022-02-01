@@ -1,8 +1,11 @@
 import { Game, InfoSource } from "@game-watch/database";
 import { createSchedulerForQueue, createWorkerForQueue, QueueParams, QueueType } from "@game-watch/queue";
 import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import * as Sentry from '@sentry/node';
 import { JobsOptions, Processor, Queue, QueueScheduler, Worker } from "bullmq";
+
+import { Environment } from "../environment";
 
 @Injectable()
 export class QueueService implements OnModuleDestroy {
@@ -12,7 +15,8 @@ export class QueueService implements OnModuleDestroy {
     private readonly handlers: Worker[] = [];
 
     public constructor(
-        private readonly queues: Record<QueueType, Queue>
+        private readonly queues: Record<QueueType, Queue>,
+        private readonly configService: ConfigService<Environment, true>
     ) {
         this.queueSchedulers = Object.keys(queues).map(
             queueType => createSchedulerForQueue(queueType as QueueType)
@@ -39,7 +43,7 @@ export class QueueService implements OnModuleDestroy {
             { sourceId: infoSource.id },
             {
                 repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
+                    cron: this.configService.get("SYNC_SOURCES_AT")
                 },
                 jobId: infoSource.id,
                 priority: 2
@@ -49,7 +53,7 @@ export class QueueService implements OnModuleDestroy {
 
     public async removeRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
         await this.queues[QueueType.ResolveSource].removeRepeatableByKey(
-            `${QueueType.ResolveSource}:${infoSource.id}:::${process.env.SYNC_SOURCES_AT}`
+            `${QueueType.ResolveSource}:${infoSource.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
         );
     }
 
@@ -59,7 +63,7 @@ export class QueueService implements OnModuleDestroy {
             { gameId: game.id },
             {
                 repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
+                    cron: this.configService.get("SYNC_SOURCES_AT")
                 },
                 jobId: game.id,
                 priority: 2
@@ -69,7 +73,7 @@ export class QueueService implements OnModuleDestroy {
 
     public async removeRepeatableGameSearchJob(game: Game) {
         await this.queues[QueueType.SearchGame].removeRepeatableByKey(
-            `${QueueType.SearchGame}:${game.id}:::${process.env.SYNC_SOURCES_AT}`
+            `${QueueType.SearchGame}:${game.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
         );
     }
 

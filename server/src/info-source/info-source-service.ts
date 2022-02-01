@@ -1,7 +1,7 @@
-import { Game, InfoSource } from "@game-watch/database";
+import { Game, InfoSource, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
-import { InfoSourceType } from "@game-watch/shared";
-import { EntityRepository } from "@mikro-orm/core";
+import { CreateInfoSourceDto } from "@game-watch/shared";
+import { EntityRepository, IdentifiedReference } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
 
@@ -19,14 +19,15 @@ export class InfoSourceService {
         private readonly infoSourceRepository: EntityRepository<InfoSource>
     ) { }
 
-    public async addInfoSource(gameId: string, type: InfoSourceType, url: string) {
+    public async addInfoSource({ gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }) {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
         // Reuse disabled info sources
         const existingInfoSource = await this.infoSourceRepository.findOne({
             type,
-            game
+            game,
+            user
         });
         if (existingInfoSource) {
             existingInfoSource.disabled = false;
@@ -48,6 +49,7 @@ export class InfoSourceService {
             remoteGameId,
             // This field is only used for display on the initial search.
             remoteGameName: "",
+            user
         });
 
         game.infoSources.add(infoSource);

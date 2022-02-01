@@ -1,4 +1,4 @@
-import { Game, Tag } from '@game-watch/database';
+import { Game, Tag, User } from '@game-watch/database';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
@@ -7,7 +7,7 @@ import { TagService } from './tag-service';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Game, Tag])
+    MikroOrmModule.forFeature([Game, Tag, User])
   ],
   controllers: [TagController],
   providers: [TagService]

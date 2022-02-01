@@ -1,6 +1,7 @@
 import { Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker, WorkerOptions } from "bullmq";
-import * as dotenv from "dotenv";
-import path from 'path';
+
+import { EnvironmentStructure } from "./environment";
+import { parseEnvironment } from "./parse-environment";
 
 export enum QueueType {
     SearchGame = "search-game",
@@ -16,11 +17,12 @@ export type QueueParams = {
     [QueueType.DeleteUnfinishedGameAdds]: { gameId: string },
 };
 
-dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env") });
+const { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } = parseEnvironment(EnvironmentStructure, process.env);
 
 const QUEUE_CONNECTION_OPTIONS = {
-    host: process.env.REDIS_HOST,
-    password: process.env.REDIS_PASSWORD
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    password: REDIS_PASSWORD
 };
 
 export const createWorkerForQueue = <T extends QueueType>(

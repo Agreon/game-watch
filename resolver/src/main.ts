@@ -1,12 +1,15 @@
+import * as dotenv from "dotenv";
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+
 import { mikroOrmConfig } from "@game-watch/database";
 import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
-import { createLogger } from "@game-watch/service";
+import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
 import { MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
-import * as dotenv from "dotenv";
-import path from 'path';
 
+import { EnvironmentStructure } from "./environment";
 import { resolveGame } from "./resolve-game";
 import { ResolveService } from "./resolve-service";
 import { resolveSource } from "./resolve-source";
@@ -16,14 +19,9 @@ import { PsStoreResolver } from "./resolvers/ps-store-resolver";
 import { SteamResolver } from "./resolvers/steam-resolver";
 import { SwitchResolver } from "./resolvers/switch-resolver";
 
-dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+const { RESOLVE_GAME_CONCURRENCY, RESOLVE_SOURCE_CONCURRENCY } = parseEnvironment(EnvironmentStructure, process.env);
 
-Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.SENTRY_ENVIRONMENT,
-    initialScope: { tags: { service: "resolver" } },
-    tracesSampleRate: 1.0,
-});
+initializeSentry("Resolver");
 
 const logger = createLogger("Resolver");
 
@@ -57,7 +55,7 @@ const main = async () => {
             Sentry.captureException(error, { tags: { gameId } });
             throw error;
         }
-    });
+    }, { concurrency: RESOLVE_GAME_CONCURRENCY });
 
     resolveGameWorker.on("error", error => {
         logger.error(error);
@@ -90,7 +88,7 @@ const main = async () => {
             Sentry.captureException(error, { tags: { sourceId } });
             throw error;
         }
-    });
+    }, { concurrency: RESOLVE_SOURCE_CONCURRENCY, });
 
     resolveGameWorker.on("error", error => {
         logger.error(error);
