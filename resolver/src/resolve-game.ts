@@ -2,17 +2,18 @@ import { Game, InfoSource } from "@game-watch/database";
 import { Logger } from "@game-watch/service";
 import { EntityManager } from "@mikro-orm/core";
 
+import { createNotifications } from "./create-notifications";
 import { ResolveService } from "./resolve-service";
 
 interface Params {
     gameId: string;
+    initialRun?: boolean;
     resolveService: ResolveService,
     em: EntityManager;
     logger: Logger;
 }
 
-
-export const resolveGame = async ({ gameId, resolveService, em, logger }: Params) => {
+export const resolveGame = async ({ gameId, initialRun, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 
     const game = await em.findOneOrFail(Game, gameId, ["infoSources"]);
@@ -41,6 +42,10 @@ export const resolveGame = async ({ gameId, resolveService, em, logger }: Params
             return;
         }
         logger.info(`Resolved source information in ${source.type}`);
+
+        if (!initialRun) {
+            await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em });
+        }
 
         await em.nativeUpdate(InfoSource, source.id, {
             resolveError: false,

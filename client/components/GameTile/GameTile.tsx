@@ -26,6 +26,7 @@ const GameTileComponent: React.FC = () => {
 
     return (
         <Box
+            id={game.id}
             position="relative"
             marginY="1rem"
             minWidth={["100%", "28rem"]}

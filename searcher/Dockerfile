@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:12-slim
+FROM node:16-slim
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer

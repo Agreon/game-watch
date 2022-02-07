@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Flex, Box, Text, Slide, Button, Kbd } from "@chakra-ui/react";
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { useNotificationContext } from '../../providers/NotificationProvider';
 import { Notification } from './Notification';
+import { NotificationDto } from '@game-watch/shared';
 
 export const NotificationSidebar = () => {
     const {
@@ -12,6 +13,19 @@ export const NotificationSidebar = () => {
         notifications,
         markNotificationAsRead,
     } = useNotificationContext();
+
+    const onClick = useCallback((notification: NotificationDto) => {
+        const scrollContainer = document.getElementById("scrollContainer");
+        const gameTile = document.getElementById(notification.game.id);
+        if (!scrollContainer || !gameTile) {
+            return;
+        }
+        closeNotificationSidebar();
+        scrollContainer.scrollTo({
+            top: gameTile.offsetTop - scrollContainer.offsetTop - 50,
+            behavior: 'smooth'
+        });
+    }, [closeNotificationSidebar]);
 
     return (
         <Slide
@@ -49,11 +63,16 @@ export const NotificationSidebar = () => {
                 <Box overflowY="auto" height="100%">
                     <Flex direction="column">
                         {notifications.map(notification =>
-                            <Notification
+                            <Box
                                 key={notification.id}
+                                onClick={() => onClick(notification)}
+                            >
+                                <Notification
                                 notification={notification}
                                 markNotificationAsRead={markNotificationAsRead}
                             />
+                            </Box>
+
                         )}
                         {!notifications.length && <Box mt="3rem" display="flex" justifyContent="center">No notifications available yet</Box>}
                     </Flex>

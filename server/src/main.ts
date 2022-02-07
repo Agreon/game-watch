@@ -36,7 +36,7 @@ async function bootstrap() {
     bodyParser: true,
     bufferLogs: true,
     cors: {
-      methods: "*",
+      methods: "POST, PATCH, PUT, GET, DELETE, OPTIONS",
       credentials: true,
       origin: CORS_ORIGIN
     }
@@ -59,14 +59,22 @@ async function bootstrap() {
 
   const queueService = app.get(QueueService);
   const gameService = app.get(GameService);
-  await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
-    const gameToDelete = await gameService.getGame(gameId);
-    if (gameToDelete.setupCompleted) {
-      return;
-    }
 
-    logger.log(`Deleting unfinished game '${gameToDelete.id}'`);
-    await gameService.deleteGame(gameToDelete.id);
+  await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
+    try {
+        const gameToDelete = await gameService.getGame(gameId);
+        if (gameToDelete.setupCompleted) {
+          return;
+        }
+
+        logger.log(`Deleting unfinished game '${gameToDelete.id}'`);
+        await gameService.deleteGame(gameToDelete.id);
+      } catch (error) {
+        // Need to wrap this because otherwise the error is swallowed by the worker.
+        logger.error(error);
+        Sentry.captureException(error, { tags: { gameId } });
+        throw error;
+      }
   });
 }
 

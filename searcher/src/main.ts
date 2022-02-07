@@ -5,7 +5,7 @@ dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 import { mikroOrmConfig } from "@game-watch/database";
 import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
-import { MikroORM } from "@mikro-orm/core";
+import { MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
 
@@ -18,7 +18,7 @@ import { PsStoreSearcher } from "./searchers/ps-store-searcher";
 import { SteamSearcher } from "./searchers/steam-searcher";
 import { SwitchSearcher } from "./searchers/switch-searcher";
 
-const { SEARCH_GAME_CONCURRENCY } = parseEnvironment(EnvironmentStructure, process.env);
+const { SEARCH_GAME_CONCURRENCY, SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Searcher");
 
@@ -39,6 +39,7 @@ const main = async () => {
 
     const resolveGameQueue = createQueue(QueueType.ResolveGame);
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
+    const searchGameQueue = createQueue(QueueType.SearchGame);
 
     worker = createWorkerForQueue(QueueType.SearchGame, async ({ data: { gameId } }) => {
         const gameScopedLogger = logger.child({ gameId });
@@ -51,8 +52,16 @@ const main = async () => {
                 resolveSourceQueue
             });
 
-            await resolveGameQueue.add(QueueType.ResolveGame, { gameId });
+            await resolveGameQueue.add(QueueType.ResolveGame, { gameId, initialRun: true });
         } catch (error) {
+            if (error instanceof NotFoundError) {
+                logger.warn(`Game '${gameId}' could not be found in database`);
+
+                searchGameQueue.removeRepeatableByKey(
+                    `${QueueType.SearchGame}:${gameId}:::${SYNC_SOURCES_AT}`
+                );
+                return;
+            }
             // Need to wrap this because otherwise the error is swallowed by the worker.
             logger.error(error);
             Sentry.captureException(error, { tags: { gameId } });

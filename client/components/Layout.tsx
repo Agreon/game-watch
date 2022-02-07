@@ -20,6 +20,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             <Header />
             <NotificationSidebar />
             <Box
+                id="scrollContainer"
                 mt="4rem"
                 pt="2rem"
                 overflowX="hidden"

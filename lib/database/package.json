@@ -13,14 +13,15 @@
         "@mikro-orm/migrations": "^4.5.9",
         "@mikro-orm/nestjs": "^4.3.0",
         "@mikro-orm/postgresql": "^4.5.9",
+        "@mikro-orm/sql-highlighter": "^1.0.1",
         "dotenv": "^10.0.0",
-        "uuid": "^8.3.2",
         "fp-ts": "^2.11.8",
         "io-ts": "^2.2.16",
         "io-ts-reporters": "^2.0.0",
         "io-ts-types": "^0.5.16",
         "monocle-ts": "^2.3.12",
-        "newtype-ts": "^0.3.5"
+        "newtype-ts": "^0.3.5",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@mikro-orm/cli": "^4.5.9",

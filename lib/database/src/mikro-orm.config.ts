@@ -1,5 +1,6 @@
 import { Configuration } from "@mikro-orm/core";
 import { MikroOrmModuleSyncOptions } from "@mikro-orm/nestjs";
+import { SqlHighlighter } from "@mikro-orm/sql-highlighter";
 import * as dotenv from "dotenv";
 import path from 'path';
 
@@ -42,6 +43,7 @@ const config: MikroOrmModuleSyncOptions = {
     dbName: DATABASE_NAME,
     host: DATABASE_HOST,
     debug: ENABLE_MIKRO_ORM_DEBUGGING,
+    highlighter: ENABLE_MIKRO_ORM_DEBUGGING ? new SqlHighlighter() : undefined,
     port: DATABASE_PORT,
     migrations: {
         path: './src/migrations',

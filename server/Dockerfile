@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:12-slim
+FROM node:16-slim
 
 WORKDIR /app
 COPY package.json yarn.lock ./
