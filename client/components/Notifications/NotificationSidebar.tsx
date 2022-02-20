@@ -66,11 +66,12 @@ export const NotificationSidebar = () => {
                             <Box
                                 key={notification.id}
                                 onClick={() => onClick(notification)}
+                                cursor="pointer"
                             >
                                 <Notification
-                                notification={notification}
-                                markNotificationAsRead={markNotificationAsRead}
-                            />
+                                    notification={notification}
+                                    markNotificationAsRead={markNotificationAsRead}
+                                />
                             </Box>
 
                         )}

@@ -4,7 +4,7 @@ import { NotificationDto, NotificationType } from "@game-watch/shared";
 import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
 import { IconButton, Tooltip } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useAction } from "../../util/useAction";
 import { LoadingSpinner } from "../LoadingSpinner";
 
@@ -26,7 +26,6 @@ function isNotificationOfType<T extends NotificationType, TValue extends Notific
 const getNotificationText = (notification: NotificationDto) => {
     const { game } = notification;
 
-    // TODO: Scroll-To-Game Effect with simple html links?
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
 
     if (isNotificationOfType(notification, NotificationType.GameReduced)) {
@@ -59,6 +58,11 @@ const NotificationComponent: React.FC<{
 
     const notificationText = useMemo(() => getNotificationText(notification), [notification]);
 
+    const onMarkAsRead = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        markAsRead(notification.id);
+    }, [markAsRead, notification.id])
+
     return (
         <Box
             position="relative"
@@ -90,7 +94,7 @@ const NotificationComponent: React.FC<{
             <Box position="absolute" right="0.5rem" top="0.5rem">
                 <IconButton
                     icon={<CheckCircleIcon />}
-                    onClick={() => markAsRead(notification.id)}
+                    onClick={onMarkAsRead}
                     size="sm"
                     variant="ghost"
                     aria-label='Delete'
