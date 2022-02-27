@@ -5,8 +5,8 @@ import { GameData, InfoSourceType } from "../types";
 export interface InfoSourceDto<T extends InfoSourceType = InfoSourceType> {
     id: string
     type: T
-    remoteGameId: string;
-    remoteGameName: string;
+    remoteGameId: string | null;
+    remoteGameName: string | null;
     syncing: boolean
     disabled: boolean
     resolveError: boolean

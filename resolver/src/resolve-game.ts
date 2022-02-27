@@ -26,7 +26,7 @@ export const resolveGame = async ({ gameId, initialRun, resolveService, em, logg
         logger.info(`Resolving ${source.type}`);
 
         const resolvedGameData = await resolveService.resolveGameInformation(
-            source.remoteGameId,
+            source.getRemoteGameIdOrFail(),
             source.type,
             { logger }
         );

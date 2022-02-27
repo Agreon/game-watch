@@ -78,7 +78,6 @@ export const createGameReleasedNotification = async (
         type: NotificationType.GameReleased,
         data: {}
     }));
-
 };
 
 export const createGameReducedNotification = async (

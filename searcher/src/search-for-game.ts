@@ -8,11 +8,11 @@ import { Queue } from "bullmq";
 import { SearchService } from "./search-service";
 
 interface Params {
-    gameId: string;
-    searchService: SearchService,
-    resolveSourceQueue: Queue;
-    em: EntityManager;
-    logger: Logger;
+    gameId: string
+    searchService: SearchService
+    resolveSourceQueue: Queue
+    em: EntityManager
+    logger: Logger
 }
 
 export const searchForGame = async ({ gameId, searchService, em, logger, resolveSourceQueue }: Params) => {
@@ -23,12 +23,34 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
 
     // Search possible new sources
     const sourcesToSearch = Object.values(InfoSourceType).filter(
-        (type => !existingInfoSources.map(({ type }) => type).includes(type))
+        (type => !existingInfoSources
+            .filter(source => !source.disabled)
+            .map(({ type }) => type).includes(type)
+        )
+    );
+
+    // Re-Search for excluded sources
+    const excludedSources = existingInfoSources.filter(
+        ({ disabled, remoteGameId }) => !disabled && remoteGameId === null
     );
 
     logger.info(`Searching for ${JSON.stringify(sourcesToSearch)}`);
 
-    await Promise.all(sourcesToSearch.map(async sourceType => {
+    const addSourceToNightlyResolveQueue = async (sourceId: string) => {
+        await resolveSourceQueue.add(
+            QueueType.ResolveSource,
+            { sourceId },
+            {
+                repeat: {
+                    cron: process.env.SYNC_SOURCES_AT
+                },
+                jobId: sourceId,
+                priority: 2
+            }
+        );
+    };
+
+    const searchForNewSourcesPromises = sourcesToSearch.map(async sourceType => {
         logger.info(`Searching ${sourceType} for '${game.search}'`);
 
         const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger });
@@ -47,19 +69,34 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
 
         await em.nativeInsert(newSource);
 
-        // Add nightly job
-        await resolveSourceQueue.add(
-            QueueType.ResolveSource,
-            { sourceId: newSource.id },
-            {
-                repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
-                },
-                jobId: newSource.id,
-                priority: 2
-            }
-        );
-    }));
+        await addSourceToNightlyResolveQueue(newSource.id);
+    });
+
+
+    logger.info(`Re-Searching for ${JSON.stringify(sourcesToSearch)}`);
+
+    const researchSourcesPromises = excludedSources.map(async source => {
+        logger.info(`Re-Searching ${source.type} for '${game.search}'`);
+
+        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger });
+        if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.remoteGameId)) {
+            logger.info(`No new store game information found in '${source.type}' for '${game.search}'`);
+            return;
+        }
+        logger.info(`Found game information in ${source.type} for '${game.search}': '${searchResponse.remoteGameId}'`);
+
+        source.remoteGameId = searchResponse.remoteGameId;
+        source.remoteGameName = searchResponse.remoteGameName;
+
+        await em.nativeUpdate(InfoSource, source.id, {
+            remoteGameId: searchResponse.remoteGameId,
+            remoteGameName: searchResponse.remoteGameName,
+        });
+
+        await addSourceToNightlyResolveQueue(source.id);
+    });
+
+    await Promise.all([...searchForNewSourcesPromises, ...researchSourcesPromises]);
 
     await em.nativeUpdate(Game, game.id, {
         syncing: false,

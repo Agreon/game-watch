@@ -23,7 +23,7 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
     logger.info(`Resolving ${source.type}`);
 
     const resolvedGameData = await resolveService.resolveGameInformation(
-        source.remoteGameId,
+        source.getRemoteGameIdOrFail(),
         source.type,
         { logger }
     );

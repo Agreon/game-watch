@@ -51,4 +51,11 @@ export class InfoSourceController {
     ): Promise<InfoSourceDto> {
         return await this.infoSourceService.disableInfoSource(id);
     }
+
+    @Post("/:id/exclude")
+    public async excludeInfoSource(
+        @Param("id", UserIsOwner) { id }: InfoSource
+    ): Promise<InfoSourceDto> {
+        return await this.infoSourceService.excludeInfoSource(id);
+    }
 }
