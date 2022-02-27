@@ -38,7 +38,13 @@ export class EpicResolver implements InfoResolver {
     }
 
 
-    private getPriceInformation({ price, discountedFromPrice }: Record<string, any>): StorePriceInformation | undefined {
+    private getPriceInformation({ price, discountedFromPrice }: Record<string, string | undefined>): StorePriceInformation | undefined {
+        if (price === "Gratis") {
+            return {
+                final: 0
+            };
+        }
+
         const initial = parseCurrencyValue(discountedFromPrice || price);
         const final = parseCurrencyValue(price);
 

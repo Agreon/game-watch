@@ -72,7 +72,7 @@ export class SwitchResolver implements InfoResolver {
         const initial = parseCurrencyValue(regular_price.raw_value);
         const final = parseCurrencyValue((discount_price || regular_price).raw_value);
 
-        if (!initial || !final) {
+        if (initial === undefined || final === undefined) {
             return undefined;
         }
 

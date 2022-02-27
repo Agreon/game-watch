@@ -28,10 +28,7 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
 
     // Search possible new sources
     const sourcesToSearch = Object.values(InfoSourceType).filter(
-        type =>
-            !existingInfoSources
-                .filter(source => !source.disabled)
-                .map(({ type }) => type).includes(type)
+        type => !existingInfoSources.map(({ type }) => type).includes(type)
     );
 
     logger.info(`Searching for ${JSON.stringify(sourcesToSearch)}`);

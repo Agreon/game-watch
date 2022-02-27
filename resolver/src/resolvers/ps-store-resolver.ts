@@ -79,6 +79,13 @@ export class PsStoreResolver implements InfoResolver {
     }
 
     private getPriceInformation({ price, originalPrice }: Record<string, any>): StorePriceInformation | undefined {
+        if (price === "Kostenlos") {
+            return {
+                final: 0
+            };
+        }
+
+
         const initial = parseCurrencyValue(originalPrice || price);
         const final = parseCurrencyValue(price);
 
