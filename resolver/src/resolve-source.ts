@@ -16,14 +16,14 @@ export const resolveSource = async ({ sourceId, resolveService, em, logger }: Pa
     const startTime = new Date().getTime();
 
     const source = await em.findOneOrFail(InfoSource, sourceId, ["game"]);
-    if (source.disabled) {
+    if (source.disabled || source.remoteGameId === null) {
         return;
     }
 
     logger.info(`Resolving ${source.type}`);
 
     const resolvedGameData = await resolveService.resolveGameInformation(
-        source.getRemoteGameIdOrFail(),
+        source.remoteGameId,
         source.type,
         { logger }
     );

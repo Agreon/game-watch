@@ -11,7 +11,7 @@ export enum QueueType {
 }
 
 export type QueueParams = {
-    [QueueType.SearchGame]: { gameId: string },
+    [QueueType.SearchGame]: { gameId: string, initialRun?: boolean },
     [QueueType.ResolveGame]: { gameId: string, initialRun?: boolean },
     [QueueType.ResolveSource]: { sourceId: string },
     [QueueType.DeleteUnfinishedGameAdds]: { gameId: string },

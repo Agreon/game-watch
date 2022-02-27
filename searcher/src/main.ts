@@ -41,7 +41,7 @@ const main = async () => {
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
     const searchGameQueue = createQueue(QueueType.SearchGame);
 
-    worker = createWorkerForQueue(QueueType.SearchGame, async ({ data: { gameId } }) => {
+    worker = createWorkerForQueue(QueueType.SearchGame, async ({ data: { gameId, initialRun } }) => {
         const gameScopedLogger = logger.child({ gameId });
         try {
             await searchForGame({
@@ -52,7 +52,7 @@ const main = async () => {
                 resolveSourceQueue
             });
 
-            await resolveGameQueue.add(QueueType.ResolveGame, { gameId, initialRun: true });
+            await resolveGameQueue.add(QueueType.ResolveGame, { gameId, initialRun });
         } catch (error) {
             if (error instanceof NotFoundError) {
                 logger.warn(`Game '${gameId}' could not be found in database`);

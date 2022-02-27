@@ -28,7 +28,7 @@ export class GameService {
         game = new Game({ search, user });
         await this.gameRepository.persistAndFlush(game);
 
-        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id, initialRun: true });
         await this.queueService.addToQueue(
             QueueType.DeleteUnfinishedGameAdds,
             { gameId: game.id },
@@ -126,6 +126,7 @@ export class GameService {
     public async getGames({ withTags, withInfoSources, user }: { withTags?: string[], withInfoSources?: string[], user: IdentifiedReference<User> }) {
         const knex = this.infoSourceRepository.getKnex();
 
+        // TODO: Exclude disabled and gameId = null sources
         const query = this.gameRepository.createQueryBuilder("game")
             .select("*")
             .where({ setupCompleted: true, user })
@@ -157,8 +158,9 @@ export class GameService {
                 .from("info_source")
                 .andWhere({
                     "game_id": knex.ref("game.id"),
-                    disabled: false
+                    disabled: false,
                 })
+                .andWhereNot("remote_game_id", null)
                 .andWhere("type", "in", withInfoSources);
 
             query

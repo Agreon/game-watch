@@ -21,17 +21,17 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
     const game = await em.findOneOrFail(Game, gameId, ["infoSources"]);
     const existingInfoSources = await game.infoSources.loadItems();
 
-    // Search possible new sources
-    const sourcesToSearch = Object.values(InfoSourceType).filter(
-        (type => !existingInfoSources
-            .filter(source => !source.disabled)
-            .map(({ type }) => type).includes(type)
-        )
-    );
-
     // Re-Search for excluded sources
     const excludedSources = existingInfoSources.filter(
         ({ disabled, remoteGameId }) => !disabled && remoteGameId === null
+    );
+
+    // Search possible new sources
+    const sourcesToSearch = Object.values(InfoSourceType).filter(
+        type =>
+            !existingInfoSources
+                .filter(source => !source.disabled)
+                .map(({ type }) => type).includes(type)
     );
 
     logger.info(`Searching for ${JSON.stringify(sourcesToSearch)}`);
@@ -72,8 +72,7 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
         await addSourceToNightlyResolveQueue(newSource.id);
     });
 
-
-    logger.info(`Re-Searching for ${JSON.stringify(sourcesToSearch)}`);
+    logger.info(`Re-Searching for ${JSON.stringify(excludedSources)}`);
 
     const researchSourcesPromises = excludedSources.map(async source => {
         logger.info(`Re-Searching ${source.type} for '${game.search}'`);

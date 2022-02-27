@@ -101,7 +101,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
         }
 
         // We take the first name for now, later the user can decide.
-        await onAdd({ name: activeInfoSources[0].remoteGameName });
+        await onAdd({ name: activeInfoSources[0].remoteGameName! });
     }, [onAdd, activeInfoSources, game]);
 
     return (
