@@ -11,8 +11,8 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { LoadingSpinner } from "../LoadingSpinner";
 
 export const InfoSourcePreview: React.FC = () => {
-    const { source, disableInfoSource } = useInfoSourceContext();
-    const onRemove = useCallback(() => disableInfoSource(), [disableInfoSource]);
+    const { source, excludeInfoSource } = useInfoSourceContext();
+    const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
 
     // The remoteGameName will not be available on a custom add.
     const name = source.remoteGameName || source.data?.fullName;
