@@ -41,8 +41,7 @@ export class ResolveService {
             }
 
             const resolvedData = await resolverForType.resolve(id, { logger: logger.child({ type }) });
-            // Expire after 24 hours
-            await this.redis.set(id, JSON.stringify(resolvedData), "EX", 60 * 60 * 24);
+            await this.redis.set(id, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
 
             return resolvedData;
         } catch (error) {

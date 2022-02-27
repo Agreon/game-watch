@@ -102,7 +102,6 @@ export const createGameReducedNotification = async (
     }
 };
 
-// TODO: Is triggered, even though no rating is shown?
 export const createNewMetacriticRatingNotification = async (
     { infoSource, resolvedGameData, game, em }: NotificationCreateParams
 ) => {
