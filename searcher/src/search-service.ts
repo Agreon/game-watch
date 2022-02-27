@@ -1,6 +1,7 @@
 import { Logger } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
+import pRetry from "p-retry";
 
 export interface InfoSearcherContext {
     logger: Logger
@@ -36,7 +37,9 @@ export class SearchService {
         const start = new Date().getTime();
 
         try {
-            return await searcherForType.search(search, { logger: logger.child({ type }) });
+            return await pRetry(
+                async () => await searcherForType.search(search, { logger: logger.child({ type }) })
+            );
         } catch (error) {
             Sentry.captureException(error, {
                 contexts: {

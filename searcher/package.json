@@ -25,12 +25,13 @@
         "axios": "^0.24.0",
         "bullmq": "^1.52.1",
         "cheerio": "^1.0.0-rc.10",
-        "reflect-metadata": "^0.1.13",
-        "io-ts": "^2.2.16",
         "fp-ts": "^2.11.8",
+        "io-ts": "^2.2.16",
         "io-ts-types": "^0.5.16",
         "monocle-ts": "^2.3.12",
-        "newtype-ts": "^0.3.5"
+        "newtype-ts": "^0.3.5",
+        "p-retry": "^4.6.1",
+        "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
         "@types/node": "^16.0.0",
