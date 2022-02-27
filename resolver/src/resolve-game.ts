@@ -18,7 +18,8 @@ export const resolveGame = async ({ gameId, initialRun, resolveService, em, logg
 
     const game = await em.findOneOrFail(Game, gameId, ["infoSources"]);
 
-    const sourcesToResolve = (await game.infoSources.loadItems()).filter(infoSource => !infoSource.disabled);
+    const sourcesToResolve = (await game.infoSources.loadItems())
+        .filter(source => !source.disabled && source.remoteGameId !== null);
 
     logger.info(`Resolving for ${JSON.stringify(sourcesToResolve.map(({ type }) => type))}`);
 
@@ -26,7 +27,7 @@ export const resolveGame = async ({ gameId, initialRun, resolveService, em, logg
         logger.info(`Resolving ${source.type}`);
 
         const resolvedGameData = await resolveService.resolveGameInformation(
-            source.remoteGameId,
+            source.getRemoteGameIdOrFail(),
             source.type,
             { logger }
         );

@@ -1,4 +1,4 @@
-import { IconButton, Menu, MenuList, MenuButton, MenuItem, Button } from "@chakra-ui/react";
+import { IconButton, Menu, MenuList, MenuButton, MenuItem, Button, AlertDialogCloseButton } from "@chakra-ui/react";
 import { SettingsIcon, DeleteIcon, DownloadIcon } from '@chakra-ui/icons'
 import React, { useCallback, useRef, useState } from "react";
 import {
@@ -42,6 +42,7 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
                             Delete {gameName}
                         </AlertDialogHeader>
+                        <AlertDialogCloseButton />
 
                         <AlertDialogBody>
                             Are you sure?

@@ -23,7 +23,7 @@ export class InfoSourceService {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
-        // Reuse disabled info sources
+        // Reuse disabled or excluded info sources
         const existingInfoSource = await this.infoSourceRepository.findOne({
             type,
             game,
@@ -82,6 +82,21 @@ export class InfoSourceService {
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
         infoSource.disabled = true;
+        await this.infoSourceRepository.persistAndFlush(infoSource);
+
+        return infoSource;
+    }
+
+    public async excludeInfoSource(id: string) {
+        const infoSource = await this.infoSourceRepository.findOneOrFail(id);
+        await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
+
+        infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
+        infoSource.data = null;
+        infoSource.resolveError = false;
+        infoSource.remoteGameId = null;
+        infoSource.remoteGameName = null;
+
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;

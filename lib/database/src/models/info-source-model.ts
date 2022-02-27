@@ -1,5 +1,5 @@
 import { GameData, InfoSourceType } from "@game-watch/shared";
-import { Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference } from "@mikro-orm/core";
+import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
@@ -11,17 +11,20 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     @Enum(() => InfoSourceType)
     public type!: T;
 
-    @Property()
-    public remoteGameId: string;
+    @Property({ nullable: true })
+    public remoteGameId: string | null;
 
-    @Property()
-    public remoteGameName: string;
+    @Property({ nullable: true })
+    public remoteGameName: string | null;
 
     @Property()
     public syncing: boolean = true;
 
     @Property()
     public disabled: boolean = false;
+
+    @Property({ type: ArrayType })
+    public excludedRemoteGameIds: string[] = [];
 
     @Property()
     public resolveError: boolean = false;
@@ -58,4 +61,13 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
             this.game = Reference.create(game);
         }
     }
+
+    public getRemoteGameIdOrFail() {
+        if (!this.remoteGameId) {
+            throw new Error("'remoteGameId' is not set");
+        }
+
+        return this.remoteGameId;
+    }
+
 }
