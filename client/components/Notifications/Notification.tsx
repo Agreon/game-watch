@@ -35,7 +35,7 @@ const getNotificationText = (notification: NotificationDto) => {
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
         const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY")
-        return <>{gameName} {`will be released on (${formattedDate})!`}</>;
+        return <>{gameName} {`will be released on ${formattedDate}!`}</>;
     }
 
     switch (notification.type) {

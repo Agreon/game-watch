@@ -6,10 +6,10 @@ import { createNotifications } from "./create-notifications";
 import { ResolveService } from "./resolve-service";
 
 interface Params {
-    sourceId: string;
-    resolveService: ResolveService,
-    em: EntityManager;
-    logger: Logger;
+    sourceId: string
+    resolveService: ResolveService
+    em: EntityManager
+    logger: Logger
 }
 
 export const resolveSource = async ({ sourceId, resolveService, em, logger }: Params) => {

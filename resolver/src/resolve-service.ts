@@ -1,6 +1,7 @@
 import { Logger } from "@game-watch/service";
 import { GameDataU, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
+import { Redis } from "ioredis";
 
 export interface InfoResolverContext {
     logger: Logger
@@ -13,7 +14,8 @@ export interface InfoResolver<T extends GameDataU = GameDataU> {
 
 export class ResolveService {
     public constructor(
-        private readonly resolvers: InfoResolver[]
+        private readonly resolvers: InfoResolver[],
+        private readonly redis: Redis
     ) { }
 
     public async resolveGameInformation(
@@ -31,7 +33,18 @@ export class ResolveService {
         const start = new Date().getTime();
 
         try {
-            return await resolverForType.resolve(id, { logger: logger.child({ type }) });
+            const existingData = await this.redis.get(id);
+            if (existingData) {
+                logger.debug(`Data for ${id} was found in cache`);
+
+                return JSON.parse(existingData);
+            }
+
+            const resolvedData = await resolverForType.resolve(id, { logger: logger.child({ type }) });
+            // Expire after 24 hours
+            await this.redis.set(id, JSON.stringify(resolvedData), "EX", 60 * 60 * 24);
+
+            return resolvedData;
         } catch (error) {
             Sentry.captureException(error, {
                 contexts: {

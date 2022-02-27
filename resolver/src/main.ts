@@ -8,6 +8,7 @@ import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/se
 import { MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
+import Redis from "ioredis";
 
 import { EnvironmentStructure } from "./environment";
 import { resolveGame } from "./resolve-game";
@@ -19,7 +20,13 @@ import { PsStoreResolver } from "./resolvers/ps-store-resolver";
 import { SteamResolver } from "./resolvers/steam-resolver";
 import { SwitchResolver } from "./resolvers/switch-resolver";
 
-const { RESOLVE_GAME_CONCURRENCY, RESOLVE_SOURCE_CONCURRENCY } = parseEnvironment(EnvironmentStructure, process.env);
+const {
+    RESOLVE_GAME_CONCURRENCY,
+    RESOLVE_SOURCE_CONCURRENCY,
+    REDIS_HOST,
+    REDIS_PASSWORD,
+    REDIS_PORT,
+} = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Resolver");
 
@@ -28,13 +35,19 @@ const logger = createLogger("Resolver");
 let resolveGameWorker: Worker | undefined;
 let resolveSourceWorker: Worker | undefined;
 
+const redis = new Redis({
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    port: REDIS_PORT
+});
+
 const resolveService = new ResolveService([
     new SteamResolver(),
     new SwitchResolver(),
     new PsStoreResolver(),
     new EpicResolver(),
     new MetacriticResolver(),
-]);
+], redis);
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);

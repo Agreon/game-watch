@@ -26,14 +26,16 @@
         "bullmq": "^1.52.1",
         "cheerio": "^1.0.0-rc.10",
         "dayjs": "^1.10.7",
-        "reflect-metadata": "^0.1.13",
-        "io-ts": "^2.2.16",
         "fp-ts": "^2.11.8",
+        "io-ts": "^2.2.16",
         "io-ts-types": "^0.5.16",
+        "ioredis": "^4.28.5",
         "monocle-ts": "^2.3.12",
-        "newtype-ts": "^0.3.5"
+        "newtype-ts": "^0.3.5",
+        "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
+        "@types/ioredis": "^4.28.8",
         "@types/node": "^16.0.0",
         "@typescript-eslint/eslint-plugin": "^4.28.2",
         "@typescript-eslint/parser": "^4.28.2",
