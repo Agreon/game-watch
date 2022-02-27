@@ -15,7 +15,7 @@ interface Params {
 export const resolveSource = async ({ sourceId, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail(InfoSource, sourceId, ["game"]);
+    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["game"] });
     if (source.disabled || source.remoteGameId === null) {
         return;
     }

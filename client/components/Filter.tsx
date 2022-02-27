@@ -87,7 +87,6 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     return (
         <PopoverContent
-            direction="column"
             bg={useColorModeValue('white', 'gray.800')}
             px="2rem"
             pt="2rem"
@@ -96,6 +95,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             width={["100vw", "100vw", "30rem"]}
             rounded="lg"
         >
+            <Flex direction="column">
             <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
             <Box mt="1rem">
                 <Text fontSize="lg">Tags</Text>
@@ -115,6 +115,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     ))}
                 </Box>
             </Box>
+            </Flex>
             <Flex justify="end">
                 <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
                 <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>

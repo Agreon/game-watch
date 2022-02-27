@@ -62,7 +62,7 @@ export class GameService {
     }
 
     public async addTagToGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.add(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -71,7 +71,7 @@ export class GameService {
     }
 
     public async removeTagFromGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.remove(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -90,7 +90,7 @@ export class GameService {
     }
 
     public async deleteGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, ["infoSources", "notifications"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources", "notifications"] });
 
         for (const notification of game.notifications) {
             this.notificationRepository.remove(notification);
@@ -108,18 +108,22 @@ export class GameService {
     public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
         const game = await this.gameRepository.findOneOrFail(
             id,
-            ["infoSources", "tags"],
             {
-                infoSources: {
-                    createdAt: QueryOrder.ASC,
-                    id: QueryOrder.ASC
-                },
-                tags: {
-                    createdAt: QueryOrder.DESC
+                populate: ["infoSources", "tags"],
+                orderBy: {
+                    infoSources: {
+                        createdAt: QueryOrder.ASC,
+                        id: QueryOrder.ASC
+                    },
+                    tags: {
+                        createdAt: QueryOrder.DESC
+                    }
                 }
-            });
+            }
+        );
 
-        return game as Game & { infoSources: InfoSource[], tags: Tag[] };
+        // TODO: Uncool
+        return game as unknown as Game & { infoSources: InfoSource[], tags: Tag[] };
     }
 
     // https://mikro-orm.io/docs/collections#filtering-collections?

@@ -31,6 +31,6 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
 
-        return this.userRepository.getReference(sub, true);
+        return this.userRepository.getReference(sub, { wrapped: true });
     }
 }

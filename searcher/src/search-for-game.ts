@@ -18,7 +18,7 @@ interface Params {
 export const searchForGame = async ({ gameId, searchService, em, logger, resolveSourceQueue }: Params) => {
     const startTime = new Date().getTime();
 
-    const game = await em.findOneOrFail(Game, gameId, ["infoSources"]);
+    const game = await em.findOneOrFail(Game, gameId, { populate: ["infoSources"] });
     const existingInfoSources = await game.infoSources.loadItems();
 
     // Re-Search for excluded sources
