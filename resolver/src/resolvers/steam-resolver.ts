@@ -41,7 +41,7 @@ export class SteamResolver implements InfoResolver {
             thumbnailUrl: json.header_image,
             // Sometimes english, sometimes german..
             releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]),
-            priceInformation: json.is_free ? { final: 0 } : this.getPriceInformation(json.price_overview),
+            priceInformation: json.is_free ? { final: 0 } : this.getPriceInformation(json.price_overview ?? {}),
             controllerSupport: json.controller_support,
             categories: json.categories ? Object.values(json.categories).map(({ description }) => description) : undefined,
             genres: json.genres ? Object.values(json.genres).map(({ description }) => description) : undefined,
