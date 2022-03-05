@@ -122,16 +122,20 @@ export class GameService {
         return game as Game & { infoSources: InfoSource[], tags: Tag[] };
     }
 
-    // https://mikro-orm.io/docs/collections#filtering-collections?
     public async getGames({ withTags, withInfoSources, user }: { withTags?: string[], withInfoSources?: string[], user: IdentifiedReference<User> }) {
         const knex = this.infoSourceRepository.getKnex();
 
-        // TODO: Exclude disabled and gameId = null sources
         const query = this.gameRepository.createQueryBuilder("game")
             .select("*")
             .where({ setupCompleted: true, user })
             .leftJoinAndSelect("game.tags", "tags")
             .leftJoinAndSelect("game.infoSources", "infoSources")
+            .andWhere({
+                infoSources: {
+                    disabled: false,
+                    remoteGameId: { $ne: null }
+                }
+            })
             .orderBy({
                 createdAt: QueryOrder.DESC,
                 infoSources: { createdAt: QueryOrder.DESC },
