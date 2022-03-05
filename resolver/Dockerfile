@@ -20,19 +20,26 @@ COPY lib/database/package.json lib/database/package.json
 COPY lib/service/package.json lib/service/package.json
 COPY lib/queue/package.json lib/queue/package.json
 COPY resolver/package.json resolver/package.json
-RUN yarn install --frozen-lockfile
+RUN \
+    --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn \
+    yarn install --frozen-lockfile
 
 COPY lib/shared lib/shared
 COPY lib/database lib/database
 COPY lib/service lib/service
 COPY lib/queue lib/queue
-COPY resolver resolver
 COPY tsconfig.json tsconfig.json
 
-RUN yarn workspace @game-watch/shared build && \
+RUN \
+    yarn workspace @game-watch/shared build && \
     yarn workspace @game-watch/database build && \
     yarn workspace @game-watch/service build && \
-    yarn workspace @game-watch/queue build && \
+    yarn workspace @game-watch/queue build
+
+COPY resolver resolver
+
+RUN \
+    --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn \
     yarn workspace @game-watch/resolver build && \
     yarn install --frozen-lockfile --production --ignore-scripts --prefer-offline
 
