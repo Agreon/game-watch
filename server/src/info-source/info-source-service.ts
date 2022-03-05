@@ -83,10 +83,10 @@ export class InfoSourceService {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
-        // We remove unnecessary notifications that were created for this version of the info source
+        // We remove all notifications that were created for this version of the info source, so that on re-use
+        // the same behavior as with a new source applies.
         await this.notificationRepository.nativeDelete({
             infoSource,
-            read: false,
         });
 
         infoSource.disabled = true;

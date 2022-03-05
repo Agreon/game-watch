@@ -16,6 +16,7 @@ const GameTileComponent: React.FC = () => {
         allInfoSources,
         activeInfoSources,
         setGameInfoSource,
+        removeGameInfoSource,
         fullName,
         syncGame,
         deleteGame,
@@ -67,6 +68,7 @@ const GameTileComponent: React.FC = () => {
                                             key={source.id}
                                             source={source}
                                             setGameInfoSource={setGameInfoSource}
+                                            removeGameInfoSource={removeGameInfoSource}
                                         >
                                             <InfoSource />
                                         </InfoSourceProvider>

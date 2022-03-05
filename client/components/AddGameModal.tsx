@@ -89,7 +89,7 @@ interface AddGameModalProps {
  * - TODO: Option to disable search for more
  */
 export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => {
-    const { game, setGameInfoSource, setupGame } = useGameContext();
+    const { game, setGameInfoSource, removeGameInfoSource, setupGame } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose })
 
     const onAddGame = useCallback(async () => {
@@ -131,7 +131,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             </Flex>
                             <Flex direction="column" my="1rem">
                                 {game.infoSources.map(source =>
-                                    <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource} disablePolling={!!source.remoteGameName}>
+                                    <InfoSourceProvider
+                                        key={source.id}
+                                        source={source}
+                                        setGameInfoSource={setGameInfoSource}
+                                        removeGameInfoSource={removeGameInfoSource}
+                                        disablePolling={!!source.remoteGameName}
+                                    >
                                         <Fade in={true}>
                                             <Box mb="1rem">
                                                 <InfoSourcePreview />

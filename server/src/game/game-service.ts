@@ -105,19 +105,34 @@ export class GameService {
         await this.gameRepository.removeAndFlush(game);
     }
 
+
     public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
-        const game = await this.gameRepository.findOneOrFail(
-            id,
-            ["infoSources", "tags"],
-            {
-                infoSources: {
-                    createdAt: QueryOrder.ASC,
-                    id: QueryOrder.ASC
-                },
-                tags: {
-                    createdAt: QueryOrder.DESC
-                }
-            });
+        const game = await this.gameRepository.createQueryBuilder("game")
+            .select("*")
+            .leftJoinAndSelect("game.tags", "tags")
+            .leftJoinAndSelect("game.infoSources", "infoSources")
+            .where({
+                $and: [
+                    { id },
+                    {
+                        $or: [
+                            {
+                                infoSources: {
+                                    disabled: false,
+                                    remoteGameId: { $ne: null }
+                                }
+                            },
+                            {
+                                setupCompleted: false
+                            }
+                        ]
+                    }]
+            })
+            .orderBy({
+                infoSources: { createdAt: QueryOrder.DESC, id: QueryOrder.ASC },
+                tags: { createdAt: QueryOrder.DESC },
+            })
+            .getSingleResult();
 
         return game as Game & { infoSources: InfoSource[], tags: Tag[] };
     }

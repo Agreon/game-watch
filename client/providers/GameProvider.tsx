@@ -55,6 +55,7 @@ export interface GameCtx {
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
     setGameInfoSource: (infoSource: InfoSourceDto) => void
+    removeGameInfoSource: (id: string) => void
     addTagToGame: (tag: TagDto) => Promise<void>
     removeTagFromGame: (tag: TagDto) => Promise<void>
     addInfoSource: (params: { type: InfoSourceType, url: string }) => Promise<void | Error>
@@ -158,6 +159,13 @@ export const GameProvider: React.FC<{
     const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
             curr.infoSources = [...curr.infoSources.filter(({ id }) => newInfoSource.id !== id), newInfoSource];
+            return curr;
+        });
+    }, [setGame, game.id]);
+
+    const removeGameInfoSource = useCallback((id: string) => {
+        setGame(game.id, curr => {
+            curr.infoSources = [...curr.infoSources.filter((infoSource) => infoSource.id !== id)];
             return curr;
         });
     }, [setGame, game.id]);
@@ -276,6 +284,7 @@ export const GameProvider: React.FC<{
         changeGameName,
         deleteGame,
         setGameInfoSource,
+        removeGameInfoSource,
         addTagToGame,
         removeTagFromGame,
         addInfoSource
@@ -293,6 +302,7 @@ export const GameProvider: React.FC<{
         changeGameName,
         deleteGame,
         setGameInfoSource,
+        removeGameInfoSource,
         addTagToGame,
         removeTagFromGame,
         addInfoSource

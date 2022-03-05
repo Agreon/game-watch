@@ -1,4 +1,3 @@
-# Install dependencies only when needed
 FROM node:16-slim
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)

@@ -20,8 +20,9 @@ export function useInfoSourceContext() {
 export const InfoSourceProvider: React.FC<{
     source: InfoSourceDto,
     setGameInfoSource: (infoSource: InfoSourceDto) => void
+    removeGameInfoSource: (id: string) => void
     disablePolling?: boolean
-}> = ({ children, source, setGameInfoSource, disablePolling }) => {
+}> = ({ children, source, setGameInfoSource, removeGameInfoSource, disablePolling }) => {
     const { withRequest, handleError } = useHttp()
 
     const [polling, setPolling] = useState(false)
@@ -73,42 +74,30 @@ export const InfoSourceProvider: React.FC<{
     }, [source, withRequest, setGameInfoSource, handleError])
 
     const disableInfoSource = useCallback(async () => {
-        setGameInfoSource({
-            ...source,
-            syncing: true
-        })
+        removeGameInfoSource(source.id)
 
         await withRequest(async http => {
-            const { data } = await http.post<InfoSourceDto>(`/info-source/${source.id}/disable`)
+            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/disable`)
 
-            setGameInfoSource(data)
+            removeGameInfoSource(id);
         }, error => {
-            setGameInfoSource({
-                ...source,
-                syncing: false
-            })
+            setGameInfoSource(source)
             handleError(error)
         })
-    }, [source, withRequest, handleError, setGameInfoSource])
+    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource])
 
     const excludeInfoSource = useCallback(async () => {
-        setGameInfoSource({
-            ...source,
-            syncing: true
-        })
+        removeGameInfoSource(source.id)
 
         await withRequest(async http => {
-            const { data } = await http.post<InfoSourceDto>(`/info-source/${source.id}/exclude`)
+            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/exclude`)
 
-            setGameInfoSource(data)
+            removeGameInfoSource(id);
         }, error => {
-            setGameInfoSource({
-                ...source,
-                syncing: false
-            })
+            setGameInfoSource(source)
             handleError(error)
         })
-    }, [source, withRequest, handleError, setGameInfoSource])
+    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource])
 
 
     const contextValue = useMemo(() => ({
