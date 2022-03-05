@@ -84,7 +84,7 @@ export class InfoSourceService {
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
         // We remove unnecessary notifications that were created for this version of the info source
-        await this.notificationRepository.removeAndFlush({
+        await this.notificationRepository.nativeDelete({
             infoSource,
             read: false,
         });
@@ -100,7 +100,7 @@ export class InfoSourceService {
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
         // We remove unnecessary notifications that were created for this version of the info source
-        await this.notificationRepository.removeAndFlush({
+        await this.notificationRepository.nativeDelete({
             infoSource,
             read: false,
         });
