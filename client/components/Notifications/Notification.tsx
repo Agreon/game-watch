@@ -76,16 +76,14 @@ const NotificationComponent: React.FC<{
                 bg={'gray.700'}
             >
                 <Flex align="center" pb="1rem">
-                    <Tooltip label={dayjs(notification.createdAt).format("DD.MM. HH:mm")} placement="right">
+                    <Box mr="0.5rem">
+                        {SourceTypeLogoSmall[notification.infoSource.type]}
+                    </Box>
+                    <Tooltip label={dayjs(notification.createdAt).format("DD.MM. HH:mm")} placement="top">
                         <Text fontSize="lg" fontWeight="bold">
                             {NotificationTypeNames[notification.type]}
                         </Text>
                     </Tooltip>
-                    <Box ml="1rem">
-                        <a href={notification.infoSource.data?.url} target="_blank" rel="noreferrer">
-                            {SourceTypeLogoSmall[notification.infoSource.type]}
-                        </a>
-                    </Box>
                 </Flex>
                 <Box>
                     {notificationText}
