@@ -230,7 +230,6 @@ export const GameProvider: React.FC<{
     const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
     const activeInfoSources = useMemo(
         () => [...allInfoSources]
-            .filter(source => !source.disabled && source.remoteGameId !== null)
             .sort((a, b) => {
                 const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
                 const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
@@ -242,7 +241,6 @@ export const GameProvider: React.FC<{
         () => Object.values(InfoSourceType)
             .filter(type =>
                 !allInfoSources
-                    .filter(source => !source.disabled && source.remoteGameId !== null)
                     .map(source => source.type)
                     .includes(type)
             ),

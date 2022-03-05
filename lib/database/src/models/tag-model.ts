@@ -1,4 +1,4 @@
-import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, Property, wrap } from "@mikro-orm/core";
+import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, Property } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";

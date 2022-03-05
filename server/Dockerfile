@@ -1,4 +1,3 @@
-# Install dependencies only when needed
 FROM node:16-slim
 
 WORKDIR /app

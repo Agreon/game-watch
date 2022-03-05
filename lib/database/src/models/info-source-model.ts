@@ -32,7 +32,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     @Property({ columnType: "json", nullable: true })
     public data: GameData[T] | null = null;
 
-    @ManyToOne(() => Game, { wrappedReference: true })
+    @ManyToOne(() => Game, { wrappedReference: true, hidden: true })
     public game!: IdentifiedReference<Game>;
 
     @ManyToOne(() => User, { wrappedReference: true })

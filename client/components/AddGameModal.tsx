@@ -92,17 +92,14 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
     const { game, setGameInfoSource, setupGame } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose })
 
-    // We use the direct infoSource so that they are sorted by date.
-    const activeInfoSources = game.infoSources.filter(source => !source.disabled && source.remoteGameId !== null);
-
     const onAddGame = useCallback(async () => {
-        if (!activeInfoSources.length) {
+        if (!game.infoSources.length) {
             return await onAdd({ name: game.search })
         }
 
         // We take the first name for now, later the user can decide.
-        await onAdd({ name: activeInfoSources[0].remoteGameName! });
-    }, [onAdd, activeInfoSources, game]);
+        await onAdd({ name: game.infoSources[0].remoteGameName! });
+    }, [onAdd, game]);
 
     return (
         <Modal
@@ -127,13 +124,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             <Flex my="1rem">
                                 {game.syncing
                                     ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
-                                    : activeInfoSources.length > 0
+                                    : game.infoSources.length > 0
                                         ? <Text fontSize="2xl">Here is what we found: </Text>
                                         : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
                                 }
                             </Flex>
                             <Flex direction="column" my="1rem">
-                                {activeInfoSources.map(source =>
+                                {game.infoSources.map(source =>
                                     <InfoSourceProvider key={source.id} source={source} setGameInfoSource={setGameInfoSource} disablePolling={!!source.remoteGameName}>
                                         <Fade in={true}>
                                             <Box mb="1rem">
