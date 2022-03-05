@@ -93,7 +93,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose })
 
     // We use the direct infoSource so that they are sorted by date.
-    const activeInfoSources = game.infoSources.filter(source => !source.disabled);
+    const activeInfoSources = game.infoSources.filter(source => !source.disabled && source.remoteGameId !== null);
 
     const onAddGame = useCallback(async () => {
         if (!activeInfoSources.length) {

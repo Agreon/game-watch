@@ -1,4 +1,4 @@
-import { Game, InfoSource, User } from "@game-watch/database";
+import { Game, InfoSource, Notification, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
 import { CreateInfoSourceDto } from "@game-watch/shared";
 import { EntityRepository, IdentifiedReference } from "@mikro-orm/core";
@@ -16,7 +16,9 @@ export class InfoSourceService {
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
-        private readonly infoSourceRepository: EntityRepository<InfoSource>
+        private readonly infoSourceRepository: EntityRepository<InfoSource>,
+        @InjectRepository(Notification)
+        private readonly notificationRepository: EntityRepository<Notification>
     ) { }
 
     public async addInfoSource({ gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }) {
@@ -81,6 +83,12 @@ export class InfoSourceService {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
+        // We remove unnecessary notifications that were created for this version of the info source
+        await this.notificationRepository.removeAndFlush({
+            infoSource,
+            read: false,
+        });
+
         infoSource.disabled = true;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
@@ -90,6 +98,12 @@ export class InfoSourceService {
     public async excludeInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
+
+        // We remove unnecessary notifications that were created for this version of the info source
+        await this.notificationRepository.removeAndFlush({
+            infoSource,
+            read: false,
+        });
 
         infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
         infoSource.data = null;
