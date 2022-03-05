@@ -29,15 +29,20 @@ export const createReleaseDateChangedNotification = async (
     const existingData = infoSource.data as StoreGameData | null;
     const storeData = resolvedGameData as StoreGameData;
 
+    // We don't want duplicate notifications if a game was just added to a store.
+    if (!existingData) {
+        return;
+    }
+
     if (
         // Never had a date
         (
-            !existingData?.releaseDate &&
+            !existingData.releaseDate &&
             storeData.releaseDate
         ) ||
         // Or date changed
         (
-            !!existingData?.releaseDate &&
+            !!existingData.releaseDate &&
             !!storeData.releaseDate &&
             !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day")
         )
@@ -56,6 +61,8 @@ export const createGameReleasedNotification = async (
 ) => {
     const storeData = resolvedGameData as StoreGameData;
     if (
+        // We don't want duplicate notifications if a game was just added to a store.
+        !infoSource.data ||
         !storeData.releaseDate ||
         dayjs(storeData.releaseDate).isAfter(dayjs()) ||
         dayjs(game.createdAt).isAfter(storeData.releaseDate)

@@ -78,12 +78,13 @@ const main = async () => {
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
 
-    resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId } }) => {
+    resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId, initialRun } }) => {
         const sourceScopedLogger = logger.child({ sourceId });
 
         try {
             await resolveSource({
                 sourceId,
+                initialRun,
                 resolveService,
                 logger: sourceScopedLogger,
                 em: orm.em.fork(),

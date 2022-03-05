@@ -40,7 +40,10 @@ export class InfoSourceService {
 
             await this.infoSourceRepository.persistAndFlush(existingInfoSource);
 
-            await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: existingInfoSource.id });
+            await this.queueService.addToQueue(
+                QueueType.ResolveSource,
+                { sourceId: existingInfoSource.id, initialRun: true }
+            );
             await this.queueService.createRepeatableInfoSourceResolveJob(existingInfoSource);
 
             return existingInfoSource;
@@ -58,7 +61,10 @@ export class InfoSourceService {
 
         await this.gameRepository.persistAndFlush(game);
 
-        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: infoSource.id });
+        await this.queueService.addToQueue(
+            QueueType.ResolveSource,
+            { sourceId: infoSource.id, initialRun: true }
+        );
         await this.queueService.createRepeatableInfoSourceResolveJob(infoSource);
 
         return infoSource;
