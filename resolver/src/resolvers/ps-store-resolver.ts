@@ -1,4 +1,4 @@
-import { withBrowser } from "@game-watch/service";
+import { withBrowser } from "@game-watch/browser";
 import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
 
 import { InfoResolver } from "../resolve-service";

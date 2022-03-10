@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@game-watch/queue": "0.0.1",
+    "@game-watch/service": "0.0.1",
     "@game-watch/shared": "0.0.1",
     "@mikro-orm/core": "^4.5.9",
     "@mikro-orm/migrations": "^4.5.9",

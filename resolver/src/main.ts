@@ -52,13 +52,14 @@ const resolveService = new ResolveService([
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
-    resolveGameWorker = createWorkerForQueue(QueueType.ResolveGame, async ({ data: { gameId, initialRun } }) => {
+    resolveGameWorker = createWorkerForQueue(QueueType.ResolveGame, async ({ data: { gameId, initialRun, skipCache } }) => {
         const gameScopedLogger = logger.child({ gameId });
 
         try {
             await resolveGame({
                 gameId,
                 initialRun,
+                skipCache,
                 resolveService,
                 logger: gameScopedLogger,
                 em: orm.em.fork(),
@@ -78,13 +79,14 @@ const main = async () => {
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
 
-    resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId, initialRun } }) => {
+    resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId, initialRun, skipCache } }) => {
         const sourceScopedLogger = logger.child({ sourceId });
 
         try {
             await resolveSource({
                 sourceId,
                 initialRun,
+                skipCache,
                 resolveService,
                 logger: sourceScopedLogger,
                 em: orm.em.fork(),

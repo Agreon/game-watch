@@ -1,4 +1,4 @@
-import { withBrowser } from "@game-watch/service";
+import { withBrowser } from "@game-watch/browser";
 import { InfoSourceType } from "@game-watch/shared";
 
 import { InfoSearcher, InfoSearcherContext } from "../search-service";

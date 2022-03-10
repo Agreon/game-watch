@@ -3,8 +3,13 @@ import { GameDataU, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
 import { Redis } from "ioredis";
 import pRetry from "p-retry";
+
 export interface InfoResolverContext {
     logger: Logger
+}
+
+export interface ResolveServiceContext extends InfoResolverContext {
+    skipCache?: boolean
 }
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
@@ -21,7 +26,7 @@ export class ResolveService {
     public async resolveGameInformation(
         id: string,
         type: InfoSourceType,
-        context: InfoResolverContext
+        context: ResolveServiceContext
     ): Promise<GameDataU | null> {
         const logger = context.logger.child({ service: ResolveService.name, });
 
@@ -35,7 +40,7 @@ export class ResolveService {
         try {
             return await pRetry(async () => {
                 const existingData = await this.redis.get(id);
-                if (existingData) {
+                if (existingData && !context.skipCache) {
                     logger.debug(`Data for ${id} was found in cache`);
 
                     return JSON.parse(existingData);

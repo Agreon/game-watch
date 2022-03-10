@@ -77,7 +77,7 @@ export class InfoSourceService {
     public async syncInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
 
-        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id });
+        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
 
         infoSource.syncing = true;
         await this.infoSourceRepository.persistAndFlush(infoSource);

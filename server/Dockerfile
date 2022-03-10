@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY lib/database/package.json lib/database/package.json
+COPY lib/service/package.json lib/service/package.json
 COPY lib/queue/package.json lib/queue/package.json
 COPY server/package.json server/package.json
 RUN \
@@ -12,12 +13,14 @@ RUN \
 
 COPY lib/shared lib/shared
 COPY lib/database lib/database
+COPY lib/service lib/service
 COPY lib/queue lib/queue
 COPY tsconfig.json tsconfig.json
 
 RUN \
     yarn workspace @game-watch/shared build && \
     yarn workspace @game-watch/database build && \
+    yarn workspace @game-watch/service build && \
     yarn workspace @game-watch/queue build
 
 COPY server server

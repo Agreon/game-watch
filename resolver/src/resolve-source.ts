@@ -8,12 +8,13 @@ import { ResolveService } from "./resolve-service";
 interface Params {
     sourceId: string
     initialRun?: boolean;
+    skipCache?: boolean;
     resolveService: ResolveService
     em: EntityManager
     logger: Logger
 }
 
-export const resolveSource = async ({ sourceId, initialRun, resolveService, em, logger }: Params) => {
+export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 
     const source = await em.findOneOrFail(InfoSource, sourceId, ["game"]);
@@ -26,7 +27,7 @@ export const resolveSource = async ({ sourceId, initialRun, resolveService, em, 
     const resolvedGameData = await resolveService.resolveGameInformation(
         source.remoteGameId,
         source.type,
-        { logger }
+        { logger, skipCache }
     );
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);

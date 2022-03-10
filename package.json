@@ -5,6 +5,7 @@
         "lib/shared",
         "lib/database",
         "lib/service",
+        "lib/browser",
         "lib/queue",
         "client",
         "server",
