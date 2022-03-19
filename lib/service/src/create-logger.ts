@@ -19,5 +19,8 @@ export const createLogger = (name: string) =>
                 ignore: 'pid,hostname',
             }
         } : undefined,
-        level: "debug"
+        level: "debug",
+        formatters: {
+            level: (label) => ({ level: label }),
+        },
     });

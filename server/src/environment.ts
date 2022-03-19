@@ -14,6 +14,7 @@ export const EnvironmentStructure = t.type({
     DISABLE_USER_REGISTRATION: BooleanFromString,
     THROTTLE_TTL: IntFromString,
     THROTTLE_LIMIT: IntFromString,
+    PRETTY_LOGGING: BooleanFromString
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;
