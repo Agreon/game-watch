@@ -4,6 +4,7 @@ import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { BadRequestException, Body, ConflictException, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { CookieOptions, Response } from "express";
 import ms from 'ms';
 
@@ -27,7 +28,7 @@ export class AuthController {
         private readonly jwtService: JwtService,
         @InjectRepository(User)
         private readonly userRepository: EntityRepository<User>,
-        configService: ConfigService<Environment, true>
+        private readonly configService: ConfigService<Environment, true>
     ) {
         this.accessTokenCookieOptions = {
             httpOnly: true,
@@ -46,6 +47,8 @@ export class AuthController {
 
     @Post("/create")
     @HttpCode(HttpStatus.OK)
+    @UseGuards(ThrottlerGuard)
+    @Throttle(2, 10)
     public async createUser(
         @Body() { id }: CreateUserDto,
         @Res() response: Response,
@@ -58,6 +61,10 @@ export class AuthController {
             }
 
             return await this.setJwtCookiesForUser(existingUserWithId, response);
+        }
+
+        if (this.configService.get("DISABLE_USER_REGISTRATION")) {
+            throw new BadRequestException("We are not allowing new user registrations at the moment");
         }
 
         const user = await this.authService.createUser({ id });

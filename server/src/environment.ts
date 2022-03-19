@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { IntFromString } from "io-ts-types";
+import { BooleanFromString, IntFromString } from "io-ts-types";
 
 export const EnvironmentStructure = t.type({
     SERVER_PORT: t.string,
@@ -11,6 +11,9 @@ export const EnvironmentStructure = t.type({
     JWT_PRIVATE_KEY: t.string,
     JWT_ACCESS_TOKEN_EXPIRES_IN: t.string,
     JWT_REFRESH_TOKEN_EXPIRES_IN: t.string,
+    DISABLE_USER_REGISTRATION: BooleanFromString,
+    THROTTLE_TTL: IntFromString,
+    THROTTLE_LIMIT: IntFromString,
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;
