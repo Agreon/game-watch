@@ -78,7 +78,13 @@ services:
       - DD_SITE=datadoghq.eu
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-      - DD_CONTAINER_EXCLUDE=name:datadog-agent
+      - DD_CONTAINER_INCLUDE=name:resolver name:searcher name:server
+      - DD_CONTAINER_EXCLUDE=name:datadog-agent name:db name:redis
+      - DD_ENABLE_PAYLOADS_EVENTS=false
+      - DD_ENABLE_PAYLOADS_SERIES=false
+      - DD_ENABLE_PAYLOADS_SERVICE_CHECKS=false
+      - DD_ENABLE_PAYLOADS_SKETCHES=false
+      - DD_APM_ENABLED=false
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro

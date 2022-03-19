@@ -28,7 +28,7 @@ export class ResolveService {
         type: InfoSourceType,
         context: ResolveServiceContext
     ): Promise<GameDataU | null> {
-        const logger = context.logger.child({ service: ResolveService.name, });
+        const logger = context.logger.child({ serviceName: ResolveService.name, });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
         if (!resolverForType) {

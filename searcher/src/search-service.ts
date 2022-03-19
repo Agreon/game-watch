@@ -27,7 +27,7 @@ export class SearchService {
         type: InfoSourceType,
         context: InfoSearcherContext
     ): Promise<SearchResponse | null> {
-        const logger = context.logger.child({ service: SearchService.name, });
+        const logger = context.logger.child({ serviceName: SearchService.name, });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
