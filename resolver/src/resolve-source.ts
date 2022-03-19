@@ -18,7 +18,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     const startTime = new Date().getTime();
 
     const source = await em.findOneOrFail(InfoSource, sourceId, ["game"]);
-    if (source.disabled || source.remoteGameId === null) {
+    if (source.disabled || source.remoteGameId === null || !source.game.getEntity().setupCompleted) {
         return;
     }
 
