@@ -43,7 +43,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     logger.info(`Resolved source information in ${source.type}`);
 
     if (!initialRun) {
-        await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em });
+        await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em, logger });
     }
 
     await em.nativeUpdate(InfoSource, sourceId, {
