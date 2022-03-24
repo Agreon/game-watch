@@ -30,7 +30,6 @@ export const createNewStoreEntryNotification = async (
     }));
 };
 
-// TODO: Unnecessary triggered
 export const createReleaseDateChangedNotification = async (
     { infoSource, resolvedGameData, game, em, logger }: NotificationCreateParams
 ) => {
@@ -38,7 +37,7 @@ export const createReleaseDateChangedNotification = async (
     const storeData = resolvedGameData as StoreGameData;
 
     // We don't want duplicate notifications if a game was just added to a store.
-    if (!existingData) {
+    if (!existingData?.releaseDate) {
         logger.debug("Not adding notification because no existing data was found");
         return;
     }
@@ -136,7 +135,7 @@ export const createGameReducedNotification = async (
         return;
     }
 
-    if (existingData.priceInformation.final >= storeData.priceInformation.final) {
+    if (storeData.priceInformation.final >= existingData.priceInformation.final) {
         logger.debug("Not adding notification because the price was the same or increased");
         return;
     }

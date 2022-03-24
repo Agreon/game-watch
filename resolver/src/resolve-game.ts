@@ -25,15 +25,16 @@ export const resolveGame = async ({ gameId, initialRun, skipCache, resolveServic
     logger.info(`Resolving for ${JSON.stringify(sourcesToResolve.map(({ type }) => type))}`);
 
     await Promise.all(sourcesToResolve.map(async source => {
-        logger.info(`Resolving ${source.type}`);
+        const sourceLogger = logger.child({ sourceId: source.id });
+        sourceLogger.info(`Resolving ${source.type}`);
 
         const resolvedGameData = await resolveService.resolveGameInformation(
             source.getRemoteGameIdOrFail(),
             source.type,
-            { logger, skipCache }
+            { logger: sourceLogger, skipCache }
         );
         if (!resolvedGameData) {
-            logger.warn(`Source ${source.type} could not be resolved`);
+            sourceLogger.warn(`Source ${source.type} could not be resolved`);
 
             await em.nativeUpdate(InfoSource, source.id, {
                 resolveError: true,
@@ -43,10 +44,16 @@ export const resolveGame = async ({ gameId, initialRun, skipCache, resolveServic
 
             return;
         }
-        logger.info(`Resolved source information in ${source.type}`);
+        sourceLogger.info(`Resolved source information in ${source.type}`);
 
         if (!initialRun) {
-            await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em, logger });
+            await createNotifications({
+                infoSource: source,
+                game: source.game.getEntity(),
+                resolvedGameData,
+                em,
+                logger: sourceLogger,
+            });
         }
 
         await em.nativeUpdate(InfoSource, source.id, {
