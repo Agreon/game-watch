@@ -1,4 +1,3 @@
-# Install dependencies only when needed
 FROM node:alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
@@ -13,7 +12,20 @@ FROM node:alpine AS builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY lib/shared lib/shared
-COPY client client
+# TODO: This is uncool..
+COPY client/assets client/assets
+COPY client/components client/components
+COPY client/hooks client/hooks
+COPY client/pages client/pages
+COPY client/providers client/providers
+COPY client/public client/public
+COPY client/styles client/styles
+COPY client/util client/util
+COPY client/next-env.d.ts client/next-env.d.ts
+COPY client/next.config.js client/next.config.js
+COPY client/package.json client/package.json
+COPY client/theme.ts client/theme.ts
+COPY client/tsconfig.json client/tsconfig.json
 COPY tsconfig.json tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules

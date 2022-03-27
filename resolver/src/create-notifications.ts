@@ -135,7 +135,7 @@ export const createGameReducedNotification = async (
         return;
     }
 
-    if (storeData.priceInformation.final >= existingData.priceInformation.final) {
+    if (existingData.priceInformation.final >= storeData.priceInformation.final) {
         logger.debug("Not adding notification because the price was the same or increased");
         return;
     }
@@ -149,8 +149,8 @@ export const createGameReducedNotification = async (
         infoSource: infoSource,
         type: NotificationType.GameReduced,
         data: {
-            initial: existingData.priceInformation.final,
-            final: storeData.priceInformation.final
+            final: existingData.priceInformation.final,
+            initial: storeData.priceInformation.final
         },
     }));
 };
