@@ -24,7 +24,7 @@ COPY client/next.config.js client/next.config.js
 COPY client/package.json client/package.json
 COPY client/theme.ts client/theme.ts
 COPY client/tsconfig.json client/tsconfig.json
-COPY client/.env client/.env
+COPY client/.env.local client/.env.local
 COPY tsconfig.json tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
