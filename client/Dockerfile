@@ -12,7 +12,6 @@ FROM node:alpine AS builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY lib/shared lib/shared
-# TODO: This is uncool..
 COPY client/assets client/assets
 COPY client/components client/components
 COPY client/pages client/pages
@@ -25,6 +24,7 @@ COPY client/next.config.js client/next.config.js
 COPY client/package.json client/package.json
 COPY client/theme.ts client/theme.ts
 COPY client/tsconfig.json client/tsconfig.json
+COPY client/.env client/.env
 COPY tsconfig.json tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
