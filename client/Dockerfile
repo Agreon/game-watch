@@ -15,7 +15,6 @@ COPY lib/shared lib/shared
 # TODO: This is uncool..
 COPY client/assets client/assets
 COPY client/components client/components
-COPY client/hooks client/hooks
 COPY client/pages client/pages
 COPY client/providers client/providers
 COPY client/public client/public
