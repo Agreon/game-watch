@@ -149,8 +149,8 @@ export const createGameReducedNotification = async (
         infoSource: infoSource,
         type: NotificationType.GameReduced,
         data: {
-            final: existingData.priceInformation.final,
-            initial: storeData.priceInformation.final
+            initial: existingData.priceInformation.final,
+            final: storeData.priceInformation.final
         },
     }));
 };
