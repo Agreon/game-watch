@@ -68,7 +68,7 @@ const AddSource: React.FC = () => {
                 <FormControl display="flex" flex="0" mb={["0.5rem", 0]} justifyContent={["end", "unset"]}>
                     <Button
                         onClick={() => onAdd({ type, url })}
-                        disabled={loading}
+                        disabled={loading || !url.length}
                         loading={loading}
                     >
                         Add
@@ -101,13 +101,14 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
         await onAdd({ name: game.infoSources[0].remoteGameName! });
     }, [onAdd, game]);
 
+    // TODO: use ModalFooter
     return (
         <Modal
             isCentered
             onClose={onClose}
             isOpen={show}
             motionPreset='none'
-            size="2xl"
+            size={useBreakpointValue(["full", "full", "2xl"])}
             scrollBehavior={useBreakpointValue(["inside", "inside", "outside"])}
         >
             <ModalOverlay />
@@ -119,54 +120,52 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb="2rem">
-                    <Flex justify="center">
-                        <Flex direction="column" width="100%">
-                            <Flex my="1rem">
-                                {game.syncing
-                                    ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
-                                    : game.infoSources.length > 0
-                                        ? <Text fontSize="2xl">Here is what we found: </Text>
-                                        : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
-                                }
-                            </Flex>
-                            <Flex direction="column" my="1rem">
-                                {game.infoSources.map(source =>
-                                    <InfoSourceProvider
-                                        key={source.id}
-                                        source={source}
-                                        setGameInfoSource={setGameInfoSource}
-                                        removeGameInfoSource={removeGameInfoSource}
-                                        disablePolling={!!source.remoteGameName}
-                                    >
-                                        <Fade in={true}>
-                                            <Box mb="1rem">
-                                                <InfoSourcePreview />
-                                            </Box>
-                                        </Fade>
-                                    </InfoSourceProvider>
-                                )}
-                                <Box position="relative" my="2rem">
-                                    {game.syncing
-                                        ? <LoadingSpinner size="xl" />
-                                        : <AddSource />
-                                    }
-                                </Box>
-                            </Flex>
-                            <Flex justify="flex-end">
-                                <Button size="lg" onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button
-                                    ml="1rem"
-                                    size="lg"
-                                    loading={loading}
-                                    colorScheme="teal"
-                                    disabled={loading}
-                                    onClick={onAddGame}
+                    <Flex direction="column" justify="space-between" align="center" width="100%" height="100%">
+                        <Flex my="1rem">
+                            {game.syncing
+                                ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
+                                : game.infoSources.length > 0
+                                    ? <Text fontSize="2xl">Here is what we found: </Text>
+                                    : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
+                            }
+                        </Flex>
+                        <Flex direction="column" my="1rem">
+                            {game.infoSources.map(source =>
+                                <InfoSourceProvider
+                                    key={source.id}
+                                    source={source}
+                                    setGameInfoSource={setGameInfoSource}
+                                    removeGameInfoSource={removeGameInfoSource}
+                                    disablePolling={!!source.remoteGameName}
                                 >
-                                    {game.syncing ? "Save right away" : "Save"}
-                                </Button>
-                            </Flex>
+                                    <Fade in={true}>
+                                        <Box mb="1rem">
+                                            <InfoSourcePreview />
+                                        </Box>
+                                    </Fade>
+                                </InfoSourceProvider>
+                            )}
+                            <Box position="relative" my="2rem">
+                                {game.syncing
+                                    ? <LoadingSpinner size="xl" />
+                                    : <AddSource />
+                                }
+                            </Box>
+                        </Flex>
+                        <Flex justify="flex-end" width="100%">
+                            <Button size="lg" onClick={onClose}>
+                                Cancel
+                            </Button>
+                            <Button
+                                ml="1rem"
+                                size="lg"
+                                loading={loading}
+                                colorScheme="teal"
+                                disabled={loading}
+                                onClick={onAddGame}
+                            >
+                                {game.syncing ? "Save right away" : "Save"}
+                            </Button>
                         </Flex>
                     </Flex>
                 </ModalBody>

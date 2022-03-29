@@ -105,7 +105,6 @@ export class GameService {
         await this.gameRepository.removeAndFlush(game);
     }
 
-
     public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
         const game = await this.gameRepository.createQueryBuilder("game")
             .select("*")
