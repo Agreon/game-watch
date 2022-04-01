@@ -87,7 +87,6 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     return (
         <PopoverContent
-            direction="column"
             bg={useColorModeValue('white', 'gray.800')}
             px="2rem"
             pt="2rem"
@@ -96,28 +95,30 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             width={["100vw", "100vw", "30rem"]}
             rounded="lg"
         >
-            <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
-            <Box mt="1rem">
-                <Text fontSize="lg">Tags</Text>
-                <Box ml="-0.5rem" >
-                    {tagsWithToggleState.map(tag => (
-                        <ChakraTag
-                            key={tag.id}
-                            onClick={() => toggleTag(tag)}
-                            variant={tag.toggled ? "subtle" : "outline"}
-                            colorScheme={tag.toggled ? tag.color : "whiteAlpha"}
-                            cursor="pointer"
-                            ml="0.5rem"
-                            mt="0.5rem"
-                        >
-                            {tag.name}
-                        </ChakraTag>
-                    ))}
+            <Flex direction="column"  >
+                <InfoSourceFilter filterInfoSources={filterInfoSources} setFilterInfoSources={setFilterInfoSources} />
+                <Box mt="1rem">
+                    <Text fontSize="lg">Tags</Text>
+                    <Box ml="-0.5rem" >
+                        {tagsWithToggleState.map(tag => (
+                            <ChakraTag
+                                key={tag.id}
+                                onClick={() => toggleTag(tag)}
+                                variant={tag.toggled ? "subtle" : "outline"}
+                                colorScheme={tag.toggled ? tag.color : "whiteAlpha"}
+                                cursor="pointer"
+                                ml="0.5rem"
+                                mt="0.5rem"
+                            >
+                                {tag.name}
+                            </ChakraTag>
+                        ))}
+                    </Box>
                 </Box>
-            </Box>
-            <Flex justify="end">
-                <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
-                <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>
+                <Flex justify="end">
+                    <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
+                    <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>
+                </Flex>
             </Flex>
         </PopoverContent>
     )

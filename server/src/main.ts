@@ -2,9 +2,11 @@ import * as dotenv from "dotenv";
 import path from 'path';
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
+import { Game } from "@game-watch/database";
 import { QueueType } from '@game-watch/queue';
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
+import { EntityManager } from "@mikro-orm/postgresql";
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
@@ -55,8 +57,9 @@ async function bootstrap() {
 
   await queueService.registerJobHandler(QueueType.DeleteUnfinishedGameAdds, async ({ data: { gameId } }) => {
     try {
-        const gameToDelete = await gameService.getGame(gameId);
-        if (gameToDelete.setupCompleted) {
+      const entityManager = app.get(EntityManager).fork();
+      const gameToDelete = await entityManager.findOne(Game, gameId);
+      if (!gameToDelete || gameToDelete.setupCompleted) {
           return;
         }
 

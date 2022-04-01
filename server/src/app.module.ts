@@ -34,13 +34,17 @@ import { TagModule } from './tag/tag-module';
     MikroOrmModule.forRoot(mikroOrmConfig),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
+      providers: [],
       inject: [ConfigService],
       useFactory: (config: ConfigService<environment, true>) => ({
         pinoHttp: {
           autoLogging: !config.get("PRETTY_LOGGING"),
           quietReqLogger: config.get("PRETTY_LOGGING"),
           redact: {
-            paths: ['req.headers.cookie', 'req.headers.authorization'],
+            paths: [
+              'req.headers.cookie',
+              'req.headers.authorization',
+            ],
             remove: true,
           },
           logger: createLogger("Server"),

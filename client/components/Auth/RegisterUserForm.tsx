@@ -69,7 +69,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
                 <Flex justify="end" mt="2rem">
                     <Button onClick={onCancel} mr="1rem">Cancel</Button>
-                    <Button colorScheme='teal' type="submit" loading={loading} disabled={loading} >
+                    <Button colorScheme='teal' type="submit" isLoading={loading} disabled={loading} >
                         Register
                     </Button>
                 </Flex>

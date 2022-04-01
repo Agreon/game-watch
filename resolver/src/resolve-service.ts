@@ -1,7 +1,7 @@
 import { Logger } from "@game-watch/service";
 import { GameDataU, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
-import { Redis } from "ioredis";
+import Redis from "ioredis";
 import pRetry from "p-retry";
 
 export interface InfoResolverContext {

@@ -69,7 +69,7 @@ const AddSource: React.FC = () => {
                     <Button
                         onClick={() => onAdd({ type, url })}
                         disabled={loading || !url.length}
-                        loading={loading}
+                        isLoading={loading}
                     >
                         Add
                     </Button>
@@ -159,7 +159,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             <Button
                                 ml="1rem"
                                 size="lg"
-                                loading={loading}
+                                isLoading={loading}
                                 colorScheme="teal"
                                 disabled={loading}
                                 onClick={onAddGame}
