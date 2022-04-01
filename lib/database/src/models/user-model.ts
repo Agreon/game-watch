@@ -1,5 +1,5 @@
-import { UserState } from "@game-watch/shared";
-import { Collection, Entity, Enum, OneToMany, Property } from "@mikro-orm/core";
+import { InfoSourceType, UserState } from "@game-watch/shared";
+import { ArrayType, Collection, Entity, Enum, OneToMany, Property } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
@@ -24,6 +24,9 @@ export class User extends BaseEntity<User> {
 
     @Property()
     public lastTokenRefresh: Date = new Date();
+
+    @Property({ type: ArrayType })
+    public interestedInSources: InfoSourceType[] = [];
 
     public constructor({ id }: { id: string }) {
         super();

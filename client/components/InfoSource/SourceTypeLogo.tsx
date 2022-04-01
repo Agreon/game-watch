@@ -8,7 +8,7 @@ import { InfoSourceType } from '@game-watch/shared';
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 
-export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
+export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height="30px" width="30px" />
@@ -37,6 +37,35 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
         <Flex align="center">
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="30px" width="30px" />
             <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
+        </Flex>
+    )
+}
+
+
+export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
+    [InfoSourceType.Steam]: (
+        <Flex align="end">
+            <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height="30px" width="30px" />
+        </Flex>
+    ),
+    [InfoSourceType.Switch]: (
+        <Flex align="center">
+            <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height="30px" width="30px" />
+        </Flex>
+    ),
+    [InfoSourceType.PsStore]: (
+        <Flex align="end">
+            <Image alt="source-icon" priority={true} src={psLogo} quality={100} height="30px" width="30px" />
+        </Flex>
+    ),
+    [InfoSourceType.Epic]: (
+        <Flex align="center">
+            <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height="30px" width="30px" />
+        </Flex>
+    ),
+    [InfoSourceType.Metacritic]: (
+        <Flex align="center">
+            <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="30px" width="30px" />
         </Flex>
     )
 }
