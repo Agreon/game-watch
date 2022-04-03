@@ -7,25 +7,26 @@ import { NotificationDto } from '@game-watch/shared';
 
 export const NotificationSidebar = () => {
     const {
+        notifications,
         showNotificationSidebar,
         notificationSidebarRef,
         closeNotificationSidebar,
-        notifications,
         markNotificationAsRead,
-    } = useNotificationContext();
+    } = useNotificationContext()
 
     const onClick = useCallback((notification: NotificationDto) => {
-        const scrollContainer = document.getElementById("scrollContainer");
-        const gameTile = document.getElementById(notification.game.id);
+        const scrollContainer = document.getElementById("scrollContainer")
+        const gameTile = document.getElementById(notification.game.id)
         if (!scrollContainer || !gameTile) {
-            return;
+            return
         }
-        closeNotificationSidebar();
+
+        closeNotificationSidebar()
         scrollContainer.scrollTo({
             top: gameTile.offsetTop - scrollContainer.offsetTop - 50,
             behavior: 'smooth'
-        });
-    }, [closeNotificationSidebar]);
+        })
+    }, [closeNotificationSidebar])
 
     return (
         <Slide
@@ -46,7 +47,7 @@ export const NotificationSidebar = () => {
                 height="calc(100vh - 4rem)"
                 width={["100%", "100%", "25rem"]}
             >
-                <Flex p="0.5rem" align="center" justifyContent="space-between">
+                <Flex p="0.5rem" height="3rem" align="center" justifyContent="space-between">
                     <Text fontWeight="bold" fontSize="large" ml="0.5rem">
                         Notifications
                     </Text>
@@ -60,7 +61,7 @@ export const NotificationSidebar = () => {
                         Collapse<Kbd ml="0.5rem" display={["none", "none", "block"]}>Esc</Kbd>
                     </Button>
                 </Flex>
-                <Box overflowY="auto" height="100%">
+                <Box overflowY="auto" height="calc(100vh - 7rem)">
                     <Flex direction="column">
                         {notifications.map(notification =>
                             <Box
