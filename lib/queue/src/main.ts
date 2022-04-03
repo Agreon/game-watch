@@ -1,4 +1,4 @@
-import { Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker, WorkerOptions } from "bullmq";
+import { JobsOptions, Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker, WorkerOptions } from "bullmq";
 
 import { EnvironmentStructure } from "./environment";
 import { parseEnvironment } from "./parse-environment";
@@ -24,10 +24,22 @@ export type QueueParams = {
 
 const { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } = parseEnvironment(EnvironmentStructure, process.env);
 
-const QUEUE_CONNECTION_OPTIONS = {
+export const QUEUE_CONNECTION_OPTIONS = {
     host: REDIS_HOST,
     port: REDIS_PORT,
     password: REDIS_PASSWORD
+};
+
+export const DEFAULT_JOB_OPTIONS: JobsOptions = {
+    removeOnComplete: true,
+    removeOnFail: true,
+    // TODO: Not sure about that
+    timeout: 60000,
+    attempts: 2,
+    backoff: {
+        type: "exponential",
+        delay: 1000
+    }
 };
 
 export const createWorkerForQueue = <T extends QueueType>(
@@ -57,16 +69,6 @@ export const createSchedulerForQueue = <T extends QueueType>(
 export const createQueue = (type: QueueType, options?: QueueOptions) =>
     new Queue(type, {
         connection: QUEUE_CONNECTION_OPTIONS,
+        defaultJobOptions: DEFAULT_JOB_OPTIONS,
         ...options,
-        defaultJobOptions: {
-            removeOnComplete: true,
-            removeOnFail: true,
-            // TODO: Not sure about that
-            timeout: 60000,
-            attempts: 2,
-            backoff: {
-                type: "exponential",
-                delay: 1000
-            }
-        }
     });

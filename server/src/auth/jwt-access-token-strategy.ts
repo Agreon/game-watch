@@ -6,18 +6,21 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from "express";
+import { PinoLogger } from 'nestjs-pino';
 import { Strategy } from 'passport-jwt';
 
 import { Environment } from '../environment';
 
 export const JWT_ACCESS_TOKEN_NAME = "game-watch-access-token";
 
+
 @Injectable()
 export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
     constructor(
-        configService: ConfigService<Environment, true>,
         @InjectRepository(User)
         private readonly userRepository: EntityRepository<User>,
+        private readonly logger: PinoLogger,
+        configService: ConfigService<Environment, true>,
     ) {
         super({
             jwtFromRequest: (request: Request) => request.cookies?.[JWT_ACCESS_TOKEN_NAME],
@@ -31,6 +34,8 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
 
-        return this.userRepository.getReference(sub, true);
+        this.logger.assign({ userId: sub });
+
+        return this.userRepository.getReference(sub, { wrapped: true });
     }
 }
