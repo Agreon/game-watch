@@ -20,6 +20,8 @@ const main = async () => {
             `${QueueType.ResolveSource}:${infoSource.id}:::${SYNC_SOURCES_AT}`
         );
 
+        console.log("Removed old cron for", infoSource.id);
+
         await queue.add(
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
@@ -31,6 +33,9 @@ const main = async () => {
                 priority: 2
             }
         );
+
+        console.log("Added cron for", infoSource.id);
+
     }
 };
 

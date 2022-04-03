@@ -11,7 +11,7 @@ const main = async () => {
     const queue = createQueue(QueueType.SearchGame);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
-    const games = await orm.em.find(Game, {});
+    const games = await orm.em.find(Game, { setupCompleted: true });
 
     for (const game of games) {
         console.log("Adding cron for", game.id);
@@ -19,6 +19,9 @@ const main = async () => {
         await queue.removeRepeatableByKey(
             `${QueueType.SearchGame}:${game.id}:::${SYNC_SOURCES_AT}`
         );
+
+        console.log("Removed old cron for", game.id);
+
 
         await queue.add(
             QueueType.SearchGame,
@@ -31,6 +34,8 @@ const main = async () => {
                 priority: 2
             }
         );
+
+        console.log("Added cron for", game.id);
     }
 };
 
