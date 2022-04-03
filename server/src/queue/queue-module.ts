@@ -17,10 +17,6 @@ import { QueueService } from "./queue-service";
             useFactory: () => createQueue(QueueType.ResolveSource)
         },
         {
-            provide: QueueType.ResolveGame,
-            useFactory: () => createQueue(QueueType.ResolveGame)
-        },
-        {
             provide: QueueType.DeleteUnfinishedGameAdds,
             useFactory: () => createQueue(QueueType.DeleteUnfinishedGameAdds)
         },
@@ -29,16 +25,14 @@ import { QueueService } from "./queue-service";
             useFactory: (
                 searchGameQueue: Queue,
                 resolveSourceQueue: Queue,
-                resolveGameQueue: Queue,
                 deleteUnfinishedGameAddsQueue: Queue,
                 configService: ConfigService<Environment, true>
             ) => new QueueService({
                 [QueueType.SearchGame]: searchGameQueue,
                 [QueueType.ResolveSource]: resolveSourceQueue,
-                [QueueType.ResolveGame]: resolveGameQueue,
                 [QueueType.DeleteUnfinishedGameAdds]: deleteUnfinishedGameAddsQueue
             }, configService),
-            inject: [QueueType.SearchGame, QueueType.ResolveSource, QueueType.ResolveGame, QueueType.DeleteUnfinishedGameAdds, ConfigService]
+            inject: [QueueType.SearchGame, QueueType.ResolveSource, QueueType.DeleteUnfinishedGameAdds, ConfigService]
         },
     ],
     exports: [QueueService]

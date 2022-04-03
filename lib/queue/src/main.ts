@@ -5,7 +5,6 @@ import { parseEnvironment } from "./parse-environment";
 
 export enum QueueType {
     SearchGame = "search-game",
-    ResolveGame = "resolve-game",
     ResolveSource = "resolve-source",
     DeleteUnfinishedGameAdds = "delete-unfinished-game-adds"
 }
@@ -14,11 +13,6 @@ export type QueueParams = {
     [QueueType.SearchGame]: {
         gameId: string
         initialRun?: boolean
-    },
-    [QueueType.ResolveGame]: {
-        gameId: string
-        initialRun?: boolean
-        skipCache?: boolean
     },
     [QueueType.ResolveSource]: {
         sourceId: string

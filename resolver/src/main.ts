@@ -11,7 +11,6 @@ import { Worker } from "bullmq";
 import Redis from "ioredis";
 
 import { EnvironmentStructure } from "./environment";
-import { resolveGame } from "./resolve-game";
 import { ResolveService } from "./resolve-service";
 import { resolveSource } from "./resolve-source";
 import { EpicResolver } from "./resolvers/epic-resolver";
@@ -21,7 +20,6 @@ import { SteamResolver } from "./resolvers/steam-resolver";
 import { SwitchResolver } from "./resolvers/switch-resolver";
 
 const {
-    RESOLVE_GAME_CONCURRENCY,
     RESOLVE_SOURCE_CONCURRENCY,
     REDIS_HOST,
     REDIS_PASSWORD,
@@ -32,7 +30,6 @@ initializeSentry("Resolver");
 
 const logger = createLogger("Resolver");
 
-let resolveGameWorker: Worker | undefined;
 let resolveSourceWorker: Worker | undefined;
 
 const redis = new Redis({
@@ -51,31 +48,6 @@ const resolveService = new ResolveService([
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
-
-    resolveGameWorker = createWorkerForQueue(QueueType.ResolveGame, async ({ data: { gameId, initialRun, skipCache } }) => {
-        const gameScopedLogger = logger.child({ gameId });
-
-        try {
-            await resolveGame({
-                gameId,
-                initialRun,
-                skipCache,
-                resolveService,
-                logger: gameScopedLogger,
-                em: orm.em.fork(),
-            });
-        } catch (error) {
-            // Need to wrap this because otherwise the error is swallowed by the worker.
-            logger.error(error);
-            Sentry.captureException(error, { tags: { gameId } });
-            throw error;
-        }
-    }, { concurrency: RESOLVE_GAME_CONCURRENCY });
-
-    resolveGameWorker.on("error", error => {
-        logger.error(error);
-        Sentry.captureException(error);
-    });
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
 
@@ -107,7 +79,7 @@ const main = async () => {
         }
     }, { concurrency: RESOLVE_SOURCE_CONCURRENCY, });
 
-    resolveGameWorker.on("error", error => {
+    resolveSourceWorker.on("error", error => {
         logger.error(error);
         Sentry.captureException(error);
     });
@@ -117,9 +89,6 @@ const main = async () => {
 
 main().catch(error => {
     logger.error(error);
-    if (resolveGameWorker) {
-        resolveGameWorker.close();
-    }
     if (resolveSourceWorker) {
         resolveSourceWorker.close();
     }

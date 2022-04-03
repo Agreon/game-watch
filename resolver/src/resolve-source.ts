@@ -18,7 +18,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     const startTime = new Date().getTime();
 
     const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["game"] });
-    if (source.disabled || source.remoteGameId === null || !source.game.getEntity().setupCompleted) {
+    if (source.disabled || source.remoteGameId === null) {
         return;
     }
 
@@ -32,11 +32,9 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);
 
-        await em.nativeUpdate(InfoSource, sourceId, {
-            resolveError: true,
-            syncing: false,
-            updatedAt: new Date()
-        });
+        source.resolveError = true;
+        source.syncing = false;
+        await em.persistAndFlush(source);
 
         return;
     }
@@ -46,12 +44,10 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
         await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em, logger });
     }
 
-    await em.nativeUpdate(InfoSource, sourceId, {
-        resolveError: false,
-        syncing: false,
-        data: resolvedGameData,
-        updatedAt: new Date()
-    });
+    source.resolveError = false;
+    source.syncing = false;
+    source.data = resolvedGameData;
+    await em.persistAndFlush(source);
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Resolving source took ${duration} ms`);

@@ -37,7 +37,6 @@ const searchService = new SearchService([
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
-    const resolveGameQueue = createQueue(QueueType.ResolveGame);
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
     const searchGameQueue = createQueue(QueueType.SearchGame);
 
@@ -46,13 +45,12 @@ const main = async () => {
         try {
             await searchForGame({
                 gameId,
+                initialRun,
                 searchService,
                 logger: gameScopedLogger,
                 em: orm.em.fork(),
                 resolveSourceQueue
             });
-
-            await resolveGameQueue.add(QueueType.ResolveGame, { gameId, initialRun });
         } catch (error) {
             if (error instanceof NotFoundError) {
                 logger.warn(`Game '${gameId}' could not be found in database`);

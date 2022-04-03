@@ -32,6 +32,7 @@ export class GameService {
         await this.queueService.addToQueue(
             QueueType.DeleteUnfinishedGameAdds,
             { gameId: game.id },
+            // 1 hour
             { delay: 1000 * 60 * 60 }
         );
 

@@ -59,7 +59,7 @@ export class QueueService implements OnModuleDestroy {
 
     public async createRepeatableGameSearchJob(game: Game) {
         await this.queues[QueueType.SearchGame].add(
-            QueueType.ResolveGame,
+            QueueType.SearchGame,
             { gameId: game.id },
             {
                 repeat: {
