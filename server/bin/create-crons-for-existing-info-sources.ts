@@ -16,7 +16,11 @@ const main = async () => {
     for (const infoSource of infoSources) {
         console.log("Adding cron for", infoSource.id);
 
-        queue.add(
+        await queue.removeRepeatableByKey(
+            `${QueueType.ResolveSource}:${infoSource.id}:::${SYNC_SOURCES_AT}`
+        );
+
+        await queue.add(
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
             {
