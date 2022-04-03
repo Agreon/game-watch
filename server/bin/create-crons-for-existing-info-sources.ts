@@ -35,8 +35,11 @@ const main = async () => {
         );
 
         console.log("Added cron for", infoSource.id);
-
     }
+
+    console.log("Added crons for", infoSources.length, "games");
+
+    await queue.close();
 };
 
 main().catch(error => {

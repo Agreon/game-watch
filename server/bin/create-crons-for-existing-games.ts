@@ -22,7 +22,6 @@ const main = async () => {
 
         console.log("Removed old cron for", game.id);
 
-
         await queue.add(
             QueueType.SearchGame,
             { gameId: game.id },
@@ -37,6 +36,10 @@ const main = async () => {
 
         console.log("Added cron for", game.id);
     }
+
+    console.log("Added crons for", games.length, "games");
+
+    await queue.close();
 };
 
 main().catch(error => {
