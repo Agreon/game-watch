@@ -107,9 +107,11 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
 
     await Promise.all([...searchForNewSourcesPromises, ...researchSourcesPromises]);
 
-    // We already set syncing to false here to signal the AddGameModal that the search is done.
-    game.syncing = false;
-    await em.persistAndFlush(game);
+    await em.nativeUpdate(Game, game.id, {
+        // We already set syncing to false here to signal the AddGameModal that the search is done.
+        syncing: false,
+        updatedAt: new Date()
+    });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Searching for game took ${duration} ms`);
