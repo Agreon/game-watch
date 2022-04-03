@@ -4,7 +4,6 @@ dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
-import { EntityManager } from "@mikro-orm/postgresql";
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import compression from 'compression';
