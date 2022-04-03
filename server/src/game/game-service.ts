@@ -62,7 +62,7 @@ export class GameService {
     }
 
     public async addTagToGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.add(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -71,7 +71,7 @@ export class GameService {
     }
 
     public async removeTagFromGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.remove(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -90,7 +90,7 @@ export class GameService {
     }
 
     public async deleteGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, ["infoSources", "notifications"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources", "notifications"] });
 
         for (const notification of game.notifications) {
             this.notificationRepository.remove(notification);

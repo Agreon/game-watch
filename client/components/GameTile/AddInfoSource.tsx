@@ -70,7 +70,7 @@ export const AddInfoSource: React.FC = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose} mr="1rem">Cancel</Button>
-                        <Button loading={loading} colorScheme="teal" onClick={() => onAdd({ type, url })} >
+                        <Button isLoading={loading} colorScheme="teal" onClick={() => onAdd({ type, url })} >
                             Add
                         </Button>
                     </ModalFooter>

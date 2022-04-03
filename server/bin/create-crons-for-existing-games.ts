@@ -16,7 +16,11 @@ const main = async () => {
     for (const game of games) {
         console.log("Adding cron for", game.id);
 
-        queue.add(
+        await queue.removeRepeatableByKey(
+            `${QueueType.SearchGame}:${game.id}:::${SYNC_SOURCES_AT}`
+        );
+
+        await queue.add(
             QueueType.SearchGame,
             { gameId: game.id },
             {

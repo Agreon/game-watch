@@ -33,13 +33,11 @@ const logger = createLogger("Searcher");
 
 let worker: Worker | undefined;
 
-
 const redis = new Redis({
     host: REDIS_HOST,
     password: REDIS_PASSWORD,
     port: REDIS_PORT
 });
-
 
 const searchService = new SearchService([
     new EpicSearcher(),

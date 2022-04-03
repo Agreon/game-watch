@@ -1,6 +1,8 @@
 import { mikroOrmConfig } from '@game-watch/database';
+import { DEFAULT_JOB_OPTIONS, QUEUE_CONNECTION_OPTIONS } from '@game-watch/queue';
 import { createLogger, parseEnvironment } from '@game-watch/service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { BullModule } from '@nestjs/bullmq';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -13,6 +15,7 @@ import { GameModule } from './game/game-module';
 import { InfoSourceModule } from './info-source/info-source-module';
 import { LoggerMiddleware } from './LoggerMiddleware';
 import { NotificationModule } from './notification/notification-module';
+import { ProcessorModule } from './processors/processor-module';
 import { TagModule } from './tag/tag-module';
 
 
@@ -34,23 +37,32 @@ import { TagModule } from './tag/tag-module';
     MikroOrmModule.forRoot(mikroOrmConfig),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
+      providers: [],
       inject: [ConfigService],
       useFactory: (config: ConfigService<environment, true>) => ({
         pinoHttp: {
           autoLogging: !config.get("PRETTY_LOGGING"),
           quietReqLogger: config.get("PRETTY_LOGGING"),
           redact: {
-            paths: ['req.headers.cookie', 'req.headers.authorization'],
+            paths: [
+              'req.headers.cookie',
+              'req.headers.authorization',
+            ],
             remove: true,
           },
           logger: createLogger("Server"),
         },
       }),
     }),
+    BullModule.forRoot({
+      connection: QUEUE_CONNECTION_OPTIONS,
+      defaultJobOptions: DEFAULT_JOB_OPTIONS
+    }),
+    ProcessorModule,
     GameModule,
     InfoSourceModule,
     TagModule,
-    NotificationModule
+    NotificationModule,
   ],
   providers: [
     {
