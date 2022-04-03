@@ -6,6 +6,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
+import { PinoLogger } from 'nestjs-pino';
 import { Strategy } from 'passport-jwt';
 
 import { Environment } from '../environment';
@@ -17,6 +18,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
     constructor(
         @InjectRepository(User)
         private readonly userRepository: EntityRepository<User>,
+        private readonly logger: PinoLogger,
         configService: ConfigService<Environment, true>
     ) {
         super({
@@ -30,6 +32,8 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
         if (typeof sub !== "string") {
             throw new UnauthorizedException();
         }
+
+        this.logger.assign({ userId: sub });
 
         const user = await this.userRepository.findOne(sub);
 
