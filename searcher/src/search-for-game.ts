@@ -9,13 +9,14 @@ import { SearchService } from "./search-service";
 
 interface Params {
     gameId: string
+    initialRun?: boolean
     searchService: SearchService
     resolveSourceQueue: Queue
     em: EntityManager
     logger: Logger
 }
 
-export const searchForGame = async ({ gameId, searchService, em, logger, resolveSourceQueue }: Params) => {
+export const searchForGame = async ({ gameId, initialRun, searchService, em, logger, resolveSourceQueue }: Params) => {
     const startTime = new Date().getTime();
 
     const game = await em.findOneOrFail(Game, gameId, { populate: ["infoSources"] });
@@ -33,7 +34,19 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
 
     logger.info(`Searching for ${JSON.stringify(sourcesToSearch)}`);
 
-    const addSourceToNightlyResolveQueue = async (sourceId: string) => {
+    const addSourceToResolveQueue = async (sourceId: string) => {
+        await resolveSourceQueue.add(
+            QueueType.ResolveSource,
+            {
+                sourceId,
+                initialRun
+            },
+            {
+                jobId: sourceId,
+                priority: 1
+            }
+        );
+
         await resolveSourceQueue.add(
             QueueType.ResolveSource,
             { sourceId },
@@ -66,7 +79,7 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
 
         await em.nativeInsert(newSource);
 
-        await addSourceToNightlyResolveQueue(newSource.id);
+        await addSourceToResolveQueue(newSource.id);
     });
 
     logger.info(`Re-Searching for ${JSON.stringify(excludedSources)}`);
@@ -89,13 +102,13 @@ export const searchForGame = async ({ gameId, searchService, em, logger, resolve
             remoteGameName: searchResponse.remoteGameName,
         });
 
-        await addSourceToNightlyResolveQueue(source.id);
+        await addSourceToResolveQueue(source.id);
     });
 
     await Promise.all([...searchForNewSourcesPromises, ...researchSourcesPromises]);
 
     await em.nativeUpdate(Game, game.id, {
-        // TODO: Why syncing false already here?
+        // We already set syncing to false here to signal the AddGameModal that the search is done.
         syncing: false,
         updatedAt: new Date()
     });

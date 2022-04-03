@@ -12,7 +12,6 @@ import { QueueService } from "./queue-service";
         BullModule.registerQueue(
             { name: QueueType.SearchGame, },
             { name: QueueType.ResolveSource },
-            { name: QueueType.ResolveGame },
             { name: QueueType.DeleteUnfinishedGameAdds, }
         )
     ],
@@ -22,19 +21,16 @@ import { QueueService } from "./queue-service";
             useFactory: (
                 searchGameQueue: Queue,
                 resolveSourceQueue: Queue,
-                resolveGameQueue: Queue,
                 deleteUnfinishedGameAddsQueue: Queue,
                 configService: ConfigService<Environment, true>
             ) => new QueueService({
                 [QueueType.SearchGame]: searchGameQueue,
                 [QueueType.ResolveSource]: resolveSourceQueue,
-                [QueueType.ResolveGame]: resolveGameQueue,
                 [QueueType.DeleteUnfinishedGameAdds]: deleteUnfinishedGameAddsQueue
             }, configService),
             inject: [
                 getQueueToken(QueueType.SearchGame),
                 getQueueToken(QueueType.ResolveSource),
-                getQueueToken(QueueType.ResolveGame),
                 getQueueToken(QueueType.DeleteUnfinishedGameAdds),
                 ConfigService
             ]
