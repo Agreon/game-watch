@@ -41,18 +41,21 @@ export class SearchService {
         }
 
         const start = new Date().getTime();
+        const cacheKey = `${type}:${search}`;
 
         try {
             return await pRetry(async () => {
-                const existingData = await this.redis.get(search);
+
+
+                const existingData = await this.redis.get(cacheKey);
                 if (existingData && !context.skipCache) {
-                    logger.debug(`Search data for ${search} was found in cache`);
+                    logger.debug(`Search data for ${cacheKey} was found in cache`);
 
                     return JSON.parse(existingData);
                 }
 
                 const foundData = await searcherForType.search(search, { logger: logger.child({ type }) });
-                await this.redis.set(search, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+                await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
 
                 return foundData;
             }, {
