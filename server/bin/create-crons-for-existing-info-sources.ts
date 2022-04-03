@@ -10,7 +10,7 @@ const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 const main = async () => {
     const queue = createQueue(QueueType.ResolveSource);
 
-    const orm = await MikroORM.init(mikroOrmConfig);
+    const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const infoSources = await orm.em.find(InfoSource, {});
 
     for (const infoSource of infoSources) {

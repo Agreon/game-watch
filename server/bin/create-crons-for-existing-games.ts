@@ -10,7 +10,7 @@ const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 const main = async () => {
     const queue = createQueue(QueueType.SearchGame);
 
-    const orm = await MikroORM.init(mikroOrmConfig);
+    const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const games = await orm.em.find(Game, {});
 
     for (const game of games) {
