@@ -82,7 +82,7 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
         await addSourceToResolveQueue(newSource.id);
     });
 
-    logger.info(`Re-Searching for ${JSON.stringify(excludedSources)}`);
+    logger.info(`Re-Searching for ${JSON.stringify(excludedSources.map(source => source.type))}`);
 
     const researchSourcesPromises = excludedSources.map(async source => {
         logger.info(`Re-Searching ${source.type} for '${game.search}'`);
