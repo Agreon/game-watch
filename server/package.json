@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "^8.4.3",
     "@nestjs/throttler": "^2.0.1",
     "@sentry/node": "^6.19.3",
-    "@sentry/tracing": "^6.19.3",
+    "@sentry/tracing": "^6.19.6",
     "bcrypt": "^5.0.1",
     "bullmq": "^1.78.2",
     "class-transformer": "^0.5.1",
