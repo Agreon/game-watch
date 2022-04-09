@@ -22,7 +22,7 @@
         "@mikro-orm/nestjs": "^5.0.1",
         "@mikro-orm/postgresql": "^5.1.1",
         "@sentry/node": "^6.19.3",
-        "@sentry/tracing": "^6.19.3",
+        "@sentry/tracing": "^6.19.6",
         "axios": "^0.26.1",
         "bullmq": "^1.78.2",
         "cheerio": "^1.0.0-rc.10",
