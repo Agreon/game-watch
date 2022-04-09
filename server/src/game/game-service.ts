@@ -40,12 +40,21 @@ export class GameService {
     }
 
     public async syncGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id);
-
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
         game.syncing = true;
-        await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
+        const activeInfoSources = game.infoSources.getItems().filter(
+            source => !source.disabled && source.remoteGameId !== null
+        );
+        for (const source of activeInfoSources) {
+            source.syncing = true;
+            source.resolveError = false;
+            await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: source.id, skipCache: true });
+        }
+
+        await this.gameRepository.persistAndFlush(game);
 
         return game;
     }
