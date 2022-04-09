@@ -42,6 +42,8 @@ export class GameService {
     public async syncGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
         game.syncing = true;
+        // We have to persist early here to avoid a race condition with the searcher setting the syncing to false to early.
+        await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
 
