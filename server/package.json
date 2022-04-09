@@ -30,7 +30,7 @@
     "@nestjs/core": "^8.4.3",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.2.1",
-    "@nestjs/platform-express": "^8.4.3",
+    "@nestjs/platform-express": "^8.4.4",
     "@nestjs/throttler": "^2.0.1",
     "@sentry/node": "^6.19.3",
     "@sentry/tracing": "^6.19.6",
