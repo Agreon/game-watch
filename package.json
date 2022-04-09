@@ -1,6 +1,6 @@
 {
     "name": "game-watch",
-    "private": "true",
+    "private": true,
     "workspaces": [
         "lib/shared",
         "lib/database",
@@ -20,6 +20,7 @@
     "devDependencies": {
         "@nestjs/common": "^8.4.3",
         "@nestjs/core": "^8.4.3",
+        "turbo": "^1.2.1",
         "yarn-deduplicate": "^4.0.0"
     }
 }

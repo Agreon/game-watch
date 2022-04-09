@@ -47,6 +47,7 @@ export class PsStoreResolver implements InfoResolver {
             // cta => price
             // thumbnail => background-image
 
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim());
 
             const price = await browser.evaluate(
