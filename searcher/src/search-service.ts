@@ -1,10 +1,15 @@
 import { Logger } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
+import { Redis } from "ioredis";
 import pRetry from "p-retry";
 
 export interface InfoSearcherContext {
     logger: Logger
+}
+
+export interface SearchServiceContext extends InfoSearcherContext {
+    skipCache?: boolean
 }
 
 export interface SearchResponse {
@@ -20,12 +25,13 @@ export interface InfoSearcher {
 export class SearchService {
     public constructor(
         private readonly searchers: InfoSearcher[],
+        private readonly redis: Redis,
     ) { }
 
     public async searchForGameInSource(
         search: string,
         type: InfoSourceType,
-        context: InfoSearcherContext
+        context: SearchServiceContext
     ): Promise<SearchResponse | null> {
         const logger = context.logger.child({ serviceName: SearchService.name, });
 
@@ -35,11 +41,28 @@ export class SearchService {
         }
 
         const start = new Date().getTime();
+        const cacheKey = `${type}:${search}`;
 
         try {
-            return await pRetry(
-                async () => await searcherForType.search(search, { logger: logger.child({ type }) })
-            );
+            return await pRetry(async () => {
+
+
+                const existingData = await this.redis.get(cacheKey);
+                if (existingData && !context.skipCache) {
+                    logger.debug(`Search data for ${cacheKey} was found in cache`);
+
+                    return JSON.parse(existingData);
+                }
+
+                const foundData = await searcherForType.search(search, { logger: logger.child({ type }) });
+                await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+
+                return foundData;
+            }, {
+                minTimeout: 5000,
+                maxTimeout: 30000
+            });
+
         } catch (error) {
             Sentry.captureException(error, {
                 contexts: {

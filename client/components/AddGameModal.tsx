@@ -69,7 +69,7 @@ const AddSource: React.FC = () => {
                     <Button
                         onClick={() => onAdd({ type, url })}
                         disabled={loading || !url.length}
-                        loading={loading}
+                        isLoading={loading}
                     >
                         Add
                     </Button>
@@ -119,8 +119,17 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                     Add Game
                 </ModalHeader>
                 <ModalCloseButton />
-                <ModalBody pb="2rem">
-                    <Flex direction="column" justify="space-between" align="center" width="100%" height="100%">
+                <ModalBody >
+                    <Flex
+                        direction="column"
+                        justify="space-between"
+                        align="center"
+                        width="100%"
+                        height="100%"
+                        pl={["0", "0", "2rem"]}
+                        pr={["0", "0", "2rem"]}
+                        pb="2rem"
+                    >
                         <Flex my="1rem">
                             {game.syncing
                                 ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
@@ -129,7 +138,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                                     : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
                             }
                         </Flex>
-                        <Flex direction="column" my="1rem">
+                        <Flex direction="column" my="1rem" width="100%">
                             {game.infoSources.map(source =>
                                 <InfoSourceProvider
                                     key={source.id}
@@ -159,7 +168,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             <Button
                                 ml="1rem"
                                 size="lg"
-                                loading={loading}
+                                isLoading={loading}
                                 colorScheme="teal"
                                 disabled={loading}
                                 onClick={onAddGame}

@@ -1,40 +1,20 @@
 import { Game, InfoSource } from "@game-watch/database";
-import { createSchedulerForQueue, createWorkerForQueue, QueueParams, QueueType } from "@game-watch/queue";
-import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import { QueueParams, QueueType } from "@game-watch/queue";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as Sentry from '@sentry/node';
-import { JobsOptions, Processor, Queue, QueueScheduler, Worker } from "bullmq";
+import { JobsOptions, Queue } from "bullmq";
 
 import { Environment } from "../environment";
 
 @Injectable()
-export class QueueService implements OnModuleDestroy {
-    private readonly logger = new Logger(QueueService.name);
-
-    private readonly queueSchedulers: QueueScheduler[] = [];
-    private readonly handlers: Worker[] = [];
-
+export class QueueService {
     public constructor(
         private readonly queues: Record<QueueType, Queue>,
-        private readonly configService: ConfigService<Environment, true>
-    ) {
-        this.queueSchedulers = Object.keys(queues).map(
-            queueType => createSchedulerForQueue(queueType as QueueType)
-        );
-    }
+        private readonly configService: ConfigService<Environment, true>,
+    ) { }
 
     public async addToQueue<T extends QueueType>(type: T, payload: QueueParams[T], opts?: JobsOptions) {
         await this.queues[type].add(type, payload, opts);
-    }
-
-    public async registerJobHandler<T extends QueueType>(type: T, processor: Processor<QueueParams[T]>) {
-        const handler = createWorkerForQueue(type, processor);
-        handler.on("error", error => {
-            this.logger.error(error);
-            Sentry.captureException(error);
-        });
-
-        this.handlers.push(handler);
     }
 
     public async createRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
@@ -59,7 +39,7 @@ export class QueueService implements OnModuleDestroy {
 
     public async createRepeatableGameSearchJob(game: Game) {
         await this.queues[QueueType.SearchGame].add(
-            QueueType.ResolveGame,
+            QueueType.SearchGame,
             { gameId: game.id },
             {
                 repeat: {
@@ -75,16 +55,5 @@ export class QueueService implements OnModuleDestroy {
         await this.queues[QueueType.SearchGame].removeRepeatableByKey(
             `${QueueType.SearchGame}:${game.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
         );
-    }
-
-    public async onModuleDestroy() {
-        await Promise.all([
-            ...this.handlers.map(
-                handler => handler.close()
-            ),
-            ...this.queueSchedulers.map(
-                scheduler => scheduler.close()
-            )
-        ]);
     }
 }

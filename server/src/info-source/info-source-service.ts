@@ -80,6 +80,7 @@ export class InfoSourceService {
         await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
 
         infoSource.syncing = true;
+        infoSource.resolveError = false;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;

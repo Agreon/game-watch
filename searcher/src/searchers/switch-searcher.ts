@@ -72,6 +72,7 @@ export class SwitchSearcher implements InfoSearcher {
             }
 
             const gameLink = await browser.$eval("game-tile", el => el.getAttribute("href"));
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const fullName = await browser.$eval("game-tile > h3", el => el.textContent!.trim());
 
             if (!matchingName(fullName, search)) {

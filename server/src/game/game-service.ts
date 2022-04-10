@@ -32,6 +32,7 @@ export class GameService {
         await this.queueService.addToQueue(
             QueueType.DeleteUnfinishedGameAdds,
             { gameId: game.id },
+            // 1 hour
             { delay: 1000 * 60 * 60 }
         );
 
@@ -39,12 +40,23 @@ export class GameService {
     }
 
     public async syncGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id);
-
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
         game.syncing = true;
+        // We have to persist early here to avoid a race condition with the searcher setting the syncing to false to early.
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+
+        const activeInfoSources = game.infoSources.getItems().filter(
+            source => !source.disabled && source.remoteGameId !== null
+        );
+        for (const source of activeInfoSources) {
+            source.syncing = true;
+            source.resolveError = false;
+            await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: source.id, skipCache: true });
+        }
+
+        await this.gameRepository.persistAndFlush(game);
 
         return game;
     }
@@ -62,7 +74,7 @@ export class GameService {
     }
 
     public async addTagToGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.add(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -71,7 +83,7 @@ export class GameService {
     }
 
     public async removeTagFromGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, ["tags"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
 
         game.tags.remove(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -90,7 +102,7 @@ export class GameService {
     }
 
     public async deleteGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, ["infoSources", "notifications"]);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources", "notifications"] });
 
         for (const notification of game.notifications) {
             this.notificationRepository.remove(notification);

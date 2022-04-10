@@ -33,7 +33,6 @@ RUN yarn workspace @game-watch/shared build && \
     yarn workspace @game-watch/client build && \
     yarn install --frozen-lockfile --production --ignore-scripts --prefer-offline
 
-# Production image, copy all the files and run next
 FROM node:alpine AS runner
 WORKDIR /app
 
@@ -42,7 +41,6 @@ ENV NODE_ENV production
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
-# You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/client/next.config.js ./client/next.config.js
 COPY --from=builder /app/client/public ./client/public
 COPY --from=builder --chown=nextjs:nodejs /app/client/.next ./client/.next

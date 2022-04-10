@@ -20,7 +20,7 @@ export interface InfoResolver<T extends GameDataU = GameDataU> {
 export class ResolveService {
     public constructor(
         private readonly resolvers: InfoResolver[],
-        private readonly redis: Redis
+        private readonly redis: Redis,
     ) { }
 
     public async resolveGameInformation(

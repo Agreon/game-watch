@@ -10,13 +10,19 @@ const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 const main = async () => {
     const queue = createQueue(QueueType.ResolveSource);
 
-    const orm = await MikroORM.init(mikroOrmConfig);
+    const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const infoSources = await orm.em.find(InfoSource, {});
 
     for (const infoSource of infoSources) {
         console.log("Adding cron for", infoSource.id);
 
-        queue.add(
+        await queue.removeRepeatableByKey(
+            `${QueueType.ResolveSource}:${infoSource.id}:::${SYNC_SOURCES_AT}`
+        );
+
+        console.log("Removed old cron for", infoSource.id);
+
+        await queue.add(
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
             {
@@ -27,7 +33,13 @@ const main = async () => {
                 priority: 2
             }
         );
+
+        console.log("Added cron for", infoSource.id);
     }
+
+    console.log("Added crons for", infoSources.length, "sources");
+
+    await queue.close();
 };
 
 main().catch(error => {

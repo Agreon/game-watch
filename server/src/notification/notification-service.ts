@@ -13,8 +13,10 @@ export class NotificationService {
     public async getNotifications(user: IdentifiedReference<User>): Promise<Notification[]> {
         return await this.notificationRepository.find(
             { read: false, user },
-            ["game", "infoSource"],
-            { createdAt: QueryOrder.DESC, id: QueryOrder.DESC },
+            {
+                populate: ["game", "infoSource"],
+                orderBy: { createdAt: QueryOrder.DESC, id: QueryOrder.DESC },
+            }
         );
     }
 
