@@ -52,7 +52,8 @@ export class ResolveService {
                 return resolvedData;
             }, {
                 minTimeout: 5000,
-                maxTimeout: 30000
+                maxTimeout: 30000,
+                onFailedAttempt: error => logger.error(error, `Error thrown while resolving ${type} for ${id}`)
             });
         } catch (error) {
             Sentry.captureException(error, {
