@@ -12,8 +12,6 @@ export const NoGamesYet = () => {
 
     return (
         <Box textAlign="center" mb="2rem">
-            <Text fontSize="4xl">Welcome to GameWatch!</Text>
-
             <Text fontSize="2xl">
                 To get started, add a new game to watch:
             </Text>

@@ -1,5 +1,5 @@
 import { User } from "@game-watch/database";
-import { CreateUserDto, RegisterUserDto, UserState } from "@game-watch/shared";
+import { Country, RegisterUserDto, UserState } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
@@ -16,8 +16,8 @@ export class AuthService {
         private readonly configService: ConfigService<Environment, true>
     ) { }
 
-    public async createUser({ id }: CreateUserDto): Promise<User> {
-        const user = new User({ id });
+    public async createUser({ id, country }: { id: string; country: Country }): Promise<User> {
+        const user = new User({ id, country });
         await this.userRepository.persistAndFlush(user);
 
         return user;

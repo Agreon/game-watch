@@ -50,3 +50,14 @@ export type GameData = {
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
+
+export const Countries = ["DE", "US"] as const;
+export type Country = typeof Countries[number];
+
+export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
+    [InfoSourceType.Steam]: ["DE", "US"] as const,
+    [InfoSourceType.Switch]: ["DE"] as const,
+    [InfoSourceType.PsStore]: ["DE", "US"] as const,
+    [InfoSourceType.Epic]: ["DE", "US"] as const,
+    [InfoSourceType.Metacritic]: ["DE", "US"] as const,
+} as const;

@@ -1,11 +1,7 @@
 import { Input } from "@chakra-ui/input";
-import {
-    Button,
-    useColorModeValue,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Button, useColorModeValue, useDisclosure, } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/layout";
-import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useRef, useEffect, useMemo, KeyboardEvent } from "react";
 import { GameProvider } from "../providers/GameProvider";
 import { useGamesContext } from "../providers/GamesProvider";
 import { useAction } from "../util/useAction";
@@ -30,7 +26,7 @@ export const AddGameInput: React.FC = () => {
     const inputRef = useRef<HTMLInputElement | null>(null)
     useEffect(() => { inputRef.current && inputRef.current.focus() }, []);
 
-    const onNameKeyPress = useCallback(async ({ key }) => {
+    const onNameKeyPress = useCallback(async ({ key }: KeyboardEvent<HTMLInputElement>) => {
         if (key === "Enter") {
             await searchGame(name);
         }

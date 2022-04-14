@@ -18,6 +18,7 @@ export function useInfoSourceContext() {
 }
 
 export const InfoSourceProvider: React.FC<{
+    children: React.ReactChild,
     source: InfoSourceDto,
     setGameInfoSource: (infoSource: InfoSourceDto) => void
     removeGameInfoSource: (id: string) => void

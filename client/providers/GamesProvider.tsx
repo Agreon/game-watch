@@ -29,7 +29,9 @@ export function useGamesContext() {
     return context;
 }
 
-export const GamesProvider: React.FC = ({ children }) => {
+export const GamesProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
     const { user } = useUserContext()
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<GameDto[]>([]);

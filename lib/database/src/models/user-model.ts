@@ -1,8 +1,9 @@
-import { InfoSourceType, UserState } from "@game-watch/shared";
+import { Country, InfoSourceType, UserState } from "@game-watch/shared";
 import { ArrayType, Collection, Entity, Enum, OneToMany, Property } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
+import { InfoSource } from "./info-source-model";
 import { Tag } from "./tag-model";
 
 @Entity()
@@ -22,14 +23,21 @@ export class User extends BaseEntity<User> {
     @OneToMany(() => Tag, tag => tag.user)
     public tags = new Collection<Tag>(this);
 
+    @OneToMany(() => InfoSource, infoSource => infoSource.user, { hidden: true })
+    public infoSources = new Collection<InfoSource>(this);
+
     @Property()
     public lastTokenRefresh: Date = new Date();
 
     @Property({ type: ArrayType })
     public interestedInSources: InfoSourceType[] = [];
 
-    public constructor({ id }: { id: string }) {
+    @Property()
+    public country: Country;
+
+    public constructor({ id, country }: { id: string, country: Country }) {
         super();
         this.id = id;
+        this.country = country;
     }
 }

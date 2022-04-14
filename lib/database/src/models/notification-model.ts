@@ -6,6 +6,7 @@ import { Game } from "./game-model";
 import { InfoSource } from "./info-source-model";
 import { User } from "./user-model";
 
+// TODO: Index on "read"
 @Entity()
 export class Notification<T extends NotificationType = NotificationType> extends BaseEntity<Notification<T>> {
     @Enum(() => NotificationType)

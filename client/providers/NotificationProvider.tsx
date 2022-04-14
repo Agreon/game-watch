@@ -20,7 +20,9 @@ export function useNotificationContext() {
     return context as NotificationCtx;
 }
 
-export const NotificationProvider: React.FC<{}> = ({ children }) => {
+export const NotificationProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
     const { withRequest, handleError } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 

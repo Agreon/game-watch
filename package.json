@@ -22,5 +22,8 @@
         "@nestjs/core": "^8.4.4",
         "turbo": "^1.2.1",
         "yarn-deduplicate": "^4.0.0"
+    },
+    "resolutions": {
+        "@types/react": "^17.0.43"
     }
 }

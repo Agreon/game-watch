@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react"
-import { RegisterUserDto, UserDto, UserState } from "@game-watch/shared"
+import { RegisterUserDto, UpdateUserSettingsDto, UserDto, UserState } from "@game-watch/shared"
 import axios from "axios"
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { v4 as uuidV4 } from "uuid"
@@ -11,6 +11,7 @@ export interface UserCtx {
     registerUser: (params: Omit<RegisterUserDto, "id">) => Promise<void | Error>
     loginUser: (params: { username: string, password: string }) => Promise<void | Error>
     logoutUser: () => Promise<void>
+    updateUserSettings: (params: UpdateUserSettingsDto) => Promise<void>
 }
 
 export const UserContext = React.createContext<UserCtx | null>(null)
@@ -46,7 +47,9 @@ export const setLocalStoredUser = (data: LocalUserData | null) => {
     }
 }
 
-export const UserProvider: React.FC = ({ children }) => {
+export const UserProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
     const { withRequest } = useHttp()
     const { withRequest: withRequestWithoutLogout } = useHttp(false)
     const [user, setUser] = useState<UserDto | null>(null)
@@ -55,7 +58,7 @@ export const UserProvider: React.FC = ({ children }) => {
         async function fetchUser() {
             await withRequestWithoutLogout(async http => {
                 try {
-                    const { data } = await http.get("/auth/user")
+                    const { data } = await http.get("/user")
                     setLocalStoredUser(data)
                     setUser(data)
                 } catch (error) {
@@ -116,13 +119,26 @@ export const UserProvider: React.FC = ({ children }) => {
         })
     }, [withRequest])
 
+    const updateUserSettings = useCallback(async (params: UpdateUserSettingsDto) => {
+        await withRequest(async http => {
+            const { data } = await http.put<UserDto>("/user", {
+                id: user?.id,
+                ...params
+            })
+
+            setLocalStoredUser(data)
+            setUser(data)
+        })
+    }, [withRequest, user])
+
     const contextValue = useMemo(() => ({
         // We show a loading screen while no user is visible
         user: user!,
         registerUser,
         loginUser,
-        logoutUser
-    }), [user, registerUser, loginUser, logoutUser])
+        logoutUser,
+        updateUserSettings
+    }), [user, registerUser, loginUser, logoutUser, updateUserSettings])
 
     return (
         <UserContext.Provider value={contextValue}>

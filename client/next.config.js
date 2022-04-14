@@ -9,5 +9,7 @@ module.exports = {
       'cdn1.epicgames.com',
       "cdn2.unrealengine.com"
     ],
+    // 365 days
+    minimumCacheTTL: 31536000,
   },
 }

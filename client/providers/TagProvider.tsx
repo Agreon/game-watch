@@ -23,7 +23,9 @@ export function useTagContext() {
 
 const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", "cyan", "purple", "pink", "linkedin", "facebook", "messenger", "whatsapp", "twitter", "telegram"];
 
-export const TagProvider: React.FC = ({ children }) => {
+export const TagProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
     const { user } = useUserContext()
     const [tagsLoading, setTagsLoading] = useState(false);
     const [tags, setTags] = useState<TagDto[]>([]);

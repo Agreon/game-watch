@@ -3,7 +3,6 @@ import { useHttp } from "../util/useHttp";
 import { AxiosResponse } from "axios";
 import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
 
-// TODO: Let users select the priority / image
 export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.PsStore,
     InfoSourceType.Steam,
@@ -55,6 +54,7 @@ export interface GameCtx {
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
     setGameInfoSource: (infoSource: InfoSourceDto) => void
+    updateGameInfoSource: (infoSource: InfoSourceDto) => void
     removeGameInfoSource: (id: string) => void
     addTagToGame: (tag: TagDto) => Promise<void>
     removeTagFromGame: (tag: TagDto) => Promise<void>
@@ -72,6 +72,7 @@ export function useGameContext() {
 }
 
 export const GameProvider: React.FC<{
+    children: React.ReactChild,
     game: GameDto,
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
@@ -159,6 +160,19 @@ export const GameProvider: React.FC<{
     const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
             curr.infoSources = [...curr.infoSources.filter(({ id }) => newInfoSource.id !== id), newInfoSource];
+            return curr;
+        });
+    }, [setGame, game.id]);
+
+    const updateGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
+        setGame(game.id, curr => {
+            const filteredInfoSources = curr.infoSources.filter(({ id }) => newInfoSource.id !== id);
+            // Make sure sources disabled in the mean time are not re-added
+            if (filteredInfoSources.length === curr.infoSources.length) {
+                return curr;
+            }
+
+            curr.infoSources = [...filteredInfoSources, newInfoSource];
             return curr;
         });
     }, [setGame, game.id]);
@@ -284,6 +298,7 @@ export const GameProvider: React.FC<{
         changeGameName,
         deleteGame,
         setGameInfoSource,
+        updateGameInfoSource,
         removeGameInfoSource,
         addTagToGame,
         removeTagFromGame,
@@ -302,6 +317,7 @@ export const GameProvider: React.FC<{
         changeGameName,
         deleteGame,
         setGameInfoSource,
+        updateGameInfoSource,
         removeGameInfoSource,
         addTagToGame,
         removeTagFromGame,
