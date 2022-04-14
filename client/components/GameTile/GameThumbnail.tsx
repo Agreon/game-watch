@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Box, Flex } from "@chakra-ui/layout";
 import React, { useEffect, useState } from "react";
 import { Skeleton, useColorModeValue } from "@chakra-ui/react";
@@ -17,12 +16,10 @@ export const GameThumbnail: React.FC = () => {
             <Skeleton isLoaded={thumbnailUrl !== null ? !imageLoading : true}>
                 <Flex position="relative" justify="center" height="215px" bg={useColorModeValue("white", "gray.900")} >
                     {thumbnailUrl &&
-                        <Image
-                        quality={100}
-                            alt=""
-                            priority={true}
-                            layout="fill"
-                            objectFit="cover"
+                        <img
+                            width="460"
+                            style={{ objectFit: "cover" }}
+                        alt=""
                             src={thumbnailUrl}
                             onError={() => setImageLoading(false)}
                             onLoad={() => setImageLoading(false)}
