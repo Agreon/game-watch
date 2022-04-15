@@ -32,13 +32,9 @@ COPY lib/service lib/service
 COPY lib/browser lib/browser
 COPY lib/queue lib/queue
 COPY tsconfig.json tsconfig.json
+COPY turbo.json turbo.json
 
-RUN \
-    pnpm --filter @game-watch/shared build && \
-    pnpm --filter @game-watch/database build && \
-    pnpm --filter @game-watch/service build && \
-    pnpm --filter @game-watch/browser build && \
-    pnpm --filter @game-watch/queue build
+RUN pnpm turbo run build --filter="./lib/*"
 
 COPY searcher searcher
 
@@ -47,7 +43,7 @@ RUN \
     pnpm --filter @game-watch/searcher build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
-RUN chmod -R o+rwx node_modules/puppeteer/.local-chromium
+RUN chmod -R o+rwx lib/browser/node_modules/puppeteer/.local-chromium
 
 ENV NODE_ENV production
 
