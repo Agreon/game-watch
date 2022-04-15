@@ -24,6 +24,7 @@
     "globalDependencies": [
         ".env",
         "tsconfig.json",
-        ".eslintrc.js"
+        ".eslintrc.js",
+        "pnpm-lock.yaml"
     ]
 }
