@@ -1,4 +1,5 @@
 import { Input } from "@chakra-ui/input";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import {
     Button,
     Fade,
@@ -12,14 +13,14 @@ import {
     Select,
     useBreakpointValue,
 } from "@chakra-ui/react";
-import { Box, Flex, Text } from "@chakra-ui/layout";
+import { InfoSourceType } from "@game-watch/shared";
 import React, { useCallback, useState } from "react";
+
 import { useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
-import { LoadingSpinner } from "./LoadingSpinner";
 import { useAction } from "../util/useAction";
-import { InfoSourceType } from "@game-watch/shared";
 import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export const PlaceholderMap: Record<InfoSourceType, string> = {
     [InfoSourceType.Steam]: "https://store.steampowered.com/app/...",
@@ -27,7 +28,7 @@ export const PlaceholderMap: Record<InfoSourceType, string> = {
     [InfoSourceType.Epic]: "https://www.epicgames.com/store/de-DE/p/...",
     [InfoSourceType.PsStore]: "https://store.playstation.com/de-de/product/...",
     [InfoSourceType.Metacritic]: "https://www.metacritic.com/game/pc/...",
-}
+};
 
 const AddSource: React.FC = () => {
     const { availableInfoSources, addInfoSource } = useGameContext();
@@ -38,7 +39,7 @@ const AddSource: React.FC = () => {
         onSuccess: () => {
             setUrl("");
         }
-    })
+    });
 
     if (!availableInfoSources.length) {
         return null;
@@ -76,12 +77,12 @@ const AddSource: React.FC = () => {
                 </FormControl>
             </Flex>
         </Flex>
-    )
-}
+    );
+};
 
 interface AddGameModalProps {
-    show: boolean;
-    onClose: () => void;
+    show: boolean
+    onClose: () => void
 }
 
 /**
@@ -90,14 +91,15 @@ interface AddGameModalProps {
  */
 export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => {
     const { game, setGameInfoSource, removeGameInfoSource, setupGame } = useGameContext();
-    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose })
+    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
 
     const onAddGame = useCallback(async () => {
         if (!game.infoSources.length) {
-            return await onAdd({ name: game.search })
+            return await onAdd({ name: game.search });
         }
 
         // We take the first name for now, later the user can decide.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         await onAdd({ name: game.infoSources[0].remoteGameName! });
     }, [onAdd, game]);
 
@@ -180,5 +182,5 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                 </ModalBody>
             </ModalContent>
         </Modal>
-    )
-}
+    );
+};

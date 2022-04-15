@@ -1,7 +1,8 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useHttp } from "../util/useHttp";
-import { AxiosResponse } from "axios";
 import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
+import { AxiosResponse } from "axios";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+
+import { useHttp } from "../util/useHttp";
 
 export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.PsStore,
@@ -38,7 +39,7 @@ const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string):
     }
 
     return null;
-}
+};
 
 export interface GameCtx {
     game: GameDto
@@ -95,6 +96,7 @@ export const GameProvider: React.FC<{
             return;
         }
         setPolling(true);
+
         (async () => {
             await withRequest(async http => {
                 do {
@@ -109,7 +111,7 @@ export const GameProvider: React.FC<{
                     } finally {
                         await new Promise(resolve => setTimeout(resolve, 1000));
                     }
-                } while (true)
+                } while (true);
             });
             setPolling(false);
         }
@@ -328,5 +330,5 @@ export const GameProvider: React.FC<{
         <GameContext.Provider value={contextValue}>
             {children}
         </GameContext.Provider>
-    )
-}
+        );
+    };

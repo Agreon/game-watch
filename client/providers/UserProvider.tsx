@@ -1,10 +1,11 @@
-import { Box } from "@chakra-ui/react"
-import { RegisterUserDto, UpdateUserSettingsDto, UserDto, UserState } from "@game-watch/shared"
-import axios from "axios"
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react"
-import { v4 as uuidV4 } from "uuid"
-import { LoadingSpinner } from "../components/LoadingSpinner"
-import { useHttp } from "../util/useHttp"
+import { Box } from "@chakra-ui/react";
+import { RegisterUserDto, UpdateUserSettingsDto, UserDto, UserState } from "@game-watch/shared";
+import axios from "axios";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { v4 as uuidV4 } from "uuid";
+
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { useHttp } from "../util/useHttp";
 
 export interface UserCtx {
     user: UserDto
@@ -14,15 +15,15 @@ export interface UserCtx {
     updateUserSettings: (params: UpdateUserSettingsDto) => Promise<void>
 }
 
-export const UserContext = React.createContext<UserCtx | null>(null)
+export const UserContext = React.createContext<UserCtx | null>(null);
 
 export function useUserContext() {
-    const context = useContext(UserContext)
+    const context = useContext(UserContext);
     if (!context) {
-        throw new Error("UserContext must be used inside UserProvider")
+        throw new Error("UserContext must be used inside UserProvider");
     }
 
-    return context
+    return context;
 }
 
 export interface LocalUserData {
@@ -31,39 +32,39 @@ export interface LocalUserData {
 }
 
 export const getLocalStoredUser = (): LocalUserData | null => {
-    const localUserData = localStorage.getItem("user")
+    const localUserData = localStorage.getItem("user");
     if (!localUserData) {
-        return null
+        return null;
     }
 
-    return JSON.parse(localUserData)
-}
+    return JSON.parse(localUserData);
+};
 
 export const setLocalStoredUser = (data: LocalUserData | null) => {
     if (data === null) {
         localStorage.removeItem("user");
     } else {
-        localStorage.setItem("user", JSON.stringify(data))
+        localStorage.setItem("user", JSON.stringify(data));
     }
-}
+};
 
 export const UserProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
-    const { withRequest } = useHttp()
-    const { withRequest: withRequestWithoutLogout } = useHttp(false)
-    const [user, setUser] = useState<UserDto | null>(null)
+    const { withRequest } = useHttp();
+    const { withRequest: withRequestWithoutLogout } = useHttp(false);
+    const [user, setUser] = useState<UserDto | null>(null);
 
     useEffect(() => {
         async function fetchUser() {
             await withRequestWithoutLogout(async http => {
                 try {
-                    const { data } = await http.get("/user")
-                    setLocalStoredUser(data)
-                    setUser(data)
+                    const { data } = await http.get("/user");
+                    setLocalStoredUser(data);
+                    setUser(data);
                 } catch (error) {
                     if (axios.isAxiosError(error) && error.response?.status === 401) {
-                        const localUserData = getLocalStoredUser()
+                        const localUserData = getLocalStoredUser();
 
                         // TODO: What to do for an registered user?
                         // => Maybe just the same? Or show him a login form directly?
@@ -74,62 +75,62 @@ export const UserProvider: React.FC<{
                             "/auth/create",
                             // TODO: We shouldn't use the same route for two things
                             { id: localUserData?.state === UserState.Trial ? localUserData?.id : uuidV4() }
-                        )
+                        );
 
-                        setLocalStoredUser(data)
-                        setUser(data)
+                        setLocalStoredUser(data);
+                        setUser(data);
 
-                        return
+                        return;
                     }
 
-                    throw error
+                    throw error;
                 }
-            })
+            });
         }
-        fetchUser()
-    }, [withRequestWithoutLogout])
+        fetchUser();
+    }, [withRequestWithoutLogout]);
 
     const registerUser = useCallback(async (params: Omit<RegisterUserDto, "id">) => {
         return await withRequest(async http => {
             const { data } = await http.post<UserDto>("/auth/register", {
                 id: user?.id,
                 ...params
-            })
+            });
 
-            setLocalStoredUser(data)
-            setUser(data)
-        }, () => { })
-    }, [withRequest, user])
+            setLocalStoredUser(data);
+            setUser(data);
+        }, () => { });
+    }, [withRequest, user]);
 
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
         return await withRequest(async http => {
-            const { data } = await http.post<UserDto>("/auth/login", params)
+            const { data } = await http.post<UserDto>("/auth/login", params);
 
-            setLocalStoredUser(data)
-            setUser(data)
-        }, () => { })
-    }, [withRequest])
+            setLocalStoredUser(data);
+            setUser(data);
+        }, () => { });
+    }, [withRequest]);
 
     const logoutUser = useCallback(async () => {
         await withRequest(async http => {
-            await http.post("/auth/logout")
+            await http.post("/auth/logout");
 
-            setLocalStoredUser(null)
-            location.href = "/?loggedOut=true"
-        })
-    }, [withRequest])
+            setLocalStoredUser(null);
+            location.href = "/?loggedOut=true";
+        });
+    }, [withRequest]);
 
     const updateUserSettings = useCallback(async (params: UpdateUserSettingsDto) => {
         await withRequest(async http => {
             const { data } = await http.put<UserDto>("/user", {
                 id: user?.id,
                 ...params
-            })
+            });
 
-            setLocalStoredUser(data)
-            setUser(data)
-        })
-    }, [withRequest, user])
+            setLocalStoredUser(data);
+            setUser(data);
+        });
+    }, [withRequest, user]);
 
     const contextValue = useMemo(() => ({
         // We show a loading screen while no user is visible
@@ -138,7 +139,7 @@ export const UserProvider: React.FC<{
         loginUser,
         logoutUser,
         updateUserSettings
-    }), [user, registerUser, loginUser, logoutUser, updateUserSettings])
+    }), [user, registerUser, loginUser, logoutUser, updateUserSettings]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -149,5 +150,5 @@ export const UserProvider: React.FC<{
                 : children
             }
         </UserContext.Provider>
-    )
-}
+        );
+    };

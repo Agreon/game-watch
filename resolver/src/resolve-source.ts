@@ -17,7 +17,8 @@ interface Params {
 export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger }: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["game"] });
+    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["game", "user"] });
+    const userCountry = source.user.get().country;
     if (source.disabled || source.remoteGameId === null) {
         return;
     }
@@ -27,7 +28,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     const resolvedGameData = await resolveService.resolveGameInformation(
         source.remoteGameId,
         source.type,
-        { logger, skipCache }
+        { logger, skipCache, userCountry }
     );
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);

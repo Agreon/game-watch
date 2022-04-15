@@ -1,7 +1,8 @@
 import { Input } from "@chakra-ui/input";
-import { Button, useColorModeValue, useDisclosure, } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/layout";
-import React, { useState, useCallback, useRef, useEffect, useMemo, KeyboardEvent } from "react";
+import { Button, useColorModeValue, useDisclosure, } from "@chakra-ui/react";
+import React, { KeyboardEvent,useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import { GameProvider } from "../providers/GameProvider";
 import { useGamesContext } from "../providers/GamesProvider";
 import { useAction } from "../util/useAction";
@@ -20,11 +21,11 @@ export const AddGameInput: React.FC = () => {
             setGameId(game.id);
             onOpen();
         }
-    })
+    });
 
     // Focus initially
-    const inputRef = useRef<HTMLInputElement | null>(null)
-    useEffect(() => { inputRef.current && inputRef.current.focus() }, []);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
 
     const onNameKeyPress = useCallback(async ({ key }: KeyboardEvent<HTMLInputElement>) => {
         if (key === "Enter") {
@@ -33,10 +34,10 @@ export const AddGameInput: React.FC = () => {
     }, [searchGame, name]);
 
     const onCloseModal = useCallback(() => {
-        setGameId(null)
+        setGameId(null);
         setName("");
         onClose();
-    }, [onClose])
+    }, [onClose]);
 
     const currentGame = useMemo(() => games.find(game => game.id === gameId), [games, gameId]);
 
@@ -70,5 +71,5 @@ export const AddGameInput: React.FC = () => {
                 </GameProvider>
             }
         </>
-    )
-}
+    );
+};

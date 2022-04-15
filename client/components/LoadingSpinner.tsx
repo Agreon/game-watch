@@ -24,4 +24,4 @@ export const LoadingSpinner: React.FC<{
             size={size}
         />
     </Flex>
-)
+);

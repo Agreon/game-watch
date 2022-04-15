@@ -1,6 +1,7 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { NotificationDto } from "@game-watch/shared";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+
 import { useHttp } from "../util/useHttp";
 
 export interface NotificationCtx {
@@ -38,7 +39,7 @@ export const NotificationProvider: React.FC<{
                     } finally {
                         await new Promise(resolve => setTimeout(resolve, 5000));
                     }
-                } while (true)
+                } while (true);
             });
         }
         )();
@@ -93,5 +94,5 @@ export const NotificationProvider: React.FC<{
         <NotificationContext.Provider value={contextValue}>
             {children}
         </NotificationContext.Provider>
-    )
-}
+        );
+    };

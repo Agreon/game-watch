@@ -1,14 +1,15 @@
 import { Box, Flex } from "@chakra-ui/layout";
+import { SkeletonText, Text, useColorModeValue } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { Text, SkeletonText, useColorModeValue } from "@chakra-ui/react";
-import { GameTileMenu } from "./GameTileMenu";
-import { GameName } from "./GameName";
-import { GameTags } from "../GameTags/GameTags";
+
 import { useGameContext } from "../../providers/GameProvider";
-import { GameThumbnail } from './GameThumbnail';
 import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
+import { GameTags } from "../GameTags/GameTags";
 import { InfoSource } from "../InfoSource/InfoSource";
 import { AddInfoSource } from "./AddInfoSource";
+import { GameName } from "./GameName";
+import { GameThumbnail } from './GameThumbnail';
+import { GameTileMenu } from "./GameTileMenu";
 
 const GameTileComponent: React.FC = () => {
     const {
@@ -81,7 +82,7 @@ const GameTileComponent: React.FC = () => {
                 </Box>
             </Flex>
         </Box>
-    )
-}
+    );
+};
 
 export const GameTile = React.memo(GameTileComponent);

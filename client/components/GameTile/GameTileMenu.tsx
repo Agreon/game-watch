@@ -1,14 +1,14 @@
-import { IconButton, Menu, MenuList, MenuButton, MenuItem, Button, AlertDialogCloseButton } from "@chakra-ui/react";
-import { SettingsIcon, DeleteIcon, DownloadIcon } from '@chakra-ui/icons'
-import React, { useCallback, useRef, useState } from "react";
+import { DeleteIcon, DownloadIcon,SettingsIcon } from '@chakra-ui/icons';
+import { AlertDialogCloseButton,Button, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
-} from "@chakra-ui/react"
+} from "@chakra-ui/react";
+import React, { useCallback, useRef, useState } from "react";
 
 export interface GameTileMenuProps {
     gameName: string
@@ -22,8 +22,8 @@ export interface GameTileMenuProps {
  * TODO: animated entry of button
  */
 const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete, highlight }) => {
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const cancelRef = useRef(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const cancelRef = useRef(null);
 
     const onDeleteSubmit = useCallback(async () => {
         setDeleteDialogOpen(false);
@@ -83,7 +83,7 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
             </Menu>
             }
         </>
-    )
-}
+    );
+};
 
 export const GameTileMenu = React.memo(GameTileMenuComponent);

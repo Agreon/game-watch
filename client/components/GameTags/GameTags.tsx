@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+
 import { useGameContext } from "../../providers/GameProvider";
 import { useTagContext } from "../../providers/TagProvider";
 import { AddTagToGame } from "./AddTagToGame";
@@ -27,10 +28,10 @@ export const GameTags: React.FC = () => {
 
     switch (editMode) {
         case EditMode.None:
-            return <GameTagList onEdit={() => setEditMode(EditMode.Edit)} />
+            return <GameTagList onEdit={() => setEditMode(EditMode.Edit)} />;
         case EditMode.Edit:
-            return <EditGameTags onNewTag={() => setEditMode(EditMode.Add)} onCancel={() => setEditMode(EditMode.None)} />
+            return <EditGameTags onNewTag={() => setEditMode(EditMode.Add)} onCancel={() => setEditMode(EditMode.None)} />;
         case EditMode.Add:
-            return <AddTagToGame onSubmit={onAdd} onAbort={() => setEditMode(EditMode.Edit)} />
+            return <AddTagToGame onSubmit={onAdd} onAbort={() => setEditMode(EditMode.Edit)} />;
     }
-}
+};

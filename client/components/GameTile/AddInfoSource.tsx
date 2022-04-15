@@ -1,22 +1,23 @@
-import { Flex } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
+import { Flex } from "@chakra-ui/layout";
 import {
-    Select,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter,
     FormControl,
     FormLabel,
     Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Select,
+    useDisclosure,
 } from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
-import { useGameContext } from "../../providers/GameProvider";
 import { InfoSourceType } from "@game-watch/shared";
+import React, { useRef, useState } from "react";
+
+import { useGameContext } from "../../providers/GameProvider";
 import { useAction } from "../../util/useAction";
 import { PlaceholderMap } from "../AddGameModal";
 
@@ -33,7 +34,7 @@ export const AddInfoSource: React.FC = () => {
             onClose();
             setUrl("");
         }
-    })
+    });
 
     return (
         <>
@@ -85,4 +86,4 @@ export const AddInfoSource: React.FC = () => {
             }
         </>
     );
-}
+};

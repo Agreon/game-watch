@@ -1,12 +1,13 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { InfoSourceType } from '@game-watch/shared';
 import Image from 'next/image';
-import steamLogo from '../../assets/steam.svg';
-import switchLogo from '../../assets/switch.png';
-import psLogo from '../../assets/playstation.svg';
+import React from 'react';
+
 import epicLogo from "../../assets/epic";
 import metacriticLogo from "../../assets/metacritic.svg";
-import { InfoSourceType } from '@game-watch/shared';
-import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import psLogo from '../../assets/playstation.svg';
+import steamLogo from '../../assets/steam.svg';
+import switchLogo from '../../assets/switch.png';
 
 export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
@@ -59,7 +60,7 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
             <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">Metacritic</Text>
         </Flex>
     )
-}
+};
 
 
 export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
@@ -88,7 +89,7 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="30px" width="30px" />
         </Flex>
     )
-}
+};
 
 
 export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
@@ -117,4 +118,4 @@ export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="20px" width="20px" />
         </Flex>
     )
-}
+};

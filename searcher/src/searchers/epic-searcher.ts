@@ -9,6 +9,7 @@ export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
 
     public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
+        // TODO: Is it "de" or "de-DE"?
         const { data } = await axios.get<string>(`https://www.epicgames.com/store/de/browse?q=${encodeURIComponent(search)}&sortBy=relevancy&sortDir=DESC&count=1`);
 
         const $ = cheerio.load(data);

@@ -1,38 +1,38 @@
 import {
-    Text,
-    FormControl,
+    Box,
+    Button,
     chakra,
+    Flex,
+    FormControl,
+    FormErrorMessage,
     FormLabel,
     Input,
-    Box,
-    Flex,
-    Button,
-    FormErrorMessage,
+    Text,
     useToast,
-} from "@chakra-ui/react"
-import React from "react"
-import { useUserContext } from "../../providers/UserProvider"
-import { useAction } from "../../util/useAction"
-
-import { useForm } from "react-hook-form";
+} from "@chakra-ui/react";
 import axios from "axios";
+import React from "react";
+import { useForm } from "react-hook-form";
+
+import { useUserContext } from "../../providers/UserProvider";
+import { useAction } from "../../util/useAction";
 
 type Inputs = {
     username: string,
     password: string,
-};
+}
 
 const Form = chakra("form");
 
 export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     const toast = useToast();
-    const { loginUser } = useUserContext()
+    const { loginUser } = useUserContext();
     const { register, handleSubmit, formState: { errors }, setError } = useForm<Inputs>();
 
     const { loading, execute: onLogin } = useAction(loginUser, {
         onError: error => {
             if (axios.isAxiosError(error) && error.response?.status === 401) {
-                return setError("password", { type: "validate" })
+                return setError("password", { type: "validate" });
             }
 
             toast({
@@ -42,7 +42,7 @@ export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) 
                 position: "top-right",
             });
         }
-    })
+    });
 
     return (
         <Box>
@@ -70,5 +70,5 @@ export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) 
                 </Flex>
             </Form>
         </Box>
-    )
-}
+    );
+};

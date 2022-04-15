@@ -1,14 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react'
 import { Button } from '@chakra-ui/button';
 import { EditIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Popover, PopoverContent, PopoverTrigger, useColorModeValue } from "@chakra-ui/react";
-import { useTagContext } from '../providers/TagProvider';
 import { Tag as ChakraTag } from "@chakra-ui/react";
-import { TagWithToggleState } from './GameTags/EditGameTags';
-import { useGamesContext } from '../providers/GamesProvider';
-import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
 import { InfoSourceType, TagDto } from '@game-watch/shared';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
+import { useGamesContext } from '../providers/GamesProvider';
+import { useTagContext } from '../providers/TagProvider';
+import { TagWithToggleState } from './GameTags/EditGameTags';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
@@ -28,9 +29,9 @@ export const InfoSourceFilter: React.FC<{
 
     const toggleInfoSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
         if (selectedSource.toggled) {
-            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type))
+            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type));
         } else {
-            setFilterInfoSources(sources => [...sources, selectedSource.type])
+            setFilterInfoSources(sources => [...sources, selectedSource.type]);
         }
     }, [setFilterInfoSources]);
 
@@ -54,7 +55,7 @@ export const InfoSourceFilter: React.FC<{
             </Box>
         </Box>
     );
-}
+};
 
 export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { tags: allTags } = useTagContext();
@@ -71,9 +72,9 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const toggleTag = useCallback(async (selectedTag: TagWithToggleState) => {
         if (selectedTag.toggled) {
-            setFilterTags(tags => [...tags].filter(tag => tag.id !== selectedTag.id))
+            setFilterTags(tags => [...tags].filter(tag => tag.id !== selectedTag.id));
         } else {
-            setFilterTags(tags => [...tags, selectedTag])
+            setFilterTags(tags => [...tags, selectedTag]);
         }
     }, [setFilterTags]);
 
@@ -121,8 +122,8 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </Flex>
             </Flex>
         </PopoverContent>
-    )
-}
+    );
+};
 
 export const Filter: React.FC = () => {
     const { filter } = useGamesContext();
@@ -151,5 +152,5 @@ export const Filter: React.FC = () => {
                 <FilterMenu onClose={() => setShowMenu(false)} />
             </Popover>
         </Flex>
-    )
-}
+    );
+};

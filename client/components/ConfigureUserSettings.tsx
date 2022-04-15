@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Box, Flex } from "@chakra-ui/layout"
-import { useColorModeValue, Text, Link, Button } from "@chakra-ui/react"
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Flex } from "@chakra-ui/layout";
+import { Button,Link, Text, useColorModeValue } from "@chakra-ui/react";
+import { Country, InfoSourceType, SupportedCountries } from '@game-watch/shared';
 import { Select, SingleValue } from "chakra-react-select";
-import { SourceTypeLogoWithName } from './InfoSource/SourceTypeLogo'
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { useUserContext } from '../providers/UserProvider'
-import { Country, InfoSourceType, SupportedCountries } from '@game-watch/shared'
-import { useAction } from '../util/useAction'
+import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
+import { useUserContext } from '../providers/UserProvider';
+import { useAction } from '../util/useAction';
+import { SourceTypeLogoWithName } from './InfoSource/SourceTypeLogo';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
@@ -23,26 +23,28 @@ interface CountryOption {
 const countryOptions: Array<CountryOption> = [
     { value: 'DE', label: 'Germany' },
     { value: 'US', label: 'USA' },
-]
+];
 
 /**
  * TODO:
  * - Select Input variant = flushed
+ * - Other icon usages are broken?
  */
 export const ConfigureUserSettings: React.FC = () => {
-    const userContext = useUserContext()
-    const { loading, execute: updateUserSettings } = useAction(userContext.updateUserSettings)
+    const userContext = useUserContext();
+    const { loading, execute: updateUserSettings } = useAction(userContext.updateUserSettings);
 
     const [userCountry, setUserCountry] = useState<CountryOption>({
         value: userContext.user.country,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         label: countryOptions.find(({ value }) => value === userContext.user.country)!.label
-    })
+    });
 
     const availableInfoSources = useMemo(() => INFO_SOURCE_PRIORITY.filter(
         type => SupportedCountries[type].includes(userCountry.value)
-    ), [userCountry])
+    ), [userCountry]);
 
-    const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>([])
+    const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>([]);
 
     const sourcesWithToggleState = useMemo(
         () => availableInfoSources.map(source => ({
@@ -50,32 +52,32 @@ export const ConfigureUserSettings: React.FC = () => {
             toggled: filterInfoSources.some(type => type === source)
         })),
         [availableInfoSources, filterInfoSources]
-    )
+    );
 
     const toggleInfoSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
         if (selectedSource.toggled) {
-            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type))
+            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type));
         } else {
-            setFilterInfoSources(sources => [...sources, selectedSource.type])
+            setFilterInfoSources(sources => [...sources, selectedSource.type]);
         }
-    }, [setFilterInfoSources])
+    }, [setFilterInfoSources]);
 
     // TODO
-    const background = useColorModeValue('white', 'gray.800')
+    const background = useColorModeValue('white', 'gray.800');
 
     const onCountryChanges = useCallback((newValue: SingleValue<CountryOption>) => {
         if (!newValue) {
-            return
+            return;
         }
-        setUserCountry(newValue)
-    }, [])
+        setUserCountry(newValue);
+    }, []);
 
     const onUpdateUserSettings = useCallback(async () => {
         await updateUserSettings({
             country: userCountry.value,
             interestedInSources: filterInfoSources
-        })
-    }, [updateUserSettings, userCountry, filterInfoSources])
+        });
+    }, [updateUserSettings, userCountry, filterInfoSources]);
 
 
     return (
@@ -144,5 +146,5 @@ export const ConfigureUserSettings: React.FC = () => {
                 </Flex>
             </Box>
         </Flex>
-    )
-}
+    );
+};

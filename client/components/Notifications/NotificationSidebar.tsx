@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react'
-import { Flex, Box, Text, Slide, Button, Kbd } from "@chakra-ui/react";
 import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, Kbd,Slide, Text } from "@chakra-ui/react";
+import { NotificationDto } from '@game-watch/shared';
+import React, { useCallback } from 'react';
+
 import { useNotificationContext } from '../../providers/NotificationProvider';
 import { Notification } from './Notification';
-import { NotificationDto } from '@game-watch/shared';
 
 export const NotificationSidebar = () => {
     const {
@@ -12,21 +13,21 @@ export const NotificationSidebar = () => {
         notificationSidebarRef,
         closeNotificationSidebar,
         markNotificationAsRead,
-    } = useNotificationContext()
+    } = useNotificationContext();
 
     const onClick = useCallback((notification: NotificationDto) => {
-        const scrollContainer = document.getElementById("scrollContainer")
-        const gameTile = document.getElementById(notification.game.id)
+        const scrollContainer = document.getElementById("scrollContainer");
+        const gameTile = document.getElementById(notification.game.id);
         if (!scrollContainer || !gameTile) {
-            return
+            return;
         }
 
-        closeNotificationSidebar()
+        closeNotificationSidebar();
         scrollContainer.scrollTo({
             top: gameTile.offsetTop - scrollContainer.offsetTop - 50,
             behavior: 'smooth'
-        })
-    }, [closeNotificationSidebar])
+        });
+    }, [closeNotificationSidebar]);
 
     return (
         <Slide
@@ -81,5 +82,5 @@ export const NotificationSidebar = () => {
                 </Box>
             </Box>
         </Slide>
-    )
-}
+    );
+};

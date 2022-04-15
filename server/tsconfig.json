@@ -5,17 +5,21 @@
     "baseUrl": "./"
   },
   "include": [
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "./bin/**/*.ts",
   ],
   "references": [
-    {
-      "path": "../lib/shared",
-    },
     {
       "path": "../lib/database"
     },
     {
       "path": "../lib/queue"
-    }
+    },
+    {
+      "path": "../lib/service",
+    },
+    {
+      "path": "../lib/shared",
+    },
   ]
 }

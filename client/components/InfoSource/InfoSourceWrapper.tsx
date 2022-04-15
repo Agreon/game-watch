@@ -1,12 +1,13 @@
-import React from "react"
-import { Flex, Box } from "@chakra-ui/layout"
+import { Box,Flex } from "@chakra-ui/layout";
 import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
+import React from "react";
+
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { SourceTypeLogo } from "./SourceTypeLogo";
 
 export const InfoSourceWrapper: React.FC = ({ children }) => {
@@ -15,7 +16,7 @@ export const InfoSourceWrapper: React.FC = ({ children }) => {
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
             <Tooltip label={source.data?.fullName} placement="top">
-                <Box flex="0.2">
+                <Box flex="1">
                     <a href={source.data?.url} target="_blank" rel="noreferrer">
                         {SourceTypeLogo[source.type]}
                     </a>
@@ -31,6 +32,6 @@ export const InfoSourceWrapper: React.FC = ({ children }) => {
             )}
             <Box><InfoSourceOptions /></Box>
         </Flex>
-    )
-}
+    );
+};
 

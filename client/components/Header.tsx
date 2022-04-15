@@ -1,19 +1,20 @@
-import React from "react";
-import { IconButton, useColorModeValue, useColorMode, Text, useDisclosure, Button, AlertIcon, useBreakpointValue } from '@chakra-ui/react'
-import Image from 'next/image'
-import githubIconLight from '../assets/github-icon-light.png'
-import githubIconDark from '../assets/github-icon-dark.png'
-import { Box, Flex } from '@chakra-ui/layout'
-import { useNotificationContext } from '../providers/NotificationProvider'
-import { BellIcon, WarningIcon } from '@chakra-ui/icons'
-import { useUserContext } from "../providers/UserProvider";
+import { BellIcon, WarningIcon } from '@chakra-ui/icons';
+import { Box, Flex } from '@chakra-ui/layout';
+import { Button, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { UserState } from "@game-watch/shared";
+import Image from 'next/image';
+import React from "react";
+
+import githubIconDark from '../assets/github-icon-dark.png';
+import githubIconLight from '../assets/github-icon-light.png';
+import { useNotificationContext } from '../providers/NotificationProvider';
+import { useUserContext } from "../providers/UserProvider";
 import { AuthModal } from "./Auth/AuthModal";
 
 export default function Header() {
-    const { user, logoutUser } = useUserContext()
-    const { notifications, openNotificationSidebar } = useNotificationContext()
-    const { colorMode } = useColorMode()
+    const { user, logoutUser } = useUserContext();
+    const { notifications, openNotificationSidebar } = useNotificationContext();
+    const { colorMode } = useColorMode();
 
     const { isOpen: showAuthModal, onOpen: openAuthModal, onClose: closeAuthModal } = useDisclosure();
 
@@ -97,5 +98,5 @@ export default function Header() {
                 </Box>
             </Flex>
         </Flex>
-    )
+    );
 }

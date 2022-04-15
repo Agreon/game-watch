@@ -1,18 +1,18 @@
-import type { NextPage } from 'next'
-import React from 'react'
 import { Box, Flex } from "@chakra-ui/layout";
+import type { NextPage } from 'next';
+import React from 'react';
 
-import { GamesProvider } from '../providers/GamesProvider';
-import { GameGrid } from '../components/GameGrid';
 import { AddGameInput } from '../components/AddGameInput';
-import { NoGamesYet } from '../components/NoGamesYet';
-import { TagProvider } from '../providers/TagProvider';
-import { Filter } from '../components/Filter';
-import { useUserContext } from '../providers/UserProvider';
 import { ConfigureUserSettings } from '../components/ConfigureUserSettings';
+import { Filter } from '../components/Filter';
+import { GameGrid } from '../components/GameGrid';
+import { NoGamesYet } from '../components/NoGamesYet';
+import { GamesProvider } from '../providers/GamesProvider';
+import { TagProvider } from '../providers/TagProvider';
+import { useUserContext } from '../providers/UserProvider';
 
 const Home: NextPage = () => {
-  const { user } = useUserContext()
+  const { user } = useUserContext();
 
   return (
     <GamesProvider>
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
 
       </TagProvider>
     </GamesProvider>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

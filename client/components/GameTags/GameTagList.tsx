@@ -1,7 +1,8 @@
-import { Box, Flex } from "@chakra-ui/layout";
-import React, { useState } from "react";
-import { Tag, TagLabel, TagLeftIcon, IconButton } from "@chakra-ui/react";
 import { AddIcon, EditIcon } from "@chakra-ui/icons";
+import { Box, Flex } from "@chakra-ui/layout";
+import { IconButton,Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import React, { useState } from "react";
+
 import { useGameContext } from "../../providers/GameProvider";
 
 export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
@@ -41,5 +42,5 @@ export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
                 </Flex>
             }
         </Flex>
-    )
-}
+    );
+};

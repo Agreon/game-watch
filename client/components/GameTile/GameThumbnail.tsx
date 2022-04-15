@@ -1,14 +1,15 @@
 import { Box, Flex } from "@chakra-ui/layout";
-import React, { useEffect, useState } from "react";
 import { Skeleton, useColorModeValue } from "@chakra-ui/react";
-import { LoadingSpinner } from "../LoadingSpinner";
+import React, { useEffect, useState } from "react";
+
 import { useGameContext } from "../../providers/GameProvider";
+import { LoadingSpinner } from "../LoadingSpinner";
 
 export const GameThumbnail: React.FC = () => {
     const { loading, game, thumbnailUrl } = useGameContext();
 
     const [imageLoading, setImageLoading] = useState(false);
-    useEffect(() => { setImageLoading(true) }, []);
+    useEffect(() => { setImageLoading(true); }, []);
 
     return (
         <Box position="relative">
@@ -28,5 +29,5 @@ export const GameThumbnail: React.FC = () => {
                 </Flex>
             </Skeleton>
         </Box>
-    )
-}
+    );
+};

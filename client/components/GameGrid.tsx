@@ -1,9 +1,10 @@
 import { Box } from "@chakra-ui/layout";
-import { useGamesContext } from "../providers/GamesProvider";
+import Masonry from "react-masonry-css";
+
 import { GameProvider } from "../providers/GameProvider";
+import { useGamesContext } from "../providers/GamesProvider";
 import { GameTile } from "./GameTile/GameTile";
 import { LoadingSpinner } from "./LoadingSpinner";
-import Masonry from "react-masonry-css";
 
 /**
  * TODO: Set custom breakpoints as default to use everywhere!
@@ -39,4 +40,4 @@ export const GameGrid: React.FC = () => {
             )}
         </Masonry>
     );
-}
+};
