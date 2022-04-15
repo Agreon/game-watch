@@ -36,4 +36,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build
-        run: cp .env.dist .env && COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+        run: |
+          cp .env.dist .env
+          cp .env client/.env.local
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
