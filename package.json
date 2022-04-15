@@ -18,9 +18,7 @@
         "mikro-orm": "yarn workspace @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "@nestjs/common": "^8.4.3",
-        "@nestjs/core": "^8.4.4",
-        "turbo": "^1.2.1",
+        "turbo": "^1.2.4",
         "yarn-deduplicate": "^4.0.0"
     },
     "resolutions": {
