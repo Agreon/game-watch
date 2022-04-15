@@ -1,6 +1,6 @@
-import { Button } from "@chakra-ui/button";
-import { Flex } from "@chakra-ui/layout";
 import {
+    Button,
+    Flex,
     FormControl,
     FormLabel,
     Input,

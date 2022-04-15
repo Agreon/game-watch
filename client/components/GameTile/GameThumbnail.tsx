@@ -1,5 +1,4 @@
-import { Box, Flex } from "@chakra-ui/layout";
-import { Skeleton, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Skeleton, useColorModeValue } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
 import { useGameContext } from "../../providers/GameProvider";

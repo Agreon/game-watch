@@ -1,6 +1,5 @@
 import { BellIcon, WarningIcon } from '@chakra-ui/icons';
-import { Box, Flex } from '@chakra-ui/layout';
-import { Button, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { UserState } from "@game-watch/shared";
 import Image from 'next/image';
 import React from "react";

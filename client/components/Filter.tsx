@@ -1,7 +1,5 @@
-import { Button } from '@chakra-ui/button';
 import { EditIcon } from '@chakra-ui/icons';
-import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Popover, PopoverContent, PopoverTrigger, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Popover, PopoverContent, PopoverTrigger, Text, useColorModeValue } from "@chakra-ui/react";
 import { Tag as ChakraTag } from "@chakra-ui/react";
 import { InfoSourceType, TagDto } from '@game-watch/shared';
 import React, { useCallback, useMemo, useState } from 'react';

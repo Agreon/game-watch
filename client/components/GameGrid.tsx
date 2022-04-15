@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/react";
 import Masonry from "react-masonry-css";
 
 import { GameProvider } from "../providers/GameProvider";

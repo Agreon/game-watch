@@ -1,6 +1,4 @@
-import { Input } from "@chakra-ui/input";
-import { Flex } from "@chakra-ui/layout";
-import { Button, useColorModeValue, useDisclosure, } from "@chakra-ui/react";
+import { Button, Flex, Input, useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import React, { KeyboardEvent,useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { GameProvider } from "../providers/GameProvider";

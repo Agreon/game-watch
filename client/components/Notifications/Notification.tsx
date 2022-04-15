@@ -1,6 +1,5 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { IconButton, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Text, Tooltip } from "@chakra-ui/react";
 import { NotificationDto, NotificationType } from "@game-watch/shared";
 import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";

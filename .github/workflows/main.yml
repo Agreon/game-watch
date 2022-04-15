@@ -7,18 +7,23 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7.0.0-rc.3
+
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: 16
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: yarn turbo run lint
+        run: pnmp turbo run lint
 
       - name: Build
-        run: yarn turbo run build
+        run: pnmp turbo run build

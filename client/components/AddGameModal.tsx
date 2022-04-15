@@ -1,9 +1,10 @@
-import { Input } from "@chakra-ui/input";
-import { Box, Flex, Text } from "@chakra-ui/layout";
 import {
+    Box,
     Button,
     Fade,
+    Flex,
     FormControl,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -11,7 +12,8 @@ import {
     ModalHeader,
     ModalOverlay,
     Select,
-    useBreakpointValue,
+    Text,
+    useBreakpointValue
 } from "@chakra-ui/react";
 import { InfoSourceType } from "@game-watch/shared";
 import React, { useCallback, useState } from "react";

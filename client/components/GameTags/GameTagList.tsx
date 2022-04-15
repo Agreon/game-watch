@@ -1,6 +1,5 @@
 import { AddIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, Flex } from "@chakra-ui/layout";
-import { IconButton,Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 import React, { useState } from "react";
 
 import { useGameContext } from "../../providers/GameProvider";

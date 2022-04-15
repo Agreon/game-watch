@@ -1,6 +1,5 @@
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { Flex } from "@chakra-ui/layout";
-import { ButtonGroup, IconButton, Input } from "@chakra-ui/react";
+import { ButtonGroup, Flex, IconButton, Input } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>, onAbort: () => void }> = ({ onSubmit, onAbort }) => {

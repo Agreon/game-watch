@@ -1,4 +1,4 @@
-import { useToast, UseToastOptions } from "@chakra-ui/toast";
+import { useToast, UseToastOptions } from "@chakra-ui/react";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { useCallback, useMemo } from "react";
 

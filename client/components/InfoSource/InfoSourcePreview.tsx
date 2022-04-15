@@ -1,6 +1,7 @@
 import { DeleteIcon } from "@chakra-ui/icons";
-import { Box,Flex } from "@chakra-ui/layout";
 import {
+    Box,
+    Flex,
     IconButton,
     Text,
     useColorModeValue

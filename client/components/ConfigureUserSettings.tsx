@@ -1,6 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Flex } from "@chakra-ui/layout";
-import { Button,Link, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Text, useColorModeValue } from "@chakra-ui/react";
 import { Country, InfoSourceType, SupportedCountries } from '@game-watch/shared';
 import { Select, SingleValue } from "chakra-react-select";
 import React, { useCallback, useMemo, useState } from 'react';

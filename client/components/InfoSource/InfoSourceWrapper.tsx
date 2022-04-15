@@ -1,5 +1,6 @@
-import { Box,Flex } from "@chakra-ui/layout";
 import {
+    Box,
+    Flex,
     Text,
     Tooltip
 } from "@chakra-ui/react";

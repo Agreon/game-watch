@@ -13,13 +13,13 @@
         "resolver"
     ],
     "scripts": {
-        "build": "yarn workspaces run build",
+        "build": "pnpm workspaces run build",
         "clean": "rm -rf ./**/dist && rm -rf ./**/node_modules && rm -rf ./node_modules",
-        "mikro-orm": "yarn workspace @game-watch/database mikro-orm"
+        "mikro-orm": "pnpm workspace @game-watch/database mikro-orm"
     },
     "devDependencies": {
         "turbo": "^1.2.4",
-        "yarn-deduplicate": "^4.0.0"
+        "pnpm": "next-7"
     },
     "resolutions": {
         "@types/react": "^17.0.43"

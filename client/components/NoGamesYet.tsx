@@ -1,5 +1,4 @@
-import { Box } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React from 'react';
 
 import { useGamesContext } from '../providers/GamesProvider';

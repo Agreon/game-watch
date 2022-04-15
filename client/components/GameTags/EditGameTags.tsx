@@ -1,6 +1,5 @@
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { Box, Flex } from "@chakra-ui/layout";
-import { IconButton,Tag as ChakraTag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Tag as ChakraTag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 import { TagDto } from "@game-watch/shared";
 import React, { useCallback, useMemo } from "react";
 
