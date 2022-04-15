@@ -13,9 +13,9 @@
         "resolver"
     ],
     "scripts": {
-        "build": "pnpm workspaces run build",
+        "build": "pnpm turbo run build",
         "clean": "rm -rf ./**/dist && rm -rf ./**/node_modules && rm -rf ./node_modules",
-        "mikro-orm": "pnpm workspace @game-watch/database mikro-orm"
+        "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
         "turbo": "^1.2.4",

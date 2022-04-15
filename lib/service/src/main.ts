@@ -1,3 +1,3 @@
-export * from "./create-logger";
-export * from "./parse-environment";
-export * from "./initialize-sentry";
+export { createLogger, Logger } from "./create-logger";
+export { parseEnvironment } from "./parse-environment";
+export { initializeSentry } from "./initialize-sentry";

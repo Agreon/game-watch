@@ -13,8 +13,10 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+RUN npm i -g pnpm@next-7
+
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY lib/database/package.json lib/database/package.json
 COPY lib/service/package.json lib/service/package.json
@@ -22,8 +24,8 @@ COPY lib/browser/package.json lib/browser/package.json
 COPY lib/queue/package.json lib/queue/package.json
 COPY resolver/package.json resolver/package.json
 RUN \
-    --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn \
-    yarn install --frozen-lockfile
+    --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --prefer-offline
 
 COPY lib/shared lib/shared
 COPY lib/database lib/database
@@ -33,18 +35,18 @@ COPY lib/queue lib/queue
 COPY tsconfig.json tsconfig.json
 
 RUN \
-    yarn workspace @game-watch/shared build && \
-    yarn workspace @game-watch/database build && \
-    yarn workspace @game-watch/service build && \
-    yarn workspace @game-watch/browser build && \
-    yarn workspace @game-watch/queue build
+    pnpm --filter @game-watch/shared build && \
+    pnpm --filter @game-watch/database build && \
+    pnpm --filter @game-watch/service build && \
+    pnpm --filter @game-watch/browser build && \
+    pnpm --filter @game-watch/queue build
 
 COPY resolver resolver
 
 RUN \
-    --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn \
-    yarn workspace @game-watch/resolver build && \
-    yarn install --frozen-lockfile --production --ignore-scripts --prefer-offline
+    --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm --filter @game-watch/resolver build && \
+    pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 RUN chmod -R o+rwx node_modules/puppeteer/.local-chromium
 
@@ -52,4 +54,4 @@ ENV NODE_ENV production
 
 EXPOSE 3000
 
-CMD ["yarn", "workspace", "@game-watch/resolver", "start:prod"]
+CMD ["pnpm", "--filter", "@game-watch/resolver", "start:prod"]

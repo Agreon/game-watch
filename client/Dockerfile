@@ -1,16 +1,20 @@
 FROM node:alpine AS deps
+RUN npm i -g pnpm@next-7
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY client/package.json client/package.json
-RUN yarn install --frozen-lockfile
+RUN \
+    --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --prefer-offline
 
 # Rebuild the source code only when needed
 FROM node:alpine AS builder
+RUN npm i -g pnpm@next-7
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared lib/shared
 COPY client/assets client/assets
 COPY client/components client/components
@@ -29,9 +33,12 @@ COPY tsconfig.json tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/lib/shared/node_modules ./lib/shared/node_modules
-RUN yarn workspace @game-watch/shared build && \
-    yarn workspace @game-watch/client build && \
-    yarn install --frozen-lockfile --production --ignore-scripts --prefer-offline
+
+RUN \
+    --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm --filter @game-watch/shared build && \
+    pnpm --filter @game-watch/client build && \
+    pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 FROM node:alpine AS runner
 WORKDIR /app
@@ -56,4 +63,4 @@ EXPOSE 3000
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["yarn", "workspace", "@game-watch/client", "start"]
+CMD ["pnpm", "--filter", "@game-watch/client", "start"]
