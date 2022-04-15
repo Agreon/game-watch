@@ -28,7 +28,6 @@ const countryOptions: Array<CountryOption> = [
 /**
  * TODO:
  * - Select Input variant = flushed
- * - Other icon usages are broken?
  */
 export const ConfigureUserSettings: React.FC = () => {
     const userContext = useUserContext();

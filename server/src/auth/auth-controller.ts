@@ -32,14 +32,14 @@ export class AuthController {
         this.accessTokenCookieOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
+            sameSite: "strict",
             maxAge: ms(configService.get("JWT_ACCESS_TOKEN_EXPIRES_IN")),
         };
 
         this.refreshTokenCookieOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
+            sameSite: "strict",
             maxAge: ms(configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
         };
     }

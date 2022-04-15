@@ -67,26 +67,31 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height="30px" width="30px" />
+            <Text fontWeight="bold" ml="0.5rem">Steam</Text>
         </Flex>
     ),
     [InfoSourceType.Switch]: (
         <Flex align="center">
             <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height="30px" width="30px" />
+            <Text fontWeight="bold" ml="0.5rem">Switch</Text>
         </Flex>
     ),
     [InfoSourceType.PsStore]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={psLogo} quality={100} height="30px" width="30px" />
+            <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
         </Flex>
     ),
     [InfoSourceType.Epic]: (
         <Flex align="center">
             <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height="30px" width="30px" />
+            <Text fontWeight="bold" ml="0.5rem">Epic</Text>
         </Flex>
     ),
     [InfoSourceType.Metacritic]: (
         <Flex align="center">
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height="30px" width="30px" />
+            <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
         </Flex>
     )
 };

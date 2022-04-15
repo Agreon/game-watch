@@ -13,7 +13,7 @@ export class UserService {
     ) { }
 
     public async updateUserSettings(userId: string, { country, interestedInSources }: UpdateUserSettingsDto): Promise<User> {
-        const user = await this.userRepository.findOneOrFail(userId, { populate: ["infoSources"] });
+        const user = await this.userRepository.findOneOrFail(userId);
 
         user.country = country;
         user.interestedInSources = interestedInSources;
