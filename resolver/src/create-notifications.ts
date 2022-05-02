@@ -55,6 +55,11 @@ export const createReleaseDateChangedNotification = async (
         return;
     }
 
+    if (dayjs(storeData.releaseDate).isBefore(new Date())) {
+        logger.debug("Not adding notification because added release date is today or in the past");
+        return;
+    }
+
     logger.debug({ context: { neverHadAReleaseDate, releaseDateChanged } }, "Adding notification because");
     await em.nativeInsert(new Notification({
         game,
