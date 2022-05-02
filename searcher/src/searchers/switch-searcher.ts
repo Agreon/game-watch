@@ -1,4 +1,5 @@
 import { withBrowser } from "@game-watch/browser";
+import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 
@@ -19,10 +20,18 @@ export interface SwitchSearchResponse {
     }
 }
 
-// TODO: Does not accept special chars " "?
 export const getSwitchSearchResponse = async (search: string) => {
     const { data: { response } } = await axios.get<SwitchSearchResponse>(
-        `https://searching.nintendo-europe.com/de/select?q=${search}&fq=type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc&start=0&rows=1&bf=linear(ms(priority%2CNOW%2FHOUR)%2C1.1e-11%2C0)`
+        'https://searching.nintendo-europe.com/de/select',
+        {
+            params: {
+                q: search,
+                fq: `type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc`,
+                start: 0,
+                rows: 1,
+                bf: 'linear(ms(priority,NOW/HOUR),1.1e-11,0)'
+            }
+        }
     );
 
     return response;
@@ -32,36 +41,34 @@ export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
 
 
-    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
-        const userLanguage = "de";
+    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
+        if (userCountry === "DE") {
+            const { numFound, docs: results } = await getSwitchSearchResponse(search);
 
-        return await withBrowser(async browser => {
-            if (userLanguage === "de") {
-                const { numFound, docs: results } = await getSwitchSearchResponse(search);
+            if (!numFound) {
+                logger.debug("No search results found");
 
-                if (!numFound) {
-                    logger.debug("No search results found");
+                return null;
 
-                    return null;
-
-                }
-
-                const gameData = results[0];
-
-                if (!matchingName(gameData.title, search)) {
-                    logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
-
-                    return null;
-                }
-
-                return {
-                    remoteGameId: `https://nintendo.de${gameData.url}`,
-                    remoteGameName: gameData.title
-                };
             }
 
+            const gameData = results[0];
 
-            await browser.goto(`https://www.nintendo.com/games/game-guide/#filter/:q=${encodeURIComponent(search)}`);
+            if (!matchingName(gameData.title, search)) {
+                logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
+
+                return null;
+            }
+
+            return {
+                remoteGameId: `https://nintendo.de${gameData.url}`,
+                remoteGameName: gameData.title
+            };
+        }
+
+
+        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
+            await browser.goto(`nintendo.com/games/game-guide/#filter/:q=${encodeURIComponent(search)}`);
             await browser.waitForSelector(".result-count");
 
             const resultCount = await browser.$eval(".result-count", el => el.innerHTML);
@@ -82,7 +89,7 @@ export class SwitchSearcher implements InfoSearcher {
             }
 
             return {
-                remoteGameId: `https://www.nintendo.com${gameLink}`,
+                remoteGameId: `https://nintendo.com${gameLink}`,
                 remoteGameName: fullName
             };
         });

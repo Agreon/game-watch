@@ -56,8 +56,10 @@ export type Country = typeof Countries[number];
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: ["DE", "US"] as const,
-    [InfoSourceType.Switch]: ["DE"] as const,
     [InfoSourceType.PsStore]: ["DE", "US"] as const,
-    [InfoSourceType.Epic]: ["DE", "US"] as const,
     [InfoSourceType.Metacritic]: ["DE", "US"] as const,
+    // Currently, it is not clear how epic determines the user origin and therefore the currencies.
+    [InfoSourceType.Epic]: ["DE"] as const,
+    // At least the US store is built completely different
+    [InfoSourceType.Switch]: ["DE"] as const,
 } as const;

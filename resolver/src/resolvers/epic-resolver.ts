@@ -6,8 +6,6 @@ import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
-// TODO: Might have 18+ banner
-// https://store.epicgames.com/en-US/p/assassins-creed-odyssey
 export class EpicResolver implements InfoResolver {
     public type = InfoSourceType.Epic;
 

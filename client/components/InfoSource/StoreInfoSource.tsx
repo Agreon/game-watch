@@ -5,10 +5,11 @@ import {
     StatNumber,
     Text,
 } from "@chakra-ui/react";
-import { StoreGameData } from "@game-watch/shared";
+import { Country, StoreGameData } from "@game-watch/shared";
 import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";
 
+import { useUserContext } from "../../providers/UserProvider";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -26,7 +27,13 @@ const ReleaseDate: React.FC<{ date?: Date }> = ({ date }) => {
     );
 };
 
-const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial }) => {
+
+const countryUnitMap: Record<Country, string> = {
+    "DE": "€",
+    "US": "$"
+};
+
+const Price: React.FC<{ price?: number, initial?: number, userCountry: Country }> = ({ price, initial, userCountry }) => {
     const formatPrice = useCallback((price?: number) => {
         if (price === undefined) {
             return "TBA";
@@ -36,8 +43,12 @@ const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial 
             return "Free";
         }
 
-        return `${price}€`;
-    }, []);
+        if (countryUnitMap[userCountry] === "$") {
+            return `$${price}`;
+        }
+
+        return `${price}${countryUnitMap[userCountry]}`;
+    }, [userCountry]);
 
     const hasDiscount = useMemo(() => price && initial && price !== initial, [price, initial]);
     const parsedPrice = useMemo(() => formatPrice(price), [formatPrice, price]);
@@ -52,13 +63,19 @@ const Price: React.FC<{ price?: number, initial?: number }> = ({ price, initial 
 };
 
 export const StoreInfoSource: React.FC<{ data: StoreGameData | null, }> = ({ data }) => {
+    const { user } = useUserContext();
+
     return (
         <InfoSourceWrapper>
             <Box flex="1">
                 <ReleaseDate date={data?.releaseDate} />
             </Box>
             <Box flex="1">
-                <Price price={data?.priceInformation?.final} initial={data?.priceInformation?.initial} />
+                <Price
+                    price={data?.priceInformation?.final}
+                    initial={data?.priceInformation?.initial}
+                    userCountry={user.country}
+                />
             </Box>
         </InfoSourceWrapper>
     );

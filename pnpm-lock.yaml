@@ -10,7 +10,7 @@ importers:
       pnpm: next-7
       turbo: ^1.2.4
     devDependencies:
-      pnpm: 7.0.0-rc.4
+      pnpm: 7.0.0
       turbo: 1.2.4
 
   client:
@@ -145,6 +145,7 @@ importers:
 
   lib/service:
     specifiers:
+      '@game-watch/shared': 0.0.1
       '@sentry/node': ^6.19.6
       eslint: 8.13.0
       fp-ts: ^2.11.10
@@ -157,6 +158,7 @@ importers:
       pino-pretty: ^7.6.1
       typescript: ^4.6.3
     dependencies:
+      '@game-watch/shared': link:../shared
       '@sentry/node': 6.19.6
       fp-ts: 2.11.10
       io-ts: 2.2.16_fp-ts@2.11.10
@@ -6905,8 +6907,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pnpm/7.0.0-rc.4:
-    resolution: {integrity: sha512-A2VecyX1fwe09fC1uQhe0S+YSk5lJYAe8SNcJdf/Ka/7gFYqEsUKKwV9JVVNrNjnvpoxfZDCo4uyzZInjRqx2g==}
+  /pnpm/7.0.0:
+    resolution: {integrity: sha512-5njVSmE/Sz6coyikS6gjwoKWaxxsJ6BY6jL1aqwvnEpNUfFednbHqid3aZ42JszOFaSOz3Qipcfp4ei22G/JEg==}
     engines: {node: '>=14.19'}
     hasBin: true
     dev: true

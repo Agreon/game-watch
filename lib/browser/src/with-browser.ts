@@ -1,6 +1,9 @@
 import Puppeteer, { Page } from "puppeteer";
 
-export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
+export const withBrowser = async <T>(
+    acceptLanguage: string,
+    method: (page: Page) => Promise<T>,
+) => {
     const browser = await Puppeteer.launch({
         headless: true,
         args: [
@@ -8,14 +11,14 @@ export const withBrowser = async <T>(method: (page: Page) => Promise<T>) => {
             "--disable-dev-shm-usage",
             "--disable-setuid-sandbox",
             "--no-sandbox",
-            '--lang=de-DE,de'
+            `--lang=${acceptLanguage}`
         ]
     });
 
     const page = await browser.newPage();
     page.setDefaultTimeout(50000);
     await page.setExtraHTTPHeaders({
-        'Accept-Language': 'de'
+        'Accept-Language': acceptLanguage
     });
 
     try {

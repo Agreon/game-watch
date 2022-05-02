@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString, Length } from "class-validator";
+import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
 
 import { Country, InfoSourceType, UserState } from "../types";
 
@@ -13,11 +13,12 @@ export interface UserDto {
 export class UpdateUserSettingsDto {
     // TODO: More narrow? => Use enum?
     @IsString()
-    @Length(2)
+    @Length(2, 2)
     public country: Country;
 
-    // TODO: Use Enum Array?
     @IsArray()
     @IsNotEmpty()
+    @ArrayMinSize(1)
+    @IsEnum(InfoSourceType, { each: true })
     public interestedInSources: InfoSourceType[];
 }
