@@ -10,6 +10,9 @@
   ],
   "references": [
     {
+      "path": "../lib/shared",
+    },
+    {
       "path": "../lib/database"
     },
     {
@@ -17,9 +20,6 @@
     },
     {
       "path": "../lib/service",
-    },
-    {
-      "path": "../lib/shared",
     },
   ]
 }

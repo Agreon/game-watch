@@ -11,7 +11,6 @@ export interface UserDto {
 }
 
 export class UpdateUserSettingsDto {
-    // TODO: More narrow? => Use enum?
     @IsString()
     @Length(2, 2)
     public country: Country;

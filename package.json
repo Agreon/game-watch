@@ -14,12 +14,12 @@
     ],
     "scripts": {
         "build": "pnpm turbo run build",
-        "clean": "rm -rf ./**/dist && rm -rf ./**/node_modules && rm -rf ./node_modules",
+        "clean": "rm -rf ./**/node_modules && rm -rf ./node_modules",
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "turbo": "^1.2.4",
-        "pnpm": "next-7"
+        "pnpm": "^7",
+        "turbo": "^1.2.6"
     },
     "resolutions": {
         "@types/react": "^17.0.43"

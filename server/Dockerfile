@@ -1,5 +1,9 @@
 FROM node:16-slim
-RUN npm i -g pnpm@next-7
+RUN apt-get update && \
+    apt-get install -y git --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN npm i -g pnpm@7
 
 WORKDIR /app
 COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
