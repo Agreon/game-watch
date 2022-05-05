@@ -46,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             url: `https://store.steampowered.com/app/${id}`,
             thumbnailUrl: json.header_image,
             // Sometimes english, sometimes german..
-            releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]),
+            releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]) ?? parseDate(releaseDate),
             priceInformation: json.is_free ? { final: 0 } : this.getPriceInformation(json.price_overview ?? {}),
             controllerSupport: json.controller_support,
             categories: json.categories ? Object.values(json.categories).map(({ description }) => description) : undefined,
