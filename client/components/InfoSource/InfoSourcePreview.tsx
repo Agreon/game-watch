@@ -1,14 +1,16 @@
-import React, { useCallback } from "react"
-import { Flex, Box } from "@chakra-ui/layout"
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
+    Box,
+    Flex,
     IconButton,
     Text,
     useColorModeValue
 } from "@chakra-ui/react";
+import React, { useCallback } from "react";
+
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { SourceTypeLogo } from "./SourceTypeLogo";
-import { DeleteIcon } from "@chakra-ui/icons";
 import { LoadingSpinner } from "../LoadingSpinner";
+import { SourceTypeLogo } from "./SourceTypeLogo";
 
 export const InfoSourcePreview: React.FC = () => {
     const { source, excludeInfoSource } = useInfoSourceContext();
@@ -57,5 +59,5 @@ export const InfoSourcePreview: React.FC = () => {
                 </Box>
             </Flex>
         </Flex>
-    )
-}
+    );
+};

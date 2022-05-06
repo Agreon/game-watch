@@ -1,10 +1,11 @@
-import Head from 'next/head'
-import React, { PropsWithChildren } from 'react'
-import Header from './Header'
-import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import Head from 'next/head';
+import React, { PropsWithChildren } from 'react';
+
+import Header from './Header';
 import { NotificationSidebar } from './Notifications/NotificationSidebar';
 
-export default function Layout({ children }: PropsWithChildren<{}>) {
+export default function Layout({ children }: PropsWithChildren<unknown>) {
     return (
         <Flex
             direction="column"
@@ -54,5 +55,5 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             </Box>
 
         </Flex>
-    )
+    );
 }

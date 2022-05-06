@@ -1,6 +1,7 @@
-import { InfoSourceDto } from "@game-watch/shared"
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react"
-import { useHttp } from "../util/useHttp"
+import { InfoSourceDto } from "@game-watch/shared";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+
+import { useHttp } from "../util/useHttp";
 
 export interface InfoSourceCtx {
     source: InfoSourceDto
@@ -9,26 +10,27 @@ export interface InfoSourceCtx {
     excludeInfoSource: () => Promise<void>
 }
 
-export const InfoSourceContext = React.createContext<InfoSourceCtx | undefined>(undefined)
+export const InfoSourceContext = React.createContext<InfoSourceCtx | undefined>(undefined);
 
 export function useInfoSourceContext() {
-    const context = useContext(InfoSourceContext)
+    const context = useContext(InfoSourceContext);
 
-    return context as InfoSourceCtx
+    return context as InfoSourceCtx;
 }
 
 export const InfoSourceProvider: React.FC<{
-    source: InfoSourceDto,
+    children: React.ReactChild
+    source: InfoSourceDto
     setGameInfoSource: (infoSource: InfoSourceDto) => void
     removeGameInfoSource: (id: string) => void
     disablePolling?: boolean
 }> = ({ children, source, setGameInfoSource, removeGameInfoSource, disablePolling }) => {
-    const { withRequest, handleError } = useHttp()
+    const { withRequest, handleError } = useHttp();
 
-    const [polling, setPolling] = useState(false)
+    const [polling, setPolling] = useState(false);
     useEffect(() => {
         if (disablePolling || !source.syncing || polling) {
-            return
+            return;
         }
         setPolling(true);
 
@@ -36,68 +38,68 @@ export const InfoSourceProvider: React.FC<{
             await withRequest(async http => {
                 do {
                     try {
-                        const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`)
-                        setGameInfoSource(data)
+                        const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
+                        setGameInfoSource(data);
                         if (data.syncing === false) {
-                            break
+                            break;
                         }
                     } catch (error) {
-                        handleError(error)
+                        handleError(error);
                     } finally {
-                        await new Promise(resolve => setTimeout(resolve, 1000))
+                        await new Promise(resolve => setTimeout(resolve, 1000));
                     }
-                } while (true)
-            })
-            setPolling(false)
+                } while (true);
+            });
+            setPolling(false);
         }
-        )()
-    }, [source, disablePolling, polling, handleError, setGameInfoSource, withRequest])
+        )();
+    }, [source, disablePolling, polling, handleError, setGameInfoSource, withRequest]);
 
 
     const syncInfoSource = useCallback(async () => {
         setGameInfoSource({
             ...source,
             syncing: true
-        })
+        });
 
         await withRequest(async http => {
-            const { data } = await http.post<InfoSourceDto>(`/info-source/${source.id}/sync`)
+            const { data } = await http.post<InfoSourceDto>(`/info-source/${source.id}/sync`);
 
-            setGameInfoSource(data)
+            setGameInfoSource(data);
         }, error => {
             setGameInfoSource({
                 ...source,
                 syncing: false
-            })
-            handleError(error)
-        })
-    }, [source, withRequest, setGameInfoSource, handleError])
+            });
+            handleError(error);
+        });
+    }, [source, withRequest, setGameInfoSource, handleError]);
 
     const disableInfoSource = useCallback(async () => {
-        removeGameInfoSource(source.id)
+        removeGameInfoSource(source.id);
 
         await withRequest(async http => {
-            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/disable`)
+            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/disable`);
 
             removeGameInfoSource(id);
         }, error => {
-            setGameInfoSource(source)
-            handleError(error)
-        })
-    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource])
+            setGameInfoSource(source);
+            handleError(error);
+        });
+    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource]);
 
     const excludeInfoSource = useCallback(async () => {
-        removeGameInfoSource(source.id)
+        removeGameInfoSource(source.id);
 
         await withRequest(async http => {
-            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/exclude`)
+            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/exclude`);
 
             removeGameInfoSource(id);
         }, error => {
-            setGameInfoSource(source)
-            handleError(error)
-        })
-    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource])
+            setGameInfoSource(source);
+            handleError(error);
+        });
+    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource]);
 
 
     const contextValue = useMemo(() => ({
@@ -105,11 +107,11 @@ export const InfoSourceProvider: React.FC<{
         syncInfoSource,
         disableInfoSource,
         excludeInfoSource
-    }), [source, syncInfoSource, disableInfoSource, excludeInfoSource])
+    }), [source, syncInfoSource, disableInfoSource, excludeInfoSource]);
 
     return (
         <InfoSourceContext.Provider value={contextValue}>
             {children}
         </InfoSourceContext.Provider>
-    )
-}
+        );
+    };

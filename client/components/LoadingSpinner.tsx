@@ -1,5 +1,4 @@
-import { Flex } from "@chakra-ui/layout";
-import { Spinner, ThemeTypings } from "@chakra-ui/react";
+import { Flex, Spinner, ThemeTypings } from "@chakra-ui/react";
 
 export const LoadingSpinner: React.FC<{
     size: ThemeTypings["components"]["Spinner"]["sizes"]
@@ -24,4 +23,4 @@ export const LoadingSpinner: React.FC<{
             size={size}
         />
     </Flex>
-)
+);

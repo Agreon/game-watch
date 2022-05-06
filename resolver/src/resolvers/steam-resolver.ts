@@ -1,21 +1,27 @@
+import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
 import { InfoSourceType, SteamGameData, StorePriceInformation } from "@game-watch/shared";
 import axios from "axios";
 
-import { InfoResolver } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseDate } from "../util/parse-date";
 
 /**
  * TODO:
  * - Add offer end date => We need to make a second api call
- * - Unit is not always euro
  */
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;
 
-    public async resolve(id: string): Promise<SteamGameData> {
+    public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SteamGameData> {
         const { data } = await axios.get<any>(
-            `https://store.steampowered.com/api/appdetails?appids=${id}&cc=de`,
-            { headers: { 'Accept-Language': 'de' } }
+            `https://store.steampowered.com/api/appdetails`,
+            {
+                params: {
+                    appids: id,
+                    cc: mapCountryCodeToLanguage(userCountry),
+                },
+                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
+            }
         );
 
         const gameData = data[id];
@@ -40,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             url: `https://store.steampowered.com/app/${id}`,
             thumbnailUrl: json.header_image,
             // Sometimes english, sometimes german..
-            releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]),
+            releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]) ?? parseDate(releaseDate),
             priceInformation: json.is_free ? { final: 0 } : this.getPriceInformation(json.price_overview ?? {}),
             controllerSupport: json.controller_support,
             categories: json.categories ? Object.values(json.categories).map(({ description }) => description) : undefined,

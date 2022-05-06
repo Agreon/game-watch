@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import path from 'path';
-dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
+dotenv.config({ path: path.join(__dirname, "..", "..", "..", '.env') });
 
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';

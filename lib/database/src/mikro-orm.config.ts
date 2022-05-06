@@ -17,6 +17,7 @@ import { Migration20211115142230 } from "./migrations/Migration20211115142230";
 import { Migration20211129140628 } from "./migrations/Migration20211129140628";
 import { Migration20220126072903 } from "./migrations/Migration20220126072903";
 import { Migration20220227090503 } from "./migrations/Migration20220227090503";
+import { Migration20220329090503 } from "./migrations/Migration20220329090503";
 import { Game } from "./models/game-model";
 import { InfoSource } from "./models/info-source-model";
 import { Notification } from "./models/notification-model";
@@ -62,6 +63,7 @@ const config: MikroOrmModuleSyncOptions = {
             { name: "Migration20211115142230.ts", class: Migration20211115142230 },
             { name: "Migration20220126072903.ts", class: Migration20220126072903 },
             { name: "Migration20220227090503.ts", class: Migration20220227090503 },
+            { name: "Migration20220329090503.ts", class: Migration20220329090503 },
         ]
     }
 };

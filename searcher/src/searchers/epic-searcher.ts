@@ -1,4 +1,4 @@
-import { InfoSourceType } from "@game-watch/shared";
+import { Country, InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
@@ -8,8 +8,28 @@ import { matchingName } from "../util/matching-name";
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
 
-    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
-        const { data } = await axios.get<string>(`https://www.epicgames.com/store/de/browse?q=${encodeURIComponent(search)}&sortBy=relevancy&sortDir=DESC&count=1`);
+    private mapCountryCode(country: Country) {
+        switch (country) {
+            case "DE":
+                // Don't ask me why this is inconsistent.
+                return "de";
+            case "US":
+                return "en-US";
+        }
+    }
+
+    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
+        const { data } = await axios.get<string>(
+            `https://www.epicgames.com/store/${this.mapCountryCode(userCountry)}/browse`,
+            {
+                params: {
+                    q: search,
+                    sortBy: "relevancy",
+                    sortDir: "DESC",
+                    count: 1
+                }
+            }
+        );
 
         const $ = cheerio.load(data);
 

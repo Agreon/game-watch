@@ -1,13 +1,14 @@
-import { Box } from "@chakra-ui/layout"
 import {
+    Box,
     Stat,
     StatLabel,
     StatNumber,
     Text,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
-import { InfoSourceWrapper } from "./InfoSourceWrapper";
 import { MetacriticData } from "@game-watch/shared";
+import React, { useMemo } from "react";
+
+import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
 const getMetaCriticScoreColor = (score: number) => {
     if (isNaN(score)) {
@@ -23,7 +24,7 @@ const getMetaCriticScoreColor = (score: number) => {
     }
 
     return "rgb(204, 0, 0)";
-}
+};
 
 const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displayScore }) => {
     const scoreColor = useMemo(() => getMetaCriticScoreColor(score), [score]);
@@ -34,8 +35,8 @@ const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displ
                 {isNaN(displayScore) ? "TBD" : displayScore}
             </Text>
         </StatNumber>
-    )
-}
+    );
+};
 
 // TODO: is jumping on loading state
 export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = ({ data }) => {
@@ -54,5 +55,5 @@ export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = (
                 </Stat>
             </Box>
         </InfoSourceWrapper>
-    )
-}
+    );
+};

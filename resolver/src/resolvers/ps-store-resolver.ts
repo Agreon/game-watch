@@ -1,7 +1,8 @@
 import { withBrowser } from "@game-watch/browser";
-import { InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
+import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
+import { Country, InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
 
-import { InfoResolver } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
@@ -15,8 +16,8 @@ import { parseDate } from "../util/parse-date";
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
 
-    public async resolve(storePage: string): Promise<PsStoreGameData> {
-        return await withBrowser(async browser => {
+    public async resolve(storePage: string, { userCountry }: InfoResolverContext): Promise<PsStoreGameData> {
+        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
             await browser.goto(storePage);
             await browser.waitForSelector(".psw-t-title-m");
 
@@ -73,14 +74,20 @@ export class PsStoreResolver implements InfoResolver {
                 url: storePage,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
-                priceInformation: this.getPriceInformation({ price, originalPrice }),
-                releaseDate: parseDate(releaseDate, ["D.M.YYYY"]),
+                priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
+                releaseDate: userCountry === "DE" ? parseDate(releaseDate, ["D.M.YYYY"]) : parseDate(releaseDate, ["MM/DD/YYYY"]),
             };
         });
     }
 
-    private getPriceInformation({ price, originalPrice }: Record<string, any>): StorePriceInformation | undefined {
-        if (price === "Kostenlos") {
+    private getPriceInformation(
+        { price, originalPrice }: Record<string, any>,
+        userCountry: Country
+    ): StorePriceInformation | undefined {
+        if (
+            (userCountry === "DE" && price === "Kostenlos")
+            || (userCountry === "US" && price === "Free")
+        ) {
             return {
                 final: 0
             };

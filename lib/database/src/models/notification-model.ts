@@ -1,5 +1,5 @@
 import { NotificationData, NotificationType } from "@game-watch/shared";
-import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } from "@mikro-orm/core";
+import { Entity, Enum, IdentifiedReference, Index, ManyToOne, Property, Reference } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
@@ -12,6 +12,7 @@ export class Notification<T extends NotificationType = NotificationType> extends
     public type!: T;
 
     @Property()
+    @Index()
     public read: boolean = false;
 
     @ManyToOne(() => Game, { wrappedReference: true })

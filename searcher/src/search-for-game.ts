@@ -19,8 +19,11 @@ interface Params {
 export const searchForGame = async ({ gameId, initialRun, searchService, em, logger, resolveSourceQueue }: Params) => {
     const startTime = new Date().getTime();
 
-    const game = await em.findOneOrFail(Game, gameId, { populate: ["infoSources"] });
-    const existingInfoSources = await game.infoSources.loadItems();
+    const game = await em.findOneOrFail(Game, gameId, { populate: ["infoSources", "user"] });
+    const userCountry = game.user.get().country;
+    const interestedInSources = game.user.get().interestedInSources;
+
+    const existingInfoSources = game.infoSources.getItems();
 
     // Re-Search for excluded sources
     const excludedSources = existingInfoSources.filter(
@@ -29,7 +32,8 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
 
     // Search possible new sources
     const sourcesToSearch = Object.values(InfoSourceType).filter(
-        type => !existingInfoSources.map(({ type }) => type).includes(type)
+        type => interestedInSources.includes(type)
+            && !existingInfoSources.map(({ type }) => type).includes(type)
     );
 
     logger.info(`Searching for ${JSON.stringify(sourcesToSearch)}`);
@@ -63,7 +67,7 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
     const searchForNewSourcesPromises = sourcesToSearch.map(async sourceType => {
         logger.info(`Searching ${sourceType} for '${game.search}'`);
 
-        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger });
+        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger, userCountry });
         if (!searchResponse) {
             logger.info(`No store game information found in '${sourceType}' for '${game.search}'`);
             return;
@@ -87,7 +91,7 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
     const researchSourcesPromises = excludedSources.map(async source => {
         logger.info(`Re-Searching ${source.type} for '${game.search}'`);
 
-        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger });
+        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger, userCountry });
         if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.remoteGameId)) {
             logger.info(`No new store game information found in '${source.type}' for '${game.search}'`);
             return;

@@ -1,26 +1,27 @@
 import {
-    Text,
-    Tabs,
-    TabList,
-    TabPanels,
-    Tab,
-    TabPanel,
+    Alert,
+    AlertIcon,
     Modal,
     ModalBody,
     ModalCloseButton,
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Alert,
-    AlertIcon,
-} from "@chakra-ui/react"
-import React, { useRef } from "react"
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Text,
+} from "@chakra-ui/react";
+import React, { useRef } from "react";
+
 import { LoginUserForm } from "./LoginUserForm";
 import { RegisterUserForm } from "./RegisterUserForm";
 
 interface AuthModalProps {
-    show: boolean;
-    onClose: () => void;
+    show: boolean
+    onClose: () => void
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
@@ -61,5 +62,5 @@ export const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
                 </ModalBody>
             </ModalContent>
         </Modal>
-    )
-}
+    );
+};

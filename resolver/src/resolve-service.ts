@@ -1,11 +1,12 @@
 import { Logger } from "@game-watch/service";
-import { GameDataU, InfoSourceType } from "@game-watch/shared";
+import { Country, GameDataU, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
 import { Redis } from "ioredis";
 import pRetry from "p-retry";
 
 export interface InfoResolverContext {
     logger: Logger
+    userCountry: Country
 }
 
 export interface ResolveServiceContext extends InfoResolverContext {
@@ -36,18 +37,19 @@ export class ResolveService {
         }
 
         const start = new Date().getTime();
+        const cacheKey = `${type}:${context.userCountry}:${id}`;
 
         try {
             return await pRetry(async () => {
-                const existingData = await this.redis.get(id);
+                const existingData = await this.redis.get(cacheKey);
                 if (existingData && !context.skipCache) {
-                    logger.debug(`Data for ${id} was found in cache`);
+                    logger.debug(`Data for ${cacheKey} was found in cache`);
 
                     return JSON.parse(existingData);
                 }
 
-                const resolvedData = await resolverForType.resolve(id, { logger: logger.child({ type }) });
-                await this.redis.set(id, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
+                const resolvedData = await resolverForType.resolve(id, { ...context, logger: logger.child({ type }) });
+                await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
 
                 return resolvedData;
             }, {

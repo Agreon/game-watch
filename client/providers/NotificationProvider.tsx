@@ -1,6 +1,7 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { NotificationDto } from "@game-watch/shared";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+
 import { useHttp } from "../util/useHttp";
 
 export interface NotificationCtx {
@@ -20,7 +21,9 @@ export function useNotificationContext() {
     return context as NotificationCtx;
 }
 
-export const NotificationProvider: React.FC<{}> = ({ children }) => {
+export const NotificationProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
     const { withRequest, handleError } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
@@ -36,7 +39,7 @@ export const NotificationProvider: React.FC<{}> = ({ children }) => {
                     } finally {
                         await new Promise(resolve => setTimeout(resolve, 5000));
                     }
-                } while (true)
+                } while (true);
             });
         }
         )();
@@ -91,5 +94,5 @@ export const NotificationProvider: React.FC<{}> = ({ children }) => {
         <NotificationContext.Provider value={contextValue}>
             {children}
         </NotificationContext.Provider>
-    )
-}
+        );
+    };

@@ -1,6 +1,7 @@
-import { AxiosResponse } from "axios";
 import { CreateTagDto, TagDto } from "@game-watch/shared";
+import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+
 import { useHttp } from "../util/useHttp";
 import { useUserContext } from "./UserProvider";
 
@@ -23,8 +24,10 @@ export function useTagContext() {
 
 const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", "cyan", "purple", "pink", "linkedin", "facebook", "messenger", "whatsapp", "twitter", "telegram"];
 
-export const TagProvider: React.FC = ({ children }) => {
-    const { user } = useUserContext()
+export const TagProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
+    const { user } = useUserContext();
     const [tagsLoading, setTagsLoading] = useState(false);
     const [tags, setTags] = useState<TagDto[]>([]);
     const { withRequest } = useHttp();
@@ -60,10 +63,10 @@ export const TagProvider: React.FC = ({ children }) => {
             ]);
 
             return data;
-        })
+        });
     }, [withRequest, getAvailableRandomTagColor]);
 
-    useEffect(() => { fetchTags() }, [fetchTags, user.id]);
+    useEffect(() => { fetchTags(); }, [fetchTags, user.id]);
 
     const contextValue = useMemo(() => ({
         tags,
@@ -75,5 +78,5 @@ export const TagProvider: React.FC = ({ children }) => {
         <TagContext.Provider value={contextValue}>
             {children}
         </TagContext.Provider>
-    )
-}
+        );
+    };

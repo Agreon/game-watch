@@ -1,11 +1,12 @@
 import { Logger } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
+import { Country, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
 import { Redis } from "ioredis";
 import pRetry from "p-retry";
 
 export interface InfoSearcherContext {
     logger: Logger
+    userCountry: Country
 }
 
 export interface SearchServiceContext extends InfoSearcherContext {
@@ -13,7 +14,7 @@ export interface SearchServiceContext extends InfoSearcherContext {
 }
 
 export interface SearchResponse {
-    remoteGameId: string;
+    remoteGameId: string
     remoteGameName: string
 }
 
@@ -41,12 +42,10 @@ export class SearchService {
         }
 
         const start = new Date().getTime();
-        const cacheKey = `${type}:${search}`;
+        const cacheKey = `${type}:${context.userCountry}:${search}`;
 
         try {
             return await pRetry(async () => {
-
-
                 const existingData = await this.redis.get(cacheKey);
                 if (existingData && !context.skipCache) {
                     logger.debug(`Search data for ${cacheKey} was found in cache`);
@@ -54,7 +53,7 @@ export class SearchService {
                     return JSON.parse(existingData);
                 }
 
-                const foundData = await searcherForType.search(search, { logger: logger.child({ type }) });
+                const foundData = await searcherForType.search(search, { ...context, logger: logger.child({ type }) });
                 await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
 
                 return foundData;

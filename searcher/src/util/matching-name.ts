@@ -1,6 +1,7 @@
-const EXCLUDED_TOKENS = [
+const IGNORED_TOKENS = [
     "a",
-    "the"
+    "the",
+    "of"
 ];
 
 export const matchingName = (name: string, search: string) => {
@@ -17,7 +18,7 @@ export const matchingName = (name: string, search: string) => {
         .filter(value => !!value);
 
     return searchTokens.some(searchToken =>
-        !EXCLUDED_TOKENS.includes(searchToken.trim())
+        !IGNORED_TOKENS.includes(searchToken.trim())
         && nameTokens.some(nameToken => nameToken.includes(searchToken.trim()))
     );
 };

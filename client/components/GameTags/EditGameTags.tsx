@@ -1,10 +1,10 @@
-import { Box, Flex } from "@chakra-ui/layout";
-import React, { useCallback, useMemo } from "react";
-import { Tag as ChakraTag, TagLabel, TagLeftIcon, IconButton } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { useTagContext } from "../../providers/TagProvider";
-import { useGameContext } from "../../providers/GameProvider";
+import { Box, Flex, IconButton, Tag as ChakraTag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 import { TagDto } from "@game-watch/shared";
+import React, { useCallback, useMemo } from "react";
+
+import { useGameContext } from "../../providers/GameProvider";
+import { useTagContext } from "../../providers/TagProvider";
 
 export interface TagWithToggleState extends TagDto {
     toggled: boolean
@@ -67,5 +67,5 @@ export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel })
                 <IconButton aria-label="cancel" size="sm" icon={<CheckIcon />} onClick={onCancel} />
             </Flex>
         </Flex>
-    )
-}
+    );
+};

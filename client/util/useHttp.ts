@@ -1,22 +1,23 @@
-import { useToast, UseToastOptions } from "@chakra-ui/toast";
-import axios, { AxiosInstance, AxiosError } from "axios";
+import { useToast, UseToastOptions } from "@chakra-ui/react";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { useCallback, useMemo } from "react";
+
 import { setLocalStoredUser } from "../providers/UserProvider";
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
 export function useHttp(logoutOnAuthFailure: boolean = true) {
     const toast = useToast();
     const http = useMemo(() => {
-        const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL })
+        const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL });
 
         client.interceptors.response.use(
             undefined,
             async (error) => {
                 if (error.response?.status === 401 && error.config.url !== "/auth/login") {
                     if (logoutOnAuthFailure && (error.config.url === "/auth/refresh" || error.config.url === "/auth/logout")) {
-                        setLocalStoredUser(null)
-                        location.href = "/?loggedOut=true"
+                        setLocalStoredUser(null);
+                        location.href = "/?loggedOut=true";
                         return;
                     }
 
@@ -59,10 +60,10 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
                     errorHandler(error);
                     return error;
                 }
-                handleError(error)
+                handleError(error);
                 return error;
             }
         }, [http, handleError]);
 
-    return { withRequest, handleError }
+    return { withRequest, handleError };
 }

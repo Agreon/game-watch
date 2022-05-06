@@ -1,4 +1,5 @@
 
+import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
@@ -9,9 +10,12 @@ import { matchingName } from "../util/matching-name";
 export class MetacriticSearcher implements InfoSearcher {
     public type = InfoSourceType.Metacritic;
 
-    public async search(search: string, { logger }: InfoSearcherContext): Promise<SearchResponse | null> {
+    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
         const { data } = await axios.get<string>(
-            `https://www.metacritic.com/search/game/${search}/results`
+            `https://www.metacritic.com/search/game/${search}/results`,
+            {
+                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
+            }
         );
 
         const $ = cheerio.load(data);

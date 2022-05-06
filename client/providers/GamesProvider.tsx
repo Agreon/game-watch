@@ -1,6 +1,7 @@
-import { AxiosResponse } from "axios";
 import { CreateGameDto, GameDto, InfoSourceType, TagDto } from "@game-watch/shared";
+import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+
 import { useHttp } from "../util/useHttp";
 import { useUserContext } from "./UserProvider";
 
@@ -29,8 +30,10 @@ export function useGamesContext() {
     return context;
 }
 
-export const GamesProvider: React.FC = ({ children }) => {
-    const { user } = useUserContext()
+export const GamesProvider: React.FC<{
+    children: React.ReactChild,
+}> = ({ children }) => {
+    const { user } = useUserContext();
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<GameDto[]>([]);
     const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
@@ -59,7 +62,7 @@ export const GamesProvider: React.FC = ({ children }) => {
     }, []);
 
     const removeGame = useCallback((gameId: string) => {
-        setGames(currentGames => currentGames.filter(({ id }) => id !== gameId))
+        setGames(currentGames => currentGames.filter(({ id }) => id !== gameId));
     }, []);
 
     const addGame = useCallback(async (search: string) => {
@@ -74,7 +77,7 @@ export const GamesProvider: React.FC = ({ children }) => {
         });
     }, [withRequest, setGames]);
 
-    useEffect(() => { fetchGames() }, [fetchGames, user.id]);
+    useEffect(() => { fetchGames(); }, [fetchGames, user.id]);
 
     const contextValue = useMemo(() => ({
         games,
@@ -90,5 +93,5 @@ export const GamesProvider: React.FC = ({ children }) => {
         <GamesContext.Provider value={contextValue}>
             {children}
         </GamesContext.Provider>
-    )
-}
+        );
+    };

@@ -5,15 +5,16 @@
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
     "scripts": {
-        "build": "tsc -b ."
+        "build": "tsc -b .",
+        "lint": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "8.13.0",
-        "typescript": "^4.6.3"
+        "eslint": "^8.14.0",
+        "typescript": "^4.6.4"
     },
     "dependencies": {
-        "bullmq": "^1.78.2",
-        "fp-ts": "^2.11.9",
+        "bullmq": "^1.81.4",
+        "fp-ts": "^2.12.1",
         "io-ts": "^2.2.16",
         "io-ts-reporters": "^2.0.1",
         "io-ts-types": "^0.5.16",

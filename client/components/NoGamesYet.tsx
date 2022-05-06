@@ -1,6 +1,6 @@
-import React from 'react'
-import { Text } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/layout";
+import { Box, Text } from "@chakra-ui/react";
+import React from 'react';
+
 import { useGamesContext } from '../providers/GamesProvider';
 
 export const NoGamesYet = () => {
@@ -12,11 +12,9 @@ export const NoGamesYet = () => {
 
     return (
         <Box textAlign="center" mb="2rem">
-            <Text fontSize="4xl">Welcome to GameWatch!</Text>
-
             <Text fontSize="2xl">
                 To get started, add a new game to watch:
             </Text>
         </Box>
-    )
-}
+    );
+};

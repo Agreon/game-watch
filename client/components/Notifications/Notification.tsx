@@ -1,11 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import dayjs from "dayjs";
-import { NotificationDto, NotificationType } from "@game-watch/shared";
-import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
-import { IconButton, Tooltip } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import { Box, Flex, IconButton, Text, Tooltip } from "@chakra-ui/react";
+import { NotificationDto, NotificationType } from "@game-watch/shared";
+import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";
+
 import { useAction } from "../../util/useAction";
+import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
 import { LoadingSpinner } from "../LoadingSpinner";
 
 const NotificationTypeNames: Record<NotificationType, string> = {
@@ -14,7 +14,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.GameReleased]: "Game released",
     [NotificationType.GameReduced]: "Game reduced",
     [NotificationType.NewMetacriticRating]: "Game rated",
-}
+};
 
 function isNotificationOfType<T extends NotificationType, TValue extends NotificationType>(
     notification: NotificationDto<NotificationType>,
@@ -34,7 +34,7 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
-        const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY")
+        const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY");
         return <>{gameName} {`will be released on ${formattedDate}!`}</>;
     }
 
@@ -48,20 +48,20 @@ const getNotificationText = (notification: NotificationDto) => {
         default:
             return <>Unknown Notification</>;
     }
-}
+};
 
 const NotificationComponent: React.FC<{
     notification: NotificationDto,
     markNotificationAsRead: (id: string) => Promise<void>
 }> = ({ notification, markNotificationAsRead }) => {
-    const { loading, execute: markAsRead } = useAction(markNotificationAsRead)
+    const { loading, execute: markAsRead } = useAction(markNotificationAsRead);
 
     const notificationText = useMemo(() => getNotificationText(notification), [notification]);
 
     const onMarkAsRead = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
         markAsRead(notification.id);
-    }, [markAsRead, notification.id])
+    }, [markAsRead, notification.id]);
 
     return (
         <Box
@@ -100,7 +100,7 @@ const NotificationComponent: React.FC<{
             </Box>
             {loading && <LoadingSpinner size="md" />}
         </Box>
-    )
-}
+    );
+};
 
 export const Notification = React.memo(NotificationComponent);

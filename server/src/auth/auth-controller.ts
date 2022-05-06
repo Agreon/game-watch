@@ -1,17 +1,16 @@
 import { User } from "@game-watch/database";
-import { CreateUserDto, RegisterUserDto, UserDto, UserState } from "@game-watch/shared";
+import { Country, CreateUserDto, RegisterUserDto, UserDto, UserState } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { BadRequestException, Body, ConflictException, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, ConflictException, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
-import { CookieOptions, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import ms from 'ms';
 
 import { Environment } from "../environment";
 import { AuthService } from "./auth-service";
 import { CurrentUser } from "./current-user-decorator";
-import { JwtAccessTokenGuard } from "./jwt-access-token-guard";
 import { JWT_ACCESS_TOKEN_NAME } from "./jwt-access-token-strategy";
 import { JwtRefreshTokenGuard } from "./jwt-refresh-token-guard";
 import { JWT_REFRESH_TOKEN_NAME } from "./jwt-refresh-token-strategy";
@@ -51,6 +50,7 @@ export class AuthController {
     @Throttle(2, 10)
     public async createUser(
         @Body() { id }: CreateUserDto,
+        @Req() request: Request,
         @Res() response: Response,
     ): Promise<Response<UserDto>> {
         const existingUserWithId = await this.userRepository.findOne(id);
@@ -67,18 +67,13 @@ export class AuthController {
             throw new BadRequestException("We are not allowing new user registrations at the moment");
         }
 
-        const user = await this.authService.createUser({ id });
+        const userCountry = request.headers["cf-ipcountry"] as Country;
+        const user = await this.authService.createUser({
+            id,
+            country: userCountry ?? "US"
+        });
 
         return await this.setJwtCookiesForUser(user, response);
-    }
-
-    // TODO: Move to user-controller
-    @Get("/user")
-    @UseGuards(JwtAccessTokenGuard)
-    public async getUser(
-        @CurrentUser() userId: string
-    ): Promise<UserDto> {
-        return await this.userRepository.findOneOrFail(userId);
     }
 
     @Post("/register")

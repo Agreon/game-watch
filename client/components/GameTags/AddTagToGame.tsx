@@ -1,12 +1,11 @@
-import { Flex } from "@chakra-ui/layout";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ButtonGroup, IconButton, Input } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { ButtonGroup, Flex, IconButton, Input } from "@chakra-ui/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>, onAbort: () => void }> = ({ onSubmit, onAbort }) => {
     // Focus initially
-    const inputRef = useRef<HTMLInputElement | null>(null)
-    useEffect(() => { inputRef.current && inputRef.current.focus() }, []);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
 
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
@@ -24,7 +23,7 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
         } finally {
             setLoading(false);
         }
-    }, [onSubmit, name])
+    }, [onSubmit, name]);
 
     const onNameKeyPress = useCallback(async ({ key }) => {
         if (key === "Enter") {
@@ -48,5 +47,5 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
                 <IconButton aria-label="cancel" icon={<CloseIcon />} onClick={onCancel} disabled={loading} />
             </ButtonGroup>
         </Flex>
-    )
-}
+    );
+};

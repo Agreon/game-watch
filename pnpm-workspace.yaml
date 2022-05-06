@@ -1,0 +1,6 @@
+packages:
+  - 'lib/*'
+  - 'server'
+  - 'client'
+  - 'searcher'
+  - 'resolver'

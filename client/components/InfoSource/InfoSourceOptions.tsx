@@ -1,40 +1,40 @@
+import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
-    IconButton,
-    Menu,
-    MenuList,
-    MenuButton,
-    MenuItem,
-    AlertDialogOverlay,
     AlertDialog,
     AlertDialogBody,
+    AlertDialogCloseButton,
     AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
+    AlertDialogOverlay,
+    Box,
     Button,
-    AlertDialogCloseButton,
-    Box
-} from "@chakra-ui/react"
-import { ChevronDownIcon, DownloadIcon, ViewOffIcon } from '@chakra-ui/icons'
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider"
-import { useGameContext } from "../../providers/GameProvider"
-import { useCallback, useRef, useState } from "react"
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList} from "@chakra-ui/react";
+import { useCallback, useRef, useState } from "react";
+
+import { useGameContext } from "../../providers/GameProvider";
+import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 
 export const InfoSourceOptions: React.FC = () => {
-    const { loading, game } = useGameContext()
-    const { disableInfoSource, syncInfoSource, excludeInfoSource, source } = useInfoSourceContext()
+    const { loading, game } = useGameContext();
+    const { disableInfoSource, syncInfoSource, excludeInfoSource, source } = useInfoSourceContext();
 
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const cancelRef = useRef(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const cancelRef = useRef(null);
 
     const onDisableInfoSource = useCallback(async () => {
-        setDeleteDialogOpen(false)
-        await disableInfoSource()
-    }, [disableInfoSource])
+        setDeleteDialogOpen(false);
+        await disableInfoSource();
+    }, [disableInfoSource]);
 
     const onKeepSearching = useCallback(async () => {
-        setDeleteDialogOpen(false)
-        await excludeInfoSource()
-    }, [excludeInfoSource])
+        setDeleteDialogOpen(false);
+        await excludeInfoSource();
+    }, [excludeInfoSource]);
 
     return (
         <>
@@ -93,5 +93,5 @@ export const InfoSourceOptions: React.FC = () => {
             </MenuList>
         </Menu>
         </>
-    )
-}
+    );
+};

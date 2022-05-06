@@ -17,6 +17,7 @@ import { LoggerMiddleware } from './LoggerMiddleware';
 import { NotificationModule } from './notification/notification-module';
 import { ProcessorModule } from './processors/processor-module';
 import { TagModule } from './tag/tag-module';
+import { UserModule } from './user/user-module';
 
 
 @Module({
@@ -63,6 +64,7 @@ import { TagModule } from './tag/tag-module';
     InfoSourceModule,
     TagModule,
     NotificationModule,
+    UserModule,
   ],
   providers: [
     {

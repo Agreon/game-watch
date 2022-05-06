@@ -17,7 +17,14 @@
             "outputs": []
         },
         "lint": {
+
             "outputs": []
         }
-    }
+    },
+    "globalDependencies": [
+        ".env",
+        "tsconfig.json",
+        ".eslintrc.js",
+        "pnpm-lock.yaml"
+    ]
 }

@@ -48,10 +48,15 @@ export const createReleaseDateChangedNotification = async (
     }
 
     const neverHadAReleaseDate = !existingData.releaseDate;
-    const releaseDateChanged = !!existingData.releaseDate && !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day");
+    const releaseDateChanged = !neverHadAReleaseDate && !dayjs(existingData.releaseDate).isSame(storeData.releaseDate, "day");
 
     if (!neverHadAReleaseDate && !releaseDateChanged) {
         logger.debug({ context: { neverHadAReleaseDate, releaseDateChanged } }, "Not adding notification because");
+        return;
+    }
+
+    if (dayjs(storeData.releaseDate).isBefore(new Date())) {
+        logger.debug("Not adding notification because added release date is today or in the past");
         return;
     }
 

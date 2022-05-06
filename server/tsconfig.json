@@ -5,7 +5,8 @@
     "baseUrl": "./"
   },
   "include": [
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "./bin/**/*.ts",
   ],
   "references": [
     {
@@ -16,6 +17,9 @@
     },
     {
       "path": "../lib/queue"
-    }
+    },
+    {
+      "path": "../lib/service",
+    },
   ]
 }
