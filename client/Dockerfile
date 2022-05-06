@@ -41,6 +41,7 @@ RUN \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 FROM node:alpine AS runner
+RUN npm i -g pnpm@7
 WORKDIR /app
 
 ENV NODE_ENV production
