@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Link, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
 import { Country, InfoSourceType, SupportedCountries } from '@game-watch/shared';
 import { Select, SingleValue } from "chakra-react-select";
 import React, { useCallback, useMemo, useState } from 'react';
@@ -24,10 +24,6 @@ const countryOptions: Array<CountryOption> = [
     { value: 'US', label: 'USA' },
 ];
 
-/**
- * TODO:
- * - Select Input variant = flushed
- */
 export const ConfigureUserSettings: React.FC = () => {
     const userContext = useUserContext();
     const { loading, execute: updateUserSettings } = useAction(userContext.updateUserSettings);
@@ -60,8 +56,6 @@ export const ConfigureUserSettings: React.FC = () => {
         }
     }, [setFilterInfoSources]);
 
-    // TODO
-    const background = useColorModeValue('white', 'gray.800');
 
     const onCountryChanges = useCallback((newValue: SingleValue<CountryOption>) => {
         if (!newValue) {
@@ -95,9 +89,37 @@ export const ConfigureUserSettings: React.FC = () => {
                                 dropdownIndicator: provided => ({
                                     ...provided,
                                     background: "grey.700",
+                                    paddingLeft: "0.5rem",
+                                    paddingRight: "0.5rem",
+                                }),
+                                valueContainer: provided => ({
+                                    ...provided,
+                                    paddingLeft: "0.5rem"
                                 }),
                                 indicatorSeparator: () => ({
                                     display: "none"
+                                }),
+                                control: provided => ({
+                                    ...provided,
+                                    border: 0,
+                                    borderBottom: "1px",
+                                    borderRadius: 0,
+                                    orderColor: "white",
+                                    boxShadow: "none !important",
+                                }),
+                                option: provided => ({
+                                    ...provided,
+                                    paddingLeft: "0.5rem"
+                                }),
+                                menu: provided => ({
+                                    ...provided,
+                                    padding: 0,
+                                    marginTop: 0,
+                                }),
+                                menuList: provided => ({
+                                    ...provided,
+                                    padding: 0,
+                                    borderRadius: 0,
                                 })
                             }}
                             defaultValue={userCountry}
@@ -111,7 +133,7 @@ export const ConfigureUserSettings: React.FC = () => {
                     {sourcesWithToggleState.map(source => (
                         <Box
                             key={source.type}
-                            bg={background}
+                            bg={'gray.800'}
                             borderColor={source.toggled ? "teal.500" : "none"}
                             borderWidth='2px'
                             borderRadius='lg'
