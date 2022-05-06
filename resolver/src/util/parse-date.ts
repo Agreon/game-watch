@@ -4,7 +4,7 @@ require('dayjs/locale/de');
 
 dayjs.extend(customParseFormat);
 
-export const parseDate = (dateString: string | undefined, expectedFormats: string[], locale?: string) => {
+export const parseDate = (dateString: string | undefined, expectedFormats?: string[], locale?: string) => {
     if (!dateString) {
         return undefined;
     }

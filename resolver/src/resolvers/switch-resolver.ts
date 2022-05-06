@@ -1,32 +1,13 @@
+import { withBrowser } from "@game-watch/browser";
+import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-watch/shared";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoResolver } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
-// American site
-
-// await page.goto(id);
-// await page.waitForSelector(".release-date > dd");
-
-// const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
-// const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
-
-// const price = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
-// const salePrice = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
-
-// const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
-
-// return {
-//     id,
-//     url: id,
-//     fullName,
-//     thumbnailUrl,
-//     priceInformation: this.getPriceInformation({ price, salePrice }),
-//     releaseDate,
-// };
 
 const extract = (content: string, regex: RegExp) => {
     const result = new RegExp(regex).exec(content);
@@ -37,7 +18,32 @@ const extract = (content: string, regex: RegExp) => {
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
-    public async resolve(id: string): Promise<SwitchGameData> {
+    public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SwitchGameData> {
+        if (userCountry === "US") {
+            return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
+                await page.goto(id);
+                await page.waitForSelector(".release-date > dd");
+
+                const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
+
+                const originalPrice = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
+                const price = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
+
+                const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
+
+                return {
+                    id,
+                    url: id,
+                    fullName,
+                    thumbnailUrl,
+                    releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
+                    priceInformation: this.getPriceInformationForUsStore({ price, originalPrice }),
+                };
+
+            });
+        }
         const { data } = await axios.get<string>(id);
         const $ = cheerio.load(data);
 
@@ -73,6 +79,21 @@ export class SwitchResolver implements InfoResolver {
         const final = parseCurrencyValue((discount_price || regular_price).raw_value);
 
         if (initial === undefined || final === undefined) {
+            return undefined;
+        }
+
+        return {
+            initial,
+            final,
+        };
+    }
+
+    // TODO: Free games?
+    private getPriceInformationForUsStore({ price, originalPrice }: Record<string, any>,): StorePriceInformation | undefined {
+        const initial = parseCurrencyValue(originalPrice || price);
+        const final = parseCurrencyValue(price);
+
+        if (!initial || !final) {
             return undefined;
         }
 
