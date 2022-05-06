@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/src&main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "create-crons-for-games": "ts-node ./bin/create-crons-for-existing-games",
     "create-crons-for-info-sources": "ts-node ./bin/create-crons-for-existing-info-sources"
