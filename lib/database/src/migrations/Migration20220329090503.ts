@@ -9,7 +9,7 @@ export class Migration20220329090503 extends Migration {
         switch,
         psStore,
         epic,
-        metacritic,
+        metacritic
       }';
     `);
 
