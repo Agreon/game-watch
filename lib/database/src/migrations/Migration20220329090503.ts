@@ -13,7 +13,7 @@ export class Migration20220329090503 extends Migration {
       }';
     `);
 
-    this.addSql('alter table "user" add column "country" varchar(255) not null default \'de-DE\';');
+    this.addSql('alter table "user" add column "country" varchar(255) not null default \'DE\';');
     this.addSql('create index "notification_read_index" on "notification" ("read");');
   }
 }
