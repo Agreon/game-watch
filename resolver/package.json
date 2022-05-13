@@ -34,7 +34,7 @@
         "ioredis": "^4.28.2",
         "monocle-ts": "^2.3.13",
         "newtype-ts": "^0.3.5",
-        "p-retry": "^4.6.2",
+        "p-retry": "^5.1.1",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
