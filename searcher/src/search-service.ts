@@ -60,7 +60,7 @@ export class SearchService {
             }, {
                 minTimeout: 5000,
                 maxTimeout: 30000,
-                onFailedAttempt: error => logger.error(error, `Error thrown while search ${type} for '${search}'`)
+                onFailedAttempt: error => logger.warn(error, `Error thrown while searching ${type} for '${search}'`)
             });
 
         } catch (error) {
@@ -72,7 +72,7 @@ export class SearchService {
                     }
                 }
             });
-            logger.child({ type }).warn(error);
+            logger.child({ type }).error(error);
             return null;
         } finally {
             const duration = new Date().getTime() - start;

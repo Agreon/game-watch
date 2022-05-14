@@ -94,6 +94,14 @@ export const createGameReleasedNotification = async (
         return;
     }
 
+    if (dayjs(infoSource.createdAt).isAfter(storeData.releaseDate)) {
+        logger.debug(
+            { context: { sourceCreatedAt: infoSource.createdAt, releaseDate: storeData.releaseDate } },
+            "Not adding notification because the source entity was created after it's release date"
+        );
+        return;
+    }
+
     if (dayjs(storeData.releaseDate).isAfter(dayjs())) {
         logger.debug(
             { context: { releaseDate: storeData.releaseDate } },

@@ -55,7 +55,7 @@ export class ResolveService {
             }, {
                 minTimeout: 5000,
                 maxTimeout: 30000,
-                onFailedAttempt: error => logger.error(error, `Error thrown while resolving ${type} for ${id}`)
+                onFailedAttempt: error => logger.warn(error, `Error thrown while resolving ${type} for ${id}`)
             });
         } catch (error) {
             Sentry.captureException(error, {
@@ -66,7 +66,7 @@ export class ResolveService {
                     }
                 }
             });
-            logger.child({ type }).warn(error);
+            logger.child({ type }).error(error);
             return null;
         } finally {
             const duration = new Date().getTime() - start;
