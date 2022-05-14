@@ -78,7 +78,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "^2.6.2",
     "ts-loader": "^9.3.0",
-    "tsconfig-paths": "^3.14.1"
+    "tsconfig-paths": "^4.0.0"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.1.12",
