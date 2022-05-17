@@ -104,6 +104,8 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
         await em.nativeUpdate(InfoSource, source.id, {
             remoteGameId: searchResponse.remoteGameId,
             remoteGameName: searchResponse.remoteGameName,
+            updatedAt: new Date(),
+            foundAt: new Date(),
         });
 
         await addSourceToResolveQueue(source.id);

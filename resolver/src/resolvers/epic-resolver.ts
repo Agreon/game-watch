@@ -24,7 +24,7 @@ export class EpicResolver implements InfoResolver {
         }
 
         const discountedFromPrice = $("div[data-component=PDPDiscountedFromPrice]").first().text().trim();
-        const releaseDate = $("time").first().attr("datetime");
+        const releaseDate = $("time").first().attr("datetime")?.trim();
         const thumbnailUrl = $("div[data-component=PDPSidebarLogo] img").attr("src");
 
         return {
@@ -33,6 +33,7 @@ export class EpicResolver implements InfoResolver {
             url: id,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["YYYY-MM-DD"]),
+            originalReleaseDate: releaseDate,
             priceInformation: this.getPriceInformation({ price, discountedFromPrice, })
         };
     }

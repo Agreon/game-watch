@@ -32,6 +32,11 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     @Property({ columnType: "json", nullable: true })
     public data: GameData[T] | null = null;
 
+    // This property is necessary because we reuse the info source model and the notification logic depends on this
+    // information.
+    @Property()
+    public foundAt: Date = new Date();
+
     @ManyToOne(() => Game, { wrappedReference: true, hidden: true })
     public game!: IdentifiedReference<Game>;
 

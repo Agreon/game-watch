@@ -24,6 +24,7 @@ export class SwitchResolver implements InfoResolver {
                 await page.goto(id);
                 await page.waitForSelector(".release-date > dd");
 
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
@@ -39,6 +40,7 @@ export class SwitchResolver implements InfoResolver {
                     fullName,
                     thumbnailUrl,
                     releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
+                    originalReleaseDate: releaseDate,
                     priceInformation: this.getPriceInformationForUsStore({ price, originalPrice }),
                 };
 

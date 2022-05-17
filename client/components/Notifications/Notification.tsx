@@ -4,6 +4,7 @@ import { NotificationDto, NotificationType } from "@game-watch/shared";
 import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";
 
+import { formatReleaseDate } from "../../util/format-release-date";
 import { useAction } from "../../util/useAction";
 import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
 import { LoadingSpinner } from "../LoadingSpinner";
@@ -34,7 +35,7 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
-        const formattedDate = dayjs(notification.data.releaseDate).format("DD. MMM. YYYY");
+        const formattedDate = formatReleaseDate(notification.data);
         return <>{gameName} {`will be released on ${formattedDate}!`}</>;
     }
 

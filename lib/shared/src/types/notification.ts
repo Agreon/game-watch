@@ -12,7 +12,7 @@ export const StoreNotifications = [NotificationType.NewStoreEntry, NotificationT
 
 export type NotificationData = {
     [NotificationType.NewStoreEntry]: StoreGameData,
-    [NotificationType.ReleaseDateChanged]: { releaseDate: Date },
+    [NotificationType.ReleaseDateChanged]: { releaseDate: Date, originalDate: string },
     [NotificationType.GameReleased]: unknown,
     [NotificationType.GameReduced]: StorePriceInformation,
     [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },

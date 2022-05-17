@@ -42,7 +42,7 @@ export const createReleaseDateChangedNotification = async (
         return;
     }
 
-    if (!storeData.releaseDate) {
+    if (!storeData.releaseDate || !storeData.originalReleaseDate) {
         logger.debug("Not adding notification because no release date was found");
         return;
     }
@@ -65,7 +65,7 @@ export const createReleaseDateChangedNotification = async (
         game,
         infoSource,
         type: NotificationType.ReleaseDateChanged,
-        data: { releaseDate: storeData.releaseDate }
+        data: { releaseDate: storeData.releaseDate, originalDate: storeData.originalReleaseDate }
     }));
 };
 
@@ -94,10 +94,10 @@ export const createGameReleasedNotification = async (
         return;
     }
 
-    if (dayjs(infoSource.createdAt).isAfter(storeData.releaseDate)) {
+    if (dayjs(infoSource.foundAt).isAfter(storeData.releaseDate)) {
         logger.debug(
-            { context: { sourceCreatedAt: infoSource.createdAt, releaseDate: storeData.releaseDate } },
-            "Not adding notification because the source entity was created after it's release date"
+            { context: { sourceFoundAt: infoSource.foundAt, releaseDate: storeData.releaseDate } },
+            "Not adding notification because the source was found after it's release date"
         );
         return;
     }

@@ -6,18 +6,14 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { Country, StoreGameData } from "@game-watch/shared";
-import dayjs from "dayjs";
 import React, { useCallback, useMemo } from "react";
 
 import { useUserContext } from "../../providers/UserProvider";
+import { formatReleaseDate } from "../../util/format-release-date";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const customParseFormat = require('dayjs/plugin/customParseFormat');
-dayjs.extend(customParseFormat);
-
-const ReleaseDate: React.FC<{ date?: Date }> = ({ date }) => {
-    const formattedDate = useMemo(() => date ? dayjs(date).format("DD MMM, YYYY") : "TBD", [date]);
+const ReleaseDate: React.FC<{ date?: Date; originalDate?: string }> = ({ date, originalDate }) => {
+    const formattedDate = useMemo(() => formatReleaseDate({ date, originalDate }), [date, originalDate]);
 
     return (
         <Stat>
@@ -68,7 +64,7 @@ export const StoreInfoSource: React.FC<{ data: StoreGameData | null, }> = ({ dat
     return (
         <InfoSourceWrapper>
             <Box flex="1">
-                <ReleaseDate date={data?.releaseDate} />
+                <ReleaseDate date={data?.releaseDate} originalDate={data?.originalReleaseDate} />
             </Box>
             <Box flex="1">
                 <Price
