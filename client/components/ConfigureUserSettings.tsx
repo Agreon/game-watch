@@ -7,31 +7,30 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { INFO_SOURCE_PRIORITY } from '../providers/GameProvider';
 import { useUserContext } from '../providers/UserProvider';
 import { useAction } from '../util/useAction';
-import { SourceTypeLogoWithName } from './InfoSource/SourceTypeLogo';
-
-interface InfoSourceWithToggleState {
-    type: InfoSourceType
-    toggled: boolean
-}
+import { InfoSourceFilter } from './InfoSourceFilter';
 
 interface CountryOption {
     value: Country
     label: string
 }
 
-const countryOptions: Array<CountryOption> = [
-    { value: 'DE', label: 'Germany' },
-    { value: 'US', label: 'USA' },
-];
+const countryLabels: Record<Country, string> = {
+    "DE": "Germany",
+    "US": "USA"
+} as const;
+
+const countryOptions: CountryOption[] = Object.entries(countryLabels).map(
+    // Thanks for nothing typescript :/
+    ([value, label]) => ({ value: value as Country, label })
+);
 
 export const ConfigureUserSettings: React.FC = () => {
     const userContext = useUserContext();
     const { loading, execute: updateUserSettings } = useAction(userContext.updateUserSettings);
 
     const [userCountry, setUserCountry] = useState<CountryOption>({
-        value: userContext.user.country,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        label: countryOptions.find(({ value }) => value === userContext.user.country)!.label
+        value: "DE",
+        label: countryLabels[userContext.user.country]
     });
 
     const availableInfoSources = useMemo(() => INFO_SOURCE_PRIORITY.filter(
@@ -39,23 +38,6 @@ export const ConfigureUserSettings: React.FC = () => {
     ), [userCountry]);
 
     const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>([]);
-
-    const sourcesWithToggleState = useMemo(
-        () => availableInfoSources.map(source => ({
-            type: source,
-            toggled: filterInfoSources.some(type => type === source)
-        })),
-        [availableInfoSources, filterInfoSources]
-    );
-
-    const toggleInfoSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
-        if (selectedSource.toggled) {
-            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type));
-        } else {
-            setFilterInfoSources(sources => [...sources, selectedSource.type]);
-        }
-    }, [setFilterInfoSources]);
-
 
     const onCountryChanges = useCallback((newValue: SingleValue<CountryOption>) => {
         if (!newValue) {
@@ -70,7 +52,6 @@ export const ConfigureUserSettings: React.FC = () => {
             interestedInSources: filterInfoSources
         });
     }, [updateUserSettings, userCountry, filterInfoSources]);
-
 
     return (
         <Flex px="1rem" justify="center">
@@ -129,24 +110,11 @@ export const ConfigureUserSettings: React.FC = () => {
                         />
                     </Box>
                 </Flex>
-                <Flex flexWrap="wrap">
-                    {sourcesWithToggleState.map(source => (
-                        <Box
-                            key={source.type}
-                            bg={'gray.800'}
-                            borderColor={source.toggled ? "teal.500" : "none"}
-                            borderWidth='2px'
-                            borderRadius='lg'
-                            mx="0.5rem"
-                            my="0.25rem"
-                            p="0.5rem"
-                            cursor="pointer"
-                            onClick={() => toggleInfoSource(source)}
-                        >
-                            {SourceTypeLogoWithName[source.type]}
-                        </Box>
-                    ))}
-                </Flex>
+                <InfoSourceFilter
+                    availableInfoSources={availableInfoSources}
+                    filterInfoSources={filterInfoSources}
+                    setFilterInfoSources={setFilterInfoSources}
+                />
                 <Text mt="2rem">
                     Missing a source? Let me know or contribute on
                     <Link href="https://github.com/agreon/game-watch" isExternal ml="0.5rem">
