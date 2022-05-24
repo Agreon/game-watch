@@ -18,8 +18,8 @@
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "pnpm": "^7",
-        "turbo": "^1.2.6"
+        "pnpm": "^7.1.5",
+        "turbo": "^1.2.11"
     },
     "resolutions": {
         "@types/react": "^17.0.43"

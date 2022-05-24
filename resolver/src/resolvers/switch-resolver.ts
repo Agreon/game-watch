@@ -64,6 +64,7 @@ export class SwitchResolver implements InfoResolver {
             fullName,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
+            originalReleaseDate: releaseDate,
             priceInformation: await this.getPriceInformation(data),
         };
     }
