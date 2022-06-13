@@ -8,13 +8,13 @@ dayjs.extend(customParseFormat);
 const NonSpecificDateRegex = /^(Winter |Summer |Spring |Fall )?(20(\d\d))$/;
 
 export const formatReleaseDate = ({ date, originalDate }: { date?: Date; originalDate?: string }) => {
-    if (!date || !originalDate) {
-        return "TBD";
-    }
-
-    if (NonSpecificDateRegex.test(originalDate)) {
+    if (originalDate && NonSpecificDateRegex.test(originalDate)) {
         return originalDate;
     }
 
-    return dayjs(date).format("DD MMM, YYYY");
+    if (date) {
+        return dayjs(date).format("DD MMM, YYYY");
+    }
+
+    return "TBD";
 };
