@@ -7,13 +7,13 @@ dayjs.extend(customParseFormat);
 // At least steam returns dates in unspecific ranges like checked below.
 const NonSpecificDateRegex = /^(Winter |Summer |Spring |Fall )?(20(\d\d))$/;
 
-export const formatReleaseDate = ({ date, originalDate }: { date?: Date; originalDate?: string }) => {
+export const formatReleaseDate = ({ releaseDate, originalDate }: { releaseDate?: Date; originalDate?: string }) => {
     if (originalDate && NonSpecificDateRegex.test(originalDate)) {
         return originalDate;
     }
 
-    if (date) {
-        return dayjs(date).format("DD MMM, YYYY");
+    if (releaseDate) {
+        return dayjs(releaseDate).format("DD MMM, YYYY");
     }
 
     return "TBD";

@@ -12,8 +12,8 @@ import { useUserContext } from "../../providers/UserProvider";
 import { formatReleaseDate } from "../../util/format-release-date";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
-const ReleaseDate: React.FC<{ date?: Date; originalDate?: string }> = ({ date, originalDate }) => {
-    const formattedDate = useMemo(() => formatReleaseDate({ date, originalDate }), [date, originalDate]);
+const ReleaseDate: React.FC<{ releaseDate?: Date; originalDate?: string }> = ({ releaseDate, originalDate }) => {
+    const formattedDate = useMemo(() => formatReleaseDate({ releaseDate, originalDate }), [releaseDate, originalDate]);
 
     return (
         <Stat>
@@ -64,7 +64,7 @@ export const StoreInfoSource: React.FC<{ data: StoreGameData | null, }> = ({ dat
     return (
         <InfoSourceWrapper>
             <Box flex="1">
-                <ReleaseDate date={data?.releaseDate} originalDate={data?.originalReleaseDate} />
+                <ReleaseDate releaseDate={data?.releaseDate} originalDate={data?.originalReleaseDate} />
             </Box>
             <Box flex="1">
                 <Price
