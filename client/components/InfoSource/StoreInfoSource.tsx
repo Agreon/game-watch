@@ -5,11 +5,10 @@ import {
     StatNumber,
     Text,
 } from "@chakra-ui/react";
-import { Country, StoreGameData } from "@game-watch/shared";
+import { Country, formatReleaseDate, StoreGameData } from "@game-watch/shared";
 import React, { useCallback, useMemo } from "react";
 
 import { useUserContext } from "../../providers/UserProvider";
-import { formatReleaseDate } from "../../util/format-release-date";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
 const ReleaseDate: React.FC<{ releaseDate?: Date; originalDate?: string }> = ({ releaseDate, originalDate }) => {

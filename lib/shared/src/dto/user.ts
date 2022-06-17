@@ -5,6 +5,8 @@ import { Country, InfoSourceType, UserState } from "../types";
 export interface UserDto {
     id: string;
     username: string | null;
+    email: string | null;
+    enableEmailNotifications: boolean;
     state: UserState;
     interestedInSources: InfoSourceType[];
     country: Country;

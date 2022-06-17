@@ -14,6 +14,12 @@ export class User extends BaseEntity<User> {
     @Property({ nullable: true, lazy: true })
     public password: string | null = null;
 
+    @Property({ unique: true, nullable: true })
+    public email: string | null = null;
+
+    @Property({ default: false })
+    public enableEmailNotifications: boolean = false;
+
     @Enum(() => UserState)
     public state: UserState = UserState.Trial;
 

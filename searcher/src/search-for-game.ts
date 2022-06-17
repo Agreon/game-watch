@@ -1,5 +1,5 @@
 import { Game, InfoSource } from "@game-watch/database";
-import { QueueType } from "@game-watch/queue";
+import { QueueParams, QueueType } from "@game-watch/queue";
 import { Logger } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import { EntityManager } from "@mikro-orm/core";
@@ -11,7 +11,7 @@ interface Params {
     gameId: string
     initialRun?: boolean
     searchService: SearchService
-    resolveSourceQueue: Queue
+    resolveSourceQueue: Queue<QueueParams[QueueType.ResolveSource]>
     em: EntityManager
     logger: Logger
 }
