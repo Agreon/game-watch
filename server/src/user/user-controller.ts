@@ -28,8 +28,8 @@ export class UserController {
     @UseGuards(JwtAccessTokenGuard)
     public async updateUserSettings(
         @CurrentUser() userId: string,
-        @Body() { country, interestedInSources }: UpdateUserSettingsDto
+        @Body() updateUserSettingsDto: UpdateUserSettingsDto
     ): Promise<UserDto> {
-        return await this.userService.updateUserSettings(userId, { country, interestedInSources });
+        return await this.userService.updateUserSettings(userId, updateUserSettingsDto);
     }
 }

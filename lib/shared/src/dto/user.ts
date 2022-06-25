@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
 
 import { Country, InfoSourceType, UserState } from "../types";
 
@@ -13,6 +13,13 @@ export interface UserDto {
 }
 
 export class UpdateUserSettingsDto {
+    @IsBoolean()
+    public enableEmailNotifications: boolean;
+
+    @IsEmail()
+    @Length(2, 255)
+    public email: string;
+
     @IsString()
     @Length(2, 2)
     public country: Country;

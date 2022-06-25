@@ -1,4 +1,4 @@
-import { BellIcon, WarningIcon } from '@chakra-ui/icons';
+import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { UserState } from "@game-watch/shared";
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import githubIconLight from '../assets/github-icon-light.png';
 import { useNotificationContext } from '../providers/NotificationProvider';
 import { useUserContext } from "../providers/UserProvider";
 import { AuthModal } from "./Auth/AuthModal";
+import { ConfigureUserSettingsModal } from './UserSettings/ConfigureUserSettingsModal';
 
 export default function Header() {
     const { user, logoutUser } = useUserContext();
@@ -16,6 +17,7 @@ export default function Header() {
     const { colorMode } = useColorMode();
 
     const { isOpen: showAuthModal, onOpen: openAuthModal, onClose: closeAuthModal } = useDisclosure();
+    const { isOpen: showSettingsModal, onOpen: openSettingsModal, onClose: closeSettingsModal } = useDisclosure();
 
     return (
         <Flex
@@ -50,10 +52,10 @@ export default function Header() {
                             Save Data
                         </Button>
                     </Box>
-                    : <Flex align="center" mr="1.5rem">
+                    : <Flex align="center" mr="0.5rem">
                         <Text display={["none", "none", "block"]}>Hey {user.username}!</Text>
                         <Button
-                            ml="0.5rem"
+                            ml="1rem"
                             aria-label="logout"
                             size="sm"
                             onClick={logoutUser}
@@ -64,22 +66,24 @@ export default function Header() {
                         </Button>
                     </Flex>
                 }
-                <Box mr="1rem" mt="0.25rem">
-                    <a
-                        href="https://github.com/Agreon/game-watch"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Image
-                            src={colorMode === "light" ? githubIconDark : githubIconLight}
-                            alt="Github"
-                            width={32}
-                            height={32}
-                            quality={100}
+                {user.interestedInSources.length > 0 &&
+                    <>
+                        <IconButton
+                            aria-label="settings"
+                            icon={<SettingsIcon w={6} h={6} />}
+                            onClick={openSettingsModal}
+                            variant="ghost"
+                            _focus={{
+                                boxShadow: "none"
+                            }}
                         />
-                    </a>
-                </Box>
-                <Box position="relative">
+                        <ConfigureUserSettingsModal
+                            show={showSettingsModal}
+                            onClose={closeSettingsModal}
+                        />
+                    </>
+                }
+                <Box position="relative" mr="1rem">
                     <IconButton
                         aria-label="notifications"
                         icon={<BellIcon w={6} h={6} />}
@@ -94,6 +98,21 @@ export default function Header() {
                             <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
                         </Box>
                     }
+                </Box>
+                <Box mt="0.25rem">
+                    <a
+                        href="https://github.com/Agreon/game-watch"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Image
+                            src={colorMode === "light" ? githubIconDark : githubIconLight}
+                            alt="Github"
+                            width={32}
+                            height={32}
+                            quality={100}
+                        />
+                    </a>
                 </Box>
             </Flex>
         </Flex>

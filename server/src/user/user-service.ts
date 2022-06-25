@@ -12,9 +12,14 @@ export class UserService {
         private readonly userRepository: EntityRepository<User>,
     ) { }
 
-    public async updateUserSettings(userId: string, { country, interestedInSources }: UpdateUserSettingsDto): Promise<User> {
+    public async updateUserSettings(
+        userId: string,
+        { country, interestedInSources, email, enableEmailNotifications }: UpdateUserSettingsDto
+    ): Promise<User> {
         const user = await this.userRepository.findOneOrFail(userId);
 
+        user.enableEmailNotifications = enableEmailNotifications;
+        user.email = email;
         user.country = country;
         user.interestedInSources = interestedInSources;
         await this.userRepository.persistAndFlush(user);
