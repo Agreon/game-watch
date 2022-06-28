@@ -39,6 +39,9 @@ export class UserController {
         @Query("token") token: string,
         @Res() response: Response
     ) {
+        if (!token) {
+            throw new Error("'token' is missing");
+        }
         await this.userService.confirmEmailAddress(token);
 
         return response.send("E-Mail Address confirmed!");
@@ -49,6 +52,9 @@ export class UserController {
         @Query("id") userId: string,
         @Res() response: Response
     ) {
+        if (!userId) {
+            throw new Error("'userId' is missing");
+        }
         await this.userService.unsubscribeFromNotifications(userId);
 
         return response.send("You successfully unsubscribed!");
