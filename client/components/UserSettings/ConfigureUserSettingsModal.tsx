@@ -26,7 +26,6 @@ import { useAction } from "../../util/useAction";
 import { InfoSourceFilter } from "../InfoSourceFilter";
 import { CountrySelect } from "./CountrySelect";
 
-
 interface UserSettingsModalProps {
     show: boolean
     onClose: () => void

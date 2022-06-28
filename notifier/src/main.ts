@@ -6,14 +6,22 @@ import { mikroOrmConfig } from "@game-watch/database";
 import { createWorkerForQueue, QueueType } from "@game-watch/queue";
 import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
 import { MikroORM } from "@mikro-orm/core";
+import SendgridMailClient from '@sendgrid/mail';
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
 
-import { createNotifications } from "./create-notifications";
 import { EnvironmentStructure } from "./environment";
+import { MailService } from "./mail-service";
+import { NotificationService } from "./notification-service";
+import { GameReducedNotificationCreator } from "./notifier/game-reduced-notification-creator";
+import { GameReleasedNotificationCreator } from "./notifier/game-released-notification-creator";
+import { NewMetaCriticRatingNotificationCreator } from "./notifier/new-meta-critic-rating-notification-creator";
+import { NewStoreEntryNotificationCreator } from "./notifier/new-store-entry-notification-creator";
+import { ReleaseDateChangedNotificationCreator } from "./notifier/release-date-changed-notification-creator";
 
 const {
     CREATE_NOTIFICATIONS_CONCURRENCY,
+    SENDGRID_API_KEY
 } = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Notifier");
@@ -22,19 +30,30 @@ const logger = createLogger("Notifier");
 
 let createNotificationsWorker: Worker | undefined;
 
+SendgridMailClient.setApiKey(SENDGRID_API_KEY);
+
+const notificationService = new NotificationService(
+    [
+        new GameReducedNotificationCreator(),
+        new GameReleasedNotificationCreator(),
+        new NewMetaCriticRatingNotificationCreator(),
+        new NewStoreEntryNotificationCreator(),
+        new ReleaseDateChangedNotificationCreator()
+    ],
+    new MailService(SendgridMailClient),
+    logger
+);
+
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
     createNotificationsWorker = createWorkerForQueue(QueueType.CreateNotifications, async ({ data: { sourceId, existingGameData, resolvedGameData } }) => {
-        const sourceScopedLogger = logger.child({ sourceId });
-
         try {
-            await createNotifications({
+            await notificationService.createNotifications({
                 sourceId,
                 existingGameData,
                 resolvedGameData,
-                logger: sourceScopedLogger,
-                em: orm.em.fork(),
+                em: orm.em.fork()
             });
         } catch (error) {
             // Need to wrap this because otherwise the error is swallowed by the worker.

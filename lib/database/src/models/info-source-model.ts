@@ -75,4 +75,11 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
         return this.remoteGameId;
     }
 
+    public getDataOrFail() {
+        if (!this.data) {
+            throw new Error("'data' is not set");
+        }
+
+        return this.data;
+    }
 }

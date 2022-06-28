@@ -14,7 +14,9 @@ export const EnvironmentStructure = t.type({
     DISABLE_USER_REGISTRATION: BooleanFromString,
     THROTTLE_TTL: IntFromString,
     THROTTLE_LIMIT: IntFromString,
-    PRETTY_LOGGING: BooleanFromString
+    PRETTY_LOGGING: BooleanFromString,
+    SENDGRID_API_KEY: t.string,
+    API_URL: t.string
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;

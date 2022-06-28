@@ -20,6 +20,12 @@ export class User extends BaseEntity<User> {
     @Property({ default: false })
     public enableEmailNotifications: boolean = false;
 
+    @Property({ default: false })
+    public emailConfirmed: boolean = false;
+
+    @Property({ unique: true, nullable: true, lazy: true })
+    public emailConfirmationToken: string | null;
+
     @Enum(() => UserState)
     public state: UserState = UserState.Trial;
 
@@ -45,5 +51,12 @@ export class User extends BaseEntity<User> {
         super();
         this.id = id;
         this.country = country;
+    }
+
+    public getEmailOrFail() {
+        if (!this.email) {
+            throw new Error("'email' was not set");
+        }
+        return this.email;
     }
 }
