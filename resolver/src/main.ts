@@ -50,6 +50,7 @@ const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
+    const createNotificationsQueue = createQueue(QueueType.CreateNotifications);
 
     resolveSourceWorker = createWorkerForQueue(QueueType.ResolveSource, async ({ data: { sourceId, initialRun, skipCache } }) => {
         const sourceScopedLogger = logger.child({ sourceId });
@@ -60,6 +61,7 @@ const main = async () => {
                 initialRun,
                 skipCache,
                 resolveService,
+                createNotificationsQueue,
                 logger: sourceScopedLogger,
                 em: orm.em.fork(),
             });

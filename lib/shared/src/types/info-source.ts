@@ -1,3 +1,5 @@
+import { Country } from "./country";
+
 export enum InfoSourceType {
     Steam = "steam",
     Switch = "switch",
@@ -6,6 +8,8 @@ export enum InfoSourceType {
     Metacritic = "metacritic"
 }
 export type StoreInfoSource = InfoSourceType.Steam | InfoSourceType.Switch | InfoSourceType.PsStore | InfoSourceType.Epic;
+
+export const StoreInfoSources = [InfoSourceType.Steam, InfoSourceType.Switch, InfoSourceType.PsStore, InfoSourceType.Epic];
 
 export interface BaseGameData {
     id: string;
@@ -51,9 +55,6 @@ export type GameData = {
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
-
-export const Countries = ["DE", "US"] as const;
-export type Country = typeof Countries[number];
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: ["DE", "US"] as const,

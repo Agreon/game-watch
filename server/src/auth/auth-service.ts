@@ -23,11 +23,13 @@ export class AuthService {
         return user;
     }
 
-    public async registerUser({ id, username, password }: RegisterUserDto): Promise<User> {
+    public async registerUser({ id, username, password, email, enableEmailNotifications }: RegisterUserDto): Promise<User> {
         const userToRegister = await this.userRepository.findOneOrFail(id);
 
         userToRegister.username = username;
         userToRegister.state = UserState.Registered;
+        userToRegister.email = email ?? null;
+        userToRegister.enableEmailNotifications = enableEmailNotifications;
         userToRegister.password = await this.hashPassword(password);
 
         await this.userRepository.persistAndFlush(userToRegister);

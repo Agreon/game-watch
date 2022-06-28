@@ -5,11 +5,10 @@ import {
     StatNumber,
     Text,
 } from "@chakra-ui/react";
-import { Country, StoreGameData } from "@game-watch/shared";
-import React, { useCallback, useMemo } from "react";
+import { Country, formatPrice, formatReleaseDate, StoreGameData } from "@game-watch/shared";
+import React, { useMemo } from "react";
 
 import { useUserContext } from "../../providers/UserProvider";
-import { formatReleaseDate } from "../../util/format-release-date";
 import { InfoSourceWrapper } from "./InfoSourceWrapper";
 
 const ReleaseDate: React.FC<{ releaseDate?: Date; originalDate?: string }> = ({ releaseDate, originalDate }) => {
@@ -23,32 +22,10 @@ const ReleaseDate: React.FC<{ releaseDate?: Date; originalDate?: string }> = ({ 
     );
 };
 
-
-const countryUnitMap: Record<Country, string> = {
-    "DE": "€",
-    "US": "$"
-};
-
 const Price: React.FC<{ price?: number, initial?: number, userCountry: Country }> = ({ price, initial, userCountry }) => {
-    const formatPrice = useCallback((price?: number) => {
-        if (price === undefined) {
-            return "TBA";
-        }
-
-        if (price === 0) {
-            return "Free";
-        }
-
-        if (countryUnitMap[userCountry] === "$") {
-            return `$${price}`;
-        }
-
-        return `${price}${countryUnitMap[userCountry]}`;
-    }, [userCountry]);
-
     const hasDiscount = useMemo(() => price && initial && price !== initial, [price, initial]);
-    const parsedPrice = useMemo(() => formatPrice(price), [formatPrice, price]);
-    const parsedInitial = useMemo(() => formatPrice(initial), [formatPrice, initial]);
+    const parsedPrice = useMemo(() => formatPrice({ price, country: userCountry }), [price, userCountry]);
+    const parsedInitial = useMemo(() => formatPrice({ price: initial, country: userCountry }), [initial, userCountry]);
 
     return (
         <Stat>

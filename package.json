@@ -10,7 +10,8 @@
         "client",
         "server",
         "searcher",
-        "resolver"
+        "resolver",
+        "notifier"
     ],
     "scripts": {
         "build": "pnpm turbo run build",

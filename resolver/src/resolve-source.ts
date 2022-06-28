@@ -1,8 +1,9 @@
 import { InfoSource } from "@game-watch/database";
+import { QueueParams, QueueType } from "@game-watch/queue";
 import { Logger } from "@game-watch/service";
 import { EntityManager } from "@mikro-orm/core";
+import { Queue } from "bullmq";
 
-import { createNotifications } from "./create-notifications";
 import { ResolveService } from "./resolve-service";
 
 interface Params {
@@ -10,14 +11,15 @@ interface Params {
     initialRun?: boolean;
     skipCache?: boolean;
     resolveService: ResolveService
+    createNotificationsQueue: Queue<QueueParams[QueueType.CreateNotifications]>
     em: EntityManager
     logger: Logger
 }
 
-export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger }: Params) => {
+export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger, createNotificationsQueue }: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["game", "user"] });
+    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["user"] });
     const userCountry = source.user.get().country;
     if (source.disabled || source.remoteGameId === null) {
         return;
@@ -44,7 +46,15 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     logger.info(`Resolved source information in ${source.type}`);
 
     if (!initialRun) {
-        await createNotifications({ infoSource: source, game: source.game.getEntity(), resolvedGameData, em, logger });
+        await createNotificationsQueue.add(
+            QueueType.CreateNotifications,
+            {
+                sourceId,
+                existingGameData: source.data,
+                resolvedGameData,
+            },
+            { jobId: sourceId, priority: 2 }
+        );
     }
 
     await em.nativeUpdate(InfoSource, sourceId, {

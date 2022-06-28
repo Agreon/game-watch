@@ -79,7 +79,7 @@ export class AuthController {
     @Post("/register")
     @HttpCode(HttpStatus.OK)
     public async registerUser(
-        @Body() { id, username, password }: RegisterUserDto,
+        @Body() { id, username, password, enableEmailNotifications, email }: RegisterUserDto,
         @Res() response: Response,
     ): Promise<Response<UserDto>> {
         const existingUser = await this.userRepository.findOne({ username });
@@ -93,7 +93,13 @@ export class AuthController {
             throw new BadRequestException();
         }
 
-        const registeredUser = await this.authService.registerUser({ id, username, password });
+        const registeredUser = await this.authService.registerUser({
+            id,
+            username,
+            password,
+            email,
+            enableEmailNotifications,
+        });
 
         delete (registeredUser as any).password;
 

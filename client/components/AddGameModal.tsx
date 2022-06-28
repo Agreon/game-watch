@@ -172,8 +172,8 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             <Button
                                 ml="1rem"
                                 size="lg"
-                                isLoading={loading}
                                 colorScheme="teal"
+                                isLoading={loading}
                                 disabled={loading}
                                 onClick={onAddGame}
                             >

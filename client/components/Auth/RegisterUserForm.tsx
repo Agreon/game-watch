@@ -19,8 +19,11 @@ import { useUserContext } from "../../providers/UserProvider";
 import { useAction } from "../../util/useAction";
 
 type Inputs = {
-    username: string,
-    password: string,
+    username: string
+    password: string
+    enableEmailNotifications: boolean
+    email?: string
+    agreeToTermsOfService: boolean
 }
 
 const Form = chakra("form");
@@ -28,7 +31,9 @@ const Form = chakra("form");
 export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     const toast = useToast();
     const { registerUser } = useUserContext();
-    const { register, handleSubmit, formState: { errors }, setError } = useForm<Inputs>();
+    const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<Inputs>();
+
+    const enableEmailNotifications = watch("enableEmailNotifications", false);
 
     const { loading, execute: onRegister } = useAction(registerUser, {
         onError: error => {
@@ -47,24 +52,40 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
     return (
         <Box>
-            <Text mt="0.25rem">Dont worry about your data</Text>
+            <Text mt="0.25rem">Don&apos;t worry about your data</Text>
 
             <Form mt="1rem" onSubmit={handleSubmit(onRegister)} >
                 <FormControl variant="floating" isInvalid={!!errors.username}>
-                    <Input id="username" placeholder=" " {...register("username", { required: true })} />
+                    <Input id="username" placeholder="" {...register("username", { required: true })} />
                     <FormLabel htmlFor="username">Username</FormLabel>
                     {errors.username?.type === "required" && <FormErrorMessage>This field is required</FormErrorMessage>}
                     {errors.username?.type === "validate" && <FormErrorMessage>Username is already taken</FormErrorMessage>}
                 </FormControl>
 
                 <FormControl variant="floating" mt="1rem" isInvalid={!!errors.password}>
-                    <Input id="password" type="password" placeholder=" " {...register("password", { required: true })} />
+                    <Input id="password" type="password" placeholder="" {...register("password", { required: true })} />
                     <FormLabel>Password</FormLabel>
                     {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
                 </FormControl>
 
-                <FormControl mt="1.5rem">
-                    <Checkbox>I agree with everything</Checkbox>
+                <FormControl mt="1rem">
+                    <Checkbox id="enableEmailNotifications" {...register("enableEmailNotifications", { value: false })}>
+                        Enable E-Mail Notifications
+                    </Checkbox>
+                </FormControl>
+
+                {
+                    enableEmailNotifications &&
+                    <FormControl variant="floating" mt="1rem" isInvalid={!!errors.email}>
+                        <Input id="email" type="email" placeholder="" {...register("email", { required: true })} />
+                        <FormLabel>Email</FormLabel>
+                        {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
+                    </FormControl>
+                }
+
+                <FormControl mt="1.5rem" isInvalid={!!errors.agreeToTermsOfService}>
+                    <Checkbox id="agreeToTermsOfService" {...register("agreeToTermsOfService", { required: true })}>I agree with everything</Checkbox>
+                    {errors.agreeToTermsOfService && <FormErrorMessage>This field is required</FormErrorMessage>}
                 </FormControl>
 
                 <Flex justify="end" mt="2rem">
