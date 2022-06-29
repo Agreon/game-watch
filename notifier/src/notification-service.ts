@@ -55,38 +55,42 @@ export class NotificationService {
             `Checking for ${JSON.stringify(relevantNotificationCreators.map(creator => creator.forNotificationType))}`
         );
 
-        const notificationsToCreate = await Promise.all(
-            relevantNotificationCreators.map(async creator =>
-                new Notification({
+        await Promise.all(
+            relevantNotificationCreators.map(async creator => {
+                const data = await creator.createNotification({
+                    logger: scopedLogger.child({
+                        notificationType: creator.forNotificationType,
+                    }),
+                    game,
+                    infoSource,
+                    em,
+                    existingGameData,
+                    resolvedGameData
+                });
+
+                if (!data) {
+                    return;
+                }
+
+                const notification = new Notification({
                     game,
                     infoSource,
                     type: creator.forNotificationType,
-                    data: await creator.createNotification({
-                        logger: scopedLogger.child({
-                            notificationType: creator.forNotificationType,
-                        }),
-                        game,
-                        infoSource,
-                        em,
-                        existingGameData,
-                        resolvedGameData
-                    }),
-                })
-            )
+                    data,
+                });
+
+                scopedLogger.info(`Creating Notification of type '${notification.type}'`);
+
+                await em.transactional(async transactionEm => {
+                    await transactionEm.nativeInsert(notification);
+
+                    if (user.enableEmailNotifications) {
+                        scopedLogger.info(`Sending notifications to ${user.email}`);
+
+                        await this.mailService.sendNotificationMail(user, notification);
+                    }
+                });
+            })
         );
-
-        for (const notification of notificationsToCreate) {
-            scopedLogger.info(`Creating Notification of type '${notification.type}'`);
-
-            await em.transactional(async transactionEm => {
-                await transactionEm.nativeInsert(notification);
-
-                if (user.enableEmailNotifications) {
-                    scopedLogger.info(`Sending notifications to ${user.email}`);
-
-                    await this.mailService.sendNotificationMail(user, notification);
-                }
-            });
-        }
     }
 }
