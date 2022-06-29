@@ -3,7 +3,7 @@ RUN npm i -g pnpm@7
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY client/package.json client/package.json
 RUN \
@@ -14,7 +14,7 @@ RUN \
 FROM node:alpine AS builder
 RUN npm i -g pnpm@7
 WORKDIR /app
-COPY package.json .pnpmfile.cjs pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared lib/shared
 COPY client/assets client/assets
 COPY client/components client/components
