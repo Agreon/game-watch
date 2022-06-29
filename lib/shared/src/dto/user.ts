@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 
 import { Country, InfoSourceType, UserState } from "../types";
 
@@ -18,7 +18,8 @@ export class UpdateUserSettingsDto {
 
     @IsEmail()
     @Length(2, 255)
-    public email: string;
+    @IsOptional()
+    public email?: string;
 
     @IsString()
     @Length(2, 2)

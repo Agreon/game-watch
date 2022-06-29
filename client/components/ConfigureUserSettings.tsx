@@ -25,7 +25,6 @@ export const ConfigureUserSettings: React.FC = () => {
             country,
             interestedInSources,
             enableEmailNotifications: false,
-            email: "",
         });
     }, [updateUserSettings, country, interestedInSources]);
 

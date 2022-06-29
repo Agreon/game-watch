@@ -54,6 +54,20 @@ services:
       - db
       - redis
 
+  notifier:
+    build:
+      context: .
+      dockerfile: ./notifier/Dockerfile
+    env_file: .env
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+      - redis
+
   client:
     build:
       context: .

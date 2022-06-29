@@ -58,14 +58,14 @@ export const NotificationProvider: React.FC<{
 
     // TODO: https://chakra-ui.com/docs/hooks/use-outside-click?
     // Close sidebar on outside click
-    const handleClick = useCallback((event) => {
-        if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target)) {
+    const handleClick = useCallback((event: MouseEvent) => {
+        if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target as Node)) {
             closeNotificationSidebar();
         }
     }, [notificationSidebarRef, closeNotificationSidebar]);
 
     // Close sidebar on escape
-    const handleKeyDown = useCallback((event) => {
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
         if (event.keyCode === 27) {
             closeNotificationSidebar();
         }

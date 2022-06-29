@@ -56,7 +56,7 @@ export const CountrySelect: React.FC<CountrySelectOptions> = ({ value, onChange 
                     border: 0,
                     borderBottom: "1px",
                     borderRadius: 0,
-                    orderColor: "white",
+                    borderColor: "white",
                     boxShadow: "none !important",
                 }),
                 option: provided => ({

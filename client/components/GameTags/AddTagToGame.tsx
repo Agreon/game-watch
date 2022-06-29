@@ -25,7 +25,7 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
         }
     }, [onSubmit, name]);
 
-    const onNameKeyPress = useCallback(async ({ key }) => {
+    const onNameKeyPress = useCallback(async ({ key }: { key: string }) => {
         if (key === "Enter") {
             onAdd();
         }

@@ -1,5 +1,5 @@
 import { User } from "@game-watch/database";
-import { Country, CreateUserDto, RegisterUserDto, UserDto, UserState } from "@game-watch/shared";
+import { Countries, Country, CreateUserDto, RegisterUserDto, UserDto, UserState } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { BadRequestException, Body, ConflictException, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
@@ -70,7 +70,7 @@ export class AuthController {
         const userCountry = request.headers["cf-ipcountry"] as Country;
         const user = await this.authService.createUser({
             id,
-            country: userCountry ?? "US"
+            country: Countries.includes(userCountry) ? userCountry : "US"
         });
 
         return await this.setJwtCookiesForUser(user, response);
@@ -100,8 +100,6 @@ export class AuthController {
             email,
             enableEmailNotifications,
         });
-
-        delete (registeredUser as any).password;
 
         return await this.setJwtCookiesForUser(registeredUser, response);
     }

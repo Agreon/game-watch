@@ -4,14 +4,14 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { InfoSourceOptions } from "./InfoSourceOptions";
 import { SourceTypeLogo } from "./SourceTypeLogo";
 
-export const InfoSourceWrapper: React.FC = ({ children }) => {
+export const InfoSourceWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     const { source } = useInfoSourceContext();
 
     return (

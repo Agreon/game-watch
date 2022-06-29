@@ -3,10 +3,19 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 30
     schedule:
       interval: 'daily'
     ignore:
       - dependency-name: 'p-retry'
         versions:
           - '>= 5.0.0'
+      - dependency-name: '@nestjs/common'
+        versions:
+          - '>= 8.4.5'
+      - dependency-name: '@nestjs/core'
+        versions:
+          - '>= 8.4.5'
+      - dependency-name: '@nestjs/platform-express'
+        versions:
+          - '>= 8.4.5'

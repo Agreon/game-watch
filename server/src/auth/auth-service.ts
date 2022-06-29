@@ -34,15 +34,19 @@ export class AuthService {
 
         await this.userRepository.persistAndFlush(userToRegister);
 
+        delete (userToRegister as any).password;
+
         return userToRegister;
     }
 
     public async validateUser(username: string, password: string): Promise<User | null> {
-        const user = await this.userRepository.findOne({ username }, { fields: ["password"] });
+        const user = await this.userRepository.findOne({ username }, { populate: ["password"] });
 
         if (!user?.password || await bcrypt.compare(password, user.password) === false) {
             return null;
         }
+
+        delete (user as any).password;
 
         return user;
     }

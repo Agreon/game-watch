@@ -25,13 +25,13 @@ export class UserService {
             user.emailConfirmed = false;
         }
         user.enableEmailNotifications = enableEmailNotifications;
-        user.email = email;
+        user.email = email ?? null;
         user.country = country;
         user.interestedInSources = interestedInSources;
 
         await this.userRepository.persistAndFlush(user);
 
-        if (user.emailConfirmed === false && user.email !== "") {
+        if (user.emailConfirmed === false && !!user.email) {
             user.emailConfirmationToken = uuidV4();
 
             // Persist again, to not send an invalid token if something failed.
