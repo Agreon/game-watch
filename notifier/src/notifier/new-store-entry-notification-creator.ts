@@ -3,8 +3,8 @@ import { InfoSourceType, NotificationType, StoreInfoSource, StoreInfoSources } f
 import { NotificationCreator, NotificationCreatorContext } from "../notification-service";
 
 export class NewStoreEntryNotificationCreator implements NotificationCreator<NotificationType.NewStoreEntry> {
-    public forNotificationType: NotificationType.NewStoreEntry;
-    public supportsInfoSourceTypes: InfoSourceType[] = StoreInfoSources;
+    public readonly forNotificationType = NotificationType.NewStoreEntry;
+    public readonly supportsInfoSourceTypes: InfoSourceType[] = StoreInfoSources;
 
     public async createNotification(
         { existingGameData, resolvedGameData, logger }: NotificationCreatorContext<StoreInfoSource>

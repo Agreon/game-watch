@@ -5,8 +5,8 @@ import dayjs from "dayjs";
 import { NotificationCreator, NotificationCreatorContext } from "../notification-service";
 
 export class GameReleasedNotificationCreator implements NotificationCreator<NotificationType.GameReleased> {
-    public forNotificationType: NotificationType.GameReleased;
-    public supportsInfoSourceTypes: InfoSourceType[] = StoreInfoSources;
+    public readonly forNotificationType = NotificationType.GameReleased;
+    public readonly supportsInfoSourceTypes: InfoSourceType[] = StoreInfoSources;
 
     public async createNotification(
         { infoSource, existingGameData, resolvedGameData, em, game, logger }: NotificationCreatorContext<StoreInfoSource>

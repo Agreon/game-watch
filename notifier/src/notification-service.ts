@@ -22,7 +22,7 @@ export interface NotificationCreatorContext<T extends InfoSourceType = InfoSourc
 }
 
 export interface NotificationCreator<T extends NotificationType> {
-    forNotificationType: T;
+    forNotificationType: NotificationType;
     supportsInfoSourceTypes: InfoSourceType[];
     createNotification: (context: NotificationCreatorContext) => Promise<NotificationData[T] | null>;
 }

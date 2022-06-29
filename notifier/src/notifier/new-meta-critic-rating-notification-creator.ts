@@ -3,8 +3,8 @@ import { InfoSourceType, NotificationType } from "@game-watch/shared";
 import { NotificationCreator, NotificationCreatorContext } from "../notification-service";
 
 export class NewMetaCriticRatingNotificationCreator implements NotificationCreator<NotificationType.NewMetacriticRating> {
-    public forNotificationType: NotificationType.NewMetacriticRating;
-    public supportsInfoSourceTypes: InfoSourceType[] = [InfoSourceType.Metacritic];
+    public readonly forNotificationType = NotificationType.NewMetacriticRating;
+    public readonly supportsInfoSourceTypes: InfoSourceType[] = [InfoSourceType.Metacritic];
 
     public async createNotification(
         { existingGameData, resolvedGameData, logger }: NotificationCreatorContext<InfoSourceType.Metacritic>
