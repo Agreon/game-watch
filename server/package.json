@@ -30,7 +30,7 @@
     "@nestjs/common": "8.4.5",
     "@nestjs/config": "^2.1.0",
     "@nestjs/core": "8.4.5",
-    "@nestjs/jwt": "^8.0.1",
+    "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^8.2.2",
     "@nestjs/platform-express": "8.4.5",
     "@nestjs/throttler": "^2.0.1",
