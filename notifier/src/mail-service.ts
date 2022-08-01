@@ -26,6 +26,7 @@ export class MailService {
 
     private getMailSubject(notification: Notification) {
         const game = notification.game.getEntity();
+        const infoSource = notification.infoSource.getEntity();
 
         const gameName = game.name || game.search;
 
@@ -35,7 +36,7 @@ export class MailService {
             case NotificationType.ReleaseDateChanged:
                 return `The release date of ${gameName} changed`;
             case NotificationType.NewStoreEntry:
-                return `${gameName} was added to the store`;
+                return `${gameName} was added to the ${infoSource.type} store`;
             case NotificationType.GameReleased:
                 return `${gameName} will be available today`;
             case NotificationType.NewMetacriticRating:
@@ -50,24 +51,25 @@ export class MailService {
         const remoteGameUrl = notification.infoSource.getEntity().getDataOrFail().url;
 
         return `
-        Hey ${receiver.username}!
+    Hey ${receiver.username}!
 
-        ${body}
+    ${body}
 
-        You can have a detailed look here: ${remoteGameUrl}
-        Or why not check in on GameWatch: ${PUBLIC_URL}
+    You can have a detailed look here: ${remoteGameUrl}
+    Or why not check in on GameWatch: ${PUBLIC_URL}
 
-        Best
+    Best
 
-        Daniel
+    Daniel
 
-        PS: If you don't want to receive these mails anymore, you can unsubscribe by clicking this link:
-        ${unsubscribeLink}
+    PS: If you don't want to receive these mails anymore, you can unsubscribe by clicking this link:
+    ${unsubscribeLink}
         `;
     }
 
     private getNotificationText(receiver: User, notification: Notification) {
         const game = notification.game.getEntity();
+        const infoSource = notification.infoSource.getEntity();
 
         const gameName = game.name || game.search;
 
@@ -77,17 +79,17 @@ export class MailService {
                 const initial = formatPrice({ price: data.initial, country: receiver.country });
                 const final = formatPrice({ price: data.final, country: receiver.country });
 
-                return `${gameName} was reduced from ${initial} to ${final}`;
+                return `${gameName} was reduced from ${initial} to ${final}.`;
             case NotificationType.ReleaseDateChanged:
                 const formattedDate = formatReleaseDate(notification.data as NotificationData[NotificationType.ReleaseDateChanged]);
 
-                return `${gameName} will be released on ${formattedDate}`;
+                return `${gameName} will be released on ${formattedDate}.`;
             case NotificationType.NewStoreEntry:
-                return `${gameName} was added to the store`;
+                return `${gameName} was added to the ${infoSource.type} store.`;
             case NotificationType.GameReleased:
-                return `${gameName} will be available today`;
+                return `${gameName} will be available today.`;
             case NotificationType.NewMetacriticRating:
-                return `${gameName} received a rating`;
+                return `${gameName} received a rating.`;
         }
     }
 
