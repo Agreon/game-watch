@@ -40,8 +40,6 @@ export const QUEUE_CONNECTION_OPTIONS = {
 export const DEFAULT_JOB_OPTIONS: JobsOptions = {
     removeOnComplete: true,
     removeOnFail: true,
-    // TODO: Not sure about that
-    timeout: 60000,
     attempts: 2,
     backoff: {
         type: "exponential",
@@ -58,6 +56,8 @@ export const createWorkerForQueue = <T extends QueueType>(
     processor,
     {
         connection: QUEUE_CONNECTION_OPTIONS,
+        // TODO: Not sure about that
+        lockDuration: 60000,
         ...options,
     },
 );

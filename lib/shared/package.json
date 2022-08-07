@@ -9,12 +9,12 @@
         "lint": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.18.0",
-        "typescript": "^4.7.4",
-        "@types/node": "^18.0.0"
+        "@types/node": "^18.6.4",
+        "eslint": "^8.21.0",
+        "typescript": "^4.7.4"
     },
     "dependencies": {
         "class-validator": "^0.13.1",
-        "dayjs": "^1.11.3"
+        "dayjs": "^1.11.4"
     }
 }
