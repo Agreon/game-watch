@@ -24,7 +24,7 @@ export class MailService {
         });
     }
 
-    private getMailSubject(notification: Notification) {
+    private getMailSubject(notification: Notification): string {
         const game = notification.game.getEntity();
         const infoSource = notification.infoSource.getEntity();
 
@@ -41,6 +41,8 @@ export class MailService {
                 return `${gameName} will be available today`;
             case NotificationType.NewMetacriticRating:
                 return `${gameName} received a rating`;
+            case NotificationType.ResolveError:
+                return `${gameName} could not be resolved`;
         }
     }
 
@@ -51,23 +53,23 @@ export class MailService {
         const remoteGameUrl = notification.infoSource.getEntity().getDataOrFail().url;
 
         return `
-    Hey ${receiver.username}!
+Hey ${receiver.username}!
 
-    ${body}
+${body}
 
-    You can have a detailed look here: ${remoteGameUrl}
-    Or why not check in on GameWatch: ${PUBLIC_URL}
+You can have a detailed look here: ${remoteGameUrl}
+Or why not check in on GameWatch: ${PUBLIC_URL}
 
-    Best
+Best
 
-    Daniel
+Daniel
 
-    PS: If you don't want to receive these mails anymore, you can unsubscribe by clicking this link:
-    ${unsubscribeLink}
+PS: If you don't want to receive these mails anymore, you can unsubscribe by clicking this link:
+${unsubscribeLink}
         `;
     }
 
-    private getNotificationText(receiver: User, notification: Notification) {
+    private getNotificationText(receiver: User, notification: Notification): string {
         const game = notification.game.getEntity();
         const infoSource = notification.infoSource.getEntity();
 
@@ -90,6 +92,8 @@ export class MailService {
                 return `${gameName} will be available today.`;
             case NotificationType.NewMetacriticRating:
                 return `${gameName} received a rating.`;
+            case NotificationType.ResolveError:
+                return `${gameName} could not be resolved.`;
         }
     }
 

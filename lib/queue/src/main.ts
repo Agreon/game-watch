@@ -25,7 +25,7 @@ export type QueueParams = {
     [QueueType.CreateNotifications]: {
         sourceId: string
         existingGameData: GameDataU
-        resolvedGameData: GameDataU
+        resolvedGameData: GameDataU | null
     },
 };
 

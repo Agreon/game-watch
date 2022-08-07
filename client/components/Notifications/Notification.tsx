@@ -14,6 +14,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.GameReleased]: "Game released",
     [NotificationType.GameReduced]: "Game reduced",
     [NotificationType.NewMetacriticRating]: "Game rated",
+    [NotificationType.ResolveError]: "Resolve error",
 };
 
 function isNotificationOfType<T extends NotificationType, TValue extends NotificationType>(
@@ -45,8 +46,8 @@ const getNotificationText = (notification: NotificationDto) => {
             return <>{gameName} will be available today!</>;
         case NotificationType.NewMetacriticRating:
             return <>{gameName} received a rating!</>;
-        default:
-            return <>Unknown Notification</>;
+        case NotificationType.ResolveError:
+            return <>{gameName} could not be resolved!</>;
     }
 };
 

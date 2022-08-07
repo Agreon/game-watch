@@ -41,6 +41,18 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
             updatedAt: new Date()
         });
 
+        if (!initialRun) {
+            await createNotificationsQueue.add(
+                QueueType.CreateNotifications,
+                {
+                    sourceId,
+                    existingGameData: source.data,
+                    resolvedGameData: null,
+                },
+                { jobId: sourceId, priority: 2 }
+            );
+        }
+
         return;
     }
     logger.info(`Resolved source information in ${source.type}`);

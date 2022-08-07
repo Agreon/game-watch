@@ -29,7 +29,7 @@ export class ResolveService {
         type: InfoSourceType,
         context: ResolveServiceContext
     ): Promise<GameDataU | null> {
-        const logger = context.logger.child({ serviceName: ResolveService.name, });
+        const logger = context.logger.child({ serviceName: ResolveService.name, type });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
         if (!resolverForType) {
@@ -48,7 +48,7 @@ export class ResolveService {
                     return JSON.parse(existingData);
                 }
 
-                const resolvedData = await resolverForType.resolve(id, { ...context, logger: logger.child({ type }) });
+                const resolvedData = await resolverForType.resolve(id, { ...context, logger });
                 await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
 
                 return resolvedData;

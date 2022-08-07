@@ -34,7 +34,7 @@ export class SearchService {
         type: InfoSourceType,
         context: SearchServiceContext
     ): Promise<SearchResponse | null> {
-        const logger = context.logger.child({ serviceName: SearchService.name, });
+        const logger = context.logger.child({ serviceName: SearchService.name, type });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
@@ -53,7 +53,7 @@ export class SearchService {
                     return JSON.parse(existingData);
                 }
 
-                const foundData = await searcherForType.search(search, { ...context, logger: logger.child({ type }) });
+                const foundData = await searcherForType.search(search, { ...context, logger });
                 await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
 
                 return foundData;

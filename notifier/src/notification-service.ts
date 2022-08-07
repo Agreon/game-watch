@@ -1,4 +1,4 @@
-import { Game, InfoSource, Notification } from "@game-watch/database";
+import { Game, InfoSource, Notification, User } from "@game-watch/database";
 import { Logger } from "@game-watch/service";
 import { GameData, InfoSourceType, NotificationData, NotificationType } from "@game-watch/shared";
 import { EntityManager } from "@mikro-orm/core";
@@ -8,8 +8,15 @@ import { MailService } from "./mail-service";
 export interface CreateNotificationsParams<T extends InfoSourceType = InfoSourceType> {
     sourceId: string
     existingGameData: GameData[T] | null
-    resolvedGameData: GameData[T]
+    resolvedGameData: GameData[T] | null
     em: EntityManager
+}
+
+interface PersistNotificationParams {
+    notification: Notification;
+    logger: Logger;
+    em: EntityManager;
+    user: User;
 }
 
 export interface NotificationCreatorContext<T extends InfoSourceType = InfoSourceType> {
@@ -47,6 +54,31 @@ export class NotificationService {
 
         const scopedLogger = this.logger.child({ sourceId, gameId: game.id, userId: user.id });
 
+        if(resolvedGameData === null){
+            const notification = new Notification({
+                game,
+                infoSource,
+                type: NotificationType.ResolveError,
+                data: {}
+            });
+
+            const existingNotification = await em.findOne(Notification, {
+                infoSource,
+                type: NotificationType.ResolveError
+            });
+            if (existingNotification) {
+                scopedLogger.debug("Not adding notification because there is already another ResolveError notification for that game");
+                return;
+            }
+
+            return await this.persistNotification({
+                notification,
+                em,
+                user,
+                logger: scopedLogger
+            });
+        }
+
         const relevantNotificationCreators = this.notificationCreators.filter(
             ({ supportsInfoSourceTypes }) => supportsInfoSourceTypes.includes(infoSource.type)
         );
@@ -79,18 +111,29 @@ export class NotificationService {
                     data,
                 });
 
-                scopedLogger.info(`Creating Notification of type '${notification.type}'`);
-
-                await em.transactional(async transactionEm => {
-                    await transactionEm.nativeInsert(notification);
-
-                    if (user.enableEmailNotifications) {
-                        scopedLogger.info(`Sending notifications to ${user.email}`);
-
-                        await this.mailService.sendNotificationMail(user, notification);
-                    }
+                await this.persistNotification({
+                    notification,
+                    em,
+                    user,
+                    logger: scopedLogger
                 });
             })
         );
+    }
+
+    private async persistNotification(
+        { notification, logger, em, user }: PersistNotificationParams
+    ) {
+        logger.info(`Creating Notification of type '${notification.type}'`);
+
+        await em.transactional(async transactionEm => {
+            await transactionEm.nativeInsert(notification);
+
+            if (user.enableEmailNotifications) {
+                logger.info(`Sending notifications to ${user.email}`);
+
+                await this.mailService.sendNotificationMail(user, notification);
+            }
+        });
     }
 }
