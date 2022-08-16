@@ -38,7 +38,7 @@
     "@sentry/node": "^7.9.0",
     "@sentry/tracing": "^7.9.0",
     "bcrypt": "^5.0.1",
-    "bullmq": "1.87.1",
+    "bullmq": "1.87.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.1",
     "compression": "^1.7.4",
