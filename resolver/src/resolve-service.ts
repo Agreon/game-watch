@@ -1,6 +1,7 @@
 import { Logger } from "@game-watch/service";
 import { Country, GameDataU, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
+import axios from "axios";
 import { Redis } from "ioredis";
 import pRetry from "p-retry";
 
@@ -11,6 +12,7 @@ export interface InfoResolverContext {
 
 export interface ResolveServiceContext extends InfoResolverContext {
     skipCache?: boolean
+    initialRun?: boolean
 }
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
@@ -29,7 +31,7 @@ export class ResolveService {
         type: InfoSourceType,
         context: ResolveServiceContext
     ): Promise<GameDataU | null> {
-        const logger = context.logger.child({ serviceName: ResolveService.name, type });
+        const logger = context.logger.child({ serviceName: ResolveService.name, type, sourceId: id });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
         if (!resolverForType) {
@@ -55,7 +57,16 @@ export class ResolveService {
             }, {
                 minTimeout: 5000,
                 maxTimeout: 30000,
-                onFailedAttempt: error => logger.warn(error, `Error thrown while resolving ${type} for ${id}`)
+                // If the user is actively waiting don't retry to often
+                retries: context.initialRun || context.skipCache ? 2 : 5,
+                onFailedAttempt: error => {
+                    logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
+                    // We only want to retry on network errors that are not signaling us to stop anyway.
+                    if(axios.isAxiosError(error) && error.response?.status !== 403) {
+                        return;
+                    }
+                    logger.warn("Retrying likely won't help. Aborting immediately");
+                }
             });
         } catch (error) {
             Sentry.captureException(error, {
@@ -66,7 +77,7 @@ export class ResolveService {
                     }
                 }
             });
-            logger.child({ type }).error(error);
+            logger.error(error);
             return null;
         } finally {
             const duration = new Date().getTime() - start;

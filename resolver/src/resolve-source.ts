@@ -30,7 +30,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     const resolvedGameData = await resolveService.resolveGameInformation(
         source.remoteGameId,
         source.type,
-        { logger, skipCache, userCountry }
+        { logger, skipCache, userCountry, initialRun }
     );
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);

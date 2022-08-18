@@ -67,7 +67,7 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
     const searchForNewSourcesPromises = sourcesToSearch.map(async sourceType => {
         logger.info(`Searching ${sourceType} for '${game.search}'`);
 
-        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger, userCountry });
+        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger, userCountry, initialRun });
         if (!searchResponse) {
             logger.info(`No store game information found in '${sourceType}' for '${game.search}'`);
             return;
@@ -91,7 +91,7 @@ export const searchForGame = async ({ gameId, initialRun, searchService, em, log
     const researchSourcesPromises = excludedSources.map(async source => {
         logger.info(`Re-Searching ${source.type} for '${game.search}'`);
 
-        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger, userCountry });
+        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger, userCountry, initialRun });
         if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.remoteGameId)) {
             logger.info(`No new store game information found in '${source.type}' for '${game.search}'`);
             return;

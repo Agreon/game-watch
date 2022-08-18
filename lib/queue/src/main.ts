@@ -40,11 +40,6 @@ export const QUEUE_CONNECTION_OPTIONS = {
 export const DEFAULT_JOB_OPTIONS: JobsOptions = {
     removeOnComplete: true,
     removeOnFail: true,
-    attempts: 2,
-    backoff: {
-        type: "exponential",
-        delay: 1000
-    }
 };
 
 export const createWorkerForQueue = <T extends QueueType>(

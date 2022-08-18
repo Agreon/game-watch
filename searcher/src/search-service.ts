@@ -1,6 +1,7 @@
 import { Logger } from "@game-watch/service";
 import { Country, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
+import axios from "axios";
 import { Redis } from "ioredis";
 import pRetry from "p-retry";
 
@@ -10,7 +11,7 @@ export interface InfoSearcherContext {
 }
 
 export interface SearchServiceContext extends InfoSearcherContext {
-    skipCache?: boolean
+    initialRun?: boolean
 }
 
 export interface SearchResponse {
@@ -34,7 +35,7 @@ export class SearchService {
         type: InfoSourceType,
         context: SearchServiceContext
     ): Promise<SearchResponse | null> {
-        const logger = context.logger.child({ serviceName: SearchService.name, type });
+        const logger = context.logger.child({ serviceName: SearchService.name, type, search });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
@@ -47,7 +48,7 @@ export class SearchService {
         try {
             return await pRetry(async () => {
                 const existingData = await this.redis.get(cacheKey);
-                if (existingData && !context.skipCache) {
+                if (existingData) {
                     logger.debug(`Search data for ${cacheKey} was found in cache`);
 
                     return JSON.parse(existingData);
@@ -60,7 +61,16 @@ export class SearchService {
             }, {
                 minTimeout: 5000,
                 maxTimeout: 30000,
-                onFailedAttempt: error => logger.warn(error, `Error thrown while searching ${type} for '${search}'`)
+                // If the user is actively waiting don't retry to often
+                retries: context.initialRun ? 2 : 5,
+                onFailedAttempt: error => {
+                    logger.warn(error, `Error thrown while searching ${type} for ${search}`);
+                    // We only want to retry on network errors that are not signaling us to stop anyway.
+                    if(axios.isAxiosError(error) && error.response?.status !== 403) {
+                        return;
+                    }
+                    logger.warn("Retrying likely won't help. Aborting immediately");
+                }
             });
 
         } catch (error) {
@@ -72,7 +82,7 @@ export class SearchService {
                     }
                 }
             });
-            logger.child({ type }).error(error);
+            logger.error(error);
             return null;
         } finally {
             const duration = new Date().getTime() - start;
