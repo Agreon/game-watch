@@ -28,6 +28,7 @@ export default function Header() {
             width="100%"
             padding="1rem"
             boxShadow="lg"
+            zIndex="1"
         >
             <Text fontSize="2xl">{useBreakpointValue(["GW", "GameWatch"])}</Text>
             <Flex

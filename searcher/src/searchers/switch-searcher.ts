@@ -26,10 +26,11 @@ export const getSwitchSearchResponse = async (search: string) => {
         {
             params: {
                 q: search,
-                fq: `type:GAME AND ((playable_on_txt:"HAC")) AND sorting_title:* AND *:*&sort=score desc, date_from desc`,
+                fq: `type:GAME AND sorting_title:* AND *:*`,
+                sort: "score desc, date_from desc",
                 start: 0,
                 rows: 1,
-                bf: 'linear(ms(priority,NOW/HOUR),1.1e-11,0)'
+                bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
             }
         }
     );
