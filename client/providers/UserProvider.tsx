@@ -133,7 +133,7 @@ export const UserProvider: React.FC<{
     }, [withRequest, user]);
 
     const contextValue = useMemo(() => ({
-        // We show a loading screen while no user is visible
+        // We show a loading screen while no user is available
         user: user!,
         registerUser,
         loginUser,

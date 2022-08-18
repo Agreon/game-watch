@@ -54,7 +54,8 @@ export const ConfigureUserSettingsModal: React.FC<UserSettingsModalProps> = ({ s
     const onUpdateUserSettings = useCallback(async () => {
         await updateSettings({
             enableEmailNotifications,
-            email,
+            // An empty string would trigger the validation.
+            email: email || null,
             country,
             interestedInSources,
         });

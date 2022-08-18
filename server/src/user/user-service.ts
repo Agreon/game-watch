@@ -25,7 +25,7 @@ export class UserService {
             user.emailConfirmed = false;
         }
         user.enableEmailNotifications = enableEmailNotifications;
-        user.email = email ?? null;
+        user.email = email;
         user.country = country;
         user.interestedInSources = interestedInSources;
 

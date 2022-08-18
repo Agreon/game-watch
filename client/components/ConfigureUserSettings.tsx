@@ -16,14 +16,16 @@ export const ConfigureUserSettings: React.FC = () => {
     const [interestedInSources, setInterestedInSources] = useState<InfoSourceType[]>([]);
     const [country, setUserCountry] = useState<Country>(userContext.user.country);
 
-    const availableInfoSources = useMemo(() => INFO_SOURCE_PRIORITY.filter(
-        type => SupportedCountries[type].includes(country)
-    ), [country]);
+    const availableInfoSources = useMemo(
+        () => INFO_SOURCE_PRIORITY.filter(type => SupportedCountries[type].includes(country)),
+        [country]
+    );
 
     const onUpdateUserSettings = useCallback(async () => {
         await updateUserSettings({
             country,
             interestedInSources,
+            email: null,
             enableEmailNotifications: false,
         });
     }, [updateUserSettings, country, interestedInSources]);
