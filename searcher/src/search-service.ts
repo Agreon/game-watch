@@ -55,7 +55,9 @@ export class SearchService {
                 }
 
                 const foundData = await searcherForType.search(search, { ...context, logger });
-                await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+                if(foundData !== null){
+                    await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+                }
 
                 return foundData;
             }, {

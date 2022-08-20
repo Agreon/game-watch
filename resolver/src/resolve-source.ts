@@ -16,13 +16,15 @@ interface Params {
     logger: Logger
 }
 
+export class SourceNotResolvableError extends Error {}
+
 export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger, createNotificationsQueue }: Params) => {
     const startTime = new Date().getTime();
 
     const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["user"] });
     const userCountry = source.user.get().country;
     if (source.disabled || source.remoteGameId === null) {
-        return;
+        throw new SourceNotResolvableError();
     }
 
     logger.info(`Resolving ${source.type}`);

@@ -22,6 +22,10 @@ const main = async () => {
 
         console.log("Removed old cron for", infoSource.id);
 
+        if(infoSource.disabled || !infoSource.remoteGameId){
+            continue;
+        }
+
         await queue.add(
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
