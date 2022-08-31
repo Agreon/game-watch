@@ -1,13 +1,12 @@
 import { withBrowser } from "@game-watch/browser";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoResolver, InfoResolverContext } from "../resolve-service";
+import {  InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
-
 
 const extract = (content: string, regex: RegExp) => {
     const result = new RegExp(regex).exec(content);
@@ -17,6 +16,8 @@ const extract = (content: string, regex: RegExp) => {
 
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
+
+    public constructor(private readonly axios: AxiosInstance) {}
 
     public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SwitchGameData> {
         if (userCountry === "US") {
@@ -46,7 +47,7 @@ export class SwitchResolver implements InfoResolver {
 
             });
         }
-        const { data } = await axios.get<string>(id);
+        const { data } = await this.axios.get<string>(id);
         const $ = cheerio.load(data);
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
@@ -75,7 +76,7 @@ export class SwitchResolver implements InfoResolver {
             return undefined;
         }
 
-        const { data } = await axios.get<any>(`https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`);
+        const { data } = await this.axios.get<any>(`https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`);
         const { regular_price, discount_price } = data.prices[0];
 
         const initial = parseCurrencyValue(regular_price.raw_value);

@@ -1,8 +1,8 @@
 import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
 import { InfoSourceType, SteamGameData, StorePriceInformation } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
-import { InfoResolver, InfoResolverContext } from "../resolve-service";
+import {  InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseDate } from "../util/parse-date";
 
 /**
@@ -12,8 +12,10 @@ import { parseDate } from "../util/parse-date";
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;
 
+    public constructor(private readonly axios: AxiosInstance) {}
+
     public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SteamGameData> {
-        const { data } = await axios.get<any>(
+        const { data } = await this.axios.get<any>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {

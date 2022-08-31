@@ -20,8 +20,8 @@ export interface SearchResponse {
 }
 
 export interface InfoSearcher {
-    type: InfoSourceType;
-    search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>;
+    type: InfoSourceType
+    search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>
 }
 
 export class SearchService {
@@ -72,6 +72,7 @@ export class SearchService {
                         return;
                     }
                     logger.warn("Retrying likely won't help. Aborting immediately");
+                    throw new Error("Non-Retrieable error encountered");
                 }
             });
 

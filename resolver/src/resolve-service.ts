@@ -16,8 +16,8 @@ export interface ResolveServiceContext extends InfoResolverContext {
 }
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
-    type: InfoSourceType;
-    resolve: (id: string, context: InfoResolverContext) => Promise<T>;
+    type: InfoSourceType
+    resolve: (id: string, context: InfoResolverContext) => Promise<T>
 }
 
 export class ResolveService {
@@ -66,6 +66,7 @@ export class ResolveService {
                         return;
                     }
                     logger.warn("Retrying likely won't help. Aborting immediately");
+                    throw new Error("Non-Retrieable error encountered");
                 }
             });
         } catch (error) {

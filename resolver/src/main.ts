@@ -7,6 +7,7 @@ import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue"
 import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
 import { MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
+import axios from "axios";
 import { Worker } from "bullmq";
 import Redis from "ioredis";
 
@@ -38,12 +39,15 @@ const redis = new Redis({
     port: REDIS_PORT
 });
 
+// Fail fast
+const axiosInstance = axios.create({ timeout: 10000 });
+
 const resolveService = new ResolveService([
-    new SteamResolver(),
-    new SwitchResolver(),
-    new PsStoreResolver(),
-    new EpicResolver(),
-    new MetacriticResolver(),
+    new SteamResolver(axiosInstance),
+    new SwitchResolver(axiosInstance),
+    new PsStoreResolver(axiosInstance),
+    new EpicResolver(axiosInstance),
+    new MetacriticResolver(axiosInstance),
 ], redis);
 
 const main = async () => {

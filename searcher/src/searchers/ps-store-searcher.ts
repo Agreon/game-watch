@@ -1,6 +1,6 @@
 import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
 import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
@@ -8,9 +8,10 @@ import { matchingName } from "../util/matching-name";
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
+    public constructor(private readonly axios: AxiosInstance) {}
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
-        const response = await axios.get(
+        const response = await this.axios.get(
             `https://web.np.playstation.com/api/graphql/v1/op`,
             {
                 headers: {

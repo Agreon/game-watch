@@ -51,8 +51,10 @@ export const createWorkerForQueue = <T extends QueueType>(
     processor,
     {
         connection: QUEUE_CONNECTION_OPTIONS,
-        // TODO: Not sure about that
-        lockDuration: 60000,
+        // We only want to remove the lock if the worker is surely hanging.
+        // The timeout of puppeteer is 30 seconds. The max timeout of p-retry is also 30 seconds
+        // while having max 5 retries. So 10 Minutes should be enough time for any worker to finish.
+        lockDuration: 10 * 60 * 1000,
         ...options,
     },
 );

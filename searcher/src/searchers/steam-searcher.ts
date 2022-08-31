@@ -1,5 +1,5 @@
 import { InfoSourceType } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
@@ -8,8 +8,10 @@ import { matchingName } from "../util/matching-name";
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;
 
+    public constructor(private readonly axios: AxiosInstance) {}
+
     public async search(search: string, { logger }: InfoSearcherContext) {
-        const { data } = await axios.get<string>(
+        const { data } = await this.axios.get<string>(
             'https://store.steampowered.com/search',
             { params: { term: search } }
         );

@@ -1,7 +1,7 @@
 import { withBrowser } from "@game-watch/browser";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
 import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
@@ -20,31 +20,14 @@ export interface SwitchSearchResponse {
     }
 }
 
-export const getSwitchSearchResponse = async (search: string) => {
-    const { data: { response } } = await axios.get<SwitchSearchResponse>(
-        'https://searching.nintendo-europe.com/de/select',
-        {
-            params: {
-                q: search,
-                fq: `type:GAME AND sorting_title:* AND *:*`,
-                sort: "score desc, date_from desc",
-                start: 0,
-                rows: 1,
-                bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
-            }
-        }
-    );
-
-    return response;
-};
-
 export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
 
+    public constructor(private readonly axios: AxiosInstance) {}
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
         if (userCountry === "DE") {
-            const { numFound, docs: results } = await getSwitchSearchResponse(search);
+            const { numFound, docs: results } = await this.getSwitchSearchResponse(search);
 
             if (!numFound) {
                 logger.debug("No search results found");
@@ -105,5 +88,23 @@ export class SwitchSearcher implements InfoSearcher {
                 remoteGameName: fullName
             };
         });
+    }
+
+    public  async getSwitchSearchResponse  (search: string) {
+        const { data: { response } } = await this.axios.get<SwitchSearchResponse>(
+            'https://searching.nintendo-europe.com/de/select',
+            {
+                params: {
+                    q: search,
+                    fq: `type:GAME AND sorting_title:* AND *:*`,
+                    sort: "score desc, date_from desc",
+                    start: 0,
+                    rows: 1,
+                    bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
+                }
+            }
+        );
+
+        return response;
     }
 }

@@ -1,16 +1,18 @@
 import { EpicGameData, InfoSourceType, StorePriceInformation } from "@game-watch/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoResolver } from "../resolve-service";
+import {  InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
 export class EpicResolver implements InfoResolver {
     public type = InfoSourceType.Epic;
 
+    public constructor(private readonly axios: AxiosInstance) {}
+
     public async resolve(id: string): Promise<EpicGameData> {
-        const { data } = await axios.get<string>(id);
+        const { data } = await this.axios.get<string>(id);
 
         const $ = cheerio.load(data);
 
