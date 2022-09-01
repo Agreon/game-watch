@@ -72,7 +72,7 @@ export class SearchService {
                         return;
                     }
                     logger.warn("Retrying likely won't help. Aborting immediately");
-                    throw new Error("Non-Retrieable error encountered");
+                    throw error;
                 }
             });
 
