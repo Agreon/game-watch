@@ -13,7 +13,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList} from "@chakra-ui/react";
+    MenuList } from "@chakra-ui/react";
 import { useCallback, useRef, useState } from "react";
 
 import { useGameContext } from "../../providers/GameProvider";

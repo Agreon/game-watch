@@ -62,7 +62,6 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
     )
 };
 
-
 export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
         <Flex align="end">
@@ -95,7 +94,6 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
         </Flex>
     )
 };
-
 
 export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (

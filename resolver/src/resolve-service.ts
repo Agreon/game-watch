@@ -62,7 +62,12 @@ export class ResolveService {
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
                     // We only want to retry on network errors that are not signaling us to stop anyway.
-                    if(axios.isAxiosError(error) && error.response?.status !== 403) {
+                    if(
+                        // Epic throws a 403 at the moment.
+                        (axios.isAxiosError(error) && error.response?.status !== 403)
+                        // This error occurs if Puppeteer timeouts.
+                        || error.name === "TimeoutError"
+                    ) {
                         return;
                     }
                     logger.warn("Retrying likely won't help. Aborting immediately");
