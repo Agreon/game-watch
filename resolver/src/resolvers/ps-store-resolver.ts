@@ -97,7 +97,6 @@ export class PsStoreResolver implements InfoResolver {
             };
         }
 
-
         const initial = parseCurrencyValue(originalPrice || price);
         const final = parseCurrencyValue(price);
 

@@ -38,7 +38,6 @@ export class SteamSearcher implements InfoSearcher {
             return null;
         }
 
-
         return {
             remoteGameId: gameId,
             remoteGameName: fullName

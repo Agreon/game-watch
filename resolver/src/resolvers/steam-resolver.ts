@@ -2,7 +2,7 @@ import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-
 import { InfoSourceType, SteamGameData, StorePriceInformation } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 
-import {  InfoResolver, InfoResolverContext } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseDate } from "../util/parse-date";
 
 /**

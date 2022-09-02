@@ -1,4 +1,3 @@
-
 import { User } from '@game-watch/database';
 import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -12,7 +11,6 @@ import { Strategy } from 'passport-jwt';
 import { Environment } from '../environment';
 
 export const JWT_ACCESS_TOKEN_NAME = "game-watch-access-token";
-
 
 @Injectable()
 export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {

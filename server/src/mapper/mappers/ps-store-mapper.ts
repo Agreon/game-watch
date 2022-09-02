@@ -1,4 +1,3 @@
-
 import { InfoSourceType } from "@game-watch/shared";
 
 import { UrlMapper } from "../mapper-service";

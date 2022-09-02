@@ -18,6 +18,9 @@
         },
         "lint": {
             "outputs": []
+        },
+        "lint:fix": {
+            "outputs": []
         }
     },
     "globalDependencies": [

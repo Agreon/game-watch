@@ -33,7 +33,6 @@ const Home: NextPage = () => {
               <GameGrid />
             </Box>
           )}
-
       </TagProvider>
     </GamesProvider>
   );

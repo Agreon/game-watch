@@ -23,7 +23,7 @@ jobs:
         run: pnpm install
 
       - name: Lint
-        run: pnpm turbo run lint
+        run: pnpm lint
 
       - name: Build
         run: pnpm turbo run build

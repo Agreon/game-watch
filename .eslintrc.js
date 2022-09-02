@@ -30,5 +30,9 @@ module.exports = {
         "@typescript-eslint/no-unused-vars": "error",
         "eol-last": ["error", "always"],
         "no-trailing-spaces": "error",
+        "no-multi-spaces": "error",
+        "space-in-parens": "error",
+        "object-curly-spacing": ["error", "always"],
+        "no-multiple-empty-lines": ["error", { max: 1, maxBOF: 0 }]
     },
 };

@@ -2,7 +2,7 @@ import { InfoSourceType, MetacriticData } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import {  InfoResolver } from "../resolve-service";
+import { InfoResolver } from "../resolve-service";
 
 export class MetacriticResolver implements InfoResolver {
     public type = InfoSourceType.Metacritic;

@@ -91,7 +91,6 @@ export class GameService {
         return game;
     }
 
-
     public async updateGameName(id: string, name: string) {
         const game = await this.gameRepository.findOneOrFail(id);
 

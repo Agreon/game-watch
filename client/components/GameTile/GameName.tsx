@@ -29,7 +29,7 @@ export const GameName: React.FC<{ disableEdit: boolean }> = ({ disableEdit }) =>
     const [showControls, setShowControls] = useState(false);
     const [value, setValue] = useState(fullName);
 
-    useEffect(() => { setValue(fullName); }, [fullName]);
+    useEffect(() => setValue(fullName), [fullName]);
 
     return (
         <Editable

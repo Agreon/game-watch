@@ -2,7 +2,7 @@ import { EpicGameData, InfoSourceType, StorePriceInformation } from "@game-watch
 import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import {  InfoResolver } from "../resolve-service";
+import { InfoResolver } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
@@ -39,7 +39,6 @@ export class EpicResolver implements InfoResolver {
             priceInformation: this.getPriceInformation({ price, discountedFromPrice, })
         };
     }
-
 
     private getPriceInformation({ price, discountedFromPrice }: Record<string, string | undefined>): StorePriceInformation | undefined {
         if (price === "Gratis") {

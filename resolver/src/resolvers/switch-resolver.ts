@@ -4,7 +4,7 @@ import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-wat
 import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import {  InfoResolver, InfoResolverContext } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 

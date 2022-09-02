@@ -6,7 +6,8 @@
     "types": "dist/main.d.ts",
     "scripts": {
         "build": "tsc -b .",
-        "lint": "eslint \"src/**/*.ts\" --fix"
+        "lint": "eslint \"src/**/*.ts\"",
+        "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
         "eslint": "^8.21.0",
