@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsString, IsUUID, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString, IsUUID, Length } from "class-validator";
 
 export class CreateUserDto {
     @IsUUID()
@@ -17,10 +17,10 @@ export class RegisterUserDto {
     @Length(8, 255)
     public password: string;
 
-    @IsString()
     @IsEmail()
     @Length(1, 255)
-    public email?: string;
+    @IsOptional()
+    public email?: string | null;
 
     @IsBoolean()
     public enableEmailNotifications: boolean;

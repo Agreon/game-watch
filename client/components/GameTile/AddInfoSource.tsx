@@ -18,13 +18,15 @@ import { InfoSourceType } from "@game-watch/shared";
 import React, { useRef, useState } from "react";
 
 import { useGameContext } from "../../providers/GameProvider";
+import { useUserContext } from "../../providers/UserProvider";
 import { useAction } from "../../util/useAction";
 import { PlaceholderMap } from "../AddGameModal";
 
 export const AddInfoSource: React.FC = () => {
-    const { availableInfoSources, addInfoSource } = useGameContext();
+    const { user: { interestedInSources } } = useUserContext();
+    const { addInfoSource } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [type, setType] = useState(availableInfoSources[0]);
+    const [type, setType] = useState(interestedInSources[0]);
     const [url, setUrl] = useState("");
 
     const initialRef = useRef(null);
@@ -53,7 +55,7 @@ export const AddInfoSource: React.FC = () => {
                             <FormControl flex="0.5" mr="1rem">
                                 <FormLabel>Type</FormLabel>
                                 <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                                    {availableInfoSources.map(source => (
+                                    {interestedInSources.map(source => (
                                         <option key={source} value={source}>{source}</option>
                                     ))}
                                 </Select>
@@ -77,7 +79,7 @@ export const AddInfoSource: React.FC = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {availableInfoSources.length > 0 &&
+            {interestedInSources.length > 0 &&
                 <Flex justify="center">
                     <Button onClick={onOpen}>
                         +

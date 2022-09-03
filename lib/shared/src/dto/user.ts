@@ -17,9 +17,9 @@ export class UpdateUserSettingsDto {
     public enableEmailNotifications: boolean;
 
     @IsEmail()
-    @Length(2, 255)
+    @Length(1, 255)
     @IsOptional()
-    public email: string | null;
+    public email?: string | null;
 
     @IsString()
     @Length(2, 2)

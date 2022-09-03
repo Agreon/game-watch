@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 
 import { useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
+import { useUserContext } from "../providers/UserProvider";
 import { ModalProps } from "../util/types";
 import { useAction } from "../util/useAction";
 import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
@@ -35,8 +36,9 @@ export const PlaceholderMap: Record<InfoSourceType, string> = {
 };
 
 const AddSource: React.FC = () => {
-    const { availableInfoSources, addInfoSource } = useGameContext();
-    const [type, setType] = useState(availableInfoSources[0]);
+    const { user: { interestedInSources } } = useUserContext();
+    const { addInfoSource } = useGameContext();
+    const [type, setType] = useState(interestedInSources[0]);
     const [url, setUrl] = useState("");
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
@@ -45,7 +47,7 @@ const AddSource: React.FC = () => {
         }
     });
 
-    if (!availableInfoSources.length) {
+    if (!interestedInSources.length) {
         return null;
     }
 
@@ -57,7 +59,7 @@ const AddSource: React.FC = () => {
             <Flex direction={["column", "row"]}>
                 <FormControl flex="0.3" mr="1rem" mb={["0.5rem", 0]}>
                     <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                        {availableInfoSources.map(source => (
+                        {interestedInSources.map(source => (
                             <option key={source} value={source}>{source}</option>
                         ))}
                     </Select>
@@ -93,9 +95,9 @@ const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) =>
     useEffect(() => onChange(name), [name]);
 
     return (
-        <Flex direction={["column", "row"]} mt="3rem" align={"center"}>
-            <Text fontSize="xl">Suggested Name</Text>
-            <FormControl flex="1" ml="1rem" mb={["0.5rem", 0]}>
+        <Flex direction={["column", "row"]} mt="3rem" align={["start", "center"]}>
+            <Text fontSize="xl" mb={["0.5rem", 0]}>Suggested Name</Text>
+            <FormControl flex="1" ml={[0, "1rem"]}>
                 <Input
                     value={name}
                     onChange={event => setName(event.target.value)}
@@ -170,7 +172,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     ? <LoadingSpinner size="xl" />
                                     : <>
                                         <AddSource />
-                                        {nonSyncingInfoSources.length && <EditName onChange={setName}/>}
+                                        {nonSyncingInfoSources.length === 0 && <EditName onChange={setName}/>}
                                     </>
                                 }
                             </Box>
@@ -187,7 +189,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 disabled={loading || !nonSyncingInfoSources.length}
                                 onClick={() => onAdd({ name })}
                             >
-                                {game.syncing ? "Save right away" : "Save"}
+                                Save
                             </Button>
                         </Flex>
                     </Flex>
