@@ -174,7 +174,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading}
+                                disabled={loading || !game.infoSources.length}
                                 onClick={onAddGame}
                             >
                                 {game.syncing ? "Save right away" : "Save"}

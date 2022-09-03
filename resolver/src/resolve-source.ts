@@ -75,6 +75,8 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
         resolveError: false,
         syncing: false,
         data: resolvedGameData,
+        // If the source was added manually, no search is done. So we have to set the name here.
+        remoteGameName: resolvedGameData.fullName,
         updatedAt: new Date()
     });
 

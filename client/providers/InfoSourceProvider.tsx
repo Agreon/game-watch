@@ -55,7 +55,6 @@ export const InfoSourceProvider: React.FC<{
         )();
     }, [source, disablePolling, polling, handleError, setGameInfoSource, withRequest]);
 
-
     const syncInfoSource = useCallback(async () => {
         setGameInfoSource({
             ...source,
@@ -100,7 +99,6 @@ export const InfoSourceProvider: React.FC<{
             handleError(error);
         });
     }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource]);
-
 
     const contextValue = useMemo(() => ({
         source,
