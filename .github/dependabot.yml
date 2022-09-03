@@ -10,12 +10,6 @@ updates:
       - dependency-name: 'p-retry'
         versions:
           - '>= 5.0.0'
-      - dependency-name: '@nestjs/common'
+      - dependency-name: 'pnpm'
         versions:
-          - '>= 8.4.5'
-      - dependency-name: '@nestjs/core'
-        versions:
-          - '>= 8.4.5'
-      - dependency-name: '@nestjs/platform-express'
-        versions:
-          - '>= 8.4.5'
+          - '> 7.5.2'

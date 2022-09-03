@@ -109,7 +109,6 @@ export class InfoSourceService {
         // We remove unnecessary notifications that were created for this version of the info source
         await this.notificationRepository.nativeDelete({
             infoSource,
-            read: false,
         });
 
         infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
