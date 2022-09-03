@@ -86,7 +86,9 @@ const AddSource: React.FC = () => {
 
 const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) => {
     const { game } = useGameContext();
-    const [name, setName] = useState(game.infoSources[0].remoteGameName ?? game.search);
+    const [name, setName] = useState(
+        game.infoSources.filter(source => !!source.remoteGameName)[0]?.remoteGameName ?? game.search
+    );
 
     useEffect(() => onChange(name), [name]);
 

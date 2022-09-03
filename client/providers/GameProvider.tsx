@@ -48,7 +48,6 @@ export interface GameCtx {
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
     availableInfoSources: InfoSourceType[]
-    fullName: string
     thumbnailUrl: string | null
     setupGame: (options: { name: string }) => Promise<void>
     syncGame: () => Promise<void>
@@ -276,23 +275,12 @@ export const GameProvider: React.FC<{
         [activeInfoSources]
     );
 
-    const nameFromInfoSource = useMemo(
-        () => retrieveDataFromInfoSources(activeInfoSources, "fullName"),
-        [activeInfoSources]
-    );
-    // Priority: User-defined name, info source name or the initial search
-    const fullName = useMemo(
-        () => game.name ?? nameFromInfoSource ?? game.search,
-        [game.name, nameFromInfoSource, game.search]
-    );
-
     const contextValue = useMemo(() => ({
         game,
         tags,
         allInfoSources,
         activeInfoSources,
         availableInfoSources,
-        fullName,
         thumbnailUrl,
         loading,
         setupGame,
@@ -311,7 +299,6 @@ export const GameProvider: React.FC<{
         allInfoSources,
         activeInfoSources,
         availableInfoSources,
-        fullName,
         thumbnailUrl,
         loading,
         setupGame,

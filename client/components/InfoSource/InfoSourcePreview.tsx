@@ -16,9 +16,6 @@ export const InfoSourcePreview: React.FC = () => {
     const { source, excludeInfoSource } = useInfoSourceContext();
     const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
 
-    // The remoteGameName will not be available on a custom add.
-    const name = source.remoteGameName || source.data?.fullName;
-
     return (
         <Flex
             direction={["column", "column", "row"]}
@@ -44,15 +41,20 @@ export const InfoSourcePreview: React.FC = () => {
             </Box>
             <Flex justify="space-between" flex="2" align="center" width="100%">
                 <Box width="100%" position="relative">
-                    {!name ? (
-                        <LoadingSpinner size="lg" />
-                    ) : (
-                        <a href={source.data?.url} target="_blank" rel="noreferrer">
-                                <Text fontWeight="bold" fontSize="xl">
-                                    {name}
-                                </Text>
-                            </a>
-                    )}
+                    {!source.syncing && source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                    {!source.resolveError &&
+                    <>
+                        {!source.remoteGameName ? (
+                            <LoadingSpinner size="lg" />
+                            ) : (
+                                <a href={source.data?.url} target="_blank" rel="noreferrer">
+                                    <Text fontWeight="bold" fontSize="xl">
+                                        {source.remoteGameName}
+                                    </Text>
+                                </a>
+                        )}
+                    </>
+                }
                 </Box>
                 <Box pl="0.5rem">
                     <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />

@@ -25,11 +25,11 @@ const EditableControls: React.FC = () => {
 };
 
 export const GameName: React.FC<{ disableEdit: boolean }> = ({ disableEdit }) => {
-    const { fullName, changeGameName } = useGameContext();
+    const { game, changeGameName } = useGameContext();
     const [showControls, setShowControls] = useState(false);
-    const [value, setValue] = useState(fullName);
+    const [value, setValue] = useState(game.name as string);
 
-    useEffect(() => setValue(fullName), [fullName]);
+    useEffect(() => setValue(game.name as string), [game.name]);
 
     return (
         <Editable

@@ -17,7 +17,6 @@ const GameTileComponent: React.FC = () => {
         activeInfoSources,
         setGameInfoSource,
         removeGameInfoSource,
-        fullName,
         syncGame,
         deleteGame,
         game
@@ -47,7 +46,7 @@ const GameTileComponent: React.FC = () => {
         >
             {!loading &&
                 <Box position="absolute" right="0" top="0" zIndex="3">
-                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={fullName} highlight={highlightMenu} />
+                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={game.name as string} highlight={highlightMenu} />
                 </Box>
             }
             <Flex direction="column">

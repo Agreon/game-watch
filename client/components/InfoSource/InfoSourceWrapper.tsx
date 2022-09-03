@@ -16,7 +16,7 @@ export const InfoSourceWrapper: React.FC<PropsWithChildren> = ({ children }) => 
 
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
-            <Tooltip label={source.data?.fullName} placement="top">
+            <Tooltip label={source.remoteGameName} placement="top">
                 <Box flex="1">
                     <a href={source.data?.url} target="_blank" rel="noreferrer">
                         {SourceTypeLogo[source.type]}

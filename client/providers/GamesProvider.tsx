@@ -55,7 +55,7 @@ export const GamesProvider: React.FC<{
 
     const setGame = useCallback((id: string, cb: ((current: GameDto) => GameDto) | GameDto) => {
         setGames(currentGames => {
-            const currentGame = currentGames.find(game => id === game.id)!;
+            const currentGame = currentGames.find(game => id === game.id) as GameDto;
             const newGame = typeof cb === "function" ? cb(currentGame) : cb;
             return currentGames.map(game => game.id === newGame.id ? newGame : game);
         });
@@ -74,7 +74,7 @@ export const GamesProvider: React.FC<{
             ]);
 
             return data;
-        });
+        }, () => {});
     }, [withRequest, setGames]);
 
     useEffect(() => { fetchGames(); }, [fetchGames, user.id]);

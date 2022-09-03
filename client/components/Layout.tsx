@@ -1,4 +1,4 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
 
@@ -20,18 +20,20 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
             </Head>
             <Header />
             <NotificationSidebar />
-            <Box
+            <Flex
                 id="scrollContainer"
                 mt="4rem"
                 pt="2rem"
                 overflowX="hidden"
                 overflowY="auto"
+                direction="column"
+                height="100%"
             >
                 <Flex
                     direction="column"
                     justifyContent="space-between"
-                    minHeight="calc(100vh - 4rem)"
                     paddingX={[0, 0, "2rem"]}
+                    flex="1"
                 >
                     {children}
                 </Flex>
@@ -52,7 +54,7 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
                         Made by <b>Agreon</b>
                     </a>
                 </Flex>
-            </Box>
+            </Flex>
 
         </Flex>
     );

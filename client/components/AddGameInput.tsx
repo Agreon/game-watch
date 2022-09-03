@@ -1,4 +1,5 @@
 import { Button, Flex, Input, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import axios from "axios";
 import React, { KeyboardEvent,useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { GameProvider } from "../providers/GameProvider";
@@ -18,6 +19,11 @@ export const AddGameInput: React.FC = () => {
         onSuccess: game => {
             setGameId(game.id);
             onOpen();
+        },
+        onError: error => {
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+                return "A game with that name already exists";
+            }
         }
     });
 
