@@ -20,6 +20,7 @@ importers:
       '@emotion/react': ^11.10.4
       '@emotion/styled': ^11.10.4
       '@game-watch/shared': 0.0.1
+      '@hookform/resolvers': ^2.9.7
       '@types/node': ^18.7.14
       '@types/react': ^18.0.18
       '@types/uuid': ^8.3.4
@@ -43,6 +44,7 @@ importers:
       '@emotion/react': 11.10.4_7v64pk2mkrohwh22gx7lrz5ive
       '@emotion/styled': 11.10.4_kjddpxqkh75n32dccdij3kv22i
       '@game-watch/shared': link:../lib/shared
+      '@hookform/resolvers': 2.9.7_react-hook-form@7.34.2
       axios: 0.27.2
       chakra-react-select: 4.2.1_kqb3vdxzvzsqyutachion6take
       dayjs: 1.11.5
@@ -2050,6 +2052,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@hookform/resolvers/2.9.7_react-hook-form@7.34.2:
+    resolution: {integrity: sha512-BloehX3MOLwuFEwT4yZnmolPjVmqyn8VsSuodLfazbCIqxBHsQ4qUZsi+bvNNCduRli1AGWFrkDLGD5QoNzsoA==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.34.2_react@18.2.0
+    dev: false
 
   /@humanwhocodes/config-array/0.10.4:
     resolution: {integrity: sha512-mXAIHxZT3Vcpg83opl1wGlVZ9xydbfZO3r5YfRSH6Gpp2J/PfdBP0wbDa2sO6/qRbcalpoevVyW6A/fI6LfeMw==}

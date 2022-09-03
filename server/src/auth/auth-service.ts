@@ -23,7 +23,9 @@ export class AuthService {
         return user;
     }
 
-    public async registerUser({ id, username, password, email, enableEmailNotifications }: RegisterUserDto): Promise<User> {
+    public async registerUser(
+        { id, username, password, email, enableEmailNotifications }: Omit<RegisterUserDto, "agreeToTermsOfService">
+    ): Promise<User> {
         const userToRegister = await this.userRepository.findOneOrFail(id);
 
         userToRegister.username = username;

@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, IsUUID, Length } from "class-validator";
+import { Equals, IsBoolean, IsEmail, IsString, IsUUID, Length, ValidateIf } from "class-validator";
 
 export class CreateUserDto {
     @IsUUID()
@@ -10,18 +10,30 @@ export class RegisterUserDto {
     public id: string;
 
     @IsString()
-    @Length(1, 255)
+    @Length(1, 255, {
+        message: "A username is required"
+    })
     public username: string;
 
     @IsString()
-    @Length(8, 255)
+    @Length(8, 255, {
+        message: "Your password must be at least 8 characters long"
+    })
     public password: string;
 
-    @IsEmail()
+    @ValidateIf(({ enableEmailNotifications }) => enableEmailNotifications)
     @Length(1, 255)
-    @IsOptional()
+    @IsEmail({}, {
+        message: "Not a valid email"
+    })
     public email?: string | null;
 
     @IsBoolean()
     public enableEmailNotifications: boolean;
+
+    @IsBoolean()
+    @Equals(true, {
+        message: "You musst accept the Terms Of Service"
+    })
+    public agreeToTermsOfService: boolean;
 }

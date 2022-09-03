@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length, ValidateIf } from "class-validator";
 
 import { Country, InfoSourceType, UserState } from "../types";
 
@@ -16,9 +16,9 @@ export class UpdateUserSettingsDto {
     @IsBoolean()
     public enableEmailNotifications: boolean;
 
-    @IsEmail()
+    @ValidateIf(({ enableEmailNotifications }) => enableEmailNotifications)
     @Length(1, 255)
-    @IsOptional()
+    @IsEmail()
     public email?: string | null;
 
     @IsString()

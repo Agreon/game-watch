@@ -11,6 +11,8 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react";
+import { RegisterUserDto } from "@game-watch/shared";
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -18,20 +20,15 @@ import { useForm } from "react-hook-form";
 import { useUserContext } from "../../providers/UserProvider";
 import { useAction } from "../../util/useAction";
 
-type Inputs = {
-    username: string
-    password: string
-    enableEmailNotifications: boolean
-    email?: string
-    agreeToTermsOfService: boolean
-}
-
 const Form = chakra("form");
 
 export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     const toast = useToast();
-    const { registerUser } = useUserContext();
-    const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<Inputs>();
+    const { registerUser, user } = useUserContext();
+    const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<RegisterUserDto>({
+        resolver: classValidatorResolver(RegisterUserDto),
+        defaultValues: { id: user.id }
+    });
 
     const enableEmailNotifications = watch("enableEmailNotifications", false);
 
@@ -56,16 +53,16 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
             <Form mt="1rem" onSubmit={handleSubmit(onRegister)} >
                 <FormControl variant="floating" isInvalid={!!errors.username}>
-                    <Input id="username" placeholder="" {...register("username", { required: true })} />
+                    <Input id="username" placeholder="" {...register("username")} />
                     <FormLabel htmlFor="username">Username</FormLabel>
-                    {errors.username?.type === "required" && <FormErrorMessage>This field is required</FormErrorMessage>}
+                    {errors.username?.type === "isLength" && <FormErrorMessage>A username is required</FormErrorMessage>}
                     {errors.username?.type === "validate" && <FormErrorMessage>Username is already taken</FormErrorMessage>}
                 </FormControl>
 
                 <FormControl variant="floating" mt="1rem" isInvalid={!!errors.password}>
-                    <Input id="password" type="password" placeholder="" {...register("password", { required: true })} />
+                    <Input id="password" type="password" placeholder="" {...register("password")} />
                     <FormLabel>Password</FormLabel>
-                    {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
+                    {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
                 </FormControl>
 
                 <FormControl mt="1rem">
@@ -77,15 +74,15 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                 {
                     enableEmailNotifications &&
                     <FormControl variant="floating" mt="1rem" isInvalid={!!errors.email}>
-                        <Input id="email" type="email" placeholder="" {...register("email", { required: true })} />
+                        <Input id="email" type="email" placeholder="" {...register("email")} />
                         <FormLabel>Email</FormLabel>
-                        {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
+                        {errors.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
                     </FormControl>
                 }
 
                 <FormControl mt="1.5rem" isInvalid={!!errors.agreeToTermsOfService}>
-                    <Checkbox id="agreeToTermsOfService" {...register("agreeToTermsOfService", { required: true })}>I agree with everything</Checkbox>
-                    {errors.agreeToTermsOfService && <FormErrorMessage>This field is required</FormErrorMessage>}
+                    <Checkbox id="agreeToTermsOfService" {...register("agreeToTermsOfService")}>I agree with everything</Checkbox>
+                    {errors.agreeToTermsOfService && <FormErrorMessage>{errors.agreeToTermsOfService.message}</FormErrorMessage>}
                 </FormControl>
 
                 <Flex justify="end" mt="2rem">
