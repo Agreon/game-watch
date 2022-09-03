@@ -16,15 +16,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useRef } from "react";
 
+import { ModalProps } from "../../util/types";
 import { LoginUserForm } from "./LoginUserForm";
 import { RegisterUserForm } from "./RegisterUserForm";
 
-interface AuthModalProps {
-    show: boolean
-    onClose: () => void
-}
-
-export const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
+export const AuthModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const initialRef = useRef(null);
 
     return (

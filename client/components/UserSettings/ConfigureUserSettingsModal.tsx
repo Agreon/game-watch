@@ -22,16 +22,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { INFO_SOURCE_PRIORITY } from "../../providers/GameProvider";
 import { useUserContext } from "../../providers/UserProvider";
+import { ModalProps } from "../../util/types";
 import { useAction } from "../../util/useAction";
 import { InfoSourceFilter } from "../InfoSourceFilter";
 import { CountrySelect } from "./CountrySelect";
 
-interface UserSettingsModalProps {
-    show: boolean
-    onClose: () => void
-}
-
-export const ConfigureUserSettingsModal: React.FC<UserSettingsModalProps> = ({ show, onClose }) => {
+export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const initialRef = useRef(null);
     const { user, updateUserSettings } = useUserContext();
     const { loading, execute: updateSettings } = useAction(updateUserSettings, { onSuccess: onClose });

@@ -16,14 +16,16 @@ import {
     useBreakpointValue
 } from "@chakra-ui/react";
 import { InfoSourceType } from "@game-watch/shared";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
+import { ModalProps } from "../util/types";
 import { useAction } from "../util/useAction";
 import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
 import { LoadingSpinner } from "./LoadingSpinner";
 
+// TODO: Localize
 export const PlaceholderMap: Record<InfoSourceType, string> = {
     [InfoSourceType.Steam]: "https://store.steampowered.com/app/...",
     [InfoSourceType.Switch]: "https://nintendo.de/Spiele/Nintendo-Switch-Download-Software/...",
@@ -82,28 +84,31 @@ const AddSource: React.FC = () => {
     );
 };
 
-interface AddGameModalProps {
-    show: boolean
-    onClose: () => void
-}
+const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) => {
+    const { game } = useGameContext();
+    const [name, setName] = useState(game.infoSources[0].remoteGameName ?? game.search);
 
-/**
- * - TODO: Let users edit the provided name beforehand
- * - TODO: Option to disable search for more
- */
-export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => {
+    useEffect(() => onChange(name), [name]);
+
+    return (
+        <Flex direction={["column", "row"]} mt="3rem" align={"center"}>
+            <Text fontSize="xl">Suggested Name</Text>
+            <FormControl flex="1" ml="1rem" mb={["0.5rem", 0]}>
+                <Input
+                    value={name}
+                    onChange={event => setName(event.target.value)}
+                />
+            </FormControl>
+        </Flex>
+    );
+};
+
+export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const { game, setGameInfoSource, removeGameInfoSource, setupGame } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
+    const [name, setName] = useState(game.search);
 
-    const onAddGame = useCallback(async () => {
-        if (!game.infoSources.length) {
-            return await onAdd({ name: game.search });
-        }
-
-        // We take the first name for now, later the user can decide.
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        await onAdd({ name: game.infoSources[0].remoteGameName! });
-    }, [onAdd, game]);
+    const nonSyncingInfoSources = game.infoSources.filter(source => !source.syncing);
 
     // TODO: use ModalFooter
     return (
@@ -161,7 +166,10 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                             <Box position="relative" my="2rem">
                                 {game.syncing
                                     ? <LoadingSpinner size="xl" />
-                                    : <AddSource />
+                                    : <>
+                                        <AddSource />
+                                        {nonSyncingInfoSources.length && <EditName onChange={setName}/>}
+                                    </>
                                 }
                             </Box>
                         </Flex>
@@ -174,8 +182,8 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ show, onClose }) => 
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || !game.infoSources.length}
-                                onClick={onAddGame}
+                                disabled={loading || !nonSyncingInfoSources.length}
+                                onClick={() => onAdd({ name })}
                             >
                                 {game.syncing ? "Save right away" : "Save"}
                             </Button>

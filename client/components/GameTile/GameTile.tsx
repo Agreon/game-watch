@@ -57,7 +57,10 @@ const GameTileComponent: React.FC = () => {
                     {allInfoSources.length === 0 ?
                         (game.syncing ?
                             <SkeletonText mt="1rem" />
-                            : <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                            : <>
+                                <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                                <AddInfoSource />
+                            </>
                         )
                         : (
                             <>
