@@ -1,6 +1,7 @@
-import { InfoSource } from "@game-watch/database";
+import { InfoSource, Notification } from "@game-watch/database";
 import { QueueParams, QueueType } from "@game-watch/queue";
 import { Logger } from "@game-watch/service";
+import { NotificationType } from "@game-watch/shared";
 import { EntityManager } from "@mikro-orm/core";
 import { Queue } from "bullmq";
 
@@ -78,6 +79,13 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
         // If the source was added manually, no search is done. So we have to set the name here.
         remoteGameName: resolvedGameData.fullName,
         updatedAt: new Date()
+    });
+
+    // Delete old, unnecessary ResolveError notifications so that on a new error a new notification
+    // is created.
+    await em.nativeDelete(Notification, {
+        infoSource: source,
+        type: NotificationType.ResolveError,
     });
 
     const duration = new Date().getTime() - startTime;

@@ -55,7 +55,6 @@ export class NotificationService {
         const scopedLogger = this.logger.child({ sourceId, gameId: game.id, userId: user.id });
 
         if(resolvedGameData === null){
-
             const existingNotification = await em.findOne(Notification, {
                 infoSource,
                 type: NotificationType.ResolveError
