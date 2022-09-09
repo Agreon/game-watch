@@ -15,16 +15,16 @@ export class Notification<T extends NotificationType = NotificationType> extends
     @Index()
     public read: boolean = false;
 
-    @ManyToOne(() => Game, { wrappedReference: true })
+    @ManyToOne(() => Game, { wrappedReference: true, onDelete: "cascade" })
     public game!: IdentifiedReference<Game>;
 
-    @ManyToOne(() => InfoSource, { wrappedReference: true })
+    @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: "cascade" })
     public infoSource!: IdentifiedReference<InfoSource>;
 
     @Property({ columnType: "json" })
     public data!: NotificationData[T];
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: "cascade" })
     public user!: IdentifiedReference<User>;
 
     public constructor(

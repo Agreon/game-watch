@@ -24,6 +24,20 @@ export interface InfoSearcher {
     search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>
 }
 
+const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
+    minTimeout: 5000,
+    // 15 Minutes
+    maxTimeout: 60000 * 15,
+    factor: 3,
+    retries: 9
+};
+
+const MANUAL_TRIGGER_RETRY_OPTIONS: pRetry.Options = {
+    minTimeout: 3000,
+    factor: 1,
+    retries: 2
+};
+
 export class SearchService {
     public constructor(
         private readonly searchers: InfoSearcher[],
@@ -61,10 +75,8 @@ export class SearchService {
 
                 return foundData;
             }, {
-                minTimeout: 5000,
-                maxTimeout: 30000,
                 // If the user is actively waiting don't retry to often
-                retries: context.initialRun ? 2 : 5,
+                ...(context.initialRun ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while searching ${type} for ${search}`);
                     // We only want to retry on network errors that are not signaling us to stop anyway.

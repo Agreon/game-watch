@@ -20,6 +20,20 @@ export interface InfoResolver<T extends GameDataU = GameDataU> {
     resolve: (id: string, context: InfoResolverContext) => Promise<T>
 }
 
+const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
+    minTimeout: 5000,
+    // 15 Minutes
+    maxTimeout: 60000 * 15,
+    factor: 3,
+    retries: 9
+};
+
+const MANUAL_TRIGGER_RETRY_OPTIONS: pRetry.Options = {
+    minTimeout: 3000,
+    factor: 1,
+    retries: 2
+};
+
 export class ResolveService {
     public constructor(
         private readonly resolvers: InfoResolver[],
@@ -55,10 +69,8 @@ export class ResolveService {
 
                 return resolvedData;
             }, {
-                minTimeout: 5000,
-                maxTimeout: 30000,
                 // If the user is actively waiting don't retry to often
-                retries: context.initialRun || context.skipCache ? 2 : 5,
+                ...(context.initialRun || context.skipCache ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
                     // We only want to retry on network errors that are not signaling us to stop anyway.
