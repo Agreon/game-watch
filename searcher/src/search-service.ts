@@ -35,7 +35,7 @@ const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
 const MANUAL_TRIGGER_RETRY_OPTIONS: pRetry.Options = {
     minTimeout: 3000,
     factor: 1,
-    retries: 2
+    retries: 1
 };
 
 export class SearchService {
@@ -57,7 +57,7 @@ export class SearchService {
         }
 
         const start = new Date().getTime();
-        const cacheKey = `${type}:${context.userCountry}:${search}`;
+        const cacheKey = `${type}:${context.userCountry}:${search}`.toLocaleLowerCase();
 
         try {
             return await pRetry(async () => {

@@ -31,7 +31,7 @@ const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
 const MANUAL_TRIGGER_RETRY_OPTIONS: pRetry.Options = {
     minTimeout: 3000,
     factor: 1,
-    retries: 2
+    retries: 1
 };
 
 export class ResolveService {
@@ -53,7 +53,7 @@ export class ResolveService {
         }
 
         const start = new Date().getTime();
-        const cacheKey = `${type}:${context.userCountry}:${id}`;
+        const cacheKey = `${type}:${context.userCountry}:${id}`.toLocaleLowerCase();
 
         try {
             return await pRetry(async () => {

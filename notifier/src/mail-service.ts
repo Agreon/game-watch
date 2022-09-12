@@ -59,7 +59,7 @@ Hey ${receiver.username}!
 ${body}
 
 ${remoteGameUrl ? `You can have a detailed look here: ${remoteGameUrl}` : ''}
-Or why not check in on GameWatch: ${PUBLIC_URL}
+${remoteGameUrl ? "Or" : ""} why not check in on GameWatch: ${PUBLIC_URL}
 
 Best
 

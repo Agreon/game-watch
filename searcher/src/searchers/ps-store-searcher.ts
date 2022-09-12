@@ -5,13 +5,26 @@ import { AxiosInstance } from "axios";
 import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
+interface SearchResponse {
+    data: {
+        universalSearch: {
+            results: Array<{
+                id: string
+                name: string
+                storeDisplayClassification: string
+            }>
+        }
+    }
+
+}
+
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
     public constructor(private readonly axios: AxiosInstance) {}
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
-        const response = await this.axios.get(
+        const { data: { data: { universalSearch: { results } } } } = await this.axios.get<SearchResponse>(
             `https://web.np.playstation.com/api/graphql/v1/op`,
             {
                 headers: {
@@ -22,7 +35,7 @@ export class PsStoreSearcher implements InfoSearcher {
                         countryCode: userCountry,
                         languageCode: mapCountryCodeToLanguage(userCountry),
                         pageOffset: 0,
-                        pageSize: 1,
+                        pageSize: 25,
                         searchTerm: search,
                     },
                     extensions: {
@@ -35,13 +48,14 @@ export class PsStoreSearcher implements InfoSearcher {
             }
         );
 
-        const results = response.data.data.universalSearch.results;
-        if (!results.length) {
+        // The ps store likes to order DLCs and cosmetics prior to the game.
+        const result = results.find(result => result.storeDisplayClassification === "FULL_GAME");
+        if (!result) {
             return null;
         }
 
-        const gameId = results[0].id;
-        const fullName = results[0].name;
+        const gameId = result.id;
+        const fullName = result.name;
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
