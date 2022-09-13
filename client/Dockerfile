@@ -34,6 +34,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/lib/shared/node_modules ./lib/shared/node_modules
 
+COPY sources/src sources/src
+
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm --filter @game-watch/shared build && \

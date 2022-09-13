@@ -1,5 +1,5 @@
 {
-    "name": "@game-watch/searcher",
+    "name": "@game-watch/sources",
     "version": "0.0.1",
     "description": "",
     "author": "Daniel Huth",
@@ -13,9 +13,8 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "dependencies": {
+        "@chakra-ui/react": "2.2.6",
         "@game-watch/browser": "0.0.1",
-        "@game-watch/database": "0.0.1",
-        "@game-watch/queue": "0.0.1",
         "@game-watch/service": "0.0.1",
         "@game-watch/shared": "0.0.1",
         "@mikro-orm/core": "^5.4.0",
@@ -25,23 +24,19 @@
         "@sentry/node": "^7.12.1",
         "@sentry/tracing": "^7.12.1",
         "axios": "^0.27.2",
-        "bullmq": "1.90.1",
         "cheerio": "1.0.0-rc.12",
         "dotenv": "^16.0.2",
         "fp-ts": "^2.12.3",
-        "glob": "^8.0.3",
         "io-ts": "^2.2.18",
         "io-ts-types": "^0.5.16",
-        "ioredis": "^5.2.3",
         "monocle-ts": "^2.3.13",
         "newtype-ts": "^0.3.5",
-        "p-retry": "^4.6.2",
-        "reflect-metadata": "^0.1.13"
+        "next": "^12.2.5",
+        "react": "^18.2.0"
     },
     "devDependencies": {
-        "@types/glob": "^8.0.0",
-        "@types/ioredis": "^4.28.10",
         "@types/node": "^18.7.14",
+        "@types/react": "^18.0.18",
         "@typescript-eslint/eslint-plugin": "^5.36.1",
         "@typescript-eslint/parser": "^5.36.1",
         "eslint": "^8.23.0",

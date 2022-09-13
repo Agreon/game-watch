@@ -11,7 +11,8 @@
         "server",
         "searcher",
         "resolver",
-        "notifier"
+        "notifier",
+        "sources"
     ],
     "scripts": {
         "build": "pnpm turbo run build",

@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import * as dotenv from "dotenv";
 import path from 'path';
 dotenv.config({ path: path.join(__dirname, "..", "..", '.env') });
 
 import { mikroOrmConfig } from "@game-watch/database";
 import { createQueue, createWorkerForQueue, QueueType } from "@game-watch/queue";
-import { createLogger, initializeSentry, parseEnvironment } from "@game-watch/service";
-import { MikroORM, NotFoundError } from "@mikro-orm/core";
+import { createLogger, InfoSearcher, initializeSentry, parseEnvironment } from "@game-watch/service";
+import { Constructor, MikroORM, NotFoundError } from "@mikro-orm/core";
 import * as Sentry from '@sentry/node';
 import axios from "axios";
 import { Worker } from "bullmq";
@@ -43,15 +44,36 @@ const redis = new Redis({
 // Fail fast
 const axiosInstance = axios.create({ timeout: 10000 });
 
+// import glob from "glob";
+
+// const searchers: Record<string, Constructor<InfoSearcher>> = {};
+
+// const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "*-searcher.ts");
+// const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "main.ts");
+
+// glob.sync(sourcesPath).forEach(file => {
+//     const pathParts = file.split("/");
+//     const sourceName = pathParts[pathParts.length - 2];
+
+//     const { Searcher } = require(file);
+
+//     searchers[sourceName] = Searcher;
+// });
+
+// const searcher = new searchers["steam"](axiosInstance);
+
 const searchService = new SearchService([
     new EpicSearcher(axiosInstance),
     new MetacriticSearcher(axiosInstance),
-    new PsStoreSearcher(axiosInstance),
+    new PsStoreSearcher(),
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance)
 ], redis);
 
 const main = async () => {
+    // const result = await searcher.search("Mario", { logger, userCountry: "DE" });
+    // console.log(result);
+
     const orm = await MikroORM.init(mikroOrmConfig);
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);
