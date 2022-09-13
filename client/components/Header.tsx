@@ -2,6 +2,7 @@ import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { UserState } from "@game-watch/shared";
 import Image from 'next/image';
+import Link from 'next/link';
 import React from "react";
 
 import githubIconDark from '../assets/github-icon-dark.png';
@@ -21,7 +22,7 @@ export default function Header() {
 
     return (
         <Flex
-            justify={["space-between", "space-between", "center"]}
+            justify={["space-between", "space-between", "space-between", "center"]}
             align="center"
             position="absolute"
             bg={useColorModeValue('white', 'gray.800')}
@@ -30,7 +31,11 @@ export default function Header() {
             boxShadow="lg"
             zIndex="1"
         >
-            <Text fontSize="2xl">{useBreakpointValue(["GW", "GameWatch"])}</Text>
+            <Text fontSize="2xl">
+                <Link href="/">
+                    {useBreakpointValue(["GW", "GameWatch"])}
+                </Link>
+            </Text>
             <Flex
                 align="center"
                 position="absolute"
