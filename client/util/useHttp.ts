@@ -44,7 +44,6 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
             title: "Error",
             description: "Unexpected Error. Please try again.",
             status: "error",
-            position: "top-right",
             ...toastOptions
         });
     }, [toast]);
