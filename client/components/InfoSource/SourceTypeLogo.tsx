@@ -3,6 +3,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { InfoSourceType } from '@game-watch/shared';
 // import glob from "glob";
 import Image from 'next/image';
+import path from 'path';
 // import path from 'path';
 import React from 'react';
 
@@ -15,23 +16,9 @@ import switchLogo from '../../assets/switch.png';
 // TODO: Copy the assets at compile time
 // => Maybe include them with some next.js config/script
 
-// // const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "*-searcher.ts");
-// // const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "main.ts");
+const { SourceTypeLogo: SteamSourceTypeLogo } = require(path.join(process.cwd(), "..", "sources", "src", "steam", "main.ts"));
 
-// // const sources = {};
-
-// // glob.sync(sourcesPath).forEach(file => {
-// //     const pathParts = file.split("/");
-// //     const sourceName = pathParts[pathParts.length - 2];
-
-// //     const { Searcher } = require(file);
-
-// //     searchers[sourceName] = Searcher;
-// // });
-
-// const { SourceTypeLogo: SteamSourceTypeLogo } = require(path.join(process.cwd(), ".." ,"sources", "src", "steam", "main.ts"));
-
-// console.log(SteamSourceTypeLogo);
+console.log(SteamSourceTypeLogo);
 
 export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (

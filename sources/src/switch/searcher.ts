@@ -1,9 +1,8 @@
 import { withBrowser } from "@game-watch/browser";
-import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
+import { InfoSearcher, InfoSearcherContext, mapCountryCodeToAcceptLanguage, SearchResponse } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 
-import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface SwitchSearchResponse {
@@ -23,7 +22,7 @@ export interface SwitchSearchResponse {
 export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
         if (userCountry === "DE") {
@@ -85,7 +84,7 @@ export class SwitchSearcher implements InfoSearcher {
         });
     }
 
-    public async getSwitchSearchResponse (search: string) {
+    public async getSwitchSearchResponse(search: string) {
         const { data: { response } } = await this.axios.get<SwitchSearchResponse>(
             'https://searching.nintendo-europe.com/de/select',
             {
@@ -103,3 +102,5 @@ export class SwitchSearcher implements InfoSearcher {
         return response;
     }
 }
+
+export const Searcher = SwitchSearcher;

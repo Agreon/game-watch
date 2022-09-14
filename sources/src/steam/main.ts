@@ -1,2 +1,4 @@
-export { Searcher } from "./steam-searcher";
+export { Searcher } from "./searcher";
+
+// TODO: Only include optionally?
 export { SourceTypeLogo } from "./SourceTypeLogo";

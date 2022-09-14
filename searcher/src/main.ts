@@ -15,11 +15,6 @@ import Redis from "ioredis";
 import { EnvironmentStructure } from "./environment";
 import { searchForGame } from "./search-for-game";
 import { SearchService } from "./search-service";
-import { EpicSearcher } from "./searchers/epic-searcher";
-import { MetacriticSearcher } from "./searchers/metacritic-searcher";
-import { PsStoreSearcher } from "./searchers/ps-store-searcher";
-import { SteamSearcher } from "./searchers/steam-searcher";
-import { SwitchSearcher } from "./searchers/switch-searcher";
 
 const {
     SEARCH_GAME_CONCURRENCY,
@@ -45,36 +40,30 @@ const redis = new Redis({
 // Fail fast
 const axiosInstance = axios.create({ timeout: 10000 });
 
-// import glob from "glob";
+// TODO: Extract somehow?
+import glob from "glob";
 
-// const searchers: Record<string, Constructor<InfoSearcher>> = {};
+const searchers: Record<string, Constructor<InfoSearcher>> = {};
 
-// const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "*-searcher.ts");
-// const sourcesPath = path.join(process.cwd(), ".." ,"sources", "**", "main.ts");
+const sourcesPath = path.join(process.cwd(), "..", "sources", "**", "*searcher.ts");
 
-// glob.sync(sourcesPath).forEach(file => {
-//     const pathParts = file.split("/");
-//     const sourceName = pathParts[pathParts.length - 2];
+// TODO: Harden
+glob.sync(sourcesPath).forEach(file => {
+    const pathParts = file.split("/");
+    const sourceName = pathParts[pathParts.length - 2];
 
-//     const { Searcher } = require(file);
+    const { Searcher } = require(file);
 
-//     searchers[sourceName] = Searcher;
-// });
+    searchers[sourceName] = Searcher;
+});
 
-// const searcher = new searchers["steam"](axiosInstance);
+const loadedSearchers = Object.values(searchers).map(
+    searcher => new searcher(axiosInstance)
+);
 
-const searchService = new SearchService([
-    new EpicSearcher(axiosInstance),
-    new MetacriticSearcher(axiosInstance),
-    new PsStoreSearcher(),
-    new SteamSearcher(axiosInstance),
-    new SwitchSearcher(axiosInstance)
-], redis, CACHING_ENABLED);
+const searchService = new SearchService(loadedSearchers, redis, CACHING_ENABLED);
 
 const main = async () => {
-    // const result = await searcher.search("Mario", { logger, userCountry: "DE" });
-    // console.log(result);
-
     const orm = await MikroORM.init(mikroOrmConfig);
 
     const resolveSourceQueue = createQueue(QueueType.ResolveSource);

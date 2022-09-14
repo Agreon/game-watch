@@ -56,6 +56,7 @@ export type GameData = {
 };
 export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
 
+// Tja
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: ["DE", "US"] as const,
     [InfoSourceType.PsStore]: ["DE", "US"] as const,

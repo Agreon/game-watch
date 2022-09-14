@@ -1,8 +1,7 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
+import { InfoSearcher, InfoSearcherContext, mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 interface SearchResponse {
@@ -21,7 +20,7 @@ interface SearchResponse {
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
         const { data: { data: { universalSearch: { results } } } } = await this.axios.get<SearchResponse>(
@@ -71,3 +70,5 @@ export class PsStoreSearcher implements InfoSearcher {
         };
     }
 }
+
+export const Searcher = PsStoreSearcher;

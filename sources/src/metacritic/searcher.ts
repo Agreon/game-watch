@@ -1,15 +1,15 @@
+import { InfoSearcher, InfoSearcherContext, SearchResponse } from "@game-watch/service";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export class MetacriticSearcher implements InfoSearcher {
     public type = InfoSourceType.Metacritic;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
         const { data } = await this.axios.get<string>(
@@ -54,3 +54,5 @@ export class MetacriticSearcher implements InfoSearcher {
 
     }
 }
+
+export const Searcher = MetacriticSearcher;
