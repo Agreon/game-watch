@@ -54,7 +54,7 @@ export class NotificationService {
 
         const scopedLogger = this.logger.child({ sourceId, gameId: game.id, userId: user.id });
 
-        if(resolvedGameData === null){
+        if (resolvedGameData === null) {
             const existingNotification = await em.findOne(Notification, {
                 infoSource,
                 type: NotificationType.ResolveError
@@ -127,7 +127,7 @@ export class NotificationService {
         await em.transactional(async transactionEm => {
             await transactionEm.nativeInsert(notification);
 
-            if (user.enableEmailNotifications) {
+            if (user.enableEmailNotifications && user.emailConfirmed) {
                 logger.info(`Sending notifications to ${user.email}`);
 
                 await this.mailService.sendNotificationMail(user, notification);

@@ -1,6 +1,7 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useToast } from "@chakra-ui/react";
 import type { NextPage } from 'next';
-import React from 'react';
+import { ParsedUrlQuery } from "querystring";
+import React, { useEffect } from 'react';
 
 import { AddGameInput } from '../components/AddGameInput';
 import { ConfigureUserSettings } from '../components/ConfigureUserSettings';
@@ -10,9 +11,29 @@ import { NoGamesYet } from '../components/NoGamesYet';
 import { GamesProvider } from '../providers/GamesProvider';
 import { TagProvider } from '../providers/TagProvider';
 import { useUserContext } from '../providers/UserProvider';
+import { DEFAULT_TOAST_OPTIONS } from "../util/default-toast-options";
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ query }: { query?: ParsedUrlQuery }) => {
   const { user } = useUserContext();
+  const toast = useToast(DEFAULT_TOAST_OPTIONS);
+
+  useEffect(() => {
+    if (query?.mailConfirmed) {
+      toast({
+        title: "Success",
+        description: "Your email address was confirmed!",
+        status: "success",
+      });
+    }
+    if (query?.unsubscribed) {
+      toast({
+        title: "Success",
+        description: "You've successfully unsubscribed!",
+        status: "success",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <GamesProvider>

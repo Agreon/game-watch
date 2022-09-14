@@ -15,6 +15,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 import { useUserContext } from "../../providers/UserProvider";
+import { DEFAULT_TOAST_OPTIONS } from "../../util/default-toast-options";
 import { useAction } from "../../util/useAction";
 
 type Inputs = {
@@ -25,7 +26,7 @@ type Inputs = {
 const Form = chakra("form");
 
 export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
-    const toast = useToast();
+    const toast = useToast(DEFAULT_TOAST_OPTIONS);
     const { loginUser } = useUserContext();
     const { register, handleSubmit, formState: { errors }, setError } = useForm<Inputs>();
 
@@ -39,7 +40,6 @@ export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) 
                 title: "Error",
                 description: "Unexpected Error. Please try again.",
                 status: "error",
-                position: "top-right",
             });
         }
     });

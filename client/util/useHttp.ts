@@ -3,11 +3,12 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { useCallback, useMemo } from "react";
 
 import { setLocalStoredUser } from "../providers/UserProvider";
+import { DEFAULT_TOAST_OPTIONS } from "./default-toast-options";
 
 axios.defaults.withCredentials = true;
 
 export function useHttp(logoutOnAuthFailure: boolean = true) {
-    const toast = useToast();
+    const toast = useToast(DEFAULT_TOAST_OPTIONS);
     const http = useMemo(() => {
         const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL });
 
