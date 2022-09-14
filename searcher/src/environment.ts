@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { IntFromString } from "io-ts-types";
+import { BooleanFromString, IntFromString } from "io-ts-types";
 
 export const EnvironmentStructure = t.type({
     SEARCH_GAME_CONCURRENCY: IntFromString,
@@ -7,7 +7,7 @@ export const EnvironmentStructure = t.type({
     REDIS_HOST: t.string,
     REDIS_PASSWORD: t.string,
     REDIS_PORT: IntFromString,
-    CACHING_ENABLED: t.boolean
+    CACHING_ENABLED: BooleanFromString
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;
