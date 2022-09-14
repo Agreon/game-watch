@@ -25,6 +25,7 @@ const {
     REDIS_HOST,
     REDIS_PASSWORD,
     REDIS_PORT,
+    CACHING_ENABLED
 } = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Resolver");
@@ -48,7 +49,7 @@ const resolveService = new ResolveService([
     new PsStoreResolver(axiosInstance),
     new EpicResolver(axiosInstance),
     new MetacriticResolver(axiosInstance),
-], redis);
+], redis, CACHING_ENABLED);
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);

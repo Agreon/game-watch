@@ -26,6 +26,7 @@ const {
     REDIS_HOST,
     REDIS_PASSWORD,
     REDIS_PORT,
+    CACHING_ENABLED
 } = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Searcher");
@@ -46,10 +47,10 @@ const axiosInstance = axios.create({ timeout: 10000 });
 const searchService = new SearchService([
     new EpicSearcher(axiosInstance),
     new MetacriticSearcher(axiosInstance),
-    new PsStoreSearcher(axiosInstance),
+    new PsStoreSearcher(),
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance)
-], redis);
+], redis, CACHING_ENABLED);
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);

@@ -42,6 +42,7 @@ export class SearchService {
     public constructor(
         private readonly searchers: InfoSearcher[],
         private readonly redis: Redis,
+        private readonly cachingEnabled: boolean
     ) { }
 
     public async searchForGameInSource(
@@ -61,15 +62,17 @@ export class SearchService {
 
         try {
             return await pRetry(async () => {
-                const existingData = await this.redis.get(cacheKey);
-                if (existingData) {
-                    logger.debug(`Search data for ${cacheKey} was found in cache`);
+                if (this.cachingEnabled) {
+                    const existingData = await this.redis.get(cacheKey);
+                    if (existingData) {
+                        logger.debug(`Search data for ${cacheKey} was found in cache`);
 
-                    return JSON.parse(existingData);
+                        return JSON.parse(existingData);
+                    }
                 }
 
                 const foundData = await searcherForType.search(search, { ...context, logger });
-                if(foundData !== null){
+                if (foundData !== null && this.cachingEnabled) {
                     await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
                 }
 
@@ -80,7 +83,7 @@ export class SearchService {
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while searching ${type} for ${search}`);
                     // We only want to retry on network errors that are not signaling us to stop anyway.
-                    if(
+                    if (
                         // Epic throws a 403 at the moment.
                         (axios.isAxiosError(error) && error.response?.status !== 403)
                         // This error occurs if Puppeteer timeouts.
