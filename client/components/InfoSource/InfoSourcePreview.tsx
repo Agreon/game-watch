@@ -10,13 +10,11 @@ import { InfoSourceState } from "@game-watch/shared";
 import React, { useCallback } from "react";
 
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { LoadingSpinner } from "../LoadingSpinner";
 import { SourceTypeLogo } from "./SourceTypeLogo";
 
-// TODO: data is never null if we never return initial ones?
 export const InfoSourcePreview: React.FC = () => {
-    const { source, excludeInfoSource } = useInfoSourceContext();
-    const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
+    const { source, disableInfoSource } = useInfoSourceContext();
+    const onRemove = useCallback(() => disableInfoSource(true), [disableInfoSource]);
 
     return (
         <Flex
@@ -37,18 +35,17 @@ export const InfoSourcePreview: React.FC = () => {
             transition="border-color 0.15s ease"
         >
             <Box flex="0.5" mb={["0.7rem", "0.7rem", "0"]}>
-                <a href={source.data?.url} target="_blank" rel="noreferrer">
+                <a href={source.data.url} target="_blank" rel="noreferrer">
                     {SourceTypeLogo[source.type]}
                 </a>
             </Box>
             <Flex justify="space-between" flex="2" align="center" width="100%">
                 <Box width="100%" position="relative">
                     {source.state === InfoSourceState.Error && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-                    {source.state === InfoSourceState.Initial && <LoadingSpinner size="lg" />}
                     {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
-                        <a href={source.data?.url} target="_blank" rel="noreferrer">
+                        <a href={source.data.url} target="_blank" rel="noreferrer">
                             <Text fontWeight="bold" fontSize="xl" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-                                {source.data?.fullName}
+                                {source.data.fullName}
                             </Text>
                         </a>
                     }

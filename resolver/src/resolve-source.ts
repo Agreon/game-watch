@@ -24,9 +24,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
         InfoSource,
         {
             id: sourceId,
-            state: {
-                $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
-            }
+            state: { $ne: InfoSourceState.Disabled }
         },
         { populate: ["user"] }
     );

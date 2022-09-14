@@ -15,11 +15,12 @@ import {
     Text,
     useBreakpointValue
 } from "@chakra-ui/react";
-import { InfoSourceState, InfoSourceType } from "@game-watch/shared";
+import { InfoSourceType } from "@game-watch/shared";
 import React, { useEffect, useState } from "react";
 
 import { useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
+import { useUserContext } from "../providers/UserProvider";
 import { ModalProps } from "../util/types";
 import { useAction } from "../util/useAction";
 import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
@@ -35,13 +36,14 @@ export const PlaceholderMap: Record<InfoSourceType, string> = {
 };
 
 const AddSource: React.FC = () => {
-    const { addInfoSource, allInfoSources } = useGameContext();
+    const { user: { interestedInSources } } = useUserContext();
+    const { addInfoSource, activeInfoSources } = useGameContext();
 
-    const availableInfoSources = allInfoSources.filter(source =>
-        [InfoSourceState.Disabled, InfoSourceState.Initial].includes(source.state)
+    const availableInfoSources = interestedInSources.filter(
+        type => activeInfoSources.find(source => source.type === type) === undefined
     );
 
-    const [type, setType] = useState(availableInfoSources[0]?.type ?? "");
+    const [type, setType] = useState(availableInfoSources[0] ?? "");
     const [url, setUrl] = useState("");
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
@@ -62,7 +64,7 @@ const AddSource: React.FC = () => {
             <Flex direction={["column", "row"]}>
                 <FormControl flex="0.3" mr="1rem" mb={["0.5rem", 0]}>
                     <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                        {availableInfoSources.map(({ type }) => (
+                        {availableInfoSources.map(type => (
                             <option key={type} value={type}>{type}</option>
                         ))}
                     </Select>
@@ -97,7 +99,7 @@ const AddSource: React.FC = () => {
 const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
     const { game, activeInfoSources } = useGameContext();
     const [name, setName] = useState(
-        activeInfoSources.filter(source => !!source.data?.fullName)[0]?.data?.fullName ?? game.search
+        activeInfoSources.filter(source => !!source.data.fullName)[0]?.data.fullName ?? game.search
     );
 
     useEffect(() => onChange(name), [name]);
@@ -185,7 +187,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     ? <LoadingSpinner size="xl" />
                                     : <>
                                         <AddSource />
-                                        {!game.syncing && <EditName onChange={setName} />}
+                                        <EditName onChange={setName} />
                                     </>
                                 }
                             </Box>

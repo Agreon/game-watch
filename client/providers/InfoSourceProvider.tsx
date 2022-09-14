@@ -6,8 +6,7 @@ import { useHttp } from "../util/useHttp";
 export interface InfoSourceCtx {
     source: InfoSourceDto
     syncInfoSource: () => Promise<void>
-    disableInfoSource: () => Promise<void>
-    excludeInfoSource: () => Promise<void>
+    disableInfoSource: (continueSearching: boolean) => Promise<void>
 }
 
 export const InfoSourceContext = React.createContext<InfoSourceCtx | undefined>(undefined);
@@ -74,24 +73,14 @@ export const InfoSourceProvider: React.FC<{
         });
     }, [source, withRequest, setGameInfoSource, handleError]);
 
-    const disableInfoSource = useCallback(async () => {
+    const disableInfoSource = useCallback(async (continueSearching: boolean) => {
         removeGameInfoSource(source.id);
 
         await withRequest(async http => {
-            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/disable`);
-
-            removeGameInfoSource(id);
-        }, error => {
-            setGameInfoSource(source);
-            handleError(error);
-        });
-    }, [source, withRequest, handleError, setGameInfoSource, removeGameInfoSource]);
-
-    const excludeInfoSource = useCallback(async () => {
-        removeGameInfoSource(source.id);
-
-        await withRequest(async http => {
-            const { data: { id } } = await http.post<InfoSourceDto>(`/info-source/${source.id}/exclude`);
+            const { data: { id } } = await http.post<InfoSourceDto>(
+                `/info-source/${source.id}/disable`,
+                { continueSearching }
+            );
 
             removeGameInfoSource(id);
         }, error => {
@@ -104,8 +93,7 @@ export const InfoSourceProvider: React.FC<{
         source,
         syncInfoSource,
         disableInfoSource,
-        excludeInfoSource
-    }), [source, syncInfoSource, disableInfoSource, excludeInfoSource]);
+    }), [source, syncInfoSource, disableInfoSource]);
 
     return (
         <InfoSourceContext.Provider value={contextValue}>

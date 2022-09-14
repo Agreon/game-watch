@@ -17,14 +17,14 @@ export const InfoSourceWrapper: React.FC<PropsWithChildren> = ({ children }) => 
 
     return (
         <Flex key={source.id} py="1rem" minHeight="4.8rem" align="center" justify="space-between">
-            <Tooltip label={source.data?.fullName} placement="top">
+            <Tooltip label={source.data.fullName} placement="top">
                 <Box flex="1">
-                    <a href={source.data?.url} target="_blank" rel="noreferrer">
+                    <a href={source.data.url} target="_blank" rel="noreferrer">
                         {SourceTypeLogo[source.type]}
                     </a>
                 </Box>
             </Tooltip>
-            {[InfoSourceState.Found, InfoSourceState.Initial].includes(source.state) && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
+            {source.state === InfoSourceState.Found && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
             {source.state === InfoSourceState.Error && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
             {source.state === InfoSourceState.Resolved && children}
             <Box><InfoSourceOptions /></Box>

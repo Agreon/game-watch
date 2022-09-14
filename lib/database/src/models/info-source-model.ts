@@ -25,7 +25,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     public state!: S;
 
     @Property()
-    public syncing: boolean = true;
+    public continueSearching: boolean = false;
 
     @Property({ type: ArrayType })
     public excludedRemoteGameIds: string[] = [];

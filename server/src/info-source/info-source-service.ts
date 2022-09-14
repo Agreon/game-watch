@@ -21,31 +21,16 @@ export class InfoSourceService {
         private readonly notificationRepository: EntityRepository<Notification>
     ) { }
 
-    public async addInfoSource({ gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }) {
+    public async addInfoSource(
+        { gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
+    ) {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
-
-        let excludedRemoteGameIds: string[] = [];
-
-        const existingInfoSource = await this.infoSourceRepository.findOne({
-            type,
-            game,
-            user
-        });
-        // TODO: Test
-        if (existingInfoSource) {
-            if ([InfoSourceState.Disabled, InfoSourceState.Initial].includes(existingInfoSource.state) === false) {
-                throw new Error("NoNo TODO");
-            }
-            excludedRemoteGameIds = existingInfoSource.excludedRemoteGameIds;
-            this.infoSourceRepository.remove(existingInfoSource);
-        }
 
         const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
             user,
             state: InfoSourceState.Found,
-            excludedRemoteGameIds,
             data: {
                 id: remoteGameId,
                 // This field is only used for display on the initial search.
@@ -86,42 +71,21 @@ export class InfoSourceService {
         return infoSource;
     }
 
-    public async disableInfoSource(id: string) {
+    public async disableInfoSource(id: string, continueSearching: boolean) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
+
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
-        // We remove all notifications that were created for this version of the info source, so that on re-use
-        // the same behavior as with a new source applies.
-        await this.notificationRepository.nativeDelete({
-            infoSource,
-        });
+        // We remove all notifications that were created for this version of the info source,
+        // so that on re-use the same behavior as with a new source applies.
+        await this.notificationRepository.nativeDelete({ infoSource });
 
+        infoSource.continueSearching = continueSearching;
+        infoSource.excludedRemoteGameIds = [
+            ...infoSource.excludedRemoteGameIds,
+            infoSource.getDataOrFail().id
+        ];
         infoSource.state = InfoSourceState.Disabled;
-        await this.infoSourceRepository.persistAndFlush(infoSource);
-
-        return infoSource;
-    }
-
-    public async excludeInfoSource(id: string) {
-        const infoSource = await this.infoSourceRepository.findOneOrFail(
-            {
-                id,
-                state: {
-                    $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
-                }
-            },
-        );
-
-        await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
-
-        // We remove unnecessary notifications that were created for this version of the info source
-        await this.notificationRepository.nativeDelete({ infoSource, });
-
-        // TODO: No type safety :/
-        infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getDataOrFail().id];
-        infoSource.data = null;
-        infoSource.state = InfoSourceState.Initial;
-
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;

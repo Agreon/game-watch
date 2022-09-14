@@ -35,18 +35,18 @@ const Price: React.FC<{ price?: number, initial?: number, userCountry: Country }
     );
 };
 
-export const StoreInfoSource: React.FC<{ data: StoreGameData | null, }> = ({ data }) => {
+export const StoreInfoSource: React.FC<{ data: StoreGameData, }> = ({ data }) => {
     const { user } = useUserContext();
 
     return (
         <InfoSourceWrapper>
             <Box flex="1">
-                <ReleaseDate releaseDate={data?.releaseDate} originalDate={data?.originalReleaseDate} />
+                <ReleaseDate releaseDate={data.releaseDate} originalDate={data.originalReleaseDate} />
             </Box>
             <Box flex="1">
                 <Price
-                    price={data?.priceInformation?.final}
-                    initial={data?.priceInformation?.initial}
+                    price={data.priceInformation?.final}
+                    initial={data.priceInformation?.initial}
                     userCountry={user.country}
                 />
             </Box>

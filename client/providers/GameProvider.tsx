@@ -259,12 +259,7 @@ export const GameProvider: React.FC<{
     );
 
     const activeInfoSources = useMemo(
-        () => allInfoSources.filter(
-            source => [
-                InfoSourceState.Disabled,
-                InfoSourceState.Initial,
-            ].includes(source.state) === false
-        ),
+        () => allInfoSources.filter(source => source.state !== InfoSourceState.Disabled),
         [allInfoSources]
     );
 

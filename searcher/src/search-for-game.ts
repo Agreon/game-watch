@@ -22,23 +22,77 @@ export const searchForGame = async (
     const startTime = new Date().getTime();
 
     const game = await em.findOneOrFail(Game, gameId, { populate: ["infoSources", "user"] });
-    const userCountry = game.user.get().country;
-    const infoSources = game.infoSources.getItems();
+    const { country: userCountry, interestedInSources } = game.user.get();
 
-    const sourcesToSearch = infoSources.filter(
-        ({ state }) => state === InfoSourceState.Initial
+    const existingInfoSources = game.infoSources.getItems();
+
+    // Re-Search for disabled sources
+    const disabledSources = existingInfoSources.filter(
+        ({ state, continueSearching }) => state === InfoSourceState.Disabled && continueSearching
     );
 
-    logger.info(`Searching for ${JSON.stringify(sourcesToSearch.map(source => source.type))}`);
+    // Search possible new sources
+    const sourcesToSearchFor = interestedInSources.filter(
+        type => !existingInfoSources.map(({ type }) => type).includes(type)
+    );
 
-    await Promise.all(sourcesToSearch.map(async source => {
-        logger.info(`Searching ${source.type} for '${game.search}'`);
-
-        const searchResponse = await searchService.searchForGameInSource(
-            game.search,
-            source.type,
-            { logger, userCountry, initialRun }
+    const addSourceToResolveQueues = async (sourceId: string) => {
+        await resolveSourceQueue.add(
+            QueueType.ResolveSource,
+            {
+                sourceId,
+                initialRun
+            },
+            {
+                jobId: sourceId,
+                priority: 1
+            }
         );
+
+        await resolveSourceQueue.add(
+            QueueType.ResolveSource,
+            { sourceId },
+            {
+                repeat: {
+                    cron: process.env.SYNC_SOURCES_AT
+                },
+                jobId: sourceId,
+                priority: 2
+            }
+        );
+    };
+
+    logger.info(`Searching for ${JSON.stringify(sourcesToSearchFor.map(source => source))}`);
+
+    const searchForNewSourcesPromises = sourcesToSearchFor.map(async sourceType => {
+        logger.info(`Searching ${sourceType} for '${game.search}'`);
+
+        const searchResponse = await searchService.searchForGameInSource(game.search, sourceType, { logger, userCountry, initialRun });
+        if (!searchResponse) {
+            logger.info(`No store game information found in '${sourceType}' for '${game.search}'`);
+            return;
+        }
+        logger.info(`Found game information in ${sourceType} for '${game.search}': '${searchResponse.id}'`);
+
+        const newSource = new InfoSource({
+            state: InfoSourceState.Found,
+            data: searchResponse,
+            type: sourceType,
+            game,
+            user: game.user,
+        });
+
+        await em.nativeInsert(newSource);
+
+        await addSourceToResolveQueues(newSource.id);
+    });
+
+    logger.info(`Re-Searching for ${JSON.stringify(disabledSources.map(source => source.type))}`);
+
+    const researchSourcesPromises = disabledSources.map(async source => {
+        logger.info(`Re-Searching ${source.type} for '${game.search}'`);
+
+        const searchResponse = await searchService.searchForGameInSource(game.search, source.type, { logger, userCountry, initialRun });
         if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.id)) {
             logger.info(`No new store game information found in '${source.type}' for '${game.search}'`);
             return;
@@ -55,30 +109,10 @@ export const searchForGame = async (
             foundAt: new Date(),
         });
 
-        await resolveSourceQueue.add(
-            QueueType.ResolveSource,
-            {
-                sourceId: source.id,
-                initialRun
-            },
-            {
-                jobId: source.id,
-                priority: 1
-            }
-        );
+        await addSourceToResolveQueues(source.id);
+    });
 
-        await resolveSourceQueue.add(
-            QueueType.ResolveSource,
-            { sourceId: source.id },
-            {
-                repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
-                },
-                jobId: source.id,
-                priority: 2
-            }
-        );
-    }));
+    await Promise.all([...searchForNewSourcesPromises, ...researchSourcesPromises]);
 
     await em.nativeUpdate(Game, game.id, {
         // We already set syncing to false here to signal the AddGameModal that the search is done.

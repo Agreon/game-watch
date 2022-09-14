@@ -1,5 +1,5 @@
 import { InfoSource, User } from "@game-watch/database";
-import { CreateInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
+import { CreateInfoSourceDto, DisableInfoSourceDto, InfoSourceDto } from "@game-watch/shared";
 import { IdentifiedReference } from "@mikro-orm/core";
 import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 
@@ -47,15 +47,9 @@ export class InfoSourceController {
 
     @Post("/:id/disable")
     public async disableInfoSource(
-        @Param("id", UserIsOwner) { id }: InfoSource
+        @Param("id", UserIsOwner) { id }: InfoSource,
+        @Body() { continueSearching }: DisableInfoSourceDto
     ): Promise<InfoSourceDto> {
-        return await this.infoSourceService.disableInfoSource(id);
-    }
-
-    @Post("/:id/exclude")
-    public async excludeInfoSource(
-        @Param("id", UserIsOwner) { id }: InfoSource
-    ): Promise<InfoSourceDto> {
-        return await this.infoSourceService.excludeInfoSource(id);
+        return await this.infoSourceService.disableInfoSource(id, continueSearching);
     }
 }

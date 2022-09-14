@@ -33,23 +33,8 @@ export class GameService {
 
         const game = new Game({ search, user: userRef });
 
-        // TODO: Why are we creating initial sources?
-        // => Only for removed check in the resolver
-        // => We can almost revert that change?
-        // => Then data never is null!
-        const infoSources = user.interestedInSources.map(
-            type => new InfoSource({
-                type,
-                game,
-                user: userRef,
-                state: InfoSourceState.Initial,
-                data: null
-            })
-        );
-
         await this.entityManager.transactional(async em => {
-            em.persist(game);
-            em.persist(infoSources);
+            await em.persistAndFlush(game);
 
             await this.queueService.addToQueue(
                 QueueType.SearchGame,
@@ -76,10 +61,11 @@ export class GameService {
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
 
         const activeInfoSources = game.infoSources.getItems().filter(
-            source => [InfoSourceState.Error, InfoSourceState.Resolved,].includes(source.state)
+            ({ state }) => state !== InfoSourceState.Disabled
         );
 
         for (const source of activeInfoSources) {
+            // TODO: Is this persisted?
             source.state = InfoSourceState.Found;
             await this.queueService.addToQueue(
                 QueueType.ResolveSource,
@@ -159,9 +145,7 @@ export class GameService {
                         $or: [
                             {
                                 infoSources: {
-                                    state: {
-                                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
-                                    },
+                                    state: { $ne: InfoSourceState.Disabled },
                                 }
                             },
                             {
@@ -189,9 +173,7 @@ export class GameService {
             .leftJoinAndSelect("game.infoSources", "infoSources")
             .andWhere({
                 infoSources: {
-                    state: {
-                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
-                    }
+                    state: { $ne: InfoSourceState.Disabled },
                 }
             })
             .orderBy({
@@ -220,9 +202,7 @@ export class GameService {
                 .from("info_source")
                 .andWhere({
                     "game_id": knex.ref("game.id"),
-                    state: {
-                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
-                    },
+                    state: { $ne: InfoSourceState.Disabled },
                 })
                 .andWhere("type", "in", withInfoSources);
 
