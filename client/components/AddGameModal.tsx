@@ -95,9 +95,9 @@ const AddSource: React.FC = () => {
 };
 
 const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
-    const { game } = useGameContext();
+    const { game, activeInfoSources } = useGameContext();
     const [name, setName] = useState(
-        game.infoSources.filter(source => !!source.remoteGameName)[0]?.remoteGameName ?? game.search
+        activeInfoSources.filter(source => !!source.data?.fullName)[0]?.data?.fullName ?? game.search
     );
 
     useEffect(() => onChange(name), [name]);
@@ -115,13 +115,9 @@ const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) 
     );
 };
 
-/**
- * TODO: Already allow save if all are at least "found"
- */
 export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const {
         game,
-        allInfoSources,
         activeInfoSources,
         setGameInfoSource,
         removeGameInfoSource,
@@ -129,8 +125,6 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
-
-    const syncingInfoSources = allInfoSources.filter(({ state }) => state === InfoSourceState.Found);
 
     // TODO: use ModalFooter
     return (
@@ -191,7 +185,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     ? <LoadingSpinner size="xl" />
                                     : <>
                                         <AddSource />
-                                        {!syncingInfoSources.length && <EditName onChange={setName} />}
+                                        {!game.syncing && <EditName onChange={setName} />}
                                     </>
                                 }
                             </Box>
@@ -205,7 +199,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || syncingInfoSources.length > 0}
+                                disabled={loading || game.syncing}
                                 onClick={() => onAdd({ name })}
                             >
                                 Save

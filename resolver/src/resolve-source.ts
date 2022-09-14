@@ -1,9 +1,8 @@
-import { Game, InfoSource, Notification } from "@game-watch/database";
+import { InfoSource, Notification } from "@game-watch/database";
 import { QueueParams, QueueType } from "@game-watch/queue";
 import { Logger } from "@game-watch/service";
 import { InfoSourceState, InfoSourceType, NotificationType } from "@game-watch/shared";
 import { EntityManager } from "@mikro-orm/core";
-// import { EntityManager, In, Not } from "@mikro-orm/core";
 import { Queue } from "bullmq";
 
 import { ResolveService } from "./resolve-service";
@@ -37,9 +36,7 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     logger.info(`Resolving ${source.type}`);
 
     const resolvedGameData = await resolveService.resolveGameInformation(
-        source.remoteGameId,
-        source.type,
-        { logger, skipCache, userCountry, initialRun }
+        { source, logger, skipCache, userCountry, initialRun }
     );
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);
@@ -80,8 +77,6 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     await em.nativeUpdate(InfoSource, sourceId, {
         state: InfoSourceState.Resolved,
         data: resolvedGameData,
-        // If the source was added manually, no search is done. So we have to set the name here.
-        remoteGameName: resolvedGameData.fullName,
         updatedAt: new Date()
     });
 
@@ -91,18 +86,6 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
         infoSource: source as InfoSource,
         type: NotificationType.ResolveError,
     });
-
-    const game = await em.findOneOrFail(Game, source.game, { populate: ["infoSources"] });
-    if (
-        game.infoSources.getItems().some(
-            source => source.state === InfoSourceState.Found
-        ) === false
-    ) {
-        await em.nativeUpdate(Game, game.id, {
-            syncing: false,
-            updatedAt: new Date()
-        });
-    }
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Resolving source took ${duration} ms`);

@@ -33,14 +33,16 @@ export class GameService {
 
         const game = new Game({ search, user: userRef });
 
+        // TODO: Why are we creating initial sources?
+        // => Only for removed check in the resolver
+        // => We can almost revert that change?
+        // => Then data never is null!
         const infoSources = user.interestedInSources.map(
             type => new InfoSource({
                 type,
                 game,
                 user: userRef,
                 state: InfoSourceState.Initial,
-                remoteGameId: null,
-                remoteGameName: null,
                 data: null
             })
         );

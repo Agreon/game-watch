@@ -64,8 +64,6 @@ export class UserService {
                     game,
                     user: Reference.create(user),
                     state: InfoSourceState.Initial,
-                    remoteGameId: null,
-                    remoteGameName: null,
                     data: null
                 })
             )

@@ -1,4 +1,4 @@
-import { GameData, InfoSourceState, InfoSourceType } from "@game-watch/shared";
+import { InfoSourceData, InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
@@ -6,16 +6,13 @@ import { Game } from "./game-model";
 import { Notification } from "./notification-model";
 import { User } from "./user-model";
 
-// TODO: Make nullables optional
-type InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> = {
-    type: T;
-    state: S;
-    user: IdentifiedReference<User>;
-    remoteGameId: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null;
-    remoteGameName: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null;
-    data: S extends InfoSourceState.Resolved ? GameData[T] : null;
-    excludedRemoteGameIds?: string[];
-    game?: Game;
+interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> {
+    type: T
+    state: S
+    user: IdentifiedReference<User>
+    data: InfoSourceData<T, S>
+    excludedRemoteGameIds?: string[]
+    game?: Game
 }
 
 @Entity()
@@ -27,12 +24,6 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     @Enum(() => InfoSourceState)
     public state!: S;
 
-    @Property({ nullable: true })
-    public remoteGameId: S extends (InfoSourceState.Found | InfoSourceState.Resolved) ? string : null;
-
-    @Property({ nullable: true })
-    public remoteGameName: S extends (InfoSourceState.Found | InfoSourceState.Resolved) ? string : null;
-
     @Property()
     public syncing: boolean = true;
 
@@ -40,7 +31,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     public excludedRemoteGameIds: string[] = [];
 
     @Property({ columnType: "json", nullable: true })
-    public data: S extends InfoSourceState.Resolved ? GameData[T] : null;
+    public data: InfoSourceData<T, S>;
 
     // This property is necessary because we reuse the info source model and the notification logic
     // depends on this information.
@@ -60,8 +51,6 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
         {
             type,
             state,
-            remoteGameId,
-            remoteGameName,
             excludedRemoteGameIds,
             data,
             game,
@@ -71,22 +60,12 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
         super();
         this.type = type;
         this.state = state;
-        this.remoteGameId = remoteGameId;
-        this.remoteGameName = remoteGameName;
         this.excludedRemoteGameIds = excludedRemoteGameIds ?? [];
         this.user = user;
         this.data = data;
         if (game) {
             this.game = Reference.create(game);
         }
-    }
-
-    public getRemoteGameIdOrFail() {
-        if (!this.remoteGameId) {
-            throw new Error("'remoteGameId' is not set");
-        }
-
-        return this.remoteGameId;
     }
 
     public getDataOrFail() {

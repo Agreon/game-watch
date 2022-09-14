@@ -6,24 +6,14 @@ import {
     Text,
     useColorModeValue
 } from "@chakra-ui/react";
-import { InfoSourceState, InfoSourceType } from "@game-watch/shared";
+import { InfoSourceState } from "@game-watch/shared";
 import React, { useCallback } from "react";
 
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { SourceTypeLogo } from "./SourceTypeLogo";
 
-const GAME_URL_MAPPING: Record<InfoSourceType, (id: string) => string> = {
-    [InfoSourceType.PsStore]: id => id,
-    [InfoSourceType.Metacritic]: id => id,
-    [InfoSourceType.Switch]: id => id,
-    [InfoSourceType.Epic]: id => id,
-    [InfoSourceType.Steam]: id => `https://store.steampowered.com/app/${id}`,
-};
-
-/**
- * TODO: RemoteGameId should not be null :/
- */
+// TODO: data is never null if we never return initial ones?
 export const InfoSourcePreview: React.FC = () => {
     const { source, excludeInfoSource } = useInfoSourceContext();
     const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
@@ -56,9 +46,9 @@ export const InfoSourcePreview: React.FC = () => {
                     {source.state === InfoSourceState.Error && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
                     {source.state === InfoSourceState.Initial && <LoadingSpinner size="lg" />}
                     {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
-                        <a href={GAME_URL_MAPPING[source.type](source.remoteGameId ?? "")} target="_blank" rel="noreferrer">
+                        <a href={source.data?.url} target="_blank" rel="noreferrer">
                             <Text fontWeight="bold" fontSize="xl" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-                                {source.remoteGameName}
+                                {source.data?.fullName}
                             </Text>
                         </a>
                     }

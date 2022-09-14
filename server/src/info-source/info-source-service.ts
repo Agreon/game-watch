@@ -25,14 +25,13 @@ export class InfoSourceService {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
-        // Reuse disabled or excluded info sources
+        let excludedRemoteGameIds: string[] = [];
+
         const existingInfoSource = await this.infoSourceRepository.findOne({
             type,
             game,
             user
         });
-        let excludedRemoteGameIds: string[] = [];
-
         // TODO: Test
         if (existingInfoSource) {
             if ([InfoSourceState.Disabled, InfoSourceState.Initial].includes(existingInfoSource.state) === false) {
@@ -46,12 +45,14 @@ export class InfoSourceService {
             type,
             user,
             state: InfoSourceState.Found,
-            remoteGameId,
-            // This field is only used for display on the initial search.
-            // TODO => Improve: Just save id,fullName in data after search?
-            remoteGameName: "",
             excludedRemoteGameIds,
-            data: null
+            data: {
+                id: remoteGameId,
+                // This field is only used for display on the initial search.
+                // It is later overwritten by the resolvers.
+                fullName: "Sync in progress",
+                url,
+            }
         });
 
         game.infoSources.add(infoSource);
@@ -102,18 +103,23 @@ export class InfoSourceService {
     }
 
     public async excludeInfoSource(id: string) {
-        const infoSource = await this.infoSourceRepository.findOneOrFail(id);
+        const infoSource = await this.infoSourceRepository.findOneOrFail(
+            {
+                id,
+                state: {
+                    $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
+                }
+            },
+        );
+
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
         // We remove unnecessary notifications that were created for this version of the info source
-        await this.notificationRepository.nativeDelete({
-            infoSource,
-        });
+        await this.notificationRepository.nativeDelete({ infoSource, });
 
-        infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
+        // TODO: No type safety :/
+        infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getDataOrFail().id];
         infoSource.data = null;
-        infoSource.remoteGameId = null;
-        infoSource.remoteGameName = null;
         infoSource.state = InfoSourceState.Initial;
 
         await this.infoSourceRepository.persistAndFlush(infoSource);

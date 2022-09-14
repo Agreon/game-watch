@@ -1,15 +1,19 @@
 import { IsEnum, IsString, Length } from "class-validator";
 
-import { GameData, InfoSourceState, InfoSourceType } from "../types";
+import { BaseGameData, GameData, InfoSourceState, InfoSourceType } from "../types";
+
+export type InfoSourceData<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> =
+    S extends InfoSourceState.Resolved ?
+    GameData[T]
+    : S extends InfoSourceState.Found ?
+    BaseGameData
+    : null
 
 export interface InfoSourceDto<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> {
     id: string
     type: T
     state: S
-    // TODO: If we remove those, move game.syncing:false to searchwr again
-    remoteGameId: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null
-    remoteGameName: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null
-    data: S extends InfoSourceState.Resolved ? GameData[T] : null
+    data: InfoSourceData<T, S>
 }
 
 export class CreateInfoSourceDto {

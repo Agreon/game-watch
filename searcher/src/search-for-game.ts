@@ -39,20 +39,18 @@ export const searchForGame = async (
             source.type,
             { logger, userCountry, initialRun }
         );
-        if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.remoteGameId)) {
+        if (!searchResponse || source.excludedRemoteGameIds.includes(searchResponse.id)) {
             logger.info(`No new store game information found in '${source.type}' for '${game.search}'`);
             return;
         }
-        logger.info(`Found game information in ${source.type} for '${game.search}': '${searchResponse.remoteGameId}'`);
+        logger.info(`Found game information in ${source.type} for '${game.search}': '${searchResponse.id}'`);
 
         source.state = InfoSourceState.Found;
-        source.remoteGameId = searchResponse.remoteGameId;
-        source.remoteGameName = searchResponse.remoteGameName;
+        source.data = searchResponse;
 
         await em.nativeUpdate(InfoSource, source.id, {
             state: InfoSourceState.Found,
-            remoteGameId: searchResponse.remoteGameId,
-            remoteGameName: searchResponse.remoteGameName,
+            data: searchResponse,
             updatedAt: new Date(),
             foundAt: new Date(),
         });
@@ -81,6 +79,12 @@ export const searchForGame = async (
             }
         );
     }));
+
+    await em.nativeUpdate(Game, game.id, {
+        // We already set syncing to false here to signal the AddGameModal that the search is done.
+        syncing: false,
+        updatedAt: new Date()
+    });
 
     const duration = new Date().getTime() - startTime;
     logger.debug(`Searching for game took ${duration} ms`);

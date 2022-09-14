@@ -12,21 +12,21 @@ import { parseDate } from "../util/parse-date";
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SteamGameData> {
+    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SteamGameData> {
         const { data } = await this.axios.get<any>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {
-                    appids: id,
+                    appids: source.data.id,
                     cc: mapCountryCodeToLanguage(userCountry),
                 },
                 headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
             }
         );
 
-        const gameData = data[id];
+        const gameData = data[source.data.id];
 
         const { success } = gameData;
         if (!success) {
@@ -43,9 +43,9 @@ export class SteamResolver implements InfoResolver {
         const releaseDate = json.release_date.date.replace(/\.|\,/g, "");
 
         return {
-            id,
-            fullName: json.name,
-            url: `https://store.steampowered.com/app/${id}`,
+            id: source.data.id,
+            fullName: source.data.fullName,
+            url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
             // Sometimes english, sometimes german..
             releaseDate: parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"], "de") ?? parseDate(releaseDate, ["D MMM YYYY", "D MMMM YYYY"]) ?? parseDate(releaseDate),

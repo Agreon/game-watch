@@ -17,17 +17,17 @@ const extract = (content: string, regex: RegExp) => {
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SwitchGameData> {
+    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SwitchGameData> {
         if (userCountry === "US") {
             return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
-                await page.goto(id);
+                await page.goto(source.data.id);
                 await page.waitForSelector(".release-date > dd");
 
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
                 const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
 
                 const originalPrice = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
@@ -36,8 +36,7 @@ export class SwitchResolver implements InfoResolver {
                 const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
 
                 return {
-                    id,
-                    url: id,
+                    ...source.data,
                     fullName,
                     thumbnailUrl,
                     releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
@@ -47,22 +46,15 @@ export class SwitchResolver implements InfoResolver {
 
             });
         }
-        const { data } = await this.axios.get<string>(id);
+        const { data } = await this.axios.get<string>(source.data.id);
         const $ = cheerio.load(data);
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
 
-        const fullName = extract(data, /(?<=gameTitle": ").+\b/);
-        if (!fullName) {
-            throw new Error("Could not find name of game");
-        }
-
         const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
 
         return {
-            id,
-            url: id,
-            fullName,
+            ...source.data,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
             originalReleaseDate: releaseDate,

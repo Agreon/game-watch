@@ -1,5 +1,6 @@
+import { InfoSource } from "@game-watch/database";
 import { Logger } from "@game-watch/service";
-import { Country, GameDataU, InfoSourceType } from "@game-watch/shared";
+import { Country, GameDataU, InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
 import axios from "axios";
 import { Redis } from "ioredis";
@@ -8,6 +9,7 @@ import pRetry from "p-retry";
 export interface InfoResolverContext {
     logger: Logger
     userCountry: Country
+    source: InfoSource<InfoSourceType, InfoSourceState.Found>
 }
 
 export interface ResolveServiceContext extends InfoResolverContext {
@@ -17,7 +19,7 @@ export interface ResolveServiceContext extends InfoResolverContext {
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType
-    resolve: (id: string, context: InfoResolverContext) => Promise<T>
+    resolve: (context: InfoResolverContext) => Promise<T>
 }
 
 const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
@@ -40,12 +42,9 @@ export class ResolveService {
         private readonly redis: Redis,
     ) { }
 
-    public async resolveGameInformation(
-        id: string,
-        type: InfoSourceType,
-        context: ResolveServiceContext
-    ): Promise<GameDataU | null> {
-        const logger = context.logger.child({ serviceName: ResolveService.name, type, id, context });
+    public async resolveGameInformation(context: ResolveServiceContext): Promise<GameDataU | null> {
+        const { type, data: { id } } = context.source;
+        const logger = context.logger.child({ serviceName: ResolveService.name, type, id });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
         if (!resolverForType) {
@@ -64,7 +63,7 @@ export class ResolveService {
                     return JSON.parse(existingData);
                 }
 
-                const resolvedData = await resolverForType.resolve(id, { ...context, logger });
+                const resolvedData = await resolverForType.resolve({ ...context, logger });
                 await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
 
                 return resolvedData;
