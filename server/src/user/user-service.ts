@@ -56,6 +56,7 @@ export class UserService {
         const user = await this.userRepository.findOneOrFail(userId);
 
         user.emailConfirmed = false;
+        user.enableEmailNotifications = false;
 
         await this.userRepository.persistAndFlush(user);
     }
