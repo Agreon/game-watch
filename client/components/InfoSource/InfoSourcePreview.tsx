@@ -6,7 +6,7 @@ import {
     Text,
     useColorModeValue
 } from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
+import { InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import React, { useCallback } from "react";
 
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
@@ -21,6 +21,9 @@ const GAME_URL_MAPPING: Record<InfoSourceType, (id: string) => string> = {
     [InfoSourceType.Steam]: id => `https://store.steampowered.com/app/${id}`,
 };
 
+/**
+ * TODO: RemoteGameId should not be null :/
+ */
 export const InfoSourcePreview: React.FC = () => {
     const { source, excludeInfoSource } = useInfoSourceContext();
     const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
@@ -50,20 +53,15 @@ export const InfoSourcePreview: React.FC = () => {
             </Box>
             <Flex justify="space-between" flex="2" align="center" width="100%">
                 <Box width="100%" position="relative">
-                    {!source.syncing && source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-                    {!source.resolveError &&
-                    <>
-                        {!source.remoteGameName ? (
-                            <LoadingSpinner size="lg" />
-                            ) : (
-                                <a href={GAME_URL_MAPPING[source.type](source.remoteGameId ?? "")} target="_blank" rel="noreferrer">
-                                    <Text fontWeight="bold" fontSize="xl">
-                                        {source.remoteGameName}
-                                    </Text>
-                                </a>
-                        )}
-                    </>
-                }
+                    {source.state === InfoSourceState.Error && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                    {source.state === InfoSourceState.Initial && <LoadingSpinner size="lg" />}
+                    {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
+                        <a href={GAME_URL_MAPPING[source.type](source.remoteGameId ?? "")} target="_blank" rel="noreferrer">
+                            <Text fontWeight="bold" fontSize="xl" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+                                {source.remoteGameName}
+                            </Text>
+                        </a>
+                    }
                 </Box>
                 <Box pl="0.5rem">
                     <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />

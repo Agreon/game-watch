@@ -45,7 +45,7 @@ export class ResolveService {
         type: InfoSourceType,
         context: ResolveServiceContext
     ): Promise<GameDataU | null> {
-        const logger = context.logger.child({ serviceName: ResolveService.name, type, id });
+        const logger = context.logger.child({ serviceName: ResolveService.name, type, id, context });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
         if (!resolverForType) {
@@ -74,7 +74,7 @@ export class ResolveService {
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
                     // We only want to retry on network errors that are not signaling us to stop anyway.
-                    if(
+                    if (
                         // Epic throws a 403 at the moment.
                         (axios.isAxiosError(error) && error.response?.status !== 403)
                         // This error occurs if Puppeteer timeouts.

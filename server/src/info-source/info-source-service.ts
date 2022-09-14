@@ -1,6 +1,6 @@
 import { Game, InfoSource, Notification, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
-import { CreateInfoSourceDto } from "@game-watch/shared";
+import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import { EntityRepository, IdentifiedReference } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
@@ -31,30 +31,27 @@ export class InfoSourceService {
             game,
             user
         });
+        let excludedRemoteGameIds: string[] = [];
+
+        // TODO: Test
         if (existingInfoSource) {
-            existingInfoSource.disabled = false;
-            existingInfoSource.data = null;
-            existingInfoSource.resolveError = false;
-            existingInfoSource.syncing = true;
-            existingInfoSource.remoteGameId = remoteGameId;
-
-            await this.infoSourceRepository.persistAndFlush(existingInfoSource);
-
-            await this.queueService.addToQueue(
-                QueueType.ResolveSource,
-                { sourceId: existingInfoSource.id, initialRun: true }
-            );
-            await this.queueService.createRepeatableInfoSourceResolveJob(existingInfoSource);
-
-            return existingInfoSource;
+            if ([InfoSourceState.Disabled, InfoSourceState.Initial].includes(existingInfoSource.state) === false) {
+                throw new Error("NoNo TODO");
+            }
+            excludedRemoteGameIds = existingInfoSource.excludedRemoteGameIds;
+            this.infoSourceRepository.remove(existingInfoSource);
         }
 
-        const infoSource = new InfoSource({
+        const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
+            user,
+            state: InfoSourceState.Found,
             remoteGameId,
             // This field is only used for display on the initial search.
+            // TODO => Improve: Just save id,fullName in data after search?
             remoteGameName: "",
-            user
+            excludedRemoteGameIds,
+            data: null
         });
 
         game.infoSources.add(infoSource);
@@ -77,11 +74,13 @@ export class InfoSourceService {
     public async syncInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
 
-        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
-
         infoSource.syncing = true;
-        infoSource.resolveError = false;
+        if (infoSource.state === InfoSourceState.Error) {
+            infoSource.state = InfoSourceState.Found;
+        }
         await this.infoSourceRepository.persistAndFlush(infoSource);
+
+        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
 
         return infoSource;
     }
@@ -96,7 +95,7 @@ export class InfoSourceService {
             infoSource,
         });
 
-        infoSource.disabled = true;
+        infoSource.state = InfoSourceState.Disabled;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;
@@ -113,9 +112,9 @@ export class InfoSourceService {
 
         infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
         infoSource.data = null;
-        infoSource.resolveError = false;
         infoSource.remoteGameId = null;
         infoSource.remoteGameName = null;
+        infoSource.state = InfoSourceState.Initial;
 
         await this.infoSourceRepository.persistAndFlush(infoSource);
 

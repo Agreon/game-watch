@@ -1,6 +1,7 @@
 import { Game, InfoSource, Notification, Tag, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
-import { IdentifiedReference, QueryOrder } from "@mikro-orm/core";
+import { InfoSourceState } from "@game-watch/shared";
+import { EntityManager, IdentifiedReference, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable } from "@nestjs/common";
@@ -11,30 +12,54 @@ import { QueueService } from "../queue/queue-service";
 export class GameService {
     public constructor(
         private readonly queueService: QueueService,
+        @InjectRepository(User)
+        private readonly userRepository: EntityRepository<User>,
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
         @InjectRepository(Notification)
         private readonly notificationRepository: EntityRepository<Notification>,
+        private readonly entityManager: EntityManager
     ) { }
 
-    public async createGame(search: string, user: IdentifiedReference<User>) {
-        let game = await this.gameRepository.findOne({ search, setupCompleted: true, user });
-        if (game !== null) {
+    public async createGame(search: string, userRef: IdentifiedReference<User>) {
+        const user = (await this.userRepository.findOneOrFail(userRef));
+
+        const existingGame = await this.gameRepository.findOne({ search, setupCompleted: true, user });
+        if (existingGame !== null) {
             throw new ConflictException();
         }
 
-        game = new Game({ search, user });
-        await this.gameRepository.persistAndFlush(game);
+        const game = new Game({ search, user: userRef });
 
-        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id, initialRun: true });
-        await this.queueService.addToQueue(
-            QueueType.DeleteUnfinishedGameAdds,
-            { gameId: game.id },
-            // 1 hour
-            { delay: 1000 * 60 * 60 }
+        const infoSources = user.interestedInSources.map(
+            type => new InfoSource({
+                type,
+                game,
+                user: userRef,
+                state: InfoSourceState.Initial,
+                remoteGameId: null,
+                remoteGameName: null,
+                data: null
+            })
         );
+
+        await this.entityManager.transactional(async em => {
+            em.persist(game);
+            em.persist(infoSources);
+
+            await this.queueService.addToQueue(
+                QueueType.SearchGame,
+                { gameId: game.id, initialRun: true }
+            );
+            await this.queueService.addToQueue(
+                QueueType.DeleteUnfinishedGameAdds,
+                { gameId: game.id },
+                // 1 hour
+                { delay: 1000 * 60 * 60 }
+            );
+        });
 
         return game;
     }
@@ -42,18 +67,23 @@ export class GameService {
     public async syncGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
         game.syncing = true;
-        // We have to persist early here to avoid a race condition with the searcher setting the syncing to false to early.
+        // We have to persist early here to avoid a race condition with the resolver setting the
+        // syncing to false to early.
         await this.gameRepository.persistAndFlush(game);
 
         await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
 
         const activeInfoSources = game.infoSources.getItems().filter(
-            source => !source.disabled && source.remoteGameId !== null
+            source => [InfoSourceState.Error, InfoSourceState.Resolved,].includes(source.state)
         );
+
         for (const source of activeInfoSources) {
             source.syncing = true;
-            source.resolveError = false;
-            await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: source.id, skipCache: true });
+            source.state = InfoSourceState.Found;
+            await this.queueService.addToQueue(
+                QueueType.ResolveSource,
+                { sourceId: source.id, skipCache: true }
+            );
         }
 
         await this.gameRepository.persistAndFlush(game);
@@ -128,8 +158,9 @@ export class GameService {
                         $or: [
                             {
                                 infoSources: {
-                                    disabled: false,
-                                    remoteGameId: { $ne: null }
+                                    state: {
+                                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
+                                    },
                                 }
                             },
                             {
@@ -157,8 +188,9 @@ export class GameService {
             .leftJoinAndSelect("game.infoSources", "infoSources")
             .andWhere({
                 infoSources: {
-                    disabled: false,
-                    remoteGameId: { $ne: null }
+                    state: {
+                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
+                    }
                 }
             })
             .orderBy({
@@ -187,9 +219,10 @@ export class GameService {
                 .from("info_source")
                 .andWhere({
                     "game_id": knex.ref("game.id"),
-                    disabled: false,
+                    state: {
+                        $nin: [InfoSourceState.Initial, InfoSourceState.Disabled]
+                    },
                 })
-                .andWhereNot("remote_game_id", null)
                 .andWhere("type", "in", withInfoSources);
 
             query

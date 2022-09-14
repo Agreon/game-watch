@@ -1,6 +1,6 @@
-import { User } from "@game-watch/database";
-import { UpdateUserSettingsDto } from "@game-watch/shared";
-import { EntityRepository } from "@mikro-orm/core";
+import { Game, InfoSource, User } from "@game-watch/database";
+import { InfoSourceState, InfoSourceType, UpdateUserSettingsDto } from "@game-watch/shared";
+import { EntityManager, EntityRepository, Reference } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
 import { v4 as uuidV4 } from "uuid";
@@ -12,6 +12,9 @@ export class UserService {
     public constructor(
         @InjectRepository(User)
         private readonly userRepository: EntityRepository<User>,
+        @InjectRepository(Game)
+        private readonly gameRepository: EntityRepository<Game>,
+        private readonly entityManager: EntityManager,
         private readonly mailService: MailService
     ) { }
 
@@ -20,6 +23,7 @@ export class UserService {
         { country, interestedInSources, email, enableEmailNotifications }: UpdateUserSettingsDto
     ): Promise<User> {
         const user = await this.userRepository.findOneOrFail(userId);
+        const { newInfoSources, infoSourcesToRemove } = await this.getGameInfoSourcesUpdate(user, interestedInSources);
 
         if (user.email !== email) {
             user.emailConfirmed = false;
@@ -27,20 +31,62 @@ export class UserService {
         user.enableEmailNotifications = enableEmailNotifications;
         user.email = email ?? null;
         user.country = country;
-        user.interestedInSources = interestedInSources;
-
-        await this.userRepository.persistAndFlush(user);
-
         if (user.emailConfirmed === false && !!user.email) {
             user.emailConfirmationToken = uuidV4();
-
-            // Persist again, to not send an invalid token if something failed.
-            await this.userRepository.persistAndFlush(user);
-
-            await this.mailService.sendDoiMail(user, user.emailConfirmationToken);
         }
 
+        user.interestedInSources = interestedInSources;
+
+        await this.entityManager.transactional(async em => {
+            em.remove(infoSourcesToRemove);
+            em.persist(user);
+            em.persist(newInfoSources);
+
+            if (user.emailConfirmationToken) {
+                await this.mailService.sendDoiMail(user, user.emailConfirmationToken);
+            }
+        });
+
         return user;
+    }
+
+    private async getGameInfoSourcesUpdate(user: User, newInterestedInSources: InfoSourceType[]) {
+        const userGames = await this.gameRepository.find({ user }, { populate: ["infoSources"] });
+
+        const newInterestIn = newInterestedInSources.filter(
+            newType => user.interestedInSources.find(oldType => oldType === newType) === undefined
+        );
+
+        const newInfoSources = userGames.flatMap(game =>
+            newInterestIn.map(
+                type => new InfoSource({
+                    type,
+                    game,
+                    user: Reference.create(user),
+                    state: InfoSourceState.Initial,
+                    remoteGameId: null,
+                    remoteGameName: null,
+                    data: null
+                })
+            )
+        );
+
+        const noMoreInterestIn = user.interestedInSources.filter(
+            oldType => newInterestedInSources.find(newType => oldType === newType) === undefined
+        );
+
+        const infoSourcesToRemove = userGames.flatMap(game =>
+            game.infoSources.getItems().filter(
+                source =>
+                    noMoreInterestIn.includes(source.type)
+                    && [InfoSourceState.Initial, InfoSourceState.Disabled].includes(source.state)
+            )
+        );
+
+        return {
+            newInfoSources,
+            infoSourcesToRemove
+        };
     }
 
     public async confirmEmailAddress(token: string) {

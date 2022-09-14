@@ -15,12 +15,11 @@ import {
     Text,
     useBreakpointValue
 } from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
+import { InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import React, { useEffect, useState } from "react";
 
 import { useGameContext } from "../providers/GameProvider";
 import { InfoSourceProvider } from "../providers/InfoSourceProvider";
-import { useUserContext } from "../providers/UserProvider";
 import { ModalProps } from "../util/types";
 import { useAction } from "../util/useAction";
 import { InfoSourcePreview } from "./InfoSource/InfoSourcePreview";
@@ -36,9 +35,13 @@ export const PlaceholderMap: Record<InfoSourceType, string> = {
 };
 
 const AddSource: React.FC = () => {
-    const { user: { interestedInSources } } = useUserContext();
-    const { addInfoSource } = useGameContext();
-    const [type, setType] = useState(interestedInSources[0]);
+    const { addInfoSource, allInfoSources } = useGameContext();
+
+    const availableInfoSources = allInfoSources.filter(source =>
+        [InfoSourceState.Disabled, InfoSourceState.Initial].includes(source.state)
+    );
+
+    const [type, setType] = useState(availableInfoSources[0]?.type ?? "");
     const [url, setUrl] = useState("");
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
@@ -47,7 +50,7 @@ const AddSource: React.FC = () => {
         }
     });
 
-    if (!interestedInSources.length) {
+    if (!availableInfoSources.length) {
         return null;
     }
 
@@ -59,8 +62,8 @@ const AddSource: React.FC = () => {
             <Flex direction={["column", "row"]}>
                 <FormControl flex="0.3" mr="1rem" mb={["0.5rem", 0]}>
                     <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                        {interestedInSources.map(source => (
-                            <option key={source} value={source}>{source}</option>
+                        {availableInfoSources.map(({ type }) => (
+                            <option key={type} value={type}>{type}</option>
                         ))}
                     </Select>
                 </FormControl>
@@ -72,7 +75,12 @@ const AddSource: React.FC = () => {
                         onChange={event => setUrl(event.target.value)}
                     />
                 </FormControl>
-                <FormControl display="flex" flex="0" mb={["0.5rem", 0]} justifyContent={["end", "unset"]}>
+                <FormControl
+                    display="flex"
+                    flex="0"
+                    mb={["0.5rem", 0]}
+                    justifyContent={["end", "unset"]}
+                >
                     <Button
                         onClick={() => onAdd({ type, url })}
                         disabled={loading || !url.length}
@@ -86,7 +94,7 @@ const AddSource: React.FC = () => {
     );
 };
 
-const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) => {
+const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
     const { game } = useGameContext();
     const [name, setName] = useState(
         game.infoSources.filter(source => !!source.remoteGameName)[0]?.remoteGameName ?? game.search
@@ -108,11 +116,18 @@ const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) =>
 };
 
 export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
-    const { game, setGameInfoSource, removeGameInfoSource, setupGame } = useGameContext();
+    const {
+        game,
+        allInfoSources,
+        activeInfoSources,
+        setGameInfoSource,
+        removeGameInfoSource,
+        setupGame,
+    } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
 
-    const nonSyncingInfoSources = game.infoSources.filter(source => !source.syncing);
+    const syncingInfoSources = allInfoSources.filter(source => source.syncing);
 
     // TODO: use ModalFooter
     return (
@@ -144,21 +159,22 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                         pb="2rem"
                     >
                         <Flex my="1rem">
-                            {game.syncing
-                                ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
-                                : game.infoSources.length > 0
-                                    ? <Text fontSize="2xl">Here is what we found: </Text>
-                                    : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
+                            {game.syncing && <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>}
+                            {
+                                !game.syncing && (
+                                    activeInfoSources.length > 0
+                                        ? <Text fontSize="2xl">Here is what we found: </Text>
+                                        : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
+                                )
                             }
                         </Flex>
                         <Flex direction="column" my="1rem" width="100%">
-                            {game.infoSources.map(source =>
+                            {activeInfoSources.map(source =>
                                 <InfoSourceProvider
                                     key={source.id}
                                     source={source}
                                     setGameInfoSource={setGameInfoSource}
                                     removeGameInfoSource={removeGameInfoSource}
-                                    disablePolling={!!source.remoteGameName}
                                 >
                                     <Fade in={true}>
                                         <Box mb="1rem">
@@ -172,7 +188,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     ? <LoadingSpinner size="xl" />
                                     : <>
                                         <AddSource />
-                                        {nonSyncingInfoSources.length === 0 && <EditName onChange={setName}/>}
+                                        {!syncingInfoSources.length && <EditName onChange={setName} />}
                                     </>
                                 }
                             </Box>
@@ -186,7 +202,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || !nonSyncingInfoSources.length}
+                                disabled={loading || syncingInfoSources.length > 0}
                                 onClick={() => onAdd({ name })}
                             >
                                 Save

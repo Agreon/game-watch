@@ -13,7 +13,6 @@ import { GameTileMenu } from "./GameTileMenu";
 const GameTileComponent: React.FC = () => {
     const {
         loading,
-        allInfoSources,
         activeInfoSources,
         setGameInfoSource,
         removeGameInfoSource,
@@ -53,14 +52,13 @@ const GameTileComponent: React.FC = () => {
                 <GameThumbnail />
                 <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
                     <GameName disableEdit={loading || game.syncing} />
-                    {allInfoSources.length === 0 ?
-                        (game.syncing ?
-                            <SkeletonText mt="1rem" />
-                            : <>
-                                <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
-                                <AddInfoSource />
-                            </>
-                        )
+                    {game.syncing && <SkeletonText mt="1rem" />}
+                    {!game.syncing &&
+                        activeInfoSources.length === 0 ?
+                        <>
+                            <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                            <AddInfoSource />
+                        </>
                         : (
                             <>
                                 <GameTags />

@@ -4,6 +4,7 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
+import { InfoSourceState } from "@game-watch/shared";
 import React, { PropsWithChildren } from "react";
 
 import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
@@ -23,14 +24,9 @@ export const InfoSourceWrapper: React.FC<PropsWithChildren> = ({ children }) => 
                     </a>
                 </Box>
             </Tooltip>
-            {source.syncing ? (
-                <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>
-            ) : (
-                <>
-                    {source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-                    {!source.resolveError && source.data !== null && children}
-                </>
-            )}
+            {[InfoSourceState.Found, InfoSourceState.Initial].includes(source.state) && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
+            {source.state === InfoSourceState.Error && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+            {source.state === InfoSourceState.Resolved && children}
             <Box><InfoSourceOptions /></Box>
         </Flex>
     );

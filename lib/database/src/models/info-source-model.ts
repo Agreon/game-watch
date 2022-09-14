@@ -1,39 +1,49 @@
-import { GameData, InfoSourceType } from "@game-watch/shared";
-import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference } from "@mikro-orm/core";
+import { GameData, InfoSourceState, InfoSourceType } from "@game-watch/shared";
+import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from "@mikro-orm/core";
 
 import { BaseEntity } from "../base-entity";
 import { Game } from "./game-model";
 import { Notification } from "./notification-model";
 import { User } from "./user-model";
 
+// TODO: Make nullables optional
+type InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> = {
+    type: T;
+    state: S;
+    user: IdentifiedReference<User>;
+    remoteGameId: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null;
+    remoteGameName: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null;
+    data: S extends InfoSourceState.Resolved ? GameData[T] : null;
+    excludedRemoteGameIds?: string[];
+    game?: Game;
+}
+
 @Entity()
-export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {
+@Unique({ properties: ["type", "game"] })
+export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
 
-    @Property({ nullable: true })
-    public remoteGameId: string | null;
+    @Enum(() => InfoSourceState)
+    public state!: S;
 
     @Property({ nullable: true })
-    public remoteGameName: string | null;
+    public remoteGameId: S extends (InfoSourceState.Found | InfoSourceState.Resolved) ? string : null;
+
+    @Property({ nullable: true })
+    public remoteGameName: S extends (InfoSourceState.Found | InfoSourceState.Resolved) ? string : null;
 
     @Property()
     public syncing: boolean = true;
 
-    @Property()
-    public disabled: boolean = false;
-
     @Property({ type: ArrayType })
     public excludedRemoteGameIds: string[] = [];
 
-    @Property()
-    public resolveError: boolean = false;
-
     @Property({ columnType: "json", nullable: true })
-    public data: GameData[T] | null = null;
+    public data: S extends InfoSourceState.Resolved ? GameData[T] : null;
 
-    // This property is necessary because we reuse the info source model and the notification logic depends on this
-    // information.
+    // This property is necessary because we reuse the info source model and the notification logic
+    // depends on this information.
     @Property()
     public foundAt: Date = new Date();
 
@@ -44,24 +54,28 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseE
     public user!: IdentifiedReference<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)
-    public notifications = new Collection<Notification, InfoSource<T>>(this);
+    public notifications = new Collection<Notification, InfoSource<T, S>>(this);
 
     public constructor(
-        { type, remoteGameId, remoteGameName, data, game, user }: {
-            type: T;
-            remoteGameId: string;
-            remoteGameName: string;
-            user: IdentifiedReference<User>;
-            data?: GameData[T];
-            game?: Game;
-        }
+        {
+            type,
+            state,
+            remoteGameId,
+            remoteGameName,
+            excludedRemoteGameIds,
+            data,
+            game,
+            user,
+        }: InfoSourceParams<T, S>
     ) {
         super();
         this.type = type;
+        this.state = state;
         this.remoteGameId = remoteGameId;
         this.remoteGameName = remoteGameName;
+        this.excludedRemoteGameIds = excludedRemoteGameIds ?? [];
         this.user = user;
-        this.data = data ?? null;
+        this.data = data;
         if (game) {
             this.game = Reference.create(game);
         }

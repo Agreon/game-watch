@@ -23,13 +23,12 @@ export const InfoSourceProvider: React.FC<{
     source: InfoSourceDto
     setGameInfoSource: (infoSource: InfoSourceDto) => void
     removeGameInfoSource: (id: string) => void
-    disablePolling?: boolean
-}> = ({ children, source, setGameInfoSource, removeGameInfoSource, disablePolling }) => {
+}> = ({ children, source, setGameInfoSource, removeGameInfoSource }) => {
     const { withRequest, handleError } = useHttp();
 
     const [polling, setPolling] = useState(false);
     useEffect(() => {
-        if (disablePolling || !source.syncing || polling) {
+        if (!source.syncing || polling) {
             return;
         }
         setPolling(true);
@@ -53,7 +52,7 @@ export const InfoSourceProvider: React.FC<{
             setPolling(false);
         }
         )();
-    }, [source, disablePolling, polling, handleError, setGameInfoSource, withRequest]);
+    }, [source, polling, handleError, setGameInfoSource, withRequest]);
 
     const syncInfoSource = useCallback(async () => {
         setGameInfoSource({
@@ -111,5 +110,5 @@ export const InfoSourceProvider: React.FC<{
         <InfoSourceContext.Provider value={contextValue}>
             {children}
         </InfoSourceContext.Provider>
-        );
-    };
+    );
+};

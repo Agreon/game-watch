@@ -14,19 +14,23 @@ import {
     Select,
     useDisclosure,
 } from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
+import { InfoSourceState, InfoSourceType } from "@game-watch/shared";
 import React, { useRef, useState } from "react";
 
 import { useGameContext } from "../../providers/GameProvider";
-import { useUserContext } from "../../providers/UserProvider";
 import { useAction } from "../../util/useAction";
 import { PlaceholderMap } from "../AddGameModal";
 
 export const AddInfoSource: React.FC = () => {
-    const { user: { interestedInSources } } = useUserContext();
-    const { addInfoSource } = useGameContext();
+    const { addInfoSource, allInfoSources } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [type, setType] = useState(interestedInSources[0]);
+
+    const availableInfoSources = allInfoSources.filter(source =>
+        [InfoSourceState.Disabled, InfoSourceState.Initial].includes(source.state)
+    );
+
+    // TODO: Does this change after adding one?
+    const [type, setType] = useState(availableInfoSources[0]?.type ?? "");
     const [url, setUrl] = useState("");
 
     const initialRef = useRef(null);
@@ -37,6 +41,10 @@ export const AddInfoSource: React.FC = () => {
             setUrl("");
         }
     });
+
+    if (!availableInfoSources.length) {
+        return null;
+    }
 
     return (
         <>
@@ -55,8 +63,8 @@ export const AddInfoSource: React.FC = () => {
                             <FormControl flex="0.5" mr="1rem">
                                 <FormLabel>Type</FormLabel>
                                 <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                                    {interestedInSources.map(source => (
-                                        <option key={source} value={source}>{source}</option>
+                                    {availableInfoSources.map(({ type }) => (
+                                        <option key={type} value={type}>{type}</option>
                                     ))}
                                 </Select>
                             </FormControl>
@@ -79,7 +87,7 @@ export const AddInfoSource: React.FC = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {interestedInSources.length > 0 &&
+            {availableInfoSources.length > 0 &&
                 <Flex justify="center">
                     <Button onClick={onOpen}>
                         +
