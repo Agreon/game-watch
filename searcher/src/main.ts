@@ -27,6 +27,7 @@ const {
     REDIS_HOST,
     REDIS_PASSWORD,
     REDIS_PORT,
+    CACHING_ENABLED
 } = parseEnvironment(EnvironmentStructure, process.env);
 
 initializeSentry("Searcher");
@@ -68,7 +69,7 @@ const searchService = new SearchService([
     new PsStoreSearcher(),
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance)
-], redis);
+], redis, CACHING_ENABLED);
 
 const main = async () => {
     // const result = await searcher.search("Mario", { logger, userCountry: "DE" });
