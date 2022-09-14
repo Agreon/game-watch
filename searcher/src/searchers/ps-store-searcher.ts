@@ -1,73 +1,47 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
+import { withBrowser } from "@game-watch/browser";
+import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
 
 import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
-interface SearchResponse {
-    data: {
-        universalSearch: {
-            results: Array<{
-                id: string
-                name: string
-                storeDisplayClassification: string
-            }>
-        }
-    }
-
-}
-
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
-
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
-        const { data: { data: { universalSearch: { results } } } } = await this.axios.get<SearchResponse>(
-            `https://web.np.playstation.com/api/graphql/v1/op`,
-            {
-                headers: {
-                    "X-PSN-Store-Locale-Override": mapCountryCodeToAcceptLanguage(userCountry)
-                },
-                params: {
-                    variables: {
-                        countryCode: userCountry,
-                        languageCode: mapCountryCodeToLanguage(userCountry),
-                        pageOffset: 0,
-                        pageSize: 25,
-                        searchTerm: search,
-                    },
-                    extensions: {
-                        persistedQuery: {
-                            version: 1,
-                            sha256Hash: "d77d9a513595db8d75fc26019f01066d54c8d0de035a77a559bd687fa1010418",
-                        }
-                    }
-                }
+        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
+            await page.goto(`https://www.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry).toLocaleLowerCase()}/search/?q=${search}`);
+
+            const raceResult = await Promise.race([
+                (async () => {
+                    await page.waitForSelector(".search-results");
+                    return 0;
+                })(),
+                (async () => {
+                    await page.waitForSelector('.search__no-result > h3:not(:empty)');
+                    return 1;
+                })()
+            ]);
+            if (raceResult === 1) {
+                return null;
             }
-        );
 
-        // The ps store likes to order DLCs and cosmetics prior to the game.
-        const result = results.find(result => result.storeDisplayClassification === "FULL_GAME");
-        if (!result) {
-            return null;
-        }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const gameLink = await page.$eval(".search-results__tile", el => el.getAttribute("href")!);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const fullName = await page.$eval(".search-results__tile__content-title", el => el.textContent!.trim());
 
-        const gameId = result.id;
-        const fullName = result.name;
+            if (!matchingName(fullName, search)) {
+                logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
-        if (!matchingName(fullName, search)) {
-            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
+                return null;
+            }
 
-            return null;
-        }
-
-        logger.debug(`Found gameId '${gameId}'`);
-
-        return {
-            remoteGameId: `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry)}/product/${gameId}`,
-            remoteGameName: fullName,
-        };
+            return {
+                id: gameLink,
+                url: gameLink,
+                fullName
+            };
+        });
     }
 }
