@@ -1,6 +1,6 @@
 import { Box, Flex, useToast } from "@chakra-ui/react";
 import type { NextPage } from 'next';
-import { ParsedUrlQuery } from "querystring";
+import { useRouter } from "next/router";
 import React, { useEffect } from 'react';
 
 import { AddGameInput } from '../components/AddGameInput';
@@ -13,19 +13,20 @@ import { TagProvider } from '../providers/TagProvider';
 import { useUserContext } from '../providers/UserProvider';
 import { DEFAULT_TOAST_OPTIONS } from "../util/default-toast-options";
 
-const Home: NextPage = ({ query }: { query?: ParsedUrlQuery }) => {
+const Home: NextPage = () => {
   const { user } = useUserContext();
+  const router = useRouter();
   const toast = useToast(DEFAULT_TOAST_OPTIONS);
 
   useEffect(() => {
-    if (query?.mailConfirmed) {
+    if (router.query.mailConfirmed) {
       toast({
         title: "Success",
         description: "Your email address was confirmed!",
         status: "success",
       });
     }
-    if (query?.unsubscribed) {
+    if (router.query.unsubscribed) {
       toast({
         title: "Success",
         description: "You've successfully unsubscribed!",

@@ -57,7 +57,7 @@ export class UserController {
     public async unsubscribe(
         @Query("id") userId: string,
         @Res() response: Response
-    ): Promise<unknown> {
+    ) {
         if (!userId) {
             throw new Error("'userId' is missing");
         }
