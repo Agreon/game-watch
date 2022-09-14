@@ -6,12 +6,10 @@ export interface InfoSourceDto<T extends InfoSourceType = InfoSourceType, S exte
     id: string
     type: T
     state: S
+    // TODO: If we remove those, move game.syncing:false to searchwr again
     remoteGameId: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null
     remoteGameName: S extends InfoSourceState.Found | InfoSourceState.Resolved ? string : null
     data: S extends InfoSourceState.Resolved ? GameData[T] : null
-    // TODO: Is this flag still necessary?
-    // => Could be inferred from state?
-    syncing: boolean
 }
 
 export class CreateInfoSourceDto {

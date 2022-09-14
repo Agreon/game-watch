@@ -82,9 +82,6 @@ export const searchForGame = async (
         );
     }));
 
-    // We already set syncing to false here to signal the AddGameModal that the search is done.
-    // => TODO: Just check the current sources in the modal
-
     const duration = new Date().getTime() - startTime;
     logger.debug(`Searching for game took ${duration} ms`);
 };

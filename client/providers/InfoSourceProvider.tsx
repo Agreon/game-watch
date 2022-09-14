@@ -1,4 +1,4 @@
-import { InfoSourceDto } from "@game-watch/shared";
+import { InfoSourceDto, InfoSourceState } from "@game-watch/shared";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { useHttp } from "../util/useHttp";
@@ -28,7 +28,7 @@ export const InfoSourceProvider: React.FC<{
 
     const [polling, setPolling] = useState(false);
     useEffect(() => {
-        if (!source.syncing || polling) {
+        if (source.state !== InfoSourceState.Found || polling) {
             return;
         }
         setPolling(true);
@@ -39,7 +39,7 @@ export const InfoSourceProvider: React.FC<{
                     try {
                         const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
                         setGameInfoSource(data);
-                        if (data.syncing === false) {
+                        if (data.state !== InfoSourceState.Found) {
                             break;
                         }
                     } catch (error) {
@@ -55,9 +55,10 @@ export const InfoSourceProvider: React.FC<{
     }, [source, polling, handleError, setGameInfoSource, withRequest]);
 
     const syncInfoSource = useCallback(async () => {
+        const previousState = source.state;
         setGameInfoSource({
             ...source,
-            syncing: true
+            state: InfoSourceState.Found,
         });
 
         await withRequest(async http => {
@@ -67,7 +68,7 @@ export const InfoSourceProvider: React.FC<{
         }, error => {
             setGameInfoSource({
                 ...source,
-                syncing: false
+                state: previousState
             });
             handleError(error);
         });

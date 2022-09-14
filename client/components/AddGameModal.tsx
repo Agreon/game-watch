@@ -115,6 +115,9 @@ const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) 
     );
 };
 
+/**
+ * TODO: Already allow save if all are at least "found"
+ */
 export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const {
         game,
@@ -127,7 +130,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
 
-    const syncingInfoSources = allInfoSources.filter(source => source.syncing);
+    const syncingInfoSources = allInfoSources.filter(({ state }) => state === InfoSourceState.Found);
 
     // TODO: use ModalFooter
     return (

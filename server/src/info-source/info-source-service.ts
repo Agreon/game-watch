@@ -74,13 +74,13 @@ export class InfoSourceService {
     public async syncInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
 
-        infoSource.syncing = true;
-        if (infoSource.state === InfoSourceState.Error) {
-            infoSource.state = InfoSourceState.Found;
-        }
+        infoSource.state = InfoSourceState.Found;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
-        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
+        await this.queueService.addToQueue(
+            QueueType.ResolveSource,
+            { sourceId: id, skipCache: true }
+        );
 
         return infoSource;
     }

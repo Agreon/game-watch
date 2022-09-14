@@ -46,7 +46,6 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
 
         await em.nativeUpdate(InfoSource, sourceId, {
             state: InfoSourceState.Error,
-            syncing: false,
             updatedAt: new Date()
         });
 
@@ -80,7 +79,6 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
 
     await em.nativeUpdate(InfoSource, sourceId, {
         state: InfoSourceState.Resolved,
-        syncing: false,
         data: resolvedGameData,
         // If the source was added manually, no search is done. So we have to set the name here.
         remoteGameName: resolvedGameData.fullName,
@@ -95,7 +93,11 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     });
 
     const game = await em.findOneOrFail(Game, source.game, { populate: ["infoSources"] });
-    if (game.infoSources.getItems().some(source => source.syncing) === false) {
+    if (
+        game.infoSources.getItems().some(
+            source => source.state === InfoSourceState.Found
+        ) === false
+    ) {
         await em.nativeUpdate(Game, game.id, {
             syncing: false,
             updatedAt: new Date()

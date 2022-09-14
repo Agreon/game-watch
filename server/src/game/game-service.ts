@@ -78,7 +78,6 @@ export class GameService {
         );
 
         for (const source of activeInfoSources) {
-            source.syncing = true;
             source.state = InfoSourceState.Found;
             await this.queueService.addToQueue(
                 QueueType.ResolveSource,
