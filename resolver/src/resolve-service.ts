@@ -40,6 +40,7 @@ export class ResolveService {
     public constructor(
         private readonly resolvers: InfoResolver[],
         private readonly redis: Redis,
+        private readonly cachingEnabled: boolean
     ) { }
 
     public async resolveGameInformation(context: ResolveServiceContext): Promise<GameDataU | null> {
@@ -56,15 +57,19 @@ export class ResolveService {
 
         try {
             return await pRetry(async () => {
-                const existingData = await this.redis.get(cacheKey);
-                if (existingData && !context.skipCache) {
-                    logger.debug(`Data for ${cacheKey} was found in cache`);
+                if (this.cachingEnabled) {
+                    const existingData = await this.redis.get(cacheKey);
+                    if (existingData && !context.skipCache) {
+                        logger.debug(`Data for ${cacheKey} was found in cache`);
 
-                    return JSON.parse(existingData);
+                        return JSON.parse(existingData);
+                    }
                 }
 
                 const resolvedData = await resolverForType.resolve({ ...context, logger });
-                await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
+                if (this.cachingEnabled) {
+                    await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
+                }
 
                 return resolvedData;
             }, {
