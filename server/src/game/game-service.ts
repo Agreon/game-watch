@@ -1,7 +1,7 @@
 import { Game, InfoSource, Notification, Tag, User } from "@game-watch/database";
 import { QueueType } from "@game-watch/queue";
 import { InfoSourceState } from "@game-watch/shared";
-import { EntityManager, IdentifiedReference, QueryOrder } from "@mikro-orm/core";
+import { IdentifiedReference, QueryOrder } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository } from "@mikro-orm/postgresql";
 import { ConflictException, Injectable } from "@nestjs/common";
@@ -20,11 +20,10 @@ export class GameService {
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
         @InjectRepository(Notification)
         private readonly notificationRepository: EntityRepository<Notification>,
-        private readonly entityManager: EntityManager
     ) { }
 
     public async createGame(search: string, userRef: IdentifiedReference<User>) {
-        const user = (await this.userRepository.findOneOrFail(userRef));
+        const user = await this.userRepository.findOneOrFail(userRef);
 
         const existingGame = await this.gameRepository.findOne({ search, setupCompleted: true, user });
         if (existingGame !== null) {
@@ -33,20 +32,18 @@ export class GameService {
 
         const game = new Game({ search, user: userRef });
 
-        await this.entityManager.transactional(async em => {
-            await em.persistAndFlush(game);
+        await this.gameRepository.persistAndFlush(game);
 
-            await this.queueService.addToQueue(
-                QueueType.SearchGame,
-                { gameId: game.id, initialRun: true }
-            );
-            await this.queueService.addToQueue(
-                QueueType.DeleteUnfinishedGameAdds,
-                { gameId: game.id },
-                // 1 hour
-                { delay: 1000 * 60 * 60 }
-            );
-        });
+        await this.queueService.addToQueue(
+            QueueType.SearchGame,
+            { gameId: game.id, initialRun: true }
+        );
+        await this.queueService.addToQueue(
+            QueueType.DeleteUnfinishedGameAdds,
+            { gameId: game.id },
+            // 1 hour
+            { delay: 1000 * 60 * 60 }
+        );
 
         return game;
     }

@@ -88,33 +88,23 @@ export const GameProvider: React.FC<{
         setLoading(false);
     }, [withRequest, setGame, game.id]);
 
-    const [polling, setPolling] = useState(false);
     useEffect(() => {
-        if (!game.syncing || polling) {
+        if (!game.syncing) {
             return;
         }
-        setPolling(true);
 
-        (async () => {
+        const intervalId = setInterval(async () => {
             await withRequest(async http => {
-                do {
-                    try {
-                        const { data } = await http.get<GameDto>(`/game/${game.id}`);
-                        setGame(data.id, data);
-                        if (data.syncing === false) {
-                            break;
-                        }
-                    } catch (error) {
-                        handleError(error);
-                    } finally {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
-                } while (true);
+                const { data } = await http.get<GameDto>(`/game/${game.id}`);
+                setGame(data.id, data);
+                if (data.syncing === false) {
+                    clearInterval(intervalId);
+                }
             });
-            setPolling(false);
-        }
-        )();
-    }, [game, handleError, polling, setGame, withRequest]);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [game.id, game.syncing, handleError, setGame, withRequest]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update

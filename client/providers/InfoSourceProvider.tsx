@@ -1,5 +1,5 @@
 import { InfoSourceDto, InfoSourceState } from "@game-watch/shared";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
 import { useHttp } from "../util/useHttp";
 
@@ -25,33 +25,24 @@ export const InfoSourceProvider: React.FC<{
 }> = ({ children, source, setGameInfoSource, removeGameInfoSource }) => {
     const { withRequest, handleError } = useHttp();
 
-    const [polling, setPolling] = useState(false);
     useEffect(() => {
-        if (source.state !== InfoSourceState.Found || polling) {
+        if (source.state !== InfoSourceState.Found) {
             return;
         }
-        setPolling(true);
 
-        (async () => {
+        const intervalId = setInterval(async () => {
             await withRequest(async http => {
-                do {
-                    try {
-                        const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
-                        setGameInfoSource(data);
-                        if (data.state !== InfoSourceState.Found) {
-                            break;
-                        }
-                    } catch (error) {
-                        handleError(error);
-                    } finally {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
-                } while (true);
+                const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
+                setGameInfoSource(data);
+                if (data.state !== InfoSourceState.Found) {
+                    clearInterval(intervalId);
+                }
             });
-            setPolling(false);
-        }
-        )();
-    }, [source, polling, handleError, setGameInfoSource, withRequest]);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+
+    }, [source.id, source.state, handleError, setGameInfoSource, withRequest]);
 
     const syncInfoSource = useCallback(async () => {
         const previousState = source.state;

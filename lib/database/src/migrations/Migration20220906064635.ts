@@ -13,10 +13,10 @@ export class Migration20220906064635 extends Migration {
     this.addSql('update "info_source" set "state" = \'Error\' where "resolve_error" = true');
     this.addSql('update "info_source" set "continue_searching" = true where "disabled" = true and "remote_game_id" is not null');
 
-    this.addSql('alter table "info_source" drop column "disabled";');
-    this.addSql('alter table "info_source" drop column "resolve_error";');
-    this.addSql('alter table "info_source" drop column "remote_game_id";');
-    this.addSql('alter table "info_source" drop column "remote_game_name";');
+    this.addSql('alter table "info_source" drop column "disabled"');
+    this.addSql('alter table "info_source" drop column "resolve_error"');
+    this.addSql('alter table "info_source" drop column "remote_game_id"');
+    this.addSql('alter table "info_source" drop column "remote_game_name"');
 
     this.addSql('alter table "info_source" add constraint "info_source_type_unique" unique ("type", "game_id");');
   }
