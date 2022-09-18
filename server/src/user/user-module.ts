@@ -1,4 +1,4 @@
-import { Game, User } from "@game-watch/database";
+import { User } from "@game-watch/database";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
 
