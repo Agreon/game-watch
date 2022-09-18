@@ -7,7 +7,7 @@ import { UserController } from "./user-controller";
 import { UserService } from "./user-service";
 
 @Module({
-    imports: [MikroOrmModule.forFeature([User, Game]), MailModule],
+    imports: [MikroOrmModule.forFeature([User]), MailModule],
     providers: [UserService],
     controllers: [UserController]
 })

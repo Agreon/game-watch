@@ -27,6 +27,15 @@ export class InfoSourceService {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
+        const existingInfoSource = await this.infoSourceRepository.findOne({
+            game,
+            type,
+            state: InfoSourceState.Disabled
+        });
+        if (existingInfoSource) {
+            await this.infoSourceRepository.removeAndFlush(existingInfoSource);
+        }
+
         const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
             user,

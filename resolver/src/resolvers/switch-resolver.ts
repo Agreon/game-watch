@@ -28,12 +28,22 @@ export class SwitchResolver implements InfoResolver {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
 
-                const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
+                const thumbnailUrl = await page.evaluate(
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    () => document.querySelector(".hero-illustration > img")!.getAttribute("src")!
+                );
 
-                const originalPrice = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
-                const price = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
+                const originalPrice = await page.evaluate(
+                    () => document.querySelector('.price > .msrp')?.textContent?.trim()
+                );
+                const price = await page.evaluate(
+                    () => document.querySelector('.price > .sale-price')?.textContent?.trim()
+                );
 
-                const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
+                const releaseDate = await page.$eval(
+                    ".release-date > dd",
+                    (el) => el.textContent?.trim()
+                );
 
                 return {
                     ...source.data,
@@ -51,10 +61,16 @@ export class SwitchResolver implements InfoResolver {
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
 
+        const fullName = extract(data, /(?<=gameTitle": ").+\b/);
+        if (!fullName) {
+            throw new Error("Could not find name of game");
+        }
+
         const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
 
         return {
             ...source.data,
+            fullName,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
             originalReleaseDate: releaseDate,
@@ -62,13 +78,17 @@ export class SwitchResolver implements InfoResolver {
         };
     }
 
-    private async getPriceInformation(pageContents: string): Promise<StorePriceInformation | undefined> {
+    private async getPriceInformation(
+        pageContents: string
+    ): Promise<StorePriceInformation | undefined> {
         const priceId = extract(pageContents, /(?<=offdeviceNsuID": ").\d+/);
         if (!priceId) {
             return undefined;
         }
 
-        const { data } = await this.axios.get<any>(`https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`);
+        const { data } = await this.axios.get<any>(
+            `https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`
+        );
         const { regular_price, discount_price } = data.prices[0];
 
         const initial = parseCurrencyValue(regular_price.raw_value);
@@ -85,7 +105,9 @@ export class SwitchResolver implements InfoResolver {
     }
 
     // TODO: Free games?
-    private getPriceInformationForUsStore({ price, originalPrice }: Record<string, any>,): StorePriceInformation | undefined {
+    private getPriceInformationForUsStore(
+        { price, originalPrice }: Record<string, any>
+    ): StorePriceInformation | undefined {
         const initial = parseCurrencyValue(originalPrice || price);
         const final = parseCurrencyValue(price);
 

@@ -102,7 +102,7 @@ const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) 
         activeInfoSources.filter(source => !!source.data.fullName)[0]?.data.fullName ?? game.search
     );
 
-    useEffect(() => onChange(name), [name]);
+    useEffect(() => onChange(name), [onChange, name]);
 
     return (
         <Flex direction={["column", "row"]} mt="3rem" align={["start", "center"]}>
@@ -158,12 +158,19 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                         pb="2rem"
                     >
                         <Flex my="1rem">
-                            {game.syncing && <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>}
+                            {
+                                game.syncing &&
+                                <Text fontSize="2xl">
+                                    We are searching for the game. Just a moment...
+                                </Text>
+                            }
                             {
                                 !game.syncing && (
                                     activeInfoSources.length > 0
                                         ? <Text fontSize="2xl">Here is what we found: </Text>
-                                        : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
+                                        : <Text fontSize="2xl">
+                                            {`We couldn't find any sources for '${game.search}' :/`}
+                                        </Text>
                                 )
                             }
                         </Flex>
@@ -201,7 +208,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || game.syncing}
+                                disabled={loading || game.syncing || !activeInfoSources.length}
                                 onClick={() => onAdd({ name })}
                             >
                                 Save

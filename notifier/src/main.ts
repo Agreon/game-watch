@@ -15,9 +15,13 @@ import { MailService } from "./mail-service";
 import { NotificationService } from "./notification-service";
 import { GameReducedNotificationCreator } from "./notifier/game-reduced-notification-creator";
 import { GameReleasedNotificationCreator } from "./notifier/game-released-notification-creator";
-import { NewMetaCriticRatingNotificationCreator } from "./notifier/new-meta-critic-rating-notification-creator";
+import {
+    NewMetaCriticRatingNotificationCreator
+} from "./notifier/new-meta-critic-rating-notification-creator";
 import { NewStoreEntryNotificationCreator } from "./notifier/new-store-entry-notification-creator";
-import { ReleaseDateChangedNotificationCreator } from "./notifier/release-date-changed-notification-creator";
+import {
+    ReleaseDateChangedNotificationCreator
+} from "./notifier/release-date-changed-notification-creator";
 
 const {
     CREATE_NOTIFICATIONS_CONCURRENCY,
@@ -47,21 +51,23 @@ const notificationService = new NotificationService(
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
 
-    createNotificationsWorker = createWorkerForQueue(QueueType.CreateNotifications, async ({ data: { sourceId, existingGameData, resolvedGameData } }) => {
-        try {
-            await notificationService.createNotifications({
-                sourceId,
-                existingGameData,
-                resolvedGameData,
-                em: orm.em.fork()
-            });
-        } catch (error) {
-            // Need to wrap this because otherwise the error is swallowed by the worker.
-            logger.error(error);
-            Sentry.captureException(error, { tags: { sourceId } });
-            throw error;
-        }
-    }, { concurrency: CREATE_NOTIFICATIONS_CONCURRENCY, });
+    createNotificationsWorker = createWorkerForQueue(
+        QueueType.CreateNotifications,
+        async ({ data: { sourceId, existingGameData, resolvedGameData } }) => {
+            try {
+                await notificationService.createNotifications({
+                    sourceId,
+                    existingGameData,
+                    resolvedGameData,
+                    em: orm.em.fork()
+                });
+            } catch (error) {
+                // Need to wrap this because otherwise the error is swallowed by the worker.
+                logger.error(error);
+                Sentry.captureException(error, { tags: { sourceId } });
+                throw error;
+            }
+        }, { concurrency: CREATE_NOTIFICATIONS_CONCURRENCY, });
 
     createNotificationsWorker.on("error", error => {
         logger.error(error);

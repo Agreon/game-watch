@@ -32,7 +32,6 @@ export const AddInfoSource: React.FC = () => {
         type => activeInfoSources.find(source => source.type === type) === undefined
     );
 
-    // TODO: Does this change after adding one?
     const [type, setType] = useState(availableInfoSources[0] ?? "");
     const [url, setUrl] = useState("");
 
@@ -61,7 +60,9 @@ export const AddInfoSource: React.FC = () => {
                         <Flex>
                             <FormControl flex="0.5" mr="1rem">
                                 <FormLabel>Type</FormLabel>
-                                <Select onChange={event => setType(event.target.value as InfoSourceType)}>
+                                <Select
+                                    onChange={evt => setType(evt.target.value as InfoSourceType)}
+                                >
                                     {availableInfoSources.map(type => (
                                         <option key={type} value={type}>{type}</option>
                                     ))}
@@ -80,7 +81,11 @@ export const AddInfoSource: React.FC = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose} mr="1rem">Cancel</Button>
-                        <Button isLoading={loading} colorScheme="teal" onClick={() => onAdd({ type, url })} >
+                        <Button
+                            isLoading={loading}
+                            colorScheme="teal"
+                            onClick={() => onAdd({ type, url })}
+                        >
                             Add
                         </Button>
                     </ModalFooter>

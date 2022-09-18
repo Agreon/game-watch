@@ -25,7 +25,9 @@ export class GameService {
     public async createGame(search: string, userRef: IdentifiedReference<User>) {
         const user = await this.userRepository.findOneOrFail(userRef);
 
-        const existingGame = await this.gameRepository.findOne({ search, setupCompleted: true, user });
+        const existingGame = await this.gameRepository.findOne(
+            { search, setupCompleted: true, user }
+        );
         if (existingGame !== null) {
             throw new ConflictException();
         }
@@ -51,7 +53,7 @@ export class GameService {
     public async syncGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
         game.syncing = true;
-        // We have to persist early here to avoid a race condition with the resolver setting the
+        // We have to persist early here to avoid a race condition with the searcher setting the
         // syncing to false to early.
         await this.gameRepository.persistAndFlush(game);
 
@@ -62,7 +64,6 @@ export class GameService {
         );
 
         for (const source of activeInfoSources) {
-            // TODO: Is this persisted?
             source.state = InfoSourceState.Found;
             await this.queueService.addToQueue(
                 QueueType.ResolveSource,
@@ -115,7 +116,10 @@ export class GameService {
     }
 
     public async deleteGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources", "notifications"] });
+        const game = await this.gameRepository.findOneOrFail(
+            id,
+            { populate: ["infoSources", "notifications"] }
+        );
 
         for (const notification of game.notifications) {
             this.notificationRepository.remove(notification);
@@ -160,7 +164,13 @@ export class GameService {
         return game as Game & { infoSources: InfoSource[], tags: Tag[] };
     }
 
-    public async getGames({ withTags, withInfoSources, user }: { withTags?: string[], withInfoSources?: string[], user: IdentifiedReference<User> }) {
+    public async getGames(
+        { withTags, withInfoSources, user }: {
+            withTags?: string[];
+            withInfoSources?: string[];
+            user: IdentifiedReference<User>;
+        },
+    ) {
         const knex = this.infoSourceRepository.getKnex();
 
         const query = this.gameRepository.createQueryBuilder("game")
