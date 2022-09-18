@@ -18,12 +18,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 import { useUserContext } from "../../providers/UserProvider";
+import { DEFAULT_TOAST_OPTIONS } from "../../util/default-toast-options";
 import { useAction } from "../../util/useAction";
 
 const Form = chakra("form");
 
 export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
-    const toast = useToast();
+    const toast = useToast(DEFAULT_TOAST_OPTIONS);
     const { registerUser, user } = useUserContext();
     const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<RegisterUserDto>({
         resolver: classValidatorResolver(RegisterUserDto),
@@ -42,7 +43,6 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                 title: "Error",
                 description: "Unexpected Error. Please try again.",
                 status: "error",
-                position: "top-right",
             });
         }
     });

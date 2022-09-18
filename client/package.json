@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.9",
-    "@chakra-ui/react": "2.2.6",
+    "@chakra-ui/react": "2.3.2",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@game-watch/shared": "0.0.1",
@@ -26,8 +26,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.34.2",
     "react-masonry-css": "^1.0.16",
-    "sharp": "^0.30.7",
-    "uuid": "^8.3.2"
+    "sharp": "^0.31.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.14",

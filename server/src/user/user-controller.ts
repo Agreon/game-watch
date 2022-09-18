@@ -2,8 +2,10 @@ import { User } from "@game-watch/database";
 import { UpdateUserSettingsDto, UserDto } from "@game-watch/shared";
 import { EntityRepository } from "@mikro-orm/core";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { Body, Controller, Get, Put, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Put, Query, Res, UseGuards } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
+import { Environment } from "src/environment";
 
 import { CurrentUser } from "../auth/current-user-decorator";
 import { JwtAccessTokenGuard } from "../auth/jwt-access-token-guard";
@@ -15,6 +17,7 @@ export class UserController {
         private readonly userService: UserService,
         @InjectRepository(User)
         private readonly userRepository: EntityRepository<User>,
+        private readonly configService: ConfigService<Environment, true>
     ) { }
 
     @Get()
@@ -44,7 +47,10 @@ export class UserController {
         }
         await this.userService.confirmEmailAddress(token);
 
-        return response.send("E-Mail Address confirmed!");
+        return response.redirect(
+            HttpStatus.SEE_OTHER,
+            new URL("?mailConfirmed=true", this.configService.get("PUBLIC_URL")).toString()
+        );
     }
 
     @Get("/unsubscribe")
@@ -57,6 +63,9 @@ export class UserController {
         }
         await this.userService.unsubscribeFromNotifications(userId);
 
-        return response.send("You successfully unsubscribed!");
+        return response.redirect(
+            HttpStatus.SEE_OTHER,
+            new URL("?unsubscribed=true", this.configService.get("PUBLIC_URL")).toString()
+        );
     }
 }
