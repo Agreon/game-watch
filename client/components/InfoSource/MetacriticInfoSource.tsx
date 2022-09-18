@@ -39,19 +39,19 @@ const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displ
 };
 
 // TODO: is jumping on loading state
-export const MetacriticInfoSource: React.FC<{ data: MetacriticData | null }> = ({ data }) => {
+export const MetacriticInfoSource: React.FC<{ data: MetacriticData }> = ({ data }) => {
     return (
         <InfoSourceWrapper>
             <Box flex="1">
                 <Stat>
                     <StatLabel>Critic Score</StatLabel>
-                    <Score score={parseInt(data?.criticScore ?? "")} displayScore={parseInt(data?.criticScore ?? "")} />
+                    <Score score={parseInt(data.criticScore)} displayScore={parseInt(data.criticScore)} />
                 </Stat>
             </Box>
             <Box flex="1">
                 <Stat>
                     <StatLabel>User Score</StatLabel>
-                    <Score score={parseFloat(data?.userScore ?? "") * 10} displayScore={parseFloat(data?.userScore ?? "")} />
+                    <Score score={parseFloat(data.userScore) * 10} displayScore={parseFloat(data.userScore)} />
                 </Stat>
             </Box>
         </InfoSourceWrapper>

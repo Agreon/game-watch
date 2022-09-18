@@ -13,7 +13,7 @@ import Redis from "ioredis";
 
 import { EnvironmentStructure } from "./environment";
 import { ResolveService } from "./resolve-service";
-import { resolveSource, SourceNotResolvableError } from "./resolve-source";
+import { resolveSource } from "./resolve-source";
 import { EpicResolver } from "./resolvers/epic-resolver";
 import { MetacriticResolver } from "./resolvers/metacritic-resolver";
 import { PsStoreResolver } from "./resolvers/ps-store-resolver";
@@ -71,7 +71,7 @@ const main = async () => {
                 em: orm.em.fork(),
             });
         } catch (error) {
-            if (error instanceof NotFoundError || error instanceof SourceNotResolvableError) {
+            if (error instanceof NotFoundError) {
                 logger.warn(`Source '${sourceId}' could not be found in database or is not resolvable. Removing nightly job`);
 
                 resolveSourceQueue.removeRepeatableByKey(

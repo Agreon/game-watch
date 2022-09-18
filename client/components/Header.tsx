@@ -21,7 +21,7 @@ export default function Header() {
 
     return (
         <Flex
-            justify={["space-between", "space-between", "center"]}
+            justify={["space-between", "space-between", "space-between", "center"]}
             align="center"
             position="absolute"
             bg={useColorModeValue('white', 'gray.800')}

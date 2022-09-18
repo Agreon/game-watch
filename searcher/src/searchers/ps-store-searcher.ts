@@ -21,7 +21,7 @@ interface SearchResponse {
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
         const { data: { data: { universalSearch: { results } } } } = await this.axios.get<SearchResponse>(
@@ -65,9 +65,12 @@ export class PsStoreSearcher implements InfoSearcher {
 
         logger.debug(`Found gameId '${gameId}'`);
 
+        const url = `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry)}/product/${gameId}`;
+
         return {
-            remoteGameId: `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry)}/product/${gameId}`,
-            remoteGameName: fullName,
+            id: url,
+            url,
+            fullName,
         };
     }
 }

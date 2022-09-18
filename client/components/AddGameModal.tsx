@@ -37,8 +37,13 @@ export const PlaceholderMap: Record<InfoSourceType, string> = {
 
 const AddSource: React.FC = () => {
     const { user: { interestedInSources } } = useUserContext();
-    const { addInfoSource } = useGameContext();
-    const [type, setType] = useState(interestedInSources[0]);
+    const { addInfoSource, activeInfoSources } = useGameContext();
+
+    const availableInfoSources = interestedInSources.filter(
+        type => activeInfoSources.find(source => source.type === type) === undefined
+    );
+
+    const [type, setType] = useState(availableInfoSources[0] ?? "");
     const [url, setUrl] = useState("");
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
@@ -47,7 +52,7 @@ const AddSource: React.FC = () => {
         }
     });
 
-    if (!interestedInSources.length) {
+    if (!availableInfoSources.length) {
         return null;
     }
 
@@ -59,8 +64,8 @@ const AddSource: React.FC = () => {
             <Flex direction={["column", "row"]}>
                 <FormControl flex="0.3" mr="1rem" mb={["0.5rem", 0]}>
                     <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                        {interestedInSources.map(source => (
-                            <option key={source} value={source}>{source}</option>
+                        {availableInfoSources.map(type => (
+                            <option key={type} value={type}>{type}</option>
                         ))}
                     </Select>
                 </FormControl>
@@ -72,7 +77,12 @@ const AddSource: React.FC = () => {
                         onChange={event => setUrl(event.target.value)}
                     />
                 </FormControl>
-                <FormControl display="flex" flex="0" mb={["0.5rem", 0]} justifyContent={["end", "unset"]}>
+                <FormControl
+                    display="flex"
+                    flex="0"
+                    mb={["0.5rem", 0]}
+                    justifyContent={["end", "unset"]}
+                >
                     <Button
                         onClick={() => onAdd({ type, url })}
                         disabled={loading || !url.length}
@@ -86,13 +96,13 @@ const AddSource: React.FC = () => {
     );
 };
 
-const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) => {
-    const { game } = useGameContext();
+const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
+    const { game, activeInfoSources } = useGameContext();
     const [name, setName] = useState(
-        game.infoSources.filter(source => !!source.remoteGameName)[0]?.remoteGameName ?? game.search
+        activeInfoSources.filter(source => !!source.data.fullName)[0]?.data.fullName ?? game.search
     );
 
-    useEffect(() => onChange(name), [name]);
+    useEffect(() => onChange(name), [onChange, name]);
 
     return (
         <Flex direction={["column", "row"]} mt="3rem" align={["start", "center"]}>
@@ -108,11 +118,15 @@ const EditName: React.FC<{onChange: (name: string) => void}> = ({ onChange }) =>
 };
 
 export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
-    const { game, setGameInfoSource, removeGameInfoSource, setupGame } = useGameContext();
+    const {
+        game,
+        activeInfoSources,
+        setGameInfoSource,
+        removeGameInfoSource,
+        setupGame,
+    } = useGameContext();
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
-
-    const nonSyncingInfoSources = game.infoSources.filter(source => !source.syncing);
 
     // TODO: use ModalFooter
     return (
@@ -144,21 +158,29 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                         pb="2rem"
                     >
                         <Flex my="1rem">
-                            {game.syncing
-                                ? <Text fontSize="2xl">We are searching for the game. Just a moment...</Text>
-                                : game.infoSources.length > 0
-                                    ? <Text fontSize="2xl">Here is what we found: </Text>
-                                    : <Text fontSize="2xl">{`We couldn't find any sources for '${game.search}' :/`}</Text>
+                            {
+                                game.syncing &&
+                                <Text fontSize="2xl">
+                                    We are searching for the game. Just a moment...
+                                </Text>
+                            }
+                            {
+                                !game.syncing && (
+                                    activeInfoSources.length > 0
+                                        ? <Text fontSize="2xl">Here is what we found: </Text>
+                                        : <Text fontSize="2xl">
+                                            {`We couldn't find any sources for '${game.search}' :/`}
+                                        </Text>
+                                )
                             }
                         </Flex>
                         <Flex direction="column" my="1rem" width="100%">
-                            {game.infoSources.map(source =>
+                            {activeInfoSources.map(source =>
                                 <InfoSourceProvider
                                     key={source.id}
                                     source={source}
                                     setGameInfoSource={setGameInfoSource}
                                     removeGameInfoSource={removeGameInfoSource}
-                                    disablePolling={!!source.remoteGameName}
                                 >
                                     <Fade in={true}>
                                         <Box mb="1rem">
@@ -172,7 +194,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     ? <LoadingSpinner size="xl" />
                                     : <>
                                         <AddSource />
-                                        {nonSyncingInfoSources.length === 0 && <EditName onChange={setName}/>}
+                                        <EditName onChange={setName} />
                                     </>
                                 }
                             </Box>
@@ -186,7 +208,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || !nonSyncingInfoSources.length}
+                                disabled={loading || game.syncing || !activeInfoSources.length}
                                 onClick={() => onAdd({ name })}
                             >
                                 Save

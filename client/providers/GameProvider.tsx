@@ -1,4 +1,4 @@
-import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceType, TagDto } from "@game-watch/shared";
+import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceState, InfoSourceType, TagDto } from "@game-watch/shared";
 import { AxiosResponse } from "axios";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
@@ -47,7 +47,6 @@ export interface GameCtx {
     loading: boolean
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
-    availableInfoSources: InfoSourceType[]
     thumbnailUrl: string | null
     setupGame: (options: { name: string }) => Promise<void>
     syncGame: () => Promise<void>
@@ -89,33 +88,23 @@ export const GameProvider: React.FC<{
         setLoading(false);
     }, [withRequest, setGame, game.id]);
 
-    const [polling, setPolling] = useState(false);
     useEffect(() => {
-        if (!game.syncing || polling) {
+        if (!game.syncing) {
             return;
         }
-        setPolling(true);
 
-        (async () => {
+        const intervalId = setInterval(async () => {
             await withRequest(async http => {
-                do {
-                    try {
-                        const { data } = await http.get<GameDto>(`/game/${game.id}`);
-                        setGame(data.id, data);
-                        if (data.syncing === false) {
-                            break;
-                        }
-                    } catch (error) {
-                        handleError(error);
-                    } finally {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
-                } while (true);
+                const { data } = await http.get<GameDto>(`/game/${game.id}`);
+                setGame(data.id, data);
+                if (data.syncing === false) {
+                    clearInterval(intervalId);
+                }
             });
-            setPolling(false);
-        }
-        )();
-    }, [game, handleError, polling, setGame, withRequest]);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [game.id, game.syncing, handleError, setGame, withRequest]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update
@@ -250,23 +239,17 @@ export const GameProvider: React.FC<{
 
     const tags = useMemo(() => game.tags, [game.tags]);
 
-    const allInfoSources = useMemo(() => game.infoSources, [game.infoSources]);
-    const activeInfoSources = useMemo(
-        () => [...allInfoSources]
-            .sort((a, b) => {
-                const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
-                const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
-                return aPriority - bPriority;
-            })
-        , [allInfoSources]);
+    const allInfoSources = useMemo(
+        () => [...game.infoSources].sort((a, b) => {
+            const aPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === a.type);
+            const bPriority = INFO_SOURCE_PRIORITY.findIndex(type => type === b.type);
+            return aPriority - bPriority;
+        }),
+        [game.infoSources]
+    );
 
-    const availableInfoSources = useMemo(
-        () => Object.values(InfoSourceType)
-            .filter(type =>
-                !allInfoSources
-                    .map(source => source.type)
-                    .includes(type)
-            ),
+    const activeInfoSources = useMemo(
+        () => allInfoSources.filter(source => source.state !== InfoSourceState.Disabled),
         [allInfoSources]
     );
 
@@ -280,7 +263,6 @@ export const GameProvider: React.FC<{
         tags,
         allInfoSources,
         activeInfoSources,
-        availableInfoSources,
         thumbnailUrl,
         loading,
         setupGame,
@@ -298,7 +280,6 @@ export const GameProvider: React.FC<{
         tags,
         allInfoSources,
         activeInfoSources,
-        availableInfoSources,
         thumbnailUrl,
         loading,
         setupGame,
@@ -317,5 +298,5 @@ export const GameProvider: React.FC<{
         <GameContext.Provider value={contextValue}>
             {children}
         </GameContext.Provider>
-        );
-    };
+    );
+};

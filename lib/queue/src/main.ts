@@ -24,7 +24,7 @@ export type QueueParams = {
     [QueueType.DeleteUnfinishedGameAdds]: { gameId: string },
     [QueueType.CreateNotifications]: {
         sourceId: string
-        existingGameData: GameDataU
+        existingGameData: GameDataU | null
         resolvedGameData: GameDataU | null
     },
 };

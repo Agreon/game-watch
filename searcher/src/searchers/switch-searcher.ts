@@ -1,9 +1,9 @@
 import { withBrowser } from "@game-watch/browser";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
+import { BaseGameData, InfoSourceType } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 
-import { InfoSearcher, InfoSearcherContext, SearchResponse } from "../search-service";
+import { InfoSearcher, InfoSearcherContext } from "../search-service";
 import { matchingName } from "../util/matching-name";
 
 export interface SwitchSearchResponse {
@@ -23,9 +23,9 @@ export interface SwitchSearchResponse {
 export class SwitchSearcher implements InfoSearcher {
     public type = InfoSourceType.Switch;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
+    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<BaseGameData | null> {
         if (userCountry === "DE") {
             const { numFound, docs: results } = await this.getSwitchSearchResponse(search);
 
@@ -44,9 +44,11 @@ export class SwitchSearcher implements InfoSearcher {
                 return null;
             }
 
+            const url = `https://nintendo.de${gameData.url}`;
             return {
-                remoteGameId: `https://nintendo.de${gameData.url}`,
-                remoteGameName: gameData.title
+                id: url,
+                url,
+                fullName: gameData.title
             };
         }
 
@@ -78,14 +80,17 @@ export class SwitchSearcher implements InfoSearcher {
                 return null;
             }
 
+            const url = `https://nintendo.com${gameLink}`;
+
             return {
-                remoteGameId: `https://nintendo.com${gameLink}`,
-                remoteGameName: fullName
+                id: url,
+                url,
+                fullName
             };
         });
     }
 
-    public async getSwitchSearchResponse (search: string) {
+    public async getSwitchSearchResponse(search: string) {
         const { data: { response } } = await this.axios.get<SwitchSearchResponse>(
             'https://searching.nintendo-europe.com/de/select',
             {

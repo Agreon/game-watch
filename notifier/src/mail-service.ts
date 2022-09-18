@@ -50,16 +50,15 @@ export class MailService {
         const body = this.getNotificationText(receiver, notification);
         const unsubscribeLink = new URL(`/user/unsubscribe?id=${receiver.id}`, API_URL);
 
-        // Data can be null if the game was never resolved successfully.
-        const remoteGameUrl = notification.infoSource.getEntity().data?.url;
+        const remoteGameUrl = notification.infoSource.getEntity().data.url;
 
         return `
 Hey ${receiver.username}!
 
 ${body}
 
-${remoteGameUrl ? `You can have a detailed look here: ${remoteGameUrl}` : ''}
-${remoteGameUrl ? "Or" : ""} why not check in on GameWatch: ${PUBLIC_URL}
+You can have a detailed look here: ${remoteGameUrl}
+Or why not check in on GameWatch: ${PUBLIC_URL}
 
 Best
 

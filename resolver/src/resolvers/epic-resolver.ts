@@ -2,17 +2,17 @@ import { EpicGameData, InfoSourceType, StorePriceInformation } from "@game-watch
 import { AxiosInstance } from "axios";
 import * as cheerio from 'cheerio';
 
-import { InfoResolver } from "../resolve-service";
+import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
 import { parseDate } from "../util/parse-date";
 
 export class EpicResolver implements InfoResolver {
     public type = InfoSourceType.Epic;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(id: string): Promise<EpicGameData> {
-        const { data } = await this.axios.get<string>(id);
+    public async resolve({ source }: InfoResolverContext): Promise<EpicGameData> {
+        const { data } = await this.axios.get<string>(source.data.id);
 
         const $ = cheerio.load(data);
 
@@ -30,9 +30,8 @@ export class EpicResolver implements InfoResolver {
         const thumbnailUrl = $("div[data-component=PDPSidebarLogo] img").attr("src");
 
         return {
-            id,
+            ...source.data,
             fullName,
-            url: id,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["YYYY-MM-DD"]),
             originalReleaseDate: releaseDate,

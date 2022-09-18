@@ -13,7 +13,6 @@ import { GameTileMenu } from "./GameTileMenu";
 const GameTileComponent: React.FC = () => {
     const {
         loading,
-        allInfoSources,
         activeInfoSources,
         setGameInfoSource,
         removeGameInfoSource,
@@ -46,40 +45,46 @@ const GameTileComponent: React.FC = () => {
         >
             {!loading &&
                 <Box position="absolute" right="0" top="0" zIndex="3">
-                    <GameTileMenu onSync={syncGame} onDelete={deleteGame} gameName={game.name as string} highlight={highlightMenu} />
+                    <GameTileMenu
+                        onSync={syncGame}
+                        onDelete={deleteGame}
+                        gameName={game.name as string}
+                        highlight={highlightMenu}
+                    />
                 </Box>
             }
             <Flex direction="column">
                 <GameThumbnail />
                 <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
                     <GameName disableEdit={loading || game.syncing} />
-                    {allInfoSources.length === 0 ?
-                        (game.syncing ?
-                            <SkeletonText mt="1rem" />
-                            : <>
-                                <Text size="xl" textAlign="center" my="1rem" >No sources found :C</Text>
+                    {!activeInfoSources.length && (
+                        game.syncing ? (<SkeletonText mt="1rem" />) : (
+                            <>
+                                <Text size="xl" textAlign="center" my="1rem">
+                                    No sources found :C
+                                </Text>
                                 <AddInfoSource />
                             </>
                         )
-                        : (
-                            <>
-                                <GameTags />
-                                <Box>
-                                    {activeInfoSources.map(source =>
-                                        <InfoSourceProvider
-                                            key={source.id}
-                                            source={source}
-                                            setGameInfoSource={setGameInfoSource}
-                                            removeGameInfoSource={removeGameInfoSource}
-                                        >
-                                            <InfoSource />
-                                        </InfoSourceProvider>
-                                    )}
-                                </Box>
-                                {!(loading || game.syncing) && <AddInfoSource />}
-                            </>
-                        )
-                    }
+                    )}
+                    {activeInfoSources.length && (
+                        <>
+                            <GameTags />
+                            <Box>
+                                {activeInfoSources.map(source =>
+                                    <InfoSourceProvider
+                                        key={source.id}
+                                        source={source}
+                                        setGameInfoSource={setGameInfoSource}
+                                        removeGameInfoSource={removeGameInfoSource}
+                                    >
+                                        <InfoSource />
+                                    </InfoSourceProvider>
+                                )}
+                            </Box>
+                        </>
+                    )}
+                    {!game.syncing && <AddInfoSource />}
                 </Box>
             </Flex>
         </Box>

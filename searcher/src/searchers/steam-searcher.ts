@@ -8,7 +8,7 @@ import { matchingName } from "../util/matching-name";
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger }: InfoSearcherContext) {
         const { data } = await this.axios.get<string>(
@@ -39,8 +39,9 @@ export class SteamSearcher implements InfoSearcher {
         }
 
         return {
-            remoteGameId: gameId,
-            remoteGameName: fullName
+            id: gameId,
+            fullName,
+            url: `https://store.steampowered.com/app/${gameId}`
         };
     }
 }

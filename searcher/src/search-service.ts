@@ -1,5 +1,5 @@
 import { Logger } from "@game-watch/service";
-import { Country, InfoSourceType } from "@game-watch/shared";
+import { BaseGameData, Country, InfoSourceType } from "@game-watch/shared";
 import * as Sentry from '@sentry/node';
 import axios from "axios";
 import { Redis } from "ioredis";
@@ -14,14 +14,9 @@ export interface SearchServiceContext extends InfoSearcherContext {
     initialRun?: boolean
 }
 
-export interface SearchResponse {
-    remoteGameId: string
-    remoteGameName: string
-}
-
 export interface InfoSearcher {
     type: InfoSourceType
-    search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>
+    search(name: string, context: InfoSearcherContext): Promise<BaseGameData | null>
 }
 
 const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
@@ -49,8 +44,8 @@ export class SearchService {
         search: string,
         type: InfoSourceType,
         context: SearchServiceContext
-    ): Promise<SearchResponse | null> {
-        const logger = context.logger.child({ serviceName: SearchService.name, type, search });
+    ): Promise<BaseGameData | null> {
+        const logger = context.logger.child({ serviceName: SearchService.name, type, search, context });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {

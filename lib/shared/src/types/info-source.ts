@@ -11,6 +11,13 @@ export type StoreInfoSource = InfoSourceType.Steam | InfoSourceType.Switch | Inf
 
 export const StoreInfoSources = [InfoSourceType.Steam, InfoSourceType.Switch, InfoSourceType.PsStore, InfoSourceType.Epic];
 
+export enum InfoSourceState {
+    Found = "Found",
+    Resolved = "Resolved",
+    Error = "Error",
+    Disabled = "Disabled"
+}
+
 export interface BaseGameData {
     id: string;
     fullName: string;

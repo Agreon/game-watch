@@ -28,21 +28,14 @@ export const NotificationProvider: React.FC<{
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
     useEffect(() => {
-        (async () => {
+        const intervalId = setInterval(async () => {
             await withRequest(async http => {
-                do {
-                    try {
-                        const { data } = await http.get<NotificationDto[]>(`/notification`);
-                        setNotifications(data);
-                    } catch (error) {
-                        handleError(error);
-                    } finally {
-                        await new Promise(resolve => setTimeout(resolve, 5000));
-                    }
-                } while (true);
+                const { data } = await http.get<NotificationDto[]>(`/notification`);
+                setNotifications(data);
             });
-        }
-        )();
+        }, 5000);
+
+        return () => clearInterval(intervalId);
     }, [setNotifications, handleError, withRequest]);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
@@ -80,7 +73,6 @@ export const NotificationProvider: React.FC<{
         };
     }, [handleClick, handleKeyDown]);
 
-
     const contextValue = useMemo(() => ({
         notifications,
         markNotificationAsRead,
@@ -94,5 +86,5 @@ export const NotificationProvider: React.FC<{
         <NotificationContext.Provider value={contextValue}>
             {children}
         </NotificationContext.Provider>
-        );
-    };
+    );
+};

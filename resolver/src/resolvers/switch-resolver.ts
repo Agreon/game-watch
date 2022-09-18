@@ -17,27 +17,36 @@ const extract = (content: string, regex: RegExp) => {
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(id: string, { userCountry }: InfoResolverContext): Promise<SwitchGameData> {
+    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SwitchGameData> {
         if (userCountry === "US") {
             return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
-                await page.goto(id);
+                await page.goto(source.data.id);
                 await page.waitForSelector(".release-date > dd");
 
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const thumbnailUrl = await page.evaluate(() => document.querySelector(".hero-illustration > img")!.getAttribute("src")!);
 
-                const originalPrice = await page.evaluate(() => document.querySelector('.price > .msrp')?.textContent?.trim());
-                const price = await page.evaluate(() => document.querySelector('.price > .sale-price')?.textContent?.trim());
+                const thumbnailUrl = await page.evaluate(
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    () => document.querySelector(".hero-illustration > img")!.getAttribute("src")!
+                );
 
-                const releaseDate = await page.$eval(".release-date > dd", (el) => el.textContent?.trim());
+                const originalPrice = await page.evaluate(
+                    () => document.querySelector('.price > .msrp')?.textContent?.trim()
+                );
+                const price = await page.evaluate(
+                    () => document.querySelector('.price > .sale-price')?.textContent?.trim()
+                );
+
+                const releaseDate = await page.$eval(
+                    ".release-date > dd",
+                    (el) => el.textContent?.trim()
+                );
 
                 return {
-                    id,
-                    url: id,
+                    ...source.data,
                     fullName,
                     thumbnailUrl,
                     releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
@@ -47,7 +56,7 @@ export class SwitchResolver implements InfoResolver {
 
             });
         }
-        const { data } = await this.axios.get<string>(id);
+        const { data } = await this.axios.get<string>(source.data.id);
         const $ = cheerio.load(data);
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
@@ -60,8 +69,7 @@ export class SwitchResolver implements InfoResolver {
         const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
 
         return {
-            id,
-            url: id,
+            ...source.data,
             fullName,
             thumbnailUrl,
             releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
@@ -70,13 +78,17 @@ export class SwitchResolver implements InfoResolver {
         };
     }
 
-    private async getPriceInformation(pageContents: string): Promise<StorePriceInformation | undefined> {
+    private async getPriceInformation(
+        pageContents: string
+    ): Promise<StorePriceInformation | undefined> {
         const priceId = extract(pageContents, /(?<=offdeviceNsuID": ").\d+/);
         if (!priceId) {
             return undefined;
         }
 
-        const { data } = await this.axios.get<any>(`https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`);
+        const { data } = await this.axios.get<any>(
+            `https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`
+        );
         const { regular_price, discount_price } = data.prices[0];
 
         const initial = parseCurrencyValue(regular_price.raw_value);
@@ -93,7 +105,9 @@ export class SwitchResolver implements InfoResolver {
     }
 
     // TODO: Free games?
-    private getPriceInformationForUsStore({ price, originalPrice }: Record<string, any>,): StorePriceInformation | undefined {
+    private getPriceInformationForUsStore(
+        { price, originalPrice }: Record<string, any>
+    ): StorePriceInformation | undefined {
         const initial = parseCurrencyValue(originalPrice || price);
         const final = parseCurrencyValue(price);
 

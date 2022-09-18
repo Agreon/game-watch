@@ -1,6 +1,11 @@
 import { withBrowser } from "@game-watch/browser";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { Country, InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
+import {
+    Country,
+    InfoSourceType,
+    PsStoreGameData,
+    StorePriceInformation,
+} from "@game-watch/shared";
 import { AxiosInstance } from "axios";
 
 import { InfoResolver, InfoResolverContext } from "../resolve-service";
@@ -17,11 +22,12 @@ import { parseDate } from "../util/parse-date";
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(storePage: string, { userCountry }: InfoResolverContext): Promise<PsStoreGameData> {
+    public async resolve({ userCountry, source }: InfoResolverContext): Promise<PsStoreGameData> {
+
         return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
-            await browser.goto(storePage);
+            await browser.goto(source.data.id);
             await browser.waitForSelector(".psw-t-title-m");
 
             // const { data } = await axios.get<string>(
@@ -73,8 +79,7 @@ export class PsStoreResolver implements InfoResolver {
             );
 
             return {
-                id: storePage,
-                url: storePage,
+                ...source.data,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
                 priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
