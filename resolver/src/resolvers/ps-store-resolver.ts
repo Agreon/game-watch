@@ -2,6 +2,7 @@ import { withBrowser } from "@game-watch/browser";
 import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
 import { Country, InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
 import { AxiosInstance } from "axios";
+import * as cheerio from 'cheerio';
 
 import { InfoResolver, InfoResolverContext } from "../resolve-service";
 import { parseCurrencyValue } from "../util/parse-currency-value";
@@ -17,9 +18,26 @@ import { parseDate } from "../util/parse-date";
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve(storePage: string, { userCountry }: InfoResolverContext): Promise<PsStoreGameData> {
+
+        const { data } = await this.axios.get<string>(storePage);
+
+        console.time("LOAD");
+        const $ = cheerio.load(data);
+        const price = $('.psw-t-title-m[data-qa="mfeCtaMain#offer0#finalPrice"]').text().trim();
+        const originalPrice = $('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]').text().trim();
+        const releaseDate = $('dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]').text().trim();
+        // TODO
+        // const thumbnailUrl = $('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]').text().trim();
+
+        console.log({
+            price,
+            originalPrice,
+            releaseDate
+        });
+
         return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
             await browser.goto(storePage);
             await browser.waitForSelector(".psw-t-title-m");
