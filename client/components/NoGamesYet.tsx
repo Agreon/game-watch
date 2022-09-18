@@ -4,9 +4,9 @@ import React from 'react';
 import { useGamesContext } from '../providers/GamesProvider';
 
 export const NoGamesYet = () => {
-    const { games, gamesLoading } = useGamesContext();
+    const { games, gamesLoading, filter } = useGamesContext();
 
-    if (gamesLoading || games.length) {
+    if (gamesLoading || games.length || filter.infoSources.length || filter.tags.length) {
         return null;
     }
 

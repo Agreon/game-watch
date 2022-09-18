@@ -27,7 +27,10 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { user } = useUserContext();
     const { tags: allTags } = useTagContext();
     const { filter, setFilter } = useGamesContext();
-    const [filterInfoSources, setFilterInfoSources] = useState<InfoSourceType[]>(filter.infoSources);
+    const [
+        filterInfoSources,
+        setFilterInfoSources
+    ] = useState<InfoSourceType[]>(filter.infoSources);
     const [filterTags, setFilterTags] = useState<TagDto[]>(filter.tags);
 
     const availableInfoSources = useMemo(
