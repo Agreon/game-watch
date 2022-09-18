@@ -1,12 +1,12 @@
-import { Game, InfoSource, Notification, Tag, User } from "@game-watch/database";
-import { QueueType } from "@game-watch/queue";
-import { InfoSourceState } from "@game-watch/shared";
-import { IdentifiedReference, QueryOrder } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { EntityRepository } from "@mikro-orm/postgresql";
-import { ConflictException, Injectable } from "@nestjs/common";
+import { Game, InfoSource, Notification, Tag, User } from '@game-watch/database';
+import { QueueType } from '@game-watch/queue';
+import { InfoSourceState } from '@game-watch/shared';
+import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/postgresql';
+import { ConflictException, Injectable } from '@nestjs/common';
 
-import { QueueService } from "../queue/queue-service";
+import { QueueService } from '../queue/queue-service';
 
 @Injectable()
 export class GameService {
@@ -51,7 +51,7 @@ export class GameService {
     }
 
     public async syncGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ["infoSources"] });
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ['infoSources'] });
         game.syncing = true;
         // We have to persist early here to avoid a race condition with the searcher setting the
         // syncing to false to early.
@@ -89,7 +89,7 @@ export class GameService {
     }
 
     public async addTagToGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ['tags'] });
 
         game.tags.add(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -98,7 +98,7 @@ export class GameService {
     }
 
     public async removeTagFromGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ["tags"] });
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ['tags'] });
 
         game.tags.remove(tag);
         await this.gameRepository.persistAndFlush(game);
@@ -118,7 +118,7 @@ export class GameService {
     public async deleteGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(
             id,
-            { populate: ["infoSources", "notifications"] }
+            { populate: ['infoSources', 'notifications'] }
         );
 
         for (const notification of game.notifications) {
@@ -135,10 +135,10 @@ export class GameService {
     }
 
     public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
-        const game = await this.gameRepository.createQueryBuilder("game")
-            .select("*")
-            .leftJoinAndSelect("game.tags", "tags")
-            .leftJoinAndSelect("game.infoSources", "infoSources")
+        const game = await this.gameRepository.createQueryBuilder('game')
+            .select('*')
+            .leftJoinAndSelect('game.tags', 'tags')
+            .leftJoinAndSelect('game.infoSources', 'infoSources')
             .where({
                 $and: [
                     { id },
@@ -173,11 +173,11 @@ export class GameService {
     ) {
         const knex = this.infoSourceRepository.getKnex();
 
-        const query = this.gameRepository.createQueryBuilder("game")
-            .select("*")
+        const query = this.gameRepository.createQueryBuilder('game')
+            .select('*')
             .where({ setupCompleted: true, user })
-            .leftJoinAndSelect("game.tags", "tags")
-            .leftJoinAndSelect("game.infoSources", "infoSources")
+            .leftJoinAndSelect('game.tags', 'tags')
+            .leftJoinAndSelect('game.infoSources', 'infoSources')
             .andWhere({
                 infoSources: {
                     state: { $ne: InfoSourceState.Disabled },
@@ -191,30 +191,30 @@ export class GameService {
 
         if (withTags) {
             const matchingTagsQuery = knex
-                .count("tag_id")
-                .from("game_tags")
+                .count('tag_id')
+                .from('game_tags')
                 .andWhere({
-                    "game_id": knex.ref("game.id"),
+                    'game_id': knex.ref('game.id'),
                 })
-                .andWhere("tag_id", "IN", withTags);
+                .andWhere('tag_id', 'IN', withTags);
 
             query
-                .withSubQuery(matchingTagsQuery, "game.matchingTags")
+                .withSubQuery(matchingTagsQuery, 'game.matchingTags')
                 .andWhere({ 'game.matchingTags': { $gt: 0 } });
         }
 
         if (withInfoSources) {
             const matchingInfoSourcesSubQuery = knex
-                .count("info_source.id")
-                .from("info_source")
+                .count('info_source.id')
+                .from('info_source')
                 .andWhere({
-                    "game_id": knex.ref("game.id"),
-                    state: { $ne: InfoSourceState.Disabled },
+                    'game_id': knex.ref('game.id'),
                 })
-                .andWhere("type", "in", withInfoSources);
+                .andWhereNot('state', InfoSourceState.Disabled)
+                .andWhere('type', 'in', withInfoSources);
 
             query
-                .withSubQuery(matchingInfoSourcesSubQuery, "game.matchingInfoSources")
+                .withSubQuery(matchingInfoSourcesSubQuery, 'game.matchingInfoSources')
                 .andWhere({ 'game.matchingInfoSources': { $gt: 0 } });
         }
 
