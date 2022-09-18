@@ -1,5 +1,15 @@
 import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    IconButton,
+    Text,
+    useBreakpointValue,
+    useColorMode,
+    useColorModeValue,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { UserState } from "@game-watch/shared";
 import Image from 'next/image';
 import React from "react";
@@ -13,11 +23,23 @@ import { ConfigureUserSettingsModal } from './UserSettings/ConfigureUserSettings
 
 export default function Header() {
     const { user, logoutUser } = useUserContext();
-    const { notifications, openNotificationSidebar } = useNotificationContext();
+    const {
+        notifications,
+        toggleNotificationSidebar,
+        notificationSidebarIconRef
+    } = useNotificationContext();
     const { colorMode } = useColorMode();
 
-    const { isOpen: showAuthModal, onOpen: openAuthModal, onClose: closeAuthModal } = useDisclosure();
-    const { isOpen: showSettingsModal, onOpen: openSettingsModal, onClose: closeSettingsModal } = useDisclosure();
+    const {
+        isOpen: showAuthModal,
+        onOpen: openAuthModal,
+        onClose: closeAuthModal,
+    } = useDisclosure();
+    const {
+        isOpen: showSettingsModal,
+        onOpen: openSettingsModal,
+        onClose: closeSettingsModal,
+    } = useDisclosure();
 
     return (
         <Flex
@@ -86,16 +108,29 @@ export default function Header() {
                 }
                 <Box position="relative" mr="1rem">
                     <IconButton
+                        ref={notificationSidebarIconRef}
                         aria-label="notifications"
                         icon={<BellIcon w={6} h={6} />}
-                        onClick={openNotificationSidebar}
+                        onClick={toggleNotificationSidebar}
                         variant="ghost"
                         _focus={{
                             boxShadow: "none"
                         }}
                     />
                     {notifications.length > 0 &&
-                        <Box position="absolute" bg="teal" rounded="3xl" mr="0.25rem" mt="0.1rem" top="0" right="0" width="1rem" height="1rem" display="flex" justifyContent="center" >
+                        <Box
+                            position="absolute"
+                            bg="teal"
+                            rounded="3xl"
+                            mr="0.25rem"
+                            mt="0.1rem"
+                            top="0"
+                            right="0"
+                            width="1rem"
+                            height="1rem"
+                            display="flex"
+                            justifyContent="center"
+                        >
                             <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
                         </Box>
                     }
