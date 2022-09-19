@@ -1,6 +1,6 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.join(__dirname, "..", "..", "..", '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '..', '..', '.env') });
 
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
@@ -8,7 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { Logger } from "nestjs-pino";
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { EnvironmentStructure } from './environment';
@@ -18,14 +18,14 @@ const {
   SERVER_PORT,
 } = parseEnvironment(EnvironmentStructure, process.env);
 
-initializeSentry("Server");
+initializeSentry('Server');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: true,
     bufferLogs: true,
     cors: {
-      methods: "POST, PATCH, PUT, GET, DELETE, OPTIONS",
+      methods: 'POST, PATCH, PUT, GET, DELETE, OPTIONS',
       credentials: true,
       origin: CORS_ORIGIN
     }

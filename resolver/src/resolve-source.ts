@@ -1,11 +1,11 @@
-import { InfoSource, Notification } from "@game-watch/database";
-import { QueueParams, QueueType } from "@game-watch/queue";
-import { Logger } from "@game-watch/service";
-import { InfoSourceState, InfoSourceType, NotificationType } from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
-import { Queue } from "bullmq";
+import { InfoSource, Notification } from '@game-watch/database';
+import { QueueParams, QueueType } from '@game-watch/queue';
+import { Logger } from '@game-watch/service';
+import { InfoSourceState, InfoSourceType, NotificationType } from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
+import { Queue } from 'bullmq';
 
-import { ResolveService } from "./resolve-service";
+import { ResolveService } from './resolve-service';
 
 interface Params {
     sourceId: string
@@ -17,16 +17,24 @@ interface Params {
     logger: Logger
 }
 
-export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger, createNotificationsQueue }: Params) => {
+export const resolveSource = async ({
+    sourceId,
+    initialRun,
+    skipCache,
+    resolveService,
+    em,
+    logger,
+    createNotificationsQueue,
+}: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail<InfoSource<InfoSourceType, InfoSourceState.Found>, "user">(
+    const source = await em.findOneOrFail<InfoSource<InfoSourceType, InfoSourceState.Found>, 'user'>(
         InfoSource,
         {
             id: sourceId,
             state: { $ne: InfoSourceState.Disabled }
         },
-        { populate: ["user"] }
+        { populate: ['user'] }
     );
 
     const userCountry = source.user.get().country;

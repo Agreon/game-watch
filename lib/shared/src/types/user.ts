@@ -1,5 +1,5 @@
 export enum UserState {
-    Trial = "Trial",
-    Registered = "Registered",
-    Disabled = "Disabled"
+    Trial = 'Trial',
+    Registered = 'Registered',
+    Disabled = 'Disabled'
 }

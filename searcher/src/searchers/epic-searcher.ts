@@ -1,9 +1,9 @@
-import { BaseGameData, Country, InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { BaseGameData, Country, InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
-import { matchingName } from "../util/matching-name";
+import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { matchingName } from '../util/matching-name';
 
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
@@ -12,22 +12,25 @@ export class EpicSearcher implements InfoSearcher {
 
     private mapCountryCode(country: Country) {
         switch (country) {
-            case "DE":
+            case 'DE':
                 // Don't ask me why this is inconsistent.
-                return "de";
-            case "US":
-                return "en-US";
+                return 'de';
+            case 'US':
+                return 'en-US';
         }
     }
 
-    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<BaseGameData | null> {
+    public async search(
+        search: string,
+        { logger, userCountry }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
         const { data } = await this.axios.get<string>(
             `https://www.epicgames.com/store/${this.mapCountryCode(userCountry)}/browse`,
             {
                 params: {
                     q: search,
-                    sortBy: "relevancy",
-                    sortDir: "DESC",
+                    sortBy: 'relevancy',
+                    sortDir: 'DESC',
                     count: 1
                 }
             }
@@ -35,14 +38,15 @@ export class EpicSearcher implements InfoSearcher {
 
         const $ = cheerio.load(data);
 
-        const gameLink = $("div[data-component=DiscoverCardLayout] > a").first().attr("href")?.trim();
+        const gameLink = $('div[data-component=DiscoverCardLayout] > a')
+            .first().attr('href')?.trim();
         if (!gameLink) {
-            logger.debug("No results found");
+            logger.debug('No results found');
 
             return null;
         }
 
-        const fullName = $("div[data-component=DirectionAuto]").first().text().trim();
+        const fullName = $('div[data-component=DirectionAuto]').first().text().trim();
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 

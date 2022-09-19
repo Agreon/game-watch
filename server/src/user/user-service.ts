@@ -1,11 +1,11 @@
-import { User } from "@game-watch/database";
-import { UpdateUserSettingsDto } from "@game-watch/shared";
-import { EntityManager, EntityRepository } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable } from "@nestjs/common";
-import { v4 as uuidV4 } from "uuid";
+import { User } from '@game-watch/database';
+import { UpdateUserSettingsDto } from '@game-watch/shared';
+import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidV4 } from 'uuid';
 
-import { MailService } from "../mail/mail-service";
+import { MailService } from '../mail/mail-service';
 
 @Injectable()
 export class UserService {

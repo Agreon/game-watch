@@ -1,14 +1,23 @@
-import { GameDataU } from "@game-watch/shared";
-import { JobsOptions, Processor, Queue, QueueOptions, QueueScheduler, QueueSchedulerOptions, Worker, WorkerOptions } from "bullmq";
+import { GameDataU } from '@game-watch/shared';
+import {
+    JobsOptions,
+    Processor,
+    Queue,
+    QueueOptions,
+    QueueScheduler,
+    QueueSchedulerOptions,
+    Worker,
+    WorkerOptions,
+} from 'bullmq';
 
-import { EnvironmentStructure } from "./environment";
-import { parseEnvironment } from "./parse-environment";
+import { EnvironmentStructure } from './environment';
+import { parseEnvironment } from './parse-environment';
 
 export enum QueueType {
-    SearchGame = "search-game",
-    ResolveSource = "resolve-source",
-    DeleteUnfinishedGameAdds = "delete-unfinished-game-adds",
-    CreateNotifications = "create-notifications",
+    SearchGame = 'search-game',
+    ResolveSource = 'resolve-source',
+    DeleteUnfinishedGameAdds = 'delete-unfinished-game-adds',
+    CreateNotifications = 'create-notifications',
 }
 
 export type QueueParams = {
@@ -29,7 +38,11 @@ export type QueueParams = {
     },
 };
 
-const { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } = parseEnvironment(EnvironmentStructure, process.env);
+const {
+    REDIS_HOST,
+    REDIS_PASSWORD,
+    REDIS_PORT,
+} = parseEnvironment(EnvironmentStructure, process.env);
 
 export const QUEUE_CONNECTION_OPTIONS = {
     host: REDIS_HOST,

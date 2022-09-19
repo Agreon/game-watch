@@ -1,9 +1,9 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
+import { InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
-import { matchingName } from "../util/matching-name";
+import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { matchingName } from '../util/matching-name';
 
 interface SearchResponse {
     data: {
@@ -24,11 +24,13 @@ export class PsStoreSearcher implements InfoSearcher {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger, userCountry }: InfoSearcherContext) {
-        const { data: { data: { universalSearch: { results } } } } = await this.axios.get<SearchResponse>(
+        const {
+            data: { data: { universalSearch: { results } } }
+        } = await this.axios.get<SearchResponse>(
             `https://web.np.playstation.com/api/graphql/v1/op`,
             {
                 headers: {
-                    "X-PSN-Store-Locale-Override": mapCountryCodeToAcceptLanguage(userCountry)
+                    'X-PSN-Store-Locale-Override': mapCountryCodeToAcceptLanguage(userCountry)
                 },
                 params: {
                     variables: {
@@ -41,7 +43,7 @@ export class PsStoreSearcher implements InfoSearcher {
                     extensions: {
                         persistedQuery: {
                             version: 1,
-                            sha256Hash: "d77d9a513595db8d75fc26019f01066d54c8d0de035a77a559bd687fa1010418",
+                            sha256Hash: 'd77d9a513595db8d75fc26019f01066d54c8d0de035a77a559bd687fa1010418',
                         }
                     }
                 }
@@ -49,7 +51,7 @@ export class PsStoreSearcher implements InfoSearcher {
         );
 
         // The ps store likes to order DLCs and cosmetics prior to the game.
-        const result = results.find(result => result.storeDisplayClassification === "FULL_GAME");
+        const result = results.find(result => result.storeDisplayClassification === 'FULL_GAME');
         if (!result) {
             return null;
         }

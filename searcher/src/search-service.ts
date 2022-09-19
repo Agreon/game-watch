@@ -1,9 +1,9 @@
-import { Logger } from "@game-watch/service";
-import { BaseGameData, Country, InfoSourceType } from "@game-watch/shared";
+import { Logger } from '@game-watch/service';
+import { BaseGameData, Country, InfoSourceType } from '@game-watch/shared';
 import * as Sentry from '@sentry/node';
-import axios from "axios";
-import { Redis } from "ioredis";
-import pRetry from "p-retry";
+import axios from 'axios';
+import { Redis } from 'ioredis';
+import pRetry from 'p-retry';
 
 export interface InfoSearcherContext {
     logger: Logger
@@ -45,7 +45,12 @@ export class SearchService {
         type: InfoSourceType,
         context: SearchServiceContext
     ): Promise<BaseGameData | null> {
-        const logger = context.logger.child({ serviceName: SearchService.name, type, search, context });
+        const logger = context.logger.child({
+            serviceName: SearchService.name,
+            type,
+            search,
+            context
+        });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
@@ -68,7 +73,7 @@ export class SearchService {
 
                 const foundData = await searcherForType.search(search, { ...context, logger });
                 if (foundData !== null && this.cachingEnabled) {
-                    await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+                    await this.redis.set(cacheKey, JSON.stringify(foundData), 'EX', 60 * 60 * 23);
                 }
 
                 return foundData;
@@ -77,12 +82,12 @@ export class SearchService {
                 ...(context.initialRun ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while searching ${type} for ${search}`);
-                    // We only want to retry on network errors that are not signaling us to stop anyway.
+                    // We only want to retry on network errors that are not signaling us to stop.
                     if (
                         // Epic throws a 403 at the moment.
                         (axios.isAxiosError(error) && error.response?.status !== 403)
                         // This error occurs if Puppeteer timeouts.
-                        || error.name === "TimeoutError"
+                        || error.name === 'TimeoutError'
                     ) {
                         return;
                     }

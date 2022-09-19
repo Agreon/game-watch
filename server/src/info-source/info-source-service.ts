@@ -1,12 +1,12 @@
-import { Game, InfoSource, Notification, User } from "@game-watch/database";
-import { QueueType } from "@game-watch/queue";
-import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from "@game-watch/shared";
-import { EntityRepository, IdentifiedReference } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable } from "@nestjs/common";
+import { Game, InfoSource, Notification, User } from '@game-watch/database';
+import { QueueType } from '@game-watch/queue';
+import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
 
-import { MapperService } from "../mapper/mapper-service";
-import { QueueService } from "../queue/queue-service";
+import { MapperService } from '../mapper/mapper-service';
+import { QueueService } from '../queue/queue-service';
 
 @Injectable()
 export class InfoSourceService {
@@ -44,7 +44,7 @@ export class InfoSourceService {
                 id: remoteGameId,
                 // This field is only used for display on the initial search.
                 // It is later overwritten by the resolvers.
-                fullName: "Sync in progress",
+                fullName: 'Sync in progress',
                 url,
             }
         });

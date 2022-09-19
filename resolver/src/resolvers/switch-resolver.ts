@@ -1,12 +1,12 @@
-import { withBrowser } from "@game-watch/browser";
-import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { InfoSourceType, StorePriceInformation, SwitchGameData } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { withBrowser } from '@game-watch/browser';
+import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
+import { InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { InfoResolver, InfoResolverContext } from "../resolve-service";
-import { parseCurrencyValue } from "../util/parse-currency-value";
-import { parseDate } from "../util/parse-date";
+import { InfoResolver, InfoResolverContext } from '../resolve-service';
+import { parseCurrencyValue } from '../util/parse-currency-value';
+import { parseDate } from '../util/parse-date';
 
 const extract = (content: string, regex: RegExp) => {
     const result = new RegExp(regex).exec(content);
@@ -20,17 +20,17 @@ export class SwitchResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ userCountry, source }: InfoResolverContext): Promise<SwitchGameData> {
-        if (userCountry === "US") {
+        if (userCountry === 'US') {
             return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
                 await page.goto(source.data.id);
-                await page.waitForSelector(".release-date > dd");
+                await page.waitForSelector('.release-date > dd');
 
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const fullName = await page.$eval(".game-title", (el) => el.textContent!.trim());
+                const fullName = await page.$eval('.game-title', (el) => el.textContent!.trim());
 
                 const thumbnailUrl = await page.evaluate(
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    () => document.querySelector(".hero-illustration > img")!.getAttribute("src")!
+                    () => document.querySelector('.hero-illustration > img')!.getAttribute('src')!
                 );
 
                 const originalPrice = await page.evaluate(
@@ -41,7 +41,7 @@ export class SwitchResolver implements InfoResolver {
                 );
 
                 const releaseDate = await page.$eval(
-                    ".release-date > dd",
+                    '.release-date > dd',
                     (el) => el.textContent?.trim()
                 );
 
@@ -49,7 +49,7 @@ export class SwitchResolver implements InfoResolver {
                     ...source.data,
                     fullName,
                     thumbnailUrl,
-                    releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
+                    releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
                     originalReleaseDate: releaseDate,
                     priceInformation: this.getPriceInformationForUsStore({ price, originalPrice }),
                 };
@@ -59,11 +59,11 @@ export class SwitchResolver implements InfoResolver {
         const { data } = await this.axios.get<string>(source.data.id);
         const $ = cheerio.load(data);
 
-        const thumbnailUrl = $("meta[property='og:image']").first().attr("content");
+        const thumbnailUrl = $("meta[property='og:image']").first().attr('content');
 
         const fullName = extract(data, /(?<=gameTitle": ").+\b/);
         if (!fullName) {
-            throw new Error("Could not find name of game");
+            throw new Error('Could not find name of game');
         }
 
         const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
@@ -72,7 +72,7 @@ export class SwitchResolver implements InfoResolver {
             ...source.data,
             fullName,
             thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ["DD.MM.YYYY"]),
+            releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
             originalReleaseDate: releaseDate,
             priceInformation: await this.getPriceInformation(data),
         };

@@ -1,21 +1,30 @@
-import { Country } from "./country";
+import { Country } from './country';
 
 export enum InfoSourceType {
-    Steam = "steam",
-    Switch = "switch",
-    PsStore = "psStore",
-    Epic = "epic",
-    Metacritic = "metacritic"
+    Steam = 'steam',
+    Switch = 'switch',
+    PsStore = 'psStore',
+    Epic = 'epic',
+    Metacritic = 'metacritic'
 }
-export type StoreInfoSource = InfoSourceType.Steam | InfoSourceType.Switch | InfoSourceType.PsStore | InfoSourceType.Epic;
+export type StoreInfoSource =
+    | InfoSourceType.Steam
+    | InfoSourceType.Switch
+    | InfoSourceType.PsStore
+    | InfoSourceType.Epic;
 
-export const StoreInfoSources = [InfoSourceType.Steam, InfoSourceType.Switch, InfoSourceType.PsStore, InfoSourceType.Epic];
+export const StoreInfoSources = [
+    InfoSourceType.Steam,
+    InfoSourceType.Switch,
+    InfoSourceType.PsStore,
+    InfoSourceType.Epic,
+];
 
 export enum InfoSourceState {
-    Found = "Found",
-    Resolved = "Resolved",
-    Error = "Error",
-    Disabled = "Disabled"
+    Found = 'Found',
+    Resolved = 'Resolved',
+    Error = 'Error',
+    Disabled = 'Disabled'
 }
 
 export interface BaseGameData {
@@ -61,14 +70,19 @@ export type GameData = {
     [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
-export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
+export type GameDataU =
+    | SteamGameData
+    | SwitchGameData
+    | PsStoreGameData
+    | EpicGameData
+    | MetacriticData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
-    [InfoSourceType.Steam]: ["DE", "US"] as const,
-    [InfoSourceType.PsStore]: ["DE", "US"] as const,
-    [InfoSourceType.Metacritic]: ["DE", "US"] as const,
+    [InfoSourceType.Steam]: ['DE', 'US'] as const,
+    [InfoSourceType.PsStore]: ['DE', 'US'] as const,
+    [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
-    [InfoSourceType.Epic]: ["DE"] as const,
+    [InfoSourceType.Epic]: ['DE'] as const,
     // At least the US store is built completely different
-    [InfoSourceType.Switch]: ["DE"] as const,
+    [InfoSourceType.Switch]: ['DE'] as const,
 } as const;

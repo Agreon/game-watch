@@ -24,8 +24,8 @@ export class TagService {
   }
 
   public async getAll(user: IdentifiedReference<User>) {
-    return await this.tagRepository.createQueryBuilder("tag")
-      .select("*")
+    return await this.tagRepository.createQueryBuilder('tag')
+      .select('*')
       .where({ user })
       .orderBy({
         createdAt: QueryOrder.DESC,

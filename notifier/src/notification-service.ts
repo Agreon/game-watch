@@ -1,9 +1,9 @@
-import { Game, InfoSource, Notification, User } from "@game-watch/database";
-import { Logger } from "@game-watch/service";
-import { GameData, InfoSourceType, NotificationData, NotificationType } from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
+import { Game, InfoSource, Notification, User } from '@game-watch/database';
+import { Logger } from '@game-watch/service';
+import { GameData, InfoSourceType, NotificationData, NotificationType } from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
 
-import { MailService } from "./mail-service";
+import { MailService } from './mail-service';
 
 export interface CreateNotificationsParams<T extends InfoSourceType = InfoSourceType> {
     sourceId: string
@@ -46,10 +46,10 @@ export class NotificationService {
     public async createNotifications(
         { sourceId, existingGameData, resolvedGameData, em }: CreateNotificationsParams
     ) {
-        const infoSource = await em.findOneOrFail<InfoSource, "game" | "user">(
+        const infoSource = await em.findOneOrFail<InfoSource, 'game' | 'user'>(
             InfoSource,
             sourceId,
-            { populate: ["game", "user"] }
+            { populate: ['game', 'user'] }
         );
         const game = infoSource.game.getEntity();
         const user = infoSource.user.getEntity();
@@ -62,7 +62,7 @@ export class NotificationService {
                 type: NotificationType.ResolveError
             });
             if (existingNotification) {
-                scopedLogger.debug("Not adding notification because there is already another ResolveError notification for that game");
+                scopedLogger.debug('Not adding notification because there is already another ResolveError notification for that game');
                 return;
             }
 

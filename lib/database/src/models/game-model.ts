@@ -1,17 +1,25 @@
-import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, OneToMany, Property } from "@mikro-orm/core";
+import {
+    Collection,
+    Entity,
+    IdentifiedReference,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    Property,
+} from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { InfoSource } from "./info-source-model";
-import { Notification } from "./notification-model";
-import { Tag } from "./tag-model";
-import { User } from "./user-model";
+import { BaseEntity } from '../base-entity';
+import { InfoSource } from './info-source-model';
+import { Notification } from './notification-model';
+import { Tag } from './tag-model';
+import { User } from './user-model';
 
 @Entity()
 export class Game extends BaseEntity<Game> {
     @Property()
     public search!: string;
 
-    @Property({ type: "string", nullable: true })
+    @Property({ type: 'string', nullable: true })
     public name: string | null;
 
     @Property()
@@ -21,7 +29,7 @@ export class Game extends BaseEntity<Game> {
     public setupCompleted: boolean = false;
 
     @Property()
-    public description: string = "";
+    public description: string = '';
 
     @OneToMany(() => InfoSource, infoSource => infoSource.game)
     public infoSources = new Collection<InfoSource, Game>(this);

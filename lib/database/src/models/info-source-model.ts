@@ -1,10 +1,10 @@
-import { InfoSourceData, InfoSourceState, InfoSourceType } from "@game-watch/shared";
-import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from "@mikro-orm/core";
+import { InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { Game } from "./game-model";
-import { Notification } from "./notification-model";
-import { User } from "./user-model";
+import { BaseEntity } from '../base-entity';
+import { Game } from './game-model';
+import { Notification } from './notification-model';
+import { User } from './user-model';
 
 interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> {
     type: T
@@ -16,7 +16,7 @@ interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends 
 }
 
 @Entity()
-@Unique({ properties: ["type", "game"] })
+@Unique({ properties: ['type', 'game'] })
 export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
@@ -30,7 +30,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     @Property({ type: ArrayType })
     public excludedRemoteGameIds: string[] = [];
 
-    @Property({ columnType: "json", nullable: true })
+    @Property({ columnType: 'json', nullable: true })
     public data: InfoSourceData<T, S>;
 
     // This property is necessary because we reuse the info source model and the notification logic

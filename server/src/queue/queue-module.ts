@@ -1,11 +1,11 @@
-import { QueueType } from "@game-watch/queue";
-import { BullModule, getQueueToken } from "@nestjs/bullmq";
-import { Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import type { Queue } from "bullmq";
+import { QueueType } from '@game-watch/queue';
+import { BullModule, getQueueToken } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import type { Queue } from 'bullmq';
 
-import { Environment } from "../environment";
-import { QueueService } from "./queue-service";
+import { Environment } from '../environment';
+import { QueueService } from './queue-service';
 
 @Module({
     imports: [

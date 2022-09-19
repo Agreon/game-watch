@@ -1,9 +1,9 @@
-import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
-import { matchingName } from "../util/matching-name";
+import { matchingName } from '../util/matching-name';
 
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;
@@ -18,19 +18,19 @@ export class SteamSearcher implements InfoSearcher {
 
         const $ = cheerio.load(data);
 
-        const resultRow = $(".search_result_row");
+        const resultRow = $('.search_result_row');
         if (!resultRow.length) {
-            logger.debug("No search results found");
+            logger.debug('No search results found');
 
             return null;
         }
 
-        const gameId = resultRow.attr("data-ds-appid");
+        const gameId = resultRow.attr('data-ds-appid');
         if (!gameId) {
             return null;
         }
 
-        const fullName = ($(".search_result_row .title")[0].children[0] as any).data as string;
+        const fullName = ($('.search_result_row .title')[0].children[0] as any).data as string;
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);

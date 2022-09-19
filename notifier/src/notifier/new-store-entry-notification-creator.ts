@@ -1,8 +1,15 @@
-import { InfoSourceType, NotificationType, StoreInfoSource, StoreInfoSources } from "@game-watch/shared";
+import {
+    InfoSourceType,
+    NotificationType,
+    StoreInfoSource,
+    StoreInfoSources,
+} from '@game-watch/shared';
 
-import { NotificationCreator, NotificationCreatorContext } from "../notification-service";
+import { NotificationCreator, NotificationCreatorContext } from '../notification-service';
 
-export class NewStoreEntryNotificationCreator implements NotificationCreator<NotificationType.NewStoreEntry> {
+export class NewStoreEntryNotificationCreator
+    implements NotificationCreator<NotificationType.NewStoreEntry>
+{
     public readonly forNotificationType = NotificationType.NewStoreEntry;
     public readonly supportsInfoSourceTypes: InfoSourceType[] = StoreInfoSources;
 
@@ -11,11 +18,11 @@ export class NewStoreEntryNotificationCreator implements NotificationCreator<Not
     ) {
         const hasExistingData = !!existingGameData;
         if (hasExistingData) {
-            logger.debug({ context: { hasExistingData } }, "Not adding notification because");
+            logger.debug({ context: { hasExistingData } }, 'Not adding notification because');
             return null;
         }
 
-        logger.debug({ context: { hasExistingData } }, "Adding notification because");
+        logger.debug({ context: { hasExistingData } }, 'Adding notification because');
 
         return resolvedGameData;
     }

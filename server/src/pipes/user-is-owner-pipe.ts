@@ -1,8 +1,16 @@
-import { Game, User } from "@game-watch/database";
-import { EntityManager, IdentifiedReference } from "@mikro-orm/core";
-import { ArgumentMetadata, ForbiddenException, forwardRef, Inject, Injectable, Scope, UnauthorizedException } from "@nestjs/common";
-import { REQUEST } from "@nestjs/core";
-import { Request } from "express";
+import { Game, User } from '@game-watch/database';
+import { EntityManager, IdentifiedReference } from '@mikro-orm/core';
+import {
+    ArgumentMetadata,
+    ForbiddenException,
+    forwardRef,
+    Inject,
+    Injectable,
+    Scope,
+    UnauthorizedException,
+} from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserIsOwner {
@@ -14,7 +22,7 @@ export class UserIsOwner {
 
     public async transform(id: string, { metatype }: ArgumentMetadata): Promise<Game> {
         if (!metatype) {
-            throw new Error("No metatype found",);
+            throw new Error('No metatype found',);
         }
         const user = this.request.user as IdentifiedReference<User>;
         if (!user) {

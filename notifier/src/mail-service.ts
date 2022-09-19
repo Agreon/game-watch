@@ -1,9 +1,14 @@
-import { Notification, User } from "@game-watch/database";
-import { parseEnvironment } from "@game-watch/service";
-import { formatPrice, formatReleaseDate, NotificationData, NotificationType } from "@game-watch/shared";
+import { Notification, User } from '@game-watch/database';
+import { parseEnvironment } from '@game-watch/service';
+import {
+    formatPrice,
+    formatReleaseDate,
+    NotificationData,
+    NotificationType,
+} from '@game-watch/shared';
 import { MailService as SendgridMailClient } from '@sendgrid/mail';
 
-import { EnvironmentStructure } from "./environment";
+import { EnvironmentStructure } from './environment';
 
 const {
     API_URL,
@@ -18,7 +23,7 @@ export class MailService {
     public async sendNotificationMail(receiver: User, notification: Notification) {
         await this.sendgridClient.send({
             to: receiver.getEmailOrFail(),
-            from: "daniel@game-watch.agreon.de",
+            from: 'daniel@game-watch.agreon.de',
             subject: this.getMailSubject(notification),
             text: this.getMailText(receiver, notification)
         });

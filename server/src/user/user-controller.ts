@@ -1,17 +1,17 @@
-import { User } from "@game-watch/database";
-import { UpdateUserSettingsDto, UserDto } from "@game-watch/shared";
-import { EntityRepository } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Body, Controller, Get, HttpStatus, Put, Query, Res, UseGuards } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { Response } from "express";
-import { Environment } from "src/environment";
+import { User } from '@game-watch/database';
+import { UpdateUserSettingsDto, UserDto } from '@game-watch/shared';
+import { EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Body, Controller, Get, HttpStatus, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import { Environment } from 'src/environment';
 
-import { CurrentUser } from "../auth/current-user-decorator";
-import { JwtAccessTokenGuard } from "../auth/jwt-access-token-guard";
-import { UserService } from "./user-service";
+import { CurrentUser } from '../auth/current-user-decorator';
+import { JwtAccessTokenGuard } from '../auth/jwt-access-token-guard';
+import { UserService } from './user-service';
 
-@Controller("/user")
+@Controller('/user')
 export class UserController {
     public constructor(
         private readonly userService: UserService,
@@ -37,9 +37,9 @@ export class UserController {
         return await this.userService.updateUserSettings(userId, updateUserSettingsDto);
     }
 
-    @Get("/confirm")
+    @Get('/confirm')
     public async confirm(
-        @Query("token") token: string,
+        @Query('token') token: string,
         @Res() response: Response
     ) {
         if (!token) {
@@ -49,13 +49,13 @@ export class UserController {
 
         return response.redirect(
             HttpStatus.SEE_OTHER,
-            new URL("?mailConfirmed=true", this.configService.get("PUBLIC_URL")).toString()
+            new URL('?mailConfirmed=true', this.configService.get('PUBLIC_URL')).toString()
         );
     }
 
-    @Get("/unsubscribe")
+    @Get('/unsubscribe')
     public async unsubscribe(
-        @Query("id") userId: string,
+        @Query('id') userId: string,
         @Res() response: Response
     ) {
         if (!userId) {
@@ -65,7 +65,7 @@ export class UserController {
 
         return response.redirect(
             HttpStatus.SEE_OTHER,
-            new URL("?unsubscribed=true", this.configService.get("PUBLIC_URL")).toString()
+            new URL('?unsubscribed=true', this.configService.get('PUBLIC_URL')).toString()
         );
     }
 }

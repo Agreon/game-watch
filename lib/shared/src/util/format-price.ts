@@ -1,20 +1,20 @@
-import { Country } from "../types/country";
+import { Country } from '../types/country';
 
 const countryUnitMap: Record<Country, string> = {
-    "DE": "€",
-    "US": "$"
+    'DE': '€',
+    'US': '$'
 };
 
 export const formatPrice = ({ price, country }: { price?: number, country: Country }) => {
     if (price === undefined) {
-        return "TBA";
+        return 'TBA';
     }
 
     if (price === 0) {
-        return "Free";
+        return 'Free';
     }
 
-    if (countryUnitMap[country] === "$") {
+    if (countryUnitMap[country] === '$') {
         return `$${price}`;
     }
 

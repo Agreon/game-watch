@@ -1,12 +1,12 @@
-import { User } from "@game-watch/database";
-import { Country, RegisterUserDto, UserState } from "@game-watch/shared";
-import { EntityRepository } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { User } from '@game-watch/database';
+import { Country, RegisterUserDto, UserState } from '@game-watch/shared';
+import { EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
 
-import { Environment } from "../environment";
+import { Environment } from '../environment';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,13 @@ export class AuthService {
     }
 
     public async registerUser(
-        { id, username, password, email, enableEmailNotifications }: Omit<RegisterUserDto, "agreeToTermsOfService">
+        {
+            id,
+            username,
+            password,
+            email,
+            enableEmailNotifications,
+        }: Omit<RegisterUserDto, 'agreeToTermsOfService'>
     ): Promise<User> {
         const userToRegister = await this.userRepository.findOneOrFail(id);
 
@@ -42,7 +48,7 @@ export class AuthService {
     }
 
     public async validateUser(username: string, password: string): Promise<User | null> {
-        const user = await this.userRepository.findOne({ username }, { populate: ["password"] });
+        const user = await this.userRepository.findOne({ username }, { populate: ['password'] });
 
         if (!user?.password || await bcrypt.compare(password, user.password) === false) {
             return null;
@@ -54,6 +60,6 @@ export class AuthService {
     }
 
     private async hashPassword(password: string): Promise<string> {
-        return await bcrypt.hash(password, this.configService.get("BCRYPT_HASH_SALT_ROUNDS"));
+        return await bcrypt.hash(password, this.configService.get('BCRYPT_HASH_SALT_ROUNDS'));
     }
 }

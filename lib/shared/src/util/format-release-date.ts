@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const customParseFormat = require('dayjs/plugin/customParseFormat');
@@ -13,8 +13,8 @@ export const formatReleaseDate = ({ releaseDate, originalDate }: { releaseDate?:
     }
 
     if (releaseDate) {
-        return dayjs(releaseDate).format("DD MMM, YYYY");
+        return dayjs(releaseDate).format('DD MMM, YYYY');
     }
 
-    return "TBD";
+    return 'TBD';
 };

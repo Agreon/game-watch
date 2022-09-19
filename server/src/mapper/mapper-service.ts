@@ -1,5 +1,5 @@
-import { InfoSourceType } from "@game-watch/shared";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { InfoSourceType } from '@game-watch/shared';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 
 export interface UrlMapper {
@@ -14,7 +14,7 @@ export class MapperService {
     private readonly logger = new Logger(MapperService.name);
 
     public constructor(
-        @Inject("MAPPERS")
+        @Inject('MAPPERS')
         private readonly mappers: UrlMapper[]
     ) { }
 
