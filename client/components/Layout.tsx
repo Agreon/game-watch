@@ -1,4 +1,4 @@
-import { Flex, useColorModeValue } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from '@chakra-ui/react';
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
 
@@ -15,7 +15,10 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
         >
             <Head>
                 <title>GameWatch</title>
-                <meta name="description" content="Overview of game release dates, prices and news" />
+                <meta
+                    name="description"
+                    content="Overview of game release dates, prices and news"
+                />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header />
@@ -32,7 +35,7 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
                 <Flex
                     direction="column"
                     justifyContent="space-between"
-                    paddingX={[0, 0, "2rem"]}
+                    paddingX={[0, 0, '2rem']}
                     flex="1"
                 >
                     {children}

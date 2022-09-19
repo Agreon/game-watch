@@ -1,5 +1,13 @@
-import { DeleteIcon, DownloadIcon,SettingsIcon } from '@chakra-ui/icons';
-import { AlertDialogCloseButton,Button, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { DeleteIcon, DownloadIcon, SettingsIcon } from '@chakra-ui/icons';
+import {
+    AlertDialogCloseButton,
+    Button,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+} from '@chakra-ui/react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -7,8 +15,8 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-} from "@chakra-ui/react";
-import React, { useCallback, useRef, useState } from "react";
+} from '@chakra-ui/react';
+import React, { useCallback, useRef, useState } from 'react';
 
 export interface GameTileMenuProps {
     gameName: string
@@ -21,7 +29,12 @@ export interface GameTileMenuProps {
  * - TODO: Submit btn color
  * TODO: animated entry of button
  */
-const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, onDelete, highlight }) => {
+const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({
+    gameName,
+    onSync,
+    onDelete,
+    highlight,
+}) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const cancelRef = useRef(null);
 
@@ -52,7 +65,12 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
                             <Button onClick={() => setDeleteDialogOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button colorScheme="red" variant="solid" onClick={onDeleteSubmit} ml={3}>
+                            <Button
+                                colorScheme="red"
+                                variant="solid"
+                                onClick={onDeleteSubmit}
+                                ml={3}
+                            >
                                 Delete
                             </Button>
                         </AlertDialogFooter>
@@ -60,27 +78,27 @@ const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({ gameName, onSync, 
                 </AlertDialogOverlay>
             </AlertDialog>
             {highlight &&
-            <Menu>
-                <MenuButton
-                    as={IconButton}
-                    aria-label="Options"
-                    icon={<SettingsIcon />}
-                    variant="ghost"
-                    color="white"
-                    size="md"
-                    _focus={{
-                        boxShadow: "none"
-                    }}
-                />
-                <MenuList>
-                    <MenuItem icon={<DownloadIcon />} onClick={onSync}>
-                        Sync
-                    </MenuItem>
-                    <MenuItem icon={<DeleteIcon />} onClick={() => setDeleteDialogOpen(true)}>
-                        Delete
-                    </MenuItem>
-                </MenuList>
-            </Menu>
+                <Menu>
+                    <MenuButton
+                        as={IconButton}
+                        aria-label="Options"
+                        icon={<SettingsIcon />}
+                        variant="ghost"
+                        color="white"
+                        size="md"
+                        _focus={{
+                            boxShadow: 'none'
+                        }}
+                    />
+                    <MenuList>
+                        <MenuItem icon={<DownloadIcon />} onClick={onSync}>
+                            Sync
+                        </MenuItem>
+                        <MenuItem icon={<DeleteIcon />} onClick={() => setDeleteDialogOpen(true)}>
+                            Delete
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             }
         </>
     );

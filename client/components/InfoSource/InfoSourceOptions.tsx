@@ -14,11 +14,11 @@ import {
     MenuButton,
     MenuItem,
     MenuList
-} from "@chakra-ui/react";
-import { useCallback, useRef, useState } from "react";
+} from '@chakra-ui/react';
+import { useCallback, useRef, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { useGameContext } from '../../providers/GameProvider';
+import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
 
 export const InfoSourceOptions: React.FC = () => {
     const { loading, game } = useGameContext();
@@ -63,10 +63,20 @@ export const InfoSourceOptions: React.FC = () => {
                                 </Button>
                             </Box>
                             <Box>
-                                <Button colorScheme="red" variant="solid" onClick={onDisableInfoSource} ml={3}>
+                                <Button
+                                    colorScheme="red"
+                                    variant="solid"
+                                    onClick={onDisableInfoSource}
+                                    ml={3}
+                                >
                                     Remove
                                 </Button>
-                                <Button colorScheme="teal" variant="solid" onClick={onKeepSearching} ml={3}>
+                                <Button
+                                    colorScheme="teal"
+                                    variant="solid"
+                                    onClick={onKeepSearching}
+                                    ml={3}
+                                >
                                     Keep Searching
                                 </Button>
                             </Box>

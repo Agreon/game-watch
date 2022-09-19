@@ -1,14 +1,14 @@
-import { Box, Flex, SkeletonText, Text, useColorModeValue } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Box, Flex, SkeletonText, Text, useColorModeValue } from '@chakra-ui/react';
+import React, { useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { InfoSourceProvider } from "../../providers/InfoSourceProvider";
-import { GameTags } from "../GameTags/GameTags";
-import { InfoSource } from "../InfoSource/InfoSource";
-import { AddInfoSource } from "./AddInfoSource";
-import { GameName } from "./GameName";
+import { useGameContext } from '../../providers/GameProvider';
+import { InfoSourceProvider } from '../../providers/InfoSourceProvider';
+import { GameTags } from '../GameTags/GameTags';
+import { InfoSource } from '../InfoSource/InfoSource';
+import { AddInfoSource } from './AddInfoSource';
+import { GameName } from './GameName';
 import { GameThumbnail } from './GameThumbnail';
-import { GameTileMenu } from "./GameTileMenu";
+import { GameTileMenu } from './GameTileMenu';
 
 const GameTileComponent: React.FC = () => {
     const {
@@ -28,8 +28,8 @@ const GameTileComponent: React.FC = () => {
             id={game.id}
             position="relative"
             marginY="1rem"
-            minWidth={["100%", "28rem"]}
-            maxWidth={["100vw", "28rem"]}
+            minWidth={['100%', '28rem']}
+            maxWidth={['100vw', '28rem']}
             overflow="hidden"
             bg={useColorModeValue('white', 'gray.800')}
             borderWidth="1px"
@@ -37,7 +37,7 @@ const GameTileComponent: React.FC = () => {
             shadow="lg"
             boxShadow="xl"
             _hover={{
-                borderColor: useColorModeValue("grey", "white")
+                borderColor: useColorModeValue('grey', 'white')
             }}
             transition="border-color 0.15s ease"
             onMouseOver={() => setHighlightMenu(true)}
@@ -55,7 +55,7 @@ const GameTileComponent: React.FC = () => {
             }
             <Flex direction="column">
                 <GameThumbnail />
-                <Box paddingX={["0.3rem", "0.3rem", "1rem"]} pt="0.5rem" pb="1rem">
+                <Box paddingX={['0.3rem', '0.3rem', '1rem']} pt="0.5rem" pb="1rem">
                     <GameName disableEdit={loading || game.syncing} />
                     {!activeInfoSources.length && (
                         game.syncing ? (<SkeletonText mt="1rem" />) : (

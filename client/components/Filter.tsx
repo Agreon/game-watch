@@ -11,8 +11,8 @@ import {
     ModalOverlay,
     Text,
     useDisclosure,
-} from "@chakra-ui/react";
-import { Tag as ChakraTag } from "@chakra-ui/react";
+} from '@chakra-ui/react';
+import { Tag as ChakraTag } from '@chakra-ui/react';
 import { InfoSourceType, SupportedCountries, TagDto } from '@game-watch/shared';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -81,8 +81,8 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             <ChakraTag
                                 key={tag.id}
                                 onClick={() => toggleTag(tag)}
-                                variant={tag.toggled ? "subtle" : "outline"}
-                                colorScheme={tag.toggled ? tag.color : "whiteAlpha"}
+                                variant={tag.toggled ? 'subtle' : 'outline'}
+                                colorScheme={tag.toggled ? tag.color : 'whiteAlpha'}
                                 cursor="pointer"
                                 mx="0.5rem"
                                 my="0.25rem"
@@ -111,11 +111,11 @@ export const Filter: React.FC = () => {
         <Flex align="center" height="100%">
             <Button
                 leftIcon={<EditIcon />}
-                colorScheme={filterActive ? "teal" : undefined}
-                variant={filterActive ? "outline" : "ghost"}
+                colorScheme={filterActive ? 'teal' : undefined}
+                variant={filterActive ? 'outline' : 'ghost'}
                 onClick={onOpen}
             >
-                <Text display={["none", "none", "block"]}>Filter</Text>
+                <Text display={['none', 'none', 'block']}>Filter</Text>
             </Button>
             <Modal
                 size="xl"

@@ -13,14 +13,14 @@ import {
     ModalOverlay,
     Select,
     useDisclosure,
-} from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
-import React, { useRef, useState } from "react";
+} from '@chakra-ui/react';
+import { InfoSourceType } from '@game-watch/shared';
+import React, { useRef, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useUserContext } from "../../providers/UserProvider";
-import { useAction } from "../../util/useAction";
-import { PlaceholderMap } from "../AddGameModal";
+import { useGameContext } from '../../providers/GameProvider';
+import { useUserContext } from '../../providers/UserProvider';
+import { useAction } from '../../util/useAction';
+import { PlaceholderMap } from '../AddGameModal';
 
 export const AddInfoSource: React.FC = () => {
     const { user: { interestedInSources } } = useUserContext();
@@ -32,15 +32,15 @@ export const AddInfoSource: React.FC = () => {
         type => activeInfoSources.find(source => source.type === type) === undefined
     );
 
-    const [type, setType] = useState(availableInfoSources[0] ?? "");
-    const [url, setUrl] = useState("");
+    const [type, setType] = useState(availableInfoSources[0] ?? '');
+    const [url, setUrl] = useState('');
 
     const initialRef = useRef(null);
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
         onSuccess: () => {
             onClose();
-            setUrl("");
+            setUrl('');
         }
     });
 

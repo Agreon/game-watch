@@ -10,15 +10,15 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import { UserState } from "@game-watch/shared";
+import { UserState } from '@game-watch/shared';
 import Image from 'next/image';
-import React from "react";
+import React from 'react';
 
 import githubIconDark from '../assets/github-icon-dark.png';
 import githubIconLight from '../assets/github-icon-light.png';
 import { useNotificationContext } from '../providers/NotificationProvider';
-import { useUserContext } from "../providers/UserProvider";
-import { AuthModal } from "./Auth/AuthModal";
+import { useUserContext } from '../providers/UserProvider';
+import { AuthModal } from './Auth/AuthModal';
 import { ConfigureUserSettingsModal } from './UserSettings/ConfigureUserSettingsModal';
 
 export default function Header() {
@@ -43,7 +43,7 @@ export default function Header() {
 
     return (
         <Flex
-            justify={["space-between", "space-between", "space-between", "center"]}
+            justify={['space-between', 'space-between', 'space-between', 'center']}
             align="center"
             position="absolute"
             bg={useColorModeValue('white', 'gray.800')}
@@ -52,7 +52,7 @@ export default function Header() {
             boxShadow="lg"
             zIndex="1"
         >
-            <Text fontSize="2xl">{useBreakpointValue(["GW", "GameWatch"])}</Text>
+            <Text fontSize="2xl">{useBreakpointValue(['GW', 'GameWatch'])}</Text>
             <Flex
                 align="center"
                 position="absolute"
@@ -76,7 +76,7 @@ export default function Header() {
                         </Button>
                     </Box>
                     : <Flex align="center" mr="0.5rem">
-                        <Text display={["none", "none", "block"]}>Hey {user.username}!</Text>
+                        <Text display={['none', 'none', 'block']}>Hey {user.username}!</Text>
                         <Button
                             ml="1rem"
                             aria-label="logout"
@@ -97,7 +97,7 @@ export default function Header() {
                             onClick={openSettingsModal}
                             variant="ghost"
                             _focus={{
-                                boxShadow: "none"
+                                boxShadow: 'none'
                             }}
                         />
                         <ConfigureUserSettingsModal
@@ -114,7 +114,7 @@ export default function Header() {
                         onClick={toggleNotificationSidebar}
                         variant="ghost"
                         _focus={{
-                            boxShadow: "none"
+                            boxShadow: 'none'
                         }}
                     />
                     {notifications.length > 0 &&
@@ -142,7 +142,7 @@ export default function Header() {
                         rel="noopener noreferrer"
                     >
                         <Image
-                            src={colorMode === "light" ? githubIconDark : githubIconLight}
+                            src={colorMode === 'light' ? githubIconDark : githubIconLight}
                             alt="Github"
                             width={32}
                             height={32}
