@@ -83,6 +83,5 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: ['DE'] as const,
-    // At least the US store is built completely different
-    [InfoSourceType.Switch]: ['DE'] as const,
+    [InfoSourceType.Switch]: ['DE', 'US'] as const,
 } as const;

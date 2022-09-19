@@ -30,7 +30,8 @@ export class MapperService {
                         url,
                         type
                     }
-                }
+                },
+                level: 'warning'
             });
             this.logger.warn(`[${type}]: ${error}`);
             throw new UrlNotMappableError();

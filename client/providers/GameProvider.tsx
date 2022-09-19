@@ -1,8 +1,8 @@
-import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceState, InfoSourceType, TagDto } from "@game-watch/shared";
-import { AxiosResponse } from "axios";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceState, InfoSourceType, TagDto } from '@game-watch/shared';
+import { AxiosResponse } from 'axios';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useHttp } from "../util/useHttp";
+import { useHttp } from '../util/useHttp';
 
 export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.PsStore,
@@ -20,17 +20,17 @@ const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string):
         const valueForKey = (infoSource.data as any)[key] as string | undefined;
 
         if (valueForKey) {
-            if (infoSource.type === "psStore" && key === "thumbnailUrl") {
+            if (infoSource.type === 'psStore' && key === 'thumbnailUrl') {
                 const url = new URL(valueForKey);
-                url.searchParams.delete("w");
-                url.searchParams.append("w", "460");
+                url.searchParams.delete('w');
+                url.searchParams.append('w', '460');
                 return url.toString();
             }
 
-            if (infoSource.type === "epic" && key === "thumbnailUrl") {
+            if (infoSource.type === 'epic' && key === 'thumbnailUrl') {
                 const url = new URL(valueForKey);
-                url.searchParams.delete("h");
-                url.searchParams.append("h", "215");
+                url.searchParams.delete('h');
+                url.searchParams.append('h', '215');
                 return url.toString();
             }
 
@@ -65,7 +65,7 @@ export const GameContext = React.createContext<GameCtx | undefined>(undefined);
 export function useGameContext() {
     const context = useContext(GameContext);
     if (!context) {
-        throw new Error("GameContext must be used inside GameProvider");
+        throw new Error('GameContext must be used inside GameProvider');
     }
     return context;
 }
@@ -125,7 +125,7 @@ export const GameProvider: React.FC<{
                     name: oldGameName
                 }));
                 handleError(error, {
-                    description: "Could not change the name. Please try again.",
+                    description: 'Could not change the name. Please try again.',
                 });
             }
         );
@@ -190,7 +190,7 @@ export const GameProvider: React.FC<{
                     tags: oldGameTags
                 }));
                 handleError(error, {
-                    description: "Could not add tag. Please try again.",
+                    description: 'Could not add tag. Please try again.',
                 });
             }
         );
@@ -212,7 +212,7 @@ export const GameProvider: React.FC<{
                     tags: oldGameTags
                 }));
                 handleError(error, {
-                    description: "Could not remove tag. Please try again.",
+                    description: 'Could not remove tag. Please try again.',
                 });
             }
         );
@@ -230,7 +230,7 @@ export const GameProvider: React.FC<{
         }, error => {
             if (error.response?.status === 400) {
                 return handleError(error, {
-                    description: "Could not extract the game id. Make sure to pass the complete url.",
+                    description: 'Could not extract the game id. Make sure to pass the complete url.',
                 });
             }
             handleError(error);
@@ -254,7 +254,7 @@ export const GameProvider: React.FC<{
     );
 
     const thumbnailUrl = useMemo(
-        () => retrieveDataFromInfoSources(activeInfoSources, "thumbnailUrl"),
+        () => retrieveDataFromInfoSources(activeInfoSources, 'thumbnailUrl'),
         [activeInfoSources]
     );
 

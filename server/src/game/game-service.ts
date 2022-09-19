@@ -4,7 +4,7 @@ import { InfoSourceState } from '@game-watch/shared';
 import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { QueueService } from '../queue/queue-service';
 
@@ -12,8 +12,6 @@ import { QueueService } from '../queue/queue-service';
 export class GameService {
     public constructor(
         private readonly queueService: QueueService,
-        @InjectRepository(User)
-        private readonly userRepository: EntityRepository<User>,
         @InjectRepository(Game)
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
@@ -22,17 +20,8 @@ export class GameService {
         private readonly notificationRepository: EntityRepository<Notification>,
     ) { }
 
-    public async createGame(search: string, userRef: IdentifiedReference<User>) {
-        const user = await this.userRepository.findOneOrFail(userRef);
-
-        const existingGame = await this.gameRepository.findOne(
-            { search, setupCompleted: true, user }
-        );
-        if (existingGame !== null) {
-            throw new ConflictException();
-        }
-
-        const game = new Game({ search, user: userRef });
+    public async createGame(search: string, user: IdentifiedReference<User>) {
+        const game = new Game({ search, user });
 
         await this.gameRepository.persistAndFlush(game);
 

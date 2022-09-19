@@ -57,27 +57,25 @@ export class SwitchSearcher implements InfoSearcher {
             };
         }
 
-        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
-            await browser.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
+        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
+            await page.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
 
-            // TODO: No result count... "didn't return any results" .ResultsForstyles__StyledText-sc-17gvq2y-1 JubOL
-
-            await browser.waitForSelector('.result-count');
-
-            const resultCount = await browser.$eval('.result-count', el => el.innerHTML);
-            if (resultCount.includes('0 results')) {
+            const raceResult = await Promise.race([
+                page.waitForXPath('//a[contains(@href,"nintendo.com/store/products/")]'),
+                (async () => {
+                    await page.waitForXPath('//h1[contains(text(),"return any results")]');
+                    return null;
+                })()
+            ]);
+            if (!raceResult) {
                 logger.debug('No results found');
 
                 return null;
             }
 
-            /**
-             * <div class="BasicTilestyles__TileUpper-sc-sh8sf3-1 fBdUCk"><div class="BasicTilestyles__Flag-sc-sh8sf3-6 cfRPNH">Pre-order now</div><div class="BasicTilestyles__ImageFrame-sc-sh8sf3-10 krmGJS"><div class="KeyArtstyles__StyledFrame-sc-1u4ptmi-0 biyUsE"><div class="Imagestyles__ImageWrapper-sc-1oi2gnz-0 hJIeuB"><img role="presentation" alt="" class="Imagestyles__CloudinaryImage-sc-1oi2gnz-1 hFNlYD" src="https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_auto/c_scale,w_300/v1/ncom/en_US/games/switch/m/mario-strikers-battle-league-switch/hero"></div></div></div></div><div class="BasicTilestyles__TileLower-sc-sh8sf3-2 kvtdMj"><div class="BasicTilestyles__Info-sc-sh8sf3-7 eTYVYV"><div class="BasicTilestyles__TitleWrapper-sc-sh8sf3-13 fhSNtP"><h3 class="BasicTilestyles__Title-sc-sh8sf3-11 ka-dMDt">Mario Strikers™: Battle League</h3></div><div><div class="ProductTilestyles__PriceWrapper-sc-n2s21r-3 hYQUDk"><div class="Pricestyles__Price-sc-afjfk5-0 ixmoXq"><div class="Pricestyles__PriceWrapper-sc-afjfk5-8 eieoUb"><span class="Pricestyles__MSRP-sc-afjfk5-10 ffFFNE"><span class="ScreenReaderOnlystyles__StyledReaderText-sc-jiymtq-0 jhBEVo">Regular Price:</span>$59.99</span></div></div></div><div class="BasicTilestyles__Row-sc-sh8sf3-12 dbOzbk"><div class="PlatformLabelstyles__StyledPlatform-sc-1cn94zq-0 gdPjDq"><span>Nintendo Switch</span></div></div></div></div></div>
-             */
-
-            const gameLink = await browser.$eval('game-tile', el => el.getAttribute('href'));
+            const url = await (await raceResult.getProperty('href')).jsonValue() as string;
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const fullName = await browser.$eval('game-tile > h3', el => el.textContent!.trim());
+            const fullName = await raceResult.$eval('h3', el => el.textContent!.trim());
 
             if (!matchingName(fullName, search)) {
                 logger.debug(
@@ -86,8 +84,6 @@ export class SwitchSearcher implements InfoSearcher {
 
                 return null;
             }
-
-            const url = `https://nintendo.com${gameLink}`;
 
             return {
                 id: url,

@@ -1,5 +1,4 @@
-import { withBrowser } from '@game-watch/browser';
-import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
@@ -14,6 +13,25 @@ const extract = (content: string, regex: RegExp) => {
     return result ? result[0] : undefined;
 };
 
+interface SwitchUSGraphqlPriceResponse {
+    minimum: {
+        finalPrice: number;
+    },
+    maximum: {
+        finalPrice: number;
+    } | null
+}
+
+interface SwitchUsGraphqlResponse {
+    name: string;
+    productType: string;
+    prices: SwitchUSGraphqlPriceResponse;
+    productImage: {
+        publicId: string;
+    }
+    releaseDate: string;
+}
+
 export class SwitchResolver implements InfoResolver {
     public type = InfoSourceType.Switch;
 
@@ -21,40 +39,43 @@ export class SwitchResolver implements InfoResolver {
 
     public async resolve({ userCountry, source }: InfoResolverContext): Promise<SwitchGameData> {
         if (userCountry === 'US') {
-            return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
-                await page.goto(source.data.id);
-                await page.waitForSelector('.release-date > dd');
+            const urlParts = source.data.id.split('/');
+            const slug = urlParts[urlParts.length - 2];
 
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const fullName = await page.$eval('.game-title', (el) => el.textContent!.trim());
+            const { data: { data } } = await this.axios.get(
+                'https://graph.nintendo.com',
+                {
+                    params: {
+                        operationName: 'ProductDetail',
+                        variables: {
+                            slug,
+                            locale: 'en_US'
+                        },
+                        extensions: {
+                            'persistedQuery': {
+                                'version': 1,
+                                'sha256Hash': 'bfa2734b3ac921de5a7297bbd70fdd10492a1b072cb4b6bc6b9cc91d3a366fbc'
+                            }
+                        }
+                    }
+                }
+            );
 
-                const thumbnailUrl = await page.evaluate(
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    () => document.querySelector('.hero-illustration > img')!.getAttribute('src')!
-                );
+            const product = (data.products as SwitchUsGraphqlResponse[]).find(
+                ({ productType }) => productType === 'SIMPLE'
+            );
 
-                const originalPrice = await page.evaluate(
-                    () => document.querySelector('.price > .msrp')?.textContent?.trim()
-                );
-                const price = await page.evaluate(
-                    () => document.querySelector('.price > .sale-price')?.textContent?.trim()
-                );
-
-                const releaseDate = await page.$eval(
-                    '.release-date > dd',
-                    (el) => el.textContent?.trim()
-                );
-
+            if (product) {
                 return {
-                    ...source.data,
-                    fullName,
-                    thumbnailUrl,
-                    releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
-                    originalReleaseDate: releaseDate,
-                    priceInformation: this.getPriceInformationForUsStore({ price, originalPrice }),
+                    id: source.data.id,
+                    url: source.data.url,
+                    fullName: product.name,
+                    thumbnailUrl: `https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.2/c_scale,w_400/${product.productImage.publicId}`,
+                    releaseDate: parseDate(product.releaseDate),
+                    originalReleaseDate: product.releaseDate,
+                    priceInformation: this.getPriceInformationForUsStore(product.prices),
                 };
-
-            });
+            }
         }
         const { data } = await this.axios.get<string>(source.data.id);
         const $ = cheerio.load(data);
@@ -104,16 +125,15 @@ export class SwitchResolver implements InfoResolver {
         };
     }
 
-    // TODO: Free games?
     private getPriceInformationForUsStore(
-        { price, originalPrice }: Record<string, any>
+        { minimum, maximum }: SwitchUSGraphqlPriceResponse
     ): StorePriceInformation | undefined {
-        const initial = parseCurrencyValue(originalPrice || price);
-        const final = parseCurrencyValue(price);
-
-        if (!initial || !final) {
+        if (minimum === null) {
             return undefined;
         }
+
+        const initial = maximum?.finalPrice || minimum.finalPrice;
+        const final = minimum.finalPrice;
 
         return {
             initial,
