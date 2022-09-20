@@ -57,17 +57,16 @@ const GameTileComponent: React.FC = () => {
                 <GameThumbnail />
                 <Box paddingX={['0.3rem', '0.3rem', '1rem']} pt="0.5rem" pb="1rem">
                     <GameName disableEdit={loading || game.syncing} />
-                    {!activeInfoSources.length && (
-                        game.syncing ? (<SkeletonText mt="1rem" />) : (
-                            <>
+                    {activeInfoSources.length === 0 && (
+                        game.syncing
+                            ? <SkeletonText mt="1rem" />
+                            : (
                                 <Text size="xl" textAlign="center" my="1rem">
                                     No sources found :C
                                 </Text>
-                                <AddInfoSource />
-                            </>
-                        )
+                            )
                     )}
-                    {activeInfoSources.length && (
+                    {activeInfoSources.length !== 0 && (
                         <>
                             <GameTags />
                             <Box>
