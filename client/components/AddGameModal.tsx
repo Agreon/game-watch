@@ -97,19 +97,18 @@ const AddSource: React.FC = () => {
 };
 
 const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
-    const { game, activeInfoSources } = useGameContext();
-    const [name, setName] = useState(
-        activeInfoSources.filter(source => !!source.data.fullName)[0]?.data.fullName ?? game.search
-    );
+    const { activeInfoSources } = useGameContext();
+    const [name, setName] = useState<string | null>(null);
+    const activeSourceName = activeInfoSources[0]?.data.fullName;
 
-    useEffect(() => onChange(name), [onChange, name]);
+    useEffect(() => onChange(name || activeSourceName), [onChange, name, activeSourceName]);
 
     return (
         <Flex direction={['column', 'row']} mt="3rem" align={['start', 'center']}>
             <Text fontSize="xl" mb={['0.5rem', 0]}>Suggested Name</Text>
             <FormControl flex="1" ml={[0, '1rem']}>
                 <Input
-                    value={name}
+                    value={name || activeSourceName}
                     onChange={event => setName(event.target.value)}
                 />
             </FormControl>
