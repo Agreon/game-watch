@@ -1,4 +1,11 @@
-import { CreateInfoSourceDto, GameDto, InfoSourceDto, InfoSourceState, InfoSourceType, TagDto } from '@game-watch/shared';
+import {
+    CreateInfoSourceDto,
+    GameDto,
+    InfoSourceDto,
+    InfoSourceState,
+    InfoSourceType,
+    TagDto,
+} from '@game-watch/shared';
 import { AxiosResponse } from 'axios';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -8,7 +15,7 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.PsStore,
     InfoSourceType.Steam,
     InfoSourceType.Switch,
-    InfoSourceType.Epic,
+    // InfoSourceType.Epic,
     InfoSourceType.Metacritic,
 ];
 
@@ -149,14 +156,19 @@ export const GameProvider: React.FC<{
 
     const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
-            curr.infoSources = [...curr.infoSources.filter(({ id }) => newInfoSource.id !== id), newInfoSource];
+            curr.infoSources = [
+                ...curr.infoSources.filter(({ id }) => newInfoSource.id !== id),
+                newInfoSource
+            ];
             return curr;
         });
     }, [setGame, game.id]);
 
     const updateGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
-            const filteredInfoSources = curr.infoSources.filter(({ id }) => newInfoSource.id !== id);
+            const filteredInfoSources = curr.infoSources.filter(
+                ({ id }) => newInfoSource.id !== id
+            );
             // Make sure sources disabled in the mean time are not re-added
             if (filteredInfoSources.length === curr.infoSources.length) {
                 return curr;
