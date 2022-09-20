@@ -91,7 +91,7 @@ export class PsStoreResolver implements InfoResolver {
                 priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
                 releaseDate: userCountry === 'DE'
                     ? parseDate(releaseDate, ['D.M.YYYY'])
-                    : parseDate(releaseDate, ['MM/DD/YYYY']),
+                    : parseDate(releaseDate, ['M/DD/YYYY']),
                 originalReleaseDate: releaseDate
             };
         });
