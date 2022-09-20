@@ -1,6 +1,7 @@
 import { InfoSource, mikroOrmConfig } from "@game-watch/database";
 import { createQueue, QueueType } from "@game-watch/queue";
 import { parseEnvironment } from "@game-watch/service";
+import { InfoSourceState } from "@game-watch/shared";
 import { MikroORM } from "@mikro-orm/core";
 
 import { EnvironmentStructure } from "../src/environment";
@@ -22,7 +23,7 @@ const main = async () => {
 
         console.log("Removed old cron for", infoSource.id);
 
-        if(infoSource.disabled || !infoSource.remoteGameId){
+        if (infoSource.state !== InfoSourceState.Found) {
             continue;
         }
 

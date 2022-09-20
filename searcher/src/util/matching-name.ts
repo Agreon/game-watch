@@ -1,20 +1,20 @@
 const IGNORED_TOKENS = [
-    "a",
-    "the",
-    "of"
+    'a',
+    'the',
+    'of'
 ];
 
 export const matchingName = (name: string, search: string) => {
     const nameTokens = name
-        .replace(/:|™|®|-/g, "")
+        .replace(/:|™|®|-/g, '')
         .toLowerCase()
-        .split(" ")
+        .split(' ')
         .filter(value => !!value);
 
     const searchTokens = search
-        .replace(/\d/, "")
+        .replace(/\d/, '')
         .toLowerCase()
-        .split(" ")
+        .split(' ')
         .filter(value => !!value);
 
     return searchTokens.some(searchToken =>

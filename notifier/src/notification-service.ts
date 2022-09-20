@@ -1,9 +1,9 @@
-import { Game, InfoSource, Notification, User } from "@game-watch/database";
-import { Logger } from "@game-watch/service";
-import { GameData, InfoSourceType, NotificationData, NotificationType } from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
+import { Game, InfoSource, Notification, User } from '@game-watch/database';
+import { Logger } from '@game-watch/service';
+import { GameData, InfoSourceType, NotificationData, NotificationType } from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
 
-import { MailService } from "./mail-service";
+import { MailService } from './mail-service';
 
 export interface CreateNotificationsParams<T extends InfoSourceType = InfoSourceType> {
     sourceId: string
@@ -31,7 +31,9 @@ export interface NotificationCreatorContext<T extends InfoSourceType = InfoSourc
 export interface NotificationCreator<T extends NotificationType> {
     forNotificationType: NotificationType;
     supportsInfoSourceTypes: InfoSourceType[];
-    createNotification: (context: NotificationCreatorContext) => Promise<NotificationData[T] | null>;
+    createNotification: (
+        context: NotificationCreatorContext
+    ) => Promise<NotificationData[T] | null>;
 }
 
 export class NotificationService {
@@ -44,23 +46,23 @@ export class NotificationService {
     public async createNotifications(
         { sourceId, existingGameData, resolvedGameData, em }: CreateNotificationsParams
     ) {
-        const infoSource = await em.findOneOrFail<InfoSource, "game" | "user">(
+        const infoSource = await em.findOneOrFail<InfoSource, 'game' | 'user'>(
             InfoSource,
             sourceId,
-            { populate: ["game", "user"] }
+            { populate: ['game', 'user'] }
         );
         const game = infoSource.game.getEntity();
         const user = infoSource.user.getEntity();
 
         const scopedLogger = this.logger.child({ sourceId, gameId: game.id, userId: user.id });
 
-        if(resolvedGameData === null){
+        if (resolvedGameData === null) {
             const existingNotification = await em.findOne(Notification, {
                 infoSource,
                 type: NotificationType.ResolveError
             });
             if (existingNotification) {
-                scopedLogger.debug("Not adding notification because there is already another ResolveError notification for that game");
+                scopedLogger.debug('Not adding notification because there is already another ResolveError notification for that game');
                 return;
             }
 
@@ -127,7 +129,7 @@ export class NotificationService {
         await em.transactional(async transactionEm => {
             await transactionEm.nativeInsert(notification);
 
-            if (user.enableEmailNotifications) {
+            if (user.enableEmailNotifications && user.emailConfirmed) {
                 logger.info(`Sending notifications to ${user.email}`);
 
                 await this.mailService.sendNotificationMail(user, notification);

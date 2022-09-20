@@ -15,11 +15,11 @@ export const createLogger = (name: string) =>
             options: {
                 colorize: true,
                 singleLine: true,
-                translateTime: "yyyy-mm-dd HH:MM:ss.l",
+                translateTime: 'yyyy-mm-dd HH:MM:ss.l',
                 ignore: 'pid,hostname',
             }
         } : undefined,
-        level: "debug",
+        level: 'debug',
         formatters: {
             level: (label) => ({ level: label }),
         },

@@ -1,8 +1,8 @@
-import { AddIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, Flex, IconButton, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
+import React, { useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
+import { useGameContext } from '../../providers/GameProvider';
 
 export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
     const { tags, loading, game } = useGameContext();
@@ -31,12 +31,17 @@ export const GameTagList: React.FC<{ onEdit: () => void }> = ({ onEdit }) => {
             {!loading && !game.syncing &&
                 <Flex align="center" position="absolute" right="0" top="0" height="100%">
                     {tags.length === 0 ? (
-                    <Tag onClick={onEdit} colorScheme="teal" cursor="pointer">
+                        <Tag onClick={onEdit} colorScheme="teal" cursor="pointer">
                             <TagLeftIcon boxSize="12px" as={AddIcon} />
                             <TagLabel>Add Tags</TagLabel>
-                    </Tag>
+                        </Tag>
                     ) : (
-                        showEdit && <IconButton aria-label="edit" size="sm" icon={<EditIcon />} onClick={onEdit} />
+                        showEdit && <IconButton
+                            aria-label="edit"
+                            size="sm"
+                            icon={<EditIcon />}
+                            onClick={onEdit}
+                        />
                     )}
                 </Flex>
             }

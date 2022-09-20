@@ -1,9 +1,9 @@
-import { withBrowser } from "@game-watch/browser";
-import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
+import { withBrowser } from '@game-watch/browser';
+import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
+import { InfoSourceType } from '@game-watch/shared';
 
-import { InfoSearcher, InfoSearcherContext } from "../search-service";
-import { matchingName } from "../util/matching-name";
+import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { matchingName } from '../util/matching-name';
 
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
@@ -14,7 +14,7 @@ export class PsStoreSearcher implements InfoSearcher {
 
             const raceResult = await Promise.race([
                 (async () => {
-                    await page.waitForSelector(".search-results");
+                    await page.waitForSelector('.search-results');
                     return 0;
                 })(),
                 (async () => {
@@ -27,9 +27,9 @@ export class PsStoreSearcher implements InfoSearcher {
             }
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const gameLink = await page.$eval(".search-results__tile", el => el.getAttribute("href")!);
+            const gameLink = await page.$eval('.search-results__tile', el => el.getAttribute('href')!);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const fullName = await page.$eval(".search-results__tile__content-title", el => el.textContent!.trim());
+            const fullName = await page.$eval('.search-results__tile__content-title', el => el.textContent!.trim());
 
             if (!matchingName(fullName, search)) {
                 logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);

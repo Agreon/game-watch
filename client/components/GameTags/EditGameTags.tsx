@@ -1,10 +1,10 @@
-import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { Box, Flex, IconButton, Tag as ChakraTag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
-import { TagDto } from "@game-watch/shared";
-import React, { useCallback, useMemo } from "react";
+import { AddIcon, CheckIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Tag as ChakraTag, TagLabel, TagLeftIcon } from '@chakra-ui/react';
+import { TagDto } from '@game-watch/shared';
+import React, { useCallback, useMemo } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useTagContext } from "../../providers/TagProvider";
+import { useGameContext } from '../../providers/GameProvider';
+import { useTagContext } from '../../providers/TagProvider';
 
 export interface TagWithToggleState extends TagDto {
     toggled: boolean
@@ -53,8 +53,8 @@ export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel })
                     <ChakraTag
                         key={tag.id}
                         onClick={() => toggleTag(tag)}
-                        variant={tag.toggled ? "subtle" : "outline"}
-                        colorScheme={tag.toggled ? tag.color : "whiteAlpha"}
+                        variant={tag.toggled ? 'subtle' : 'outline'}
+                        colorScheme={tag.toggled ? tag.color : 'whiteAlpha'}
                         cursor="pointer"
                         ml="0.5rem"
                         mt="0.5rem"

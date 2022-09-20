@@ -1,13 +1,15 @@
-import { Logger } from "@game-watch/service";
-import { Country, GameDataU, InfoSourceType } from "@game-watch/shared";
+import { InfoSource } from '@game-watch/database';
+import { Logger } from '@game-watch/service';
+import { Country, GameDataU, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import * as Sentry from '@sentry/node';
-import axios from "axios";
-import { Redis } from "ioredis";
-import pRetry from "p-retry";
+import axios from 'axios';
+import { Redis } from 'ioredis';
+import pRetry from 'p-retry';
 
 export interface InfoResolverContext {
     logger: Logger
     userCountry: Country
+    source: InfoSource<InfoSourceType, InfoSourceState.Found>
 }
 
 export interface ResolveServiceContext extends InfoResolverContext {
@@ -17,7 +19,7 @@ export interface ResolveServiceContext extends InfoResolverContext {
 
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType
-    resolve: (id: string, context: InfoResolverContext) => Promise<T>
+    resolve: (context: InfoResolverContext) => Promise<T>
 }
 
 const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
@@ -41,11 +43,8 @@ export class ResolveService {
         private readonly cachingEnabled: boolean
     ) { }
 
-    public async resolveGameInformation(
-        id: string,
-        type: InfoSourceType,
-        context: ResolveServiceContext
-    ): Promise<GameDataU | null> {
+    public async resolveGameInformation(context: ResolveServiceContext): Promise<GameDataU | null> {
+        const { type, data: { id } } = context.source;
         const logger = context.logger.child({ serviceName: ResolveService.name, type, id });
 
         const resolverForType = this.resolvers.find(resolver => resolver.type == type);
@@ -67,9 +66,9 @@ export class ResolveService {
                     }
                 }
 
-                const resolvedData = await resolverForType.resolve(id, { ...context, logger });
+                const resolvedData = await resolverForType.resolve({ ...context, logger });
                 if (this.cachingEnabled) {
-                    await this.redis.set(cacheKey, JSON.stringify(resolvedData), "EX", 60 * 60 * 23);
+                    await this.redis.set(cacheKey, JSON.stringify(resolvedData), 'EX', 60 * 60 * 23);
                 }
 
                 return resolvedData;
@@ -78,12 +77,12 @@ export class ResolveService {
                 ...(context.initialRun || context.skipCache ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
-                    // We only want to retry on network errors that are not signaling us to stop anyway.
+                    // We only want to retry on network errors that are not signaling us to stop.
                     if (
                         // Epic throws a 403 at the moment.
                         (axios.isAxiosError(error) && error.response?.status !== 403)
                         // This error occurs if Puppeteer timeouts.
-                        || error.name === "TimeoutError"
+                        || error.name === 'TimeoutError'
                     ) {
                         return;
                     }

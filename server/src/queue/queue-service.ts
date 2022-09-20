@@ -1,10 +1,10 @@
-import { Game, InfoSource } from "@game-watch/database";
-import { QueueParams, QueueType } from "@game-watch/queue";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JobsOptions, Queue } from "bullmq";
+import { Game, InfoSource } from '@game-watch/database';
+import { QueueParams, QueueType } from '@game-watch/queue';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JobsOptions, Queue } from 'bullmq';
 
-import { Environment } from "../environment";
+import { Environment } from '../environment';
 
 @Injectable()
 export class QueueService {
@@ -13,7 +13,9 @@ export class QueueService {
         private readonly configService: ConfigService<Environment, true>,
     ) { }
 
-    public async addToQueue<T extends QueueType>(type: T, payload: QueueParams[T], opts?: JobsOptions) {
+    public async addToQueue<T extends QueueType>(
+        type: T, payload: QueueParams[T], opts?: JobsOptions
+    ) {
         await this.queues[type].add(type, payload, opts);
     }
 
@@ -23,7 +25,7 @@ export class QueueService {
             { sourceId: infoSource.id },
             {
                 repeat: {
-                    cron: this.configService.get("SYNC_SOURCES_AT")
+                    cron: this.configService.get('SYNC_SOURCES_AT')
                 },
                 jobId: infoSource.id,
                 priority: 2
@@ -33,7 +35,7 @@ export class QueueService {
 
     public async removeRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
         await this.queues[QueueType.ResolveSource].removeRepeatableByKey(
-            `${QueueType.ResolveSource}:${infoSource.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
+            `${QueueType.ResolveSource}:${infoSource.id}:::${this.configService.get('SYNC_SOURCES_AT')}`
         );
     }
 
@@ -43,7 +45,7 @@ export class QueueService {
             { gameId: game.id },
             {
                 repeat: {
-                    cron: this.configService.get("SYNC_SOURCES_AT")
+                    cron: this.configService.get('SYNC_SOURCES_AT')
                 },
                 jobId: game.id,
                 priority: 2
@@ -53,7 +55,7 @@ export class QueueService {
 
     public async removeRepeatableGameSearchJob(game: Game) {
         await this.queues[QueueType.SearchGame].removeRepeatableByKey(
-            `${QueueType.SearchGame}:${game.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
+            `${QueueType.SearchGame}:${game.id}:::${this.configService.get('SYNC_SOURCES_AT')}`
         );
     }
 }

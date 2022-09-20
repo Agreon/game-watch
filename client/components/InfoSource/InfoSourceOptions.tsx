@@ -13,28 +13,29 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList } from "@chakra-ui/react";
-import { useCallback, useRef, useState } from "react";
+    MenuList
+} from '@chakra-ui/react';
+import { useCallback, useRef, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
+import { useGameContext } from '../../providers/GameProvider';
+import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
 
 export const InfoSourceOptions: React.FC = () => {
     const { loading, game } = useGameContext();
-    const { disableInfoSource, syncInfoSource, excludeInfoSource, source } = useInfoSourceContext();
+    const { disableInfoSource, syncInfoSource, source } = useInfoSourceContext();
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const cancelRef = useRef(null);
 
     const onDisableInfoSource = useCallback(async () => {
         setDeleteDialogOpen(false);
-        await disableInfoSource();
+        await disableInfoSource(false);
     }, [disableInfoSource]);
 
     const onKeepSearching = useCallback(async () => {
         setDeleteDialogOpen(false);
-        await excludeInfoSource();
-    }, [excludeInfoSource]);
+        await disableInfoSource(true);
+    }, [disableInfoSource]);
 
     return (
         <>
@@ -62,10 +63,20 @@ export const InfoSourceOptions: React.FC = () => {
                                 </Button>
                             </Box>
                             <Box>
-                                <Button colorScheme="red" variant="solid" onClick={onDisableInfoSource} ml={3}>
+                                <Button
+                                    colorScheme="red"
+                                    variant="solid"
+                                    onClick={onDisableInfoSource}
+                                    ml={3}
+                                >
                                     Remove
                                 </Button>
-                                <Button colorScheme="teal" variant="solid" onClick={onKeepSearching} ml={3}>
+                                <Button
+                                    colorScheme="teal"
+                                    variant="solid"
+                                    onClick={onKeepSearching}
+                                    ml={3}
+                                >
                                     Keep Searching
                                 </Button>
                             </Box>
@@ -73,25 +84,25 @@ export const InfoSourceOptions: React.FC = () => {
                     </AlertDialogContent>
                 </AlertDialogOverlay>
             </AlertDialog>
-        <Menu
-            isOpen={(!loading && !game.syncing) ? undefined : false}
-        >
-            <MenuButton
-                as={IconButton}
-                aria-label="Options"
-                icon={<ChevronDownIcon />}
-                variant="outline"
-                size="sm"
-            />
-            <MenuList>
-                <MenuItem icon={<DownloadIcon />} onClick={syncInfoSource}>
-                    Sync
-                </MenuItem>
+            <Menu
+                isOpen={(!loading && !game.syncing) ? undefined : false}
+            >
+                <MenuButton
+                    as={IconButton}
+                    aria-label="Options"
+                    icon={<ChevronDownIcon />}
+                    variant="outline"
+                    size="sm"
+                />
+                <MenuList>
+                    <MenuItem icon={<DownloadIcon />} onClick={syncInfoSource}>
+                        Sync
+                    </MenuItem>
                     <MenuItem icon={<ViewOffIcon />} onClick={() => setDeleteDialogOpen(true)}>
-                    Remove
-                </MenuItem>
-            </MenuList>
-        </Menu>
+                        Remove
+                    </MenuItem>
+                </MenuList>
+            </Menu>
         </>
     );
 };

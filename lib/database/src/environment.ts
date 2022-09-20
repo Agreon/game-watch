@@ -1,5 +1,5 @@
-import * as t from "io-ts";
-import { BooleanFromString, IntFromString } from "io-ts-types";
+import * as t from 'io-ts';
+import { BooleanFromString, IntFromString } from 'io-ts-types';
 
 export const EnvironmentStructure = t.type({
     DATABASE_NAME: t.string,

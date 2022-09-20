@@ -1,10 +1,10 @@
-import { Box } from "@chakra-ui/react";
-import Masonry from "react-masonry-css";
+import { Box } from '@chakra-ui/react';
+import Masonry from 'react-masonry-css';
 
-import { GameProvider } from "../providers/GameProvider";
-import { useGamesContext } from "../providers/GamesProvider";
-import { GameTile } from "./GameTile/GameTile";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { GameProvider } from '../providers/GameProvider';
+import { useGamesContext } from '../providers/GamesProvider';
+import { GameTile } from './GameTile/GameTile';
+import { LoadingSpinner } from './LoadingSpinner';
 
 /**
  * TODO: Set custom breakpoints as default to use everywhere!

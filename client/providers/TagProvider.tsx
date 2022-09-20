@@ -1,9 +1,9 @@
-import { CreateTagDto, TagDto } from "@game-watch/shared";
-import { AxiosResponse } from "axios";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { CreateTagDto, TagDto } from '@game-watch/shared';
+import { AxiosResponse } from 'axios';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useHttp } from "../util/useHttp";
-import { useUserContext } from "./UserProvider";
+import { useHttp } from '../util/useHttp';
+import { useUserContext } from './UserProvider';
 
 export interface TagCtx {
     tags: TagDto[]
@@ -16,13 +16,30 @@ export const TagContext = React.createContext<TagCtx | null>(null);
 export function useTagContext() {
     const context = useContext(TagContext);
     if (!context) {
-        throw new Error("TagContext must be used inside TagProvider");
+        throw new Error('TagContext must be used inside TagProvider');
     }
 
     return context;
 }
 
-const TAG_COLORS = ["gray", "red", "orange", "yellow", "green", "teal", "blue", "cyan", "purple", "pink", "linkedin", "facebook", "messenger", "whatsapp", "twitter", "telegram"];
+const TAG_COLORS = [
+    'gray',
+    'red',
+    'orange',
+    'yellow',
+    'green',
+    'teal',
+    'blue',
+    'cyan',
+    'purple',
+    'pink',
+    'linkedin',
+    'facebook',
+    'messenger',
+    'whatsapp',
+    'twitter',
+    'telegram',
+];
 
 export const TagProvider: React.FC<{
     children: React.ReactChild,
@@ -55,7 +72,10 @@ export const TagProvider: React.FC<{
         const color = getAvailableRandomTagColor();
 
         return await withRequest(async http => {
-            const { data } = await http.post<CreateTagDto, AxiosResponse<TagDto>>("/tag", { name, color });
+            const { data } = await http.post<CreateTagDto, AxiosResponse<TagDto>>(
+                '/tag',
+                { name, color }
+            );
 
             setTags(tags => [
                 data,
@@ -78,5 +98,5 @@ export const TagProvider: React.FC<{
         <TagContext.Provider value={contextValue}>
             {children}
         </TagContext.Provider>
-        );
-    };
+    );
+};

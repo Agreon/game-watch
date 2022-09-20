@@ -1,23 +1,41 @@
-import { User } from "@game-watch/database";
-import { Countries, Country, CreateUserDto, RegisterUserDto, UserDto, UserState } from "@game-watch/shared";
-import { EntityRepository } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { BadRequestException, Body, ConflictException, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
-import { CookieOptions, Request, Response } from "express";
+import { User } from '@game-watch/database';
+import {
+    Countries,
+    Country,
+    CreateUserDto,
+    RegisterUserDto,
+    UserDto,
+    UserState,
+} from '@game-watch/shared';
+import { EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import {
+    BadRequestException,
+    Body,
+    ConflictException,
+    Controller,
+    HttpCode,
+    HttpStatus,
+    Post,
+    Req,
+    Res,
+    UseGuards,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { CookieOptions, Request, Response } from 'express';
 import ms from 'ms';
 
-import { Environment } from "../environment";
-import { AuthService } from "./auth-service";
-import { CurrentUser } from "./current-user-decorator";
-import { JWT_ACCESS_TOKEN_NAME } from "./jwt-access-token-strategy";
-import { JwtRefreshTokenGuard } from "./jwt-refresh-token-guard";
-import { JWT_REFRESH_TOKEN_NAME } from "./jwt-refresh-token-strategy";
-import { JwtService } from "./jwt-service";
-import { LocalAuthGuard } from "./local-auth-guard";
+import { Environment } from '../environment';
+import { AuthService } from './auth-service';
+import { CurrentUser } from './current-user-decorator';
+import { JWT_ACCESS_TOKEN_NAME } from './jwt-access-token-strategy';
+import { JwtRefreshTokenGuard } from './jwt-refresh-token-guard';
+import { JWT_REFRESH_TOKEN_NAME } from './jwt-refresh-token-strategy';
+import { JwtService } from './jwt-service';
+import { LocalAuthGuard } from './local-auth-guard';
 
-@Controller("/auth")
+@Controller('/auth')
 export class AuthController {
     private accessTokenCookieOptions: CookieOptions;
     private refreshTokenCookieOptions: CookieOptions;
@@ -32,19 +50,19 @@ export class AuthController {
         this.accessTokenCookieOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
-            maxAge: ms(configService.get("JWT_ACCESS_TOKEN_EXPIRES_IN")),
+            sameSite: 'none',
+            maxAge: ms(configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')),
         };
 
         this.refreshTokenCookieOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
-            maxAge: ms(configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
+            sameSite: 'none',
+            maxAge: ms(configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')),
         };
     }
 
-    @Post("/create")
+    @Post('/create')
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard)
     @Throttle(2, 10)
@@ -63,20 +81,22 @@ export class AuthController {
             return await this.setJwtCookiesForUser(existingUserWithId, response);
         }
 
-        if (this.configService.get("DISABLE_USER_REGISTRATION")) {
-            throw new BadRequestException("We are not allowing new user registrations at the moment");
+        if (this.configService.get('DISABLE_USER_REGISTRATION')) {
+            throw new BadRequestException(
+                'We are not allowing new user registrations at the moment'
+            );
         }
 
-        const userCountry = request.headers["cf-ipcountry"] as Country;
+        const userCountry = request.headers['cf-ipcountry'] as Country;
         const user = await this.authService.createUser({
             id,
-            country: Countries.includes(userCountry) ? userCountry : "US"
+            country: Countries.includes(userCountry) ? userCountry : 'US'
         });
 
         return await this.setJwtCookiesForUser(user, response);
     }
 
-    @Post("/register")
+    @Post('/register')
     @HttpCode(HttpStatus.OK)
     public async registerUser(
         @Body() { id, username, password, enableEmailNotifications, email }: RegisterUserDto,
@@ -104,7 +124,7 @@ export class AuthController {
         return await this.setJwtCookiesForUser(registeredUser, response);
     }
 
-    @Post("/refresh")
+    @Post('/refresh')
     @UseGuards(JwtRefreshTokenGuard)
     @HttpCode(HttpStatus.OK)
     public async refreshToken(
@@ -114,7 +134,7 @@ export class AuthController {
         return await this.setJwtCookiesForUser(user, response);
     }
 
-    @Post("/login")
+    @Post('/login')
     @UseGuards(LocalAuthGuard)
     @HttpCode(HttpStatus.OK)
     public async loginUser(
@@ -124,7 +144,7 @@ export class AuthController {
         return await this.setJwtCookiesForUser(user, response);
     }
 
-    @Post("/logout")
+    @Post('/logout')
     @UseGuards(JwtRefreshTokenGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     public async logoutUser(

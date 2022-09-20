@@ -1,12 +1,12 @@
-import { Game, InfoSource, Notification, User } from "@game-watch/database";
-import { QueueType } from "@game-watch/queue";
-import { CreateInfoSourceDto } from "@game-watch/shared";
-import { EntityRepository, IdentifiedReference } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable } from "@nestjs/common";
+import { Game, InfoSource, Notification, User } from '@game-watch/database';
+import { QueueType } from '@game-watch/queue';
+import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
 
-import { MapperService } from "../mapper/mapper-service";
-import { QueueService } from "../queue/queue-service";
+import { MapperService } from '../mapper/mapper-service';
+import { QueueService } from '../queue/queue-service';
 
 @Injectable()
 export class InfoSourceService {
@@ -21,40 +21,32 @@ export class InfoSourceService {
         private readonly notificationRepository: EntityRepository<Notification>
     ) { }
 
-    public async addInfoSource({ gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }) {
+    public async addInfoSource(
+        { gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
+    ) {
         const game = await this.gameRepository.findOneOrFail(gameId);
         const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
 
-        // Reuse disabled or excluded info sources
         const existingInfoSource = await this.infoSourceRepository.findOne({
-            type,
             game,
-            user
+            type,
+            state: InfoSourceState.Disabled
         });
         if (existingInfoSource) {
-            existingInfoSource.disabled = false;
-            existingInfoSource.data = null;
-            existingInfoSource.resolveError = false;
-            existingInfoSource.syncing = true;
-            existingInfoSource.remoteGameId = remoteGameId;
-
-            await this.infoSourceRepository.persistAndFlush(existingInfoSource);
-
-            await this.queueService.addToQueue(
-                QueueType.ResolveSource,
-                { sourceId: existingInfoSource.id, initialRun: true }
-            );
-            await this.queueService.createRepeatableInfoSourceResolveJob(existingInfoSource);
-
-            return existingInfoSource;
+            await this.infoSourceRepository.removeAndFlush(existingInfoSource);
         }
 
-        const infoSource = new InfoSource({
+        const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
-            remoteGameId,
-            // This field is only used for display on the initial search.
-            remoteGameName: "",
-            user
+            user,
+            state: InfoSourceState.Found,
+            data: {
+                id: remoteGameId,
+                // This field is only used for display on the initial search.
+                // It is later overwritten by the resolvers.
+                fullName: 'Sync in progress',
+                url,
+            }
         });
 
         game.infoSources.add(infoSource);
@@ -77,46 +69,32 @@ export class InfoSourceService {
     public async syncInfoSource(id: string) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
 
-        await this.queueService.addToQueue(QueueType.ResolveSource, { sourceId: id, skipCache: true });
-
-        infoSource.syncing = true;
-        infoSource.resolveError = false;
+        infoSource.state = InfoSourceState.Found;
         await this.infoSourceRepository.persistAndFlush(infoSource);
+
+        await this.queueService.addToQueue(
+            QueueType.ResolveSource,
+            { sourceId: id, skipCache: true }
+        );
 
         return infoSource;
     }
 
-    public async disableInfoSource(id: string) {
+    public async disableInfoSource(id: string, continueSearching: boolean) {
         const infoSource = await this.infoSourceRepository.findOneOrFail(id);
+
         await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
 
-        // We remove all notifications that were created for this version of the info source, so that on re-use
-        // the same behavior as with a new source applies.
-        await this.notificationRepository.nativeDelete({
-            infoSource,
-        });
+        // We remove all notifications that were created for this version of the info source,
+        // so that on re-use the same behavior as with a new source applies.
+        await this.notificationRepository.nativeDelete({ infoSource });
 
-        infoSource.disabled = true;
-        await this.infoSourceRepository.persistAndFlush(infoSource);
-
-        return infoSource;
-    }
-
-    public async excludeInfoSource(id: string) {
-        const infoSource = await this.infoSourceRepository.findOneOrFail(id);
-        await this.queueService.removeRepeatableInfoSourceResolveJob(infoSource);
-
-        // We remove unnecessary notifications that were created for this version of the info source
-        await this.notificationRepository.nativeDelete({
-            infoSource,
-        });
-
-        infoSource.excludedRemoteGameIds = [...infoSource.excludedRemoteGameIds, infoSource.getRemoteGameIdOrFail()];
-        infoSource.data = null;
-        infoSource.resolveError = false;
-        infoSource.remoteGameId = null;
-        infoSource.remoteGameName = null;
-
+        infoSource.continueSearching = continueSearching;
+        infoSource.excludedRemoteGameIds = [
+            ...infoSource.excludedRemoteGameIds,
+            infoSource.getDataOrFail().id
+        ];
+        infoSource.state = InfoSourceState.Disabled;
         await this.infoSourceRepository.persistAndFlush(infoSource);
 
         return infoSource;

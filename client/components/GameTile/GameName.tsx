@@ -1,8 +1,16 @@
-import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
-import { ButtonGroup, Editable, EditableInput, EditablePreview, Flex, IconButton, useEditableControls } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons';
+import {
+    ButtonGroup,
+    Editable,
+    EditableInput,
+    EditablePreview,
+    Flex,
+    IconButton,
+    useEditableControls,
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
+import { useGameContext } from '../../providers/GameProvider';
 
 const EditableControls: React.FC = () => {
     const {
@@ -18,9 +26,9 @@ const EditableControls: React.FC = () => {
             <IconButton aria-label="close" icon={<CloseIcon />} {...getCancelButtonProps()} />
         </ButtonGroup>
     ) : (
-            <Flex position="absolute" justifyContent="center" top="auto" bottom="auto" right="0">
-                <IconButton aria-label="edit" size="sm" icon={<EditIcon />} {...getEditButtonProps()} />
-            </Flex>
+        <Flex position="absolute" justifyContent="center" top="auto" bottom="auto" right="0">
+            <IconButton aria-label="edit" size="sm" icon={<EditIcon />} {...getEditButtonProps()} />
+        </Flex>
     );
 };
 

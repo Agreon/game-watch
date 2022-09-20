@@ -1,5 +1,5 @@
 import { Country } from '@game-watch/shared';
-import { Select, SingleValue } from "chakra-react-select";
+import { Select, SingleValue } from 'chakra-react-select';
 import React, { useCallback, useMemo } from 'react';
 
 interface CountryOption {
@@ -8,8 +8,8 @@ interface CountryOption {
 }
 
 const countryLabels: Record<Country, string> = {
-    "DE": "Germany",
-    "US": "USA"
+    'DE': 'Germany',
+    'US': 'USA'
 } as const;
 
 const countryOptions: CountryOption[] = Object.entries(countryLabels).map(
@@ -40,28 +40,28 @@ export const CountrySelect: React.FC<CountrySelectOptions> = ({ value, onChange 
             chakraStyles={{
                 dropdownIndicator: provided => ({
                     ...provided,
-                    background: "grey.700",
-                    paddingLeft: "0.5rem",
-                    paddingRight: "0.5rem",
+                    background: 'grey.700',
+                    paddingLeft: '0.5rem',
+                    paddingRight: '0.5rem',
                 }),
                 valueContainer: provided => ({
                     ...provided,
-                    paddingLeft: "0.5rem"
+                    paddingLeft: '0.5rem'
                 }),
                 indicatorSeparator: () => ({
-                    display: "none"
+                    display: 'none'
                 }),
                 control: provided => ({
                     ...provided,
                     border: 0,
-                    borderBottom: "1px",
+                    borderBottom: '1px',
                     borderRadius: 0,
-                    borderColor: "white",
-                    boxShadow: "none !important",
+                    borderColor: 'white',
+                    boxShadow: 'none !important',
                 }),
                 option: provided => ({
                     ...provided,
-                    paddingLeft: "0.5rem"
+                    paddingLeft: '0.5rem'
                 }),
                 menu: provided => ({
                     ...provided,

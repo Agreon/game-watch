@@ -1,8 +1,8 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
-import React, { useCallback, useMemo } from "react";
+import { Box, Flex } from '@chakra-ui/react';
+import { InfoSourceType } from '@game-watch/shared';
+import React, { useCallback, useMemo } from 'react';
 
-import { SourceTypeLogoWithName } from "./InfoSource/SourceTypeLogo";
+import { SourceTypeLogoWithName } from './InfoSource/SourceTypeLogo';
 
 interface InfoSourceWithToggleState {
     type: InfoSourceType
@@ -17,7 +17,9 @@ export const InfoSourceFilter: React.FC<{
 
     const toggleInfoSource = useCallback(async (selectedSource: InfoSourceWithToggleState) => {
         if (selectedSource.toggled) {
-            setFilterInfoSources(sources => [...sources].filter(source => source !== selectedSource.type));
+            setFilterInfoSources(
+                sources => [...sources].filter(source => source !== selectedSource.type)
+            );
         } else {
             setFilterInfoSources(sources => [...sources, selectedSource.type]);
         }
@@ -37,7 +39,7 @@ export const InfoSourceFilter: React.FC<{
                 <Box
                     key={source.type}
                     bg={'gray.800'}
-                    borderColor={source.toggled ? "teal.500" : "none"}
+                    borderColor={source.toggled ? 'teal.500' : 'none'}
                     borderWidth='2px'
                     borderRadius='lg'
                     mx="0.5rem"

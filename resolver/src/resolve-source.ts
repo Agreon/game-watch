@@ -1,11 +1,11 @@
-import { InfoSource, Notification } from "@game-watch/database";
-import { QueueParams, QueueType } from "@game-watch/queue";
-import { Logger } from "@game-watch/service";
-import { NotificationType } from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
-import { Queue } from "bullmq";
+import { InfoSource, Notification } from '@game-watch/database';
+import { QueueParams, QueueType } from '@game-watch/queue';
+import { Logger } from '@game-watch/service';
+import { InfoSourceState, InfoSourceType, NotificationType } from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
+import { Queue } from 'bullmq';
 
-import { ResolveService } from "./resolve-service";
+import { ResolveService } from './resolve-service';
 
 interface Params {
     sourceId: string
@@ -17,30 +17,38 @@ interface Params {
     logger: Logger
 }
 
-export class SourceNotResolvableError extends Error {}
-
-export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveService, em, logger, createNotificationsQueue }: Params) => {
+export const resolveSource = async ({
+    sourceId,
+    initialRun,
+    skipCache,
+    resolveService,
+    em,
+    logger,
+    createNotificationsQueue,
+}: Params) => {
     const startTime = new Date().getTime();
 
-    const source = await em.findOneOrFail(InfoSource, sourceId, { populate: ["user"] });
+    const source = await em.findOneOrFail<InfoSource<InfoSourceType, InfoSourceState.Found>, 'user'>(
+        InfoSource,
+        {
+            id: sourceId,
+            state: { $ne: InfoSourceState.Disabled }
+        },
+        { populate: ['user'] }
+    );
+
     const userCountry = source.user.get().country;
-    if (source.disabled || source.remoteGameId === null) {
-        throw new SourceNotResolvableError();
-    }
 
     logger.info(`Resolving ${source.type}`);
 
     const resolvedGameData = await resolveService.resolveGameInformation(
-        source.remoteGameId,
-        source.type,
-        { logger, skipCache, userCountry, initialRun }
+        { source, logger, skipCache, userCountry, initialRun }
     );
     if (!resolvedGameData) {
         logger.warn(`Source ${source.type} could not be resolved`);
 
         await em.nativeUpdate(InfoSource, sourceId, {
-            resolveError: true,
-            syncing: false,
+            state: InfoSourceState.Error,
             updatedAt: new Date()
         });
 
@@ -73,18 +81,15 @@ export const resolveSource = async ({ sourceId, initialRun, skipCache, resolveSe
     }
 
     await em.nativeUpdate(InfoSource, sourceId, {
-        resolveError: false,
-        syncing: false,
+        state: InfoSourceState.Resolved,
         data: resolvedGameData,
-        // If the source was added manually, no search is done. So we have to set the name here.
-        remoteGameName: resolvedGameData.fullName,
         updatedAt: new Date()
     });
 
     // Delete old, unnecessary ResolveError notifications so that on a new error a new notification
     // is created.
     await em.nativeDelete(Notification, {
-        infoSource: source,
+        infoSource: source as InfoSource,
         type: NotificationType.ResolveError,
     });
 

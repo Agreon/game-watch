@@ -1,9 +1,14 @@
-import { Notification, User } from "@game-watch/database";
-import { parseEnvironment } from "@game-watch/service";
-import { formatPrice, formatReleaseDate, NotificationData, NotificationType } from "@game-watch/shared";
+import { Notification, User } from '@game-watch/database';
+import { parseEnvironment } from '@game-watch/service';
+import {
+    formatPrice,
+    formatReleaseDate,
+    NotificationData,
+    NotificationType,
+} from '@game-watch/shared';
 import { MailService as SendgridMailClient } from '@sendgrid/mail';
 
-import { EnvironmentStructure } from "./environment";
+import { EnvironmentStructure } from './environment';
 
 const {
     API_URL,
@@ -18,7 +23,7 @@ export class MailService {
     public async sendNotificationMail(receiver: User, notification: Notification) {
         await this.sendgridClient.send({
             to: receiver.getEmailOrFail(),
-            from: "daniel@game-watch.agreon.de",
+            from: 'daniel@game-watch.agreon.de',
             subject: this.getMailSubject(notification),
             text: this.getMailText(receiver, notification)
         });
@@ -50,16 +55,15 @@ export class MailService {
         const body = this.getNotificationText(receiver, notification);
         const unsubscribeLink = new URL(`/user/unsubscribe?id=${receiver.id}`, API_URL);
 
-        // Data can be null if the game was never resolved successfully.
-        const remoteGameUrl = notification.infoSource.getEntity().data?.url;
+        const remoteGameUrl = notification.infoSource.getEntity().data.url;
 
         return `
 Hey ${receiver.username}!
 
 ${body}
 
-${remoteGameUrl ? `You can have a detailed look here: ${remoteGameUrl}` : ''}
-${remoteGameUrl ? "Or" : ""} why not check in on GameWatch: ${PUBLIC_URL}
+You can have a detailed look here: ${remoteGameUrl}
+Or why not check in on GameWatch: ${PUBLIC_URL}
 
 Best
 

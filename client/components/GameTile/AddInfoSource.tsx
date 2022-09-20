@@ -13,28 +13,34 @@ import {
     ModalOverlay,
     Select,
     useDisclosure,
-} from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
-import React, { useRef, useState } from "react";
+} from '@chakra-ui/react';
+import { InfoSourceType } from '@game-watch/shared';
+import React, { useRef, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useUserContext } from "../../providers/UserProvider";
-import { useAction } from "../../util/useAction";
-import { PlaceholderMap } from "../AddGameModal";
+import { useGameContext } from '../../providers/GameProvider';
+import { useUserContext } from '../../providers/UserProvider';
+import { useAction } from '../../util/useAction';
+import { PlaceholderMap } from '../AddGameModal';
 
 export const AddInfoSource: React.FC = () => {
     const { user: { interestedInSources } } = useUserContext();
-    const { addInfoSource } = useGameContext();
+
+    const { addInfoSource, activeInfoSources } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [type, setType] = useState(interestedInSources[0]);
-    const [url, setUrl] = useState("");
+
+    const availableInfoSources = interestedInSources.filter(
+        type => activeInfoSources.find(source => source.type === type) === undefined
+    );
+
+    const [type, setType] = useState(availableInfoSources[0] ?? '');
+    const [url, setUrl] = useState('');
 
     const initialRef = useRef(null);
 
     const { loading, execute: onAdd } = useAction(addInfoSource, {
         onSuccess: () => {
             onClose();
-            setUrl("");
+            setUrl('');
         }
     });
 
@@ -54,9 +60,11 @@ export const AddInfoSource: React.FC = () => {
                         <Flex>
                             <FormControl flex="0.5" mr="1rem">
                                 <FormLabel>Type</FormLabel>
-                                <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                                    {interestedInSources.map(source => (
-                                        <option key={source} value={source}>{source}</option>
+                                <Select
+                                    onChange={evt => setType(evt.target.value as InfoSourceType)}
+                                >
+                                    {availableInfoSources.map(type => (
+                                        <option key={type} value={type}>{type}</option>
                                     ))}
                                 </Select>
                             </FormControl>
@@ -73,13 +81,17 @@ export const AddInfoSource: React.FC = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose} mr="1rem">Cancel</Button>
-                        <Button isLoading={loading} colorScheme="teal" onClick={() => onAdd({ type, url })} >
+                        <Button
+                            isLoading={loading}
+                            colorScheme="teal"
+                            onClick={() => onAdd({ type, url })}
+                        >
                             Add
                         </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {interestedInSources.length > 0 &&
+            {availableInfoSources.length > 0 &&
                 <Flex justify="center">
                     <Button onClick={onOpen}>
                         +

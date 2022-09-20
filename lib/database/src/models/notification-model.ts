@@ -1,13 +1,23 @@
-import { NotificationData, NotificationType } from "@game-watch/shared";
-import { Entity, Enum, IdentifiedReference, Index, ManyToOne, Property, Reference } from "@mikro-orm/core";
+import { NotificationData, NotificationType } from '@game-watch/shared';
+import {
+    Entity,
+    Enum,
+    IdentifiedReference,
+    Index,
+    ManyToOne,
+    Property,
+    Reference,
+} from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { Game } from "./game-model";
-import { InfoSource } from "./info-source-model";
-import { User } from "./user-model";
+import { BaseEntity } from '../base-entity';
+import { Game } from './game-model';
+import { InfoSource } from './info-source-model';
+import { User } from './user-model';
 
 @Entity()
-export class Notification<T extends NotificationType = NotificationType> extends BaseEntity<Notification<T>> {
+export class Notification<T extends NotificationType = NotificationType>
+    extends BaseEntity<Notification<T>>
+{
     @Enum(() => NotificationType)
     public type!: T;
 
@@ -15,16 +25,16 @@ export class Notification<T extends NotificationType = NotificationType> extends
     @Index()
     public read: boolean = false;
 
-    @ManyToOne(() => Game, { wrappedReference: true, onDelete: "cascade" })
+    @ManyToOne(() => Game, { wrappedReference: true, onDelete: 'cascade' })
     public game!: IdentifiedReference<Game>;
 
-    @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: "cascade" })
+    @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: 'cascade' })
     public infoSource!: IdentifiedReference<InfoSource>;
 
-    @Property({ columnType: "json" })
+    @Property({ columnType: 'json' })
     public data!: NotificationData[T];
 
-    @ManyToOne(() => User, { wrappedReference: true, onDelete: "cascade" })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
     public constructor(

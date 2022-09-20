@@ -1,11 +1,11 @@
-import { QueueParams, QueueType } from "@game-watch/queue";
-import { MikroORM, UseRequestContext } from "@mikro-orm/core";
-import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { Logger } from "@nestjs/common";
+import { QueueParams, QueueType } from '@game-watch/queue';
+import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import { Job } from "bullmq";
+import { Job } from 'bullmq';
 
-import { GameService } from "../../game/game-service";
+import { GameService } from '../../game/game-service';
 
 @Processor({ name: QueueType.DeleteUnfinishedGameAdds })
 export class DeleteUnfinishedGameProcessor extends WorkerHost {
@@ -19,7 +19,9 @@ export class DeleteUnfinishedGameProcessor extends WorkerHost {
         super();
     }
 
-    public async process({ data: { gameId } }: Job<QueueParams[QueueType.DeleteUnfinishedGameAdds]>): Promise<void> {
+    public async process(
+        { data: { gameId } }: Job<QueueParams[QueueType.DeleteUnfinishedGameAdds]>
+    ): Promise<void> {
         try {
             await this.deleteUnfinishedGame(gameId);
         } catch (error) {
