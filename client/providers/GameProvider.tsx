@@ -27,14 +27,20 @@ const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string):
         const valueForKey = (infoSource.data as any)[key] as string | undefined;
 
         if (valueForKey) {
-            if (infoSource.type === 'psStore' && key === 'thumbnailUrl') {
+            if (
+                infoSource.type === InfoSourceType.PsStore
+                && key === 'thumbnailUrl'
+                // There are multiple types of images coming from the ps store.
+                && valueForKey.includes('image.api.playstation.com')
+            ) {
                 const url = new URL(valueForKey);
                 url.searchParams.delete('w');
                 url.searchParams.append('w', '460');
+                url.searchParams.delete('thumb');
                 return url.toString();
             }
 
-            if (infoSource.type === 'epic' && key === 'thumbnailUrl') {
+            if (infoSource.type === InfoSourceType.Epic && key === 'thumbnailUrl') {
                 const url = new URL(valueForKey);
                 url.searchParams.delete('h');
                 url.searchParams.append('h', '215');
