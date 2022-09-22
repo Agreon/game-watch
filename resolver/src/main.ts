@@ -41,7 +41,7 @@ const redis = new Redis({
 });
 
 // Fail fast
-const axiosInstance = axios.create({ timeout: 10000 });
+const axiosInstance = axios.create({ timeout: 10000, maxRedirects: 1 });
 
 const resolveService = new ResolveService([
     new SteamResolver(axiosInstance),
