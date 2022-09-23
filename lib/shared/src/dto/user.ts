@@ -32,7 +32,7 @@ export class UpdateUserSettingsDto {
     public email?: string | null;
 
     @IsString()
-    @Length(2, 2)
+    @Length(2, 5)
     public country: Country;
 
     @IsArray()

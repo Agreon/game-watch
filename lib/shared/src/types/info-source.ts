@@ -81,7 +81,7 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: ['DE', 'US'] as const,
     [InfoSourceType.PsStore]: ['DE', 'US'] as const,
     [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
+    [InfoSourceType.Switch]: ['DE', "CH-DE", "AU", "NZ"] as const,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: ['DE'] as const,
-    [InfoSourceType.Switch]: ['DE', 'US'] as const,
 } as const;

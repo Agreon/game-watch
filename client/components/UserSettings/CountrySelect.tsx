@@ -9,7 +9,11 @@ interface CountryOption {
 
 const countryLabels: Record<Country, string> = {
     'DE': 'Germany',
-    'US': 'USA'
+    "CH-DE": "Schweiz (Deutsch)",
+    'US': 'USA',
+    "AU": "Australia",
+    "NZ": "New Zealand",
+    "ZA": "South Africa",
 } as const;
 
 const countryOptions: CountryOption[] = Object.entries(countryLabels).map(
