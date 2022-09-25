@@ -6,6 +6,8 @@ import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as Sentry from '@sentry/node';
+import * as Tracing from '@sentry/tracing';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
@@ -17,8 +19,6 @@ const {
   CORS_ORIGIN,
   SERVER_PORT,
 } = parseEnvironment(EnvironmentStructure, process.env);
-
-initializeSentry('Server');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -41,6 +41,16 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(compression());
   app.useGlobalPipes(new ValidationPipe());
+
+
+  initializeSentry('Server', [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Express({ app: app.getHttpAdapter().getInstance() }),
+  ]);
+
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+  app.use(Sentry.Handlers.errorHandler());
 
   await app.listen(SERVER_PORT);
 
