@@ -44,7 +44,17 @@ export class SwitchResolver implements InfoResolver {
             return await this.resolveAUandNZ(context);
         }
 
-        if (userCountry === 'US') {
+        if ([
+            'US',
+            "EN-CA",
+            "ES-AR",
+            "ES-CL",
+            "ES-CO",
+            "ES-MX",
+            "ES-PE",
+            "FR-CA",
+            "PT-BR",
+        ].includes(userCountry)) {
             const urlParts = source.data.id.split('/');
             const slug = urlParts[urlParts.length - 2];
 
@@ -83,29 +93,65 @@ export class SwitchResolver implements InfoResolver {
                 };
             }
         }
-        const { data } = await this.axios.get<string>(source.data.url);
-        const $ = cheerio.load(data);
 
-        const thumbnailUrl = $("meta[property='og:image']").first().attr('content');
+        if ([
+            "AT",
+            "BE-FR",
+            "BE-NL",
+            "CH-DE",
+            "CH-FR",
+            "CH-IT",
+            "DE",
+            "ES",
+            "FR",
+            "GB",
+            "IE",
+            "IT",
+            "NL",
+            "PT",
+            "RU",
+            "ZA",
+            "SE",
+            "DK",
+            "NO",
+            "FI",
+            "HU",
+            "PL",
+            "CZ",
+            "SK",
+            "GR",
+            "HR",
+            "BG",
+            "SL",
+            "RO",
+            "SR"
+        ].includes(userCountry)) {
+            const { data } = await this.axios.get<string>(source.data.url);
+            const $ = cheerio.load(data);
 
-        const fullName = extract(data, /(?<=gameTitle": ").+\b/);
-        if (!fullName) {
-            throw new Error('Could not find name of game');
+            const thumbnailUrl = $("meta[property='og:image']").first().attr('content');
+
+            const fullName = extract(data, /(?<=gameTitle": ").+\b/);
+            if (!fullName) {
+                throw new Error('Could not find name of game');
+            }
+
+            const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
+            const price = await this.getPriceInformation(priceId, userCountry);
+
+            const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
+
+            return {
+                ...source.data,
+                fullName,
+                thumbnailUrl,
+                releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
+                originalReleaseDate: releaseDate,
+                priceInformation: this.parsePriceInformation(price),
+            };
         }
 
-        const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
-
-        const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
-        const price = await this.getPriceInformation(priceId, userCountry);
-
-        return {
-            ...source.data,
-            fullName,
-            thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
-            originalReleaseDate: releaseDate,
-            priceInformation: this.parsePriceInformation(price),
-        };
+        throw new Error(`Unsupported userCountry '${userCountry}' supplied.`)
     }
 
     private async resolveAUandNZ({ userCountry, source }: InfoResolverContext) {

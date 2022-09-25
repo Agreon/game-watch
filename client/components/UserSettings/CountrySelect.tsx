@@ -14,6 +14,7 @@ const countryLabels: Record<Country, string> = {
     "AU": "Australia",
     "NZ": "New Zealand",
     "ZA": "South Africa",
+    "GR": "Greece"
 } as const;
 
 const countryOptions: CountryOption[] = Object.entries(countryLabels).map(

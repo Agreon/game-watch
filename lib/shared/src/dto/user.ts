@@ -4,6 +4,7 @@ import {
     IsBoolean,
     IsEmail,
     IsEnum,
+    IsISO31661Alpha2,
     IsNotEmpty,
     IsString,
     Length,
@@ -32,7 +33,7 @@ export class UpdateUserSettingsDto {
     public email?: string | null;
 
     @IsString()
-    @Length(2, 5)
+    @IsISO31661Alpha2()
     public country: Country;
 
     @IsArray()

@@ -9,6 +9,7 @@ export const mapCountryCodeToLanguage = (country: Country): string => {
         case 'ZA':
         case 'AU':
         case "NZ":
+        default:
             // Is this good enough for steam? I don't think so
             // => Maybe we should move that methods into the services
             return 'en';
@@ -25,6 +26,7 @@ export const mapCountryCodeToAcceptLanguage = (country: Country): string => {
         case "NZ":
         case "AU":
         case "ZA":
+        default:
             return 'en-US';
     }
 };
