@@ -130,6 +130,7 @@ export default function Header() {
                             height="1rem"
                             display="flex"
                             justifyContent="center"
+                            alignItems="center"
                         >
                             <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
                         </Box>

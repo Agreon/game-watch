@@ -45,7 +45,7 @@ export class MetacriticSearcher implements InfoSearcher {
 
         const criticScore = $('.main_stats > .metascore_w').text().trim();
         if (isNaN(parseInt(criticScore))) {
-            logger.debug(`Found score '${fullName}' is not a number. Skipping`);
+            logger.debug(`Found score '${criticScore}' is not a number. Skipping`);
 
             return null;
         }

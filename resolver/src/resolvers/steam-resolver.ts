@@ -39,19 +39,13 @@ export class SteamResolver implements InfoResolver {
             // TODO: We need to open the site to get the price.
         }
 
-        // The dots make problems with dayjs parsing.
-        const releaseDate = json.release_date.date.replace(/\.|\,/g, '');
-
         return {
             id: source.data.id,
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
-            // Sometimes english, sometimes german..
-            releaseDate: parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
-                ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-                ?? parseDate(releaseDate),
-            originalReleaseDate: releaseDate,
+            releaseDate: this.getReleaseDate(json.release_date.date),
+            originalReleaseDate: json.release_date.date,
             priceInformation: json.is_free
                 ? { final: 0 }
                 : this.getPriceInformation(json.price_overview ?? {}),
@@ -63,6 +57,20 @@ export class SteamResolver implements InfoResolver {
                 ? Object.values(json.genres).map(({ description }) => description)
                 : undefined,
         };
+    }
+
+    private getReleaseDate(releaseDate: string) {
+        releaseDate
+            // The dots create problems with dayjs parsing.
+            .replace(/\.|\,/g, '')
+            // For some reason "Okt" is leading to an invalid date. So we use the english one.
+            .replace('Okt', 'Oct');
+
+        // Sometimes english, sometimes german..
+        // TODO: What's with other countries?
+        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
+            ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
+            ?? parseDate(releaseDate);
     }
 
     private getPriceInformation(
