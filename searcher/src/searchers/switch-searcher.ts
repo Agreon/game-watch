@@ -22,26 +22,11 @@ export interface SwitchSearchResponse {
 }
 
 /**
- * TH
- * https://www.nintendo.com/th/api/v1/games/all
+ * china?
+ * => No search? No prices?
  *
- * HK + TW
- * https://www.nintendo.com.hk/software/switch/
- * https://www.nintendo.com.hk/data/json/switch_software.json?979812931524=
- * https://www.nintendo.tw/software/switch/
- * https://www.nintendo.tw/data/json/switch_software.json?53828332842=
- * => Whats the number
- *
- * KR
- * https://www.nintendo.co.kr/search_software.php?globalSearch=Mario
- *
- * JP
- * https://search.nintendo.jp/nintendo_soft/auto_complete.json?opt_sshow=1&fq[]=(*:* -ssitu_s:(sales_termination not_found)) OR ( id:70050000031641 OR id:3676 OR id:ef5bf7785c3eca1ab4f3d46a121c1709 OR id:3347 OR id:3252 OR id:3082 OR id:eb9f0cddb93859d136c45e7064033636 OR id:52ae614e85d88158afb6f88cbd43d4f5 OR id:70670517efc94e7bb6b2f9a16747a63a OR id:70010000000026_2 )&c=9733277731357724&pt=E&opt_search=1&q=Mario
- *  or maybe
- *  https://www.nintendo.co.jp/search/?q=Mario
- *
- * 70010000057243
- * => Can be resolved
+ * Maybe resolve all in eshop?
+ * https://ec.nintendo.com/US/en/titles/70070000001541
  */
 
 
@@ -128,19 +113,125 @@ export class SwitchSearcher implements InfoSearcher {
                         limit: 1,
                         page: 1,
                         c: "9633277730941627",
-                        q: "Mario",
+                        q: search,
                         opt_type: 2,
                         sort: "hards asc, score"
                     }
                 }
             )
 
+            const fullName = result.title.split("|")[0];
+            if (!matchingName(fullName, search)) {
+                logger.debug(
+                    `Found name '${fullName}' does not include search '${search}'. Skipping`
+                );
+
+                return null;
+            }
+
             return {
                 id: result.url,
                 url: result.url,
-                fullName: result.titles.split("|")[0],
+                fullName,
             }
         }
+
+        if (userCountry === "TH") {
+            const { data: { result: { items } } } = await this.axios.get(
+                "https://www.nintendo.com/th/api/v1/games/all"
+            );
+            // TODO: Cache items
+            /**
+             * 	"releaseDate": "2022-09-09T00:00:00.000Z",
+                "softPageUrl": "/switch/av5j/",
+                "common": {
+                    "title": "Splatoon™ 3",
+                    "nsuid": "70010000046395",
+             */
+
+            let matchingItem = { item: null, matches: 0 };
+            for (const item of items) {
+
+            }
+            // Resolve
+            // => https://www.nintendo.com/th/api/v1/switch/av5j
+            // => No price
+        }
+
+        if (userCountry === "KR") {
+            const { data } = await this.axios.get<string>(
+                "https://www.nintendo.co.kr/search_software.php",
+                { params: { globalSearch: search } }
+            )
+            const $ = cheerio.load(data);
+
+            const fullName = $(".tit").text().trim();
+            const link = $(".thumb").attr("href")!.trim();
+            const id = link.split("/")[link.split("/").length - 1];
+
+
+            if (!matchingName(fullName, search)) {
+                logger.debug(
+                    `Found name '${fullName}' does not include search '${search}'. Skipping`
+                );
+
+                return null;
+            }
+
+            return {
+                id,
+                url: link,
+                fullName,
+            }
+
+        }
+
+        if (userCountry === "JP") {
+            const { data: { item: [result] } } = await this.axios.get(
+                "https://search.nintendo.jp/nintendo_soft/auto_complete.json",
+                {
+                    params: {
+                        q: search,
+                        pt: "E",
+                        opt_search: 1,
+                    }
+                }
+            )
+
+            if (!matchingName(result.title, search)) {
+                logger.debug(
+                    `Found name '${result.title}' does not include search '${search}'. Skipping`
+                );
+
+                return null;
+            }
+
+            return {
+                id: result.nsuid,
+                url: result.url,
+                fullName: result.title
+            }
+        }
+
+        if (["HK", "TW"].includes(userCountry)) {
+            const { data: results } = await this.axios.get(
+                `https://www.nintendo.${userCountry === 'HK' ? "com.hk" : "tw"}/data/json/switch_software.json`
+            );
+            // TODO: Cache Items
+            // TODO: Search
+
+            const foundItem = {
+                title: "《哆啦A夢 牧場物語 自然王國與和樂家人》數位豪華版",
+                link: "https://store.nintendo.com.hk/70070000015153",
+            }
+
+            return {
+                id: foundItem.link,
+                url: foundItem.link,
+                fullName: foundItem.title.trim(),
+            }
+        }
+
 
         throw new Error(`Unsupported userCountry '${userCountry}' supplied.`)
     }
@@ -201,56 +292,6 @@ export class SwitchSearcher implements InfoSearcher {
             id: url,
             url,
             fullName: gameData.title
-        };
-    }
-
-    private async searchInNorthEurope(
-        search: string,
-        { logger, userCountry }: InfoSearcherContext
-    ): Promise<BaseGameData | null> {
-        const { data } = await this.axios.get<string>(
-            `https://www.nintendo.${userCountry.toLowerCase()}`,
-            {
-                params: {
-                    option: "com_virtuemart_search",
-                    task: "virtuemart_search_all",
-                    ajax: "yes",
-                    vm_search_word: search,
-                    virtuemart_search_system_type: ["SYSTEM_NINTENDO_SWITCH"],
-                    virtuemart_search_sortdir: "desc",
-                    limitstart: 0,
-                    selectedtab: 2,
-                    limit: 1,
-                }
-            }
-        );
-
-        const $ = cheerio.load(data);
-
-        const URL_PREFIX = {
-            "SE": "spel",
-            "NO": "spill",
-            "DK": "spil",
-            "FI": "amiibo",
-        }
-
-        const fullName = $("a").attr("title")!;
-        if (!matchingName(fullName, search)) {
-            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
-
-            return null;
-        }
-
-        const fullUrl = $("a").attr("href")!;
-        const slug = fullUrl.split("/")[fullUrl.split("/").length - 1];
-        const url = `/${URL_PREFIX[userCountry as "SE" | "NO" | "DK" | "FI"]!}/${slug}`;
-
-        logger.debug(`Found gameId '${url}'`);
-
-        return {
-            id: url,
-            url,
-            fullName,
         };
     }
 

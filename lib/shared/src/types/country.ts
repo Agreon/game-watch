@@ -44,11 +44,13 @@ export const Countries = [
     "ZA",
     // Asia
     "JP",
-    // SEA
     'AU',
     'NZ',
     'PH',
     'MY',
     'SG',
+    "TH",
+    "HK",
+    "KR",
 ] as const;
 export type Country = typeof Countries[number];
