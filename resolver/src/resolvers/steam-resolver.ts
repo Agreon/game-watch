@@ -64,13 +64,13 @@ export class SteamResolver implements InfoResolver {
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
             // For some reason "Okt" is leading to an invalid date. So we use the english one.
-            .replace("Okt", "Oct");
+            .replace('Okt', 'Oct');
 
         // Sometimes english, sometimes german..
         // TODO: What's with other countries?
         return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
             ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-            ?? parseDate(releaseDate)
+            ?? parseDate(releaseDate);
     }
 
     private getPriceInformation(
