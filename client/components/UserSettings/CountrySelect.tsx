@@ -8,13 +8,48 @@ interface CountryOption {
 }
 
 const countryLabels: Record<Country, string> = {
+    'AR-ES': 'Argentina',
+    'AT': 'Austria',
+    'AU': 'Australia',
+    'BE-FR': 'Belgium (French)',
+    'BE-NL': 'Belgium (Dutch)',
+    'BG': 'Bulgaria',
+    'BR-PT': 'Brasilia',
+    'CA-EN': 'Canada (English)',
+    'CA-FR': 'Canada (French)',
+    'CH-DE': 'Switzerland (German)',
+    'CH-FR': 'Switzerland (French)',
+    'CH-IT': 'Switzerland (Italian)',
+    'CL-ES': 'Chile',
+    'CO-ES': 'Colombia',
+    'CZ': 'Czechia',
     'DE': 'Germany',
-    "CH-DE": "Schweiz (Deutsch)",
+    'DK': 'Denmark',
+    'EE': 'Estonia',
+    'ES': 'Spain',
+    'FI': 'Finland',
+    'FR': 'France',
+    'GR': 'Greece',
+    'HR': 'Croatia',
+    'HU': 'Hungary',
+    'IE': 'Ireland',
+    'IT': 'Italy',
+    'MX-ES': 'Mexiko',
+    'NL': 'Netherlands',
+    'NO': 'Norway',
+    'NZ': 'New Zealand',
+    'PE-ES': 'Peru',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'RU': 'Russia',
+    'SE': 'Sweden',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    'TR': 'Turkey',
+    'UK': 'United Kingdom',
     'US': 'USA',
-    "AU": "Australia",
-    "NZ": "New Zealand",
-    "ZA": "South Africa",
-    "GR": "Greece"
+    'ZA': 'South Africa',
 } as const;
 
 const countryOptions: CountryOption[] = Object.entries(countryLabels).map(
@@ -82,7 +117,7 @@ export const CountrySelect: React.FC<CountrySelectOptions> = ({ value, onChange 
             value={countryValue}
             onChange={onCountryChanges}
             options={countryOptions}
-            isSearchable={false}
+            isSearchable={true}
         />
     );
 };

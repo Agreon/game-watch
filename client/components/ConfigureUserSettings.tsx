@@ -59,7 +59,7 @@ export const ConfigureUserSettings: React.FC = () => {
                     setFilterInfoSources={setInterestedInSources}
                 />
                 <Text mt="2rem">
-                    Missing a source? Let me know or contribute on
+                    Missing a source or country? Let me know or contribute on
                     <Link href="https://github.com/agreon/game-watch" isExternal ml="0.5rem">
                         <Text as="u">GitHub<ExternalLinkIcon ml='0.2rem' mb="0.2rem" /></Text>
                     </Link>

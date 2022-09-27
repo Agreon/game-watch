@@ -3,29 +3,49 @@ import { Country } from '@game-watch/shared';
 export const mapCountryCodeToLanguage = (country: Country): string => {
     switch (country) {
         case 'DE':
-        case "CH-DE":
+        case 'AT':
+        case 'CH-DE':
             return 'de';
         case 'US':
-        case 'ZA':
-        case 'AU':
-        case "NZ":
         default:
-            // Is this good enough for steam? I don't think so
-            // => Maybe we should move that methods into the services
             return 'en';
     }
 };
 
+// TODO: Only correct for steam
 export const mapCountryCodeToAcceptLanguage = (country: Country): string => {
     switch (country) {
         case 'DE':
+        case 'AT':
+        case 'CH-DE':
             return 'de-DE';
-        case "CH-DE":
-            return "ch-DE";
+        case 'FR':
+        case 'BE-FR':
+        case 'CH-FR':
+        case 'CA-FR':
+            return 'fr';
+        case 'IT':
+        case 'CH-IT':
+            return 'it';
+        case 'ES':
+            return 'es';
+        case 'TR':
+            return 'tr';
+        case 'AR-ES':
+        case 'CL-ES':
+        case 'CO-ES':
+        case 'MX-ES':
+        case 'PE-ES':
+            return country.split('-')[1].toLowerCase() + '-' + country.split('-')[0];
+        case 'PT':
+            return 'pt';
+        case 'BR-PT':
+            return 'pt-BR';
         case 'US':
-        case "NZ":
-        case "AU":
-        case "ZA":
+        case 'NZ':
+        case 'AU':
+        case 'ZA':
+        case 'CA-EN':
         default:
             return 'en-US';
     }

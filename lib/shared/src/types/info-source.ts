@@ -1,4 +1,4 @@
-import { Country } from './country';
+import { Countries, Country } from './country';
 
 export enum InfoSourceType {
     Steam = 'steam',
@@ -51,37 +51,40 @@ export interface SteamGameData extends StoreGameData {
     controllerSupport?: string;
 }
 
-export type SwitchGameData = StoreGameData;
-
-export type PsStoreGameData = StoreGameData;
-
-export type EpicGameData = StoreGameData;
-
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
     userScore: string;
 }
 
-// TODO: What do these generics give us except for binding us to details?
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
-    [InfoSourceType.Switch]: SwitchGameData;
-    [InfoSourceType.PsStore]: PsStoreGameData;
-    [InfoSourceType.Epic]: EpicGameData;
+    [InfoSourceType.Switch]: StoreGameData;
+    [InfoSourceType.PsStore]: StoreGameData;
+    [InfoSourceType.Epic]: StoreGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type GameDataU =
     | SteamGameData
-    | SwitchGameData
-    | PsStoreGameData
-    | EpicGameData
+    | StoreGameData
+    | StoreGameData
+    | StoreGameData
     | MetacriticData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
-    [InfoSourceType.Steam]: ['DE', 'US'] as const,
+    [InfoSourceType.Steam]: Countries,
+    [InfoSourceType.Metacritic]: Countries,
+    //TODO: Americas not possible until all todos in searcher fixed
+    [InfoSourceType.Switch]: Countries.filter(country => [
+        'JP',
+        'PH',
+        'MY',
+        'SG',
+        'TH',
+        'HK',
+        'TW',
+        'KR',
+    ].includes(country) === false),
     [InfoSourceType.PsStore]: ['DE', 'US'] as const,
-    [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
-    [InfoSourceType.Switch]: ['DE', "US", "CH-DE", "AU", "NZ", "GR"] as const,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: ['DE'] as const,
 } as const;

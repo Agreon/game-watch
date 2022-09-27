@@ -1,5 +1,5 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
-import { InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
+import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
+import { Country, InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -20,8 +20,10 @@ export class SteamResolver implements InfoResolver {
             {
                 params: {
                     appids: source.data.id,
-                    cc: mapCountryCodeToLanguage(userCountry),
+                    // Determines the returned currency
+                    cc: userCountry.split('-')[0],
                 },
+                // Determines the returned language
                 headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
             }
         );
@@ -44,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
-            releaseDate: this.getReleaseDate(json.release_date.date),
+            releaseDate: this.parseReleaseDate(json.release_date.date, userCountry),
             originalReleaseDate: json.release_date.date,
             priceInformation: json.is_free
                 ? { final: 0 }
@@ -58,19 +60,22 @@ export class SteamResolver implements InfoResolver {
                 : undefined,
         };
     }
+    private parseReleaseDate(releaseDate: string, userCountry: Country) {
+        // Transforms `CH-DE` to `de`
+        const locale = (userCountry.split('-')[1] ?? userCountry.split('-')[0]).toLowerCase();
 
-    private getReleaseDate(releaseDate: string) {
-        releaseDate
+        const preparedDate = releaseDate
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
+            // Portuguese release dates will come in the format: 1\/set.\/2011
+            .replace(/\\\//g, ' ')
             // For some reason "Okt" is leading to an invalid date. So we use the english one.
             .replace('Okt', 'Oct');
 
-        // Sometimes english, sometimes german..
-        // TODO: What's with other countries?
-        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
-            ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-            ?? parseDate(releaseDate);
+        // Sometimes the locale does not match the return value. Then we try other formats.
+        return parseDate(preparedDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
+            ?? parseDate(preparedDate, ['D MMM YYYY', 'D MMMM YYYY'])
+            ?? parseDate(preparedDate);
     }
 
     private getPriceInformation(

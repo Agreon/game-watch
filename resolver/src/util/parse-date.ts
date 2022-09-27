@@ -1,6 +1,13 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 require('dayjs/locale/de');
+require('dayjs/locale/fr');
+require('dayjs/locale/it');
+require('dayjs/locale/pt');
+require('dayjs/locale/es');
+require('dayjs/locale/bg');
+require('dayjs/locale/ru');
+require('dayjs/locale/tr');
 
 dayjs.extend(customParseFormat);
 

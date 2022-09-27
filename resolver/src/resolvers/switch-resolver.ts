@@ -40,20 +40,58 @@ export class SwitchResolver implements InfoResolver {
     public async resolve(context: InfoResolverContext): Promise<SwitchGameData> {
         const { userCountry, source } = context;
 
-        if (userCountry === "NZ" || userCountry === "AU") {
+        if (userCountry === 'NZ' || userCountry === 'AU') {
             return await this.resolveAUandNZ(context);
+        }
+
+        /**
+         * https://store-jp.nintendo.com/list/software/70010000012325.html
+         */
+        if (userCountry === 'JP') {
+            const [{ data }, price] = await Promise.all([
+                this.axios.get<string>(source.data.url),
+                this.getPriceInformation(source.data.id, userCountry)
+            ]);
+
+            const $ = cheerio.load(data);
+
+            const fullName = $("meta[property='og:title']").attr('content');
+            if (!fullName) {
+                throw new Error('Could not find name of game');
+            }
+
+            // nintendo.co.jp/switch/a4nla/index.html
+            // https://www.nintendo.co.jp/switch/a4nla/img/hero_pc.jpg
+            // https://store-jp.nintendo.com/list/software/70010000038434.html
+            // Two diffrent sites?!
+            // const thumbnailUrl = source.data.url.replace('index.html', 'img/hero_pc.jpg');
+            const thumbnailUrl = $("meta[name='og:image']").attr('content');
+
+            // productDetail--spec. tr:last > td = ReleaseDate
+            // const releaseDate = extract(data, /(?<=release_date_on_eshop":")([\d.]+-[\d.]+-[\d.]+)/);
+            const releaseDate = '2022年12月2日';
+
+            return {
+                ...source.data,
+                fullName,
+                thumbnailUrl,
+                // 2022年12月2日
+                releaseDate: parseDate(releaseDate, ['YYYY年MM月D日']),
+                originalReleaseDate: releaseDate,
+                priceInformation: this.parsePriceInformation(price)
+            };
         }
 
         if ([
             'US',
-            "EN-CA",
-            "ES-AR",
-            "ES-CL",
-            "ES-CO",
-            "ES-MX",
-            "ES-PE",
-            "FR-CA",
-            "PT-BR",
+            'EN-CA',
+            'ES-AR',
+            'ES-CL',
+            'ES-CO',
+            'ES-MX',
+            'ES-PE',
+            'FR-CA',
+            'PT-BR',
         ].includes(userCountry)) {
             const urlParts = source.data.id.split('/');
             const slug = urlParts[urlParts.length - 2];
@@ -95,36 +133,36 @@ export class SwitchResolver implements InfoResolver {
         }
 
         if ([
-            "AT",
-            "BE-FR",
-            "BE-NL",
-            "CH-DE",
-            "CH-FR",
-            "CH-IT",
-            "DE",
-            "ES",
-            "FR",
-            "GB",
-            "IE",
-            "IT",
-            "NL",
-            "PT",
-            "RU",
-            "ZA",
-            "SE",
-            "DK",
-            "NO",
-            "FI",
-            "HU",
-            "PL",
-            "CZ",
-            "SK",
-            "GR",
-            "HR",
-            "BG",
-            "SL",
-            "RO",
-            "SR"
+            'AT',
+            'BE-FR',
+            'BE-NL',
+            'CH-DE',
+            'CH-FR',
+            'CH-IT',
+            'DE',
+            'ES',
+            'FR',
+            'GB',
+            'IE',
+            'IT',
+            'NL',
+            'PT',
+            'RU',
+            'ZA',
+            'SE',
+            'DK',
+            'NO',
+            'FI',
+            'HU',
+            'PL',
+            'CZ',
+            'SK',
+            'GR',
+            'HR',
+            'BG',
+            'SL',
+            'RO',
+            'SR'
         ].includes(userCountry)) {
             const { data } = await this.axios.get<string>(source.data.url);
             const $ = cheerio.load(data);
@@ -151,7 +189,7 @@ export class SwitchResolver implements InfoResolver {
             };
         }
 
-        throw new Error(`Unsupported userCountry '${userCountry}' supplied.`)
+        throw new Error(`Unsupported userCountry '${userCountry}' supplied.`);
     }
 
     private async resolveAUandNZ({ userCountry, source }: InfoResolverContext) {
@@ -175,10 +213,10 @@ export class SwitchResolver implements InfoResolver {
             ...source.data,
             fullName,
             thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ["YYYY-MM-DD"]),
+            releaseDate: parseDate(releaseDate, ['YYYY-MM-DD']),
             originalReleaseDate: releaseDate,
             priceInformation: this.parsePriceInformation(price)
-        }
+        };
     }
 
     private async getPriceInformation(
@@ -190,7 +228,7 @@ export class SwitchResolver implements InfoResolver {
             {
                 params: {
                     country: userCountry,
-                    lang: "en",
+                    lang: 'en',
                     ids: id
                 }
             }

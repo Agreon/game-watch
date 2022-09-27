@@ -6,7 +6,7 @@ const IGNORED_TOKENS = [
 
 export const matchingName = (name: string, search: string) => {
     const nameTokens = name
-        .replace(/:|™|®|-/g, '')
+        .replace(/:|™|®|-|\(|\)/g, '')
         .toLowerCase()
         .split(' ')
         .filter(value => !!value);
