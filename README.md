@@ -2,6 +2,8 @@
 
 Overview of game release dates, prices and news
 
+![Screenshot](./screenshot.png)
+
 ## Features
 
 - Nightly update of Game data
@@ -9,4 +11,4 @@ Overview of game release dates, prices and news
 
 ## Contributing
 
-You can find the Developer Documentation [here](./developers.md).
+You can find the Developer Documentation [here](./CONTRIBUTING.md).

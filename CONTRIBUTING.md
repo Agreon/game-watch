@@ -4,11 +4,17 @@
 
 GameWatch (working title) is a service with which you can watch for changes in stores for specific games. This is done via `scraping`. A user can add a `Game` and the service will look for entries of that game in stores specified by the user. If an entry in a store is found, they are saved as a `InformationSource`. All `InformationSource`s are scraped each night to keep the state updated. If an update happened, `Notification`s are created for that source and if the user opted into it, an email is sent.
 
-## Setup
+## Run it
 
 ### Necessary software
 - [docker](docker.com) + [docker-compose](docs.docker.com/compose/install)
 - [pnpm](pnpm.io)
+
+### First time setup
+
+Create a copy of `.env.dist` and name it `.env`. Run `pnpm build` to build all libraries and packages.
+
+### Helpful Commands
 
 GameWatch is created as a monorepo with multiple packages and libraries. Each component can be independently started in docker or for active development with `pnpm start:dev`.
 
