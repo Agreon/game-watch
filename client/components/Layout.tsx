@@ -17,6 +17,7 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
             <Head>
                 <title>GameWatch</title>
                 <meta
+                    key="description"
                     name="description"
                     content="Overview of game release dates, prices and news"
                 />
@@ -58,9 +59,14 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
                             Made by <b>Agreon</b>
                         </a>
                     </Box>
-                    <Box>
-                        <Link href="/imprint" prefetch={false}>Imprint</Link>
-                    </Box>
+                    <Flex>
+                        <Box>
+                            <Link href="/imprint" prefetch={false}>Imprint</Link>
+                        </Box>
+                        <Box ml="1rem">
+                            <Link href="/privacy" prefetch={false}>Privacy Policy</Link>
+                        </Box>
+                    </Flex>
                 </Flex>
             </Flex>
 
