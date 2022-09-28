@@ -23,7 +23,7 @@ If you feel ready to start, execute `docker compose up -d` to start all services
 
 ### During Development
 
-GameWatch is created as a monorepo with multiple packages and libraries. Each component can be independently started in docker or for active development with `pnpm start:dev`. When I develop locally, I normally start up the non-development services with docker and the ones I work on with `pnpm start:dev`. Hot reloading in containers is not done yet. Feel free to help in #142 ;)
+GameWatch is created as a monorepo with multiple packages and libraries. Each component can be independently started in docker or for active development with `pnpm start:dev`. When I develop locally, I normally start up the non-development services with docker and the ones I work on with `pnpm start:dev`. Hot reloading in containers is not done yet. Feel free to help in https://github.com/Agreon/game-watch/issues/142 ;)
 
 ---
 
