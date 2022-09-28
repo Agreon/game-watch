@@ -14,23 +14,27 @@ GameWatch (working title) is a service with which you can watch for changes in s
 Run the following commands to build all packages and create an initial environment:
 
 ```
-cp .env.dist .env
-cp ./.env client/.env.local
+./create-initial-environment.sh
 pnpm install
 pnpm build:lib
 pnpm build:docker
 ```
+
+If you feel ready to start, execute `docker compose up -d` to start all services.
+
+**If some error during execution of create-initial-environment.sh occurred**
 
 You have to generate a JWT keypair for the JWT handling. To do that, use the following commands:
 
 ```
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+
+cat public.pem | base64
+cat private.pem | base64
 ```
 
-These values must be inserted in the `.env` as `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY`.
-
-If you feel ready to start, execute `docker compose up -d` to start all services.
+These base64 encoded values must be inserted in the `.env` as `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY`. Don't forget to remote the created keyfiles.
 
 ### During Development
 
