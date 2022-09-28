@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
+import { Country, InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
@@ -37,7 +37,13 @@ export class SwitchResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SwitchGameData> {
+    public async resolve(context: InfoResolverContext): Promise<SwitchGameData> {
+        const { userCountry, source } = context;
+
+        if (userCountry === 'NZ' || userCountry === 'AU') {
+            return await this.resolveAUandNZ(context);
+        }
+
         if (userCountry === 'US') {
             const urlParts = source.data.id.split('/');
             const slug = urlParts[urlParts.length - 2];
@@ -77,7 +83,8 @@ export class SwitchResolver implements InfoResolver {
                 };
             }
         }
-        const { data } = await this.axios.get<string>(source.data.id);
+
+        const { data } = await this.axios.get<string>(source.data.url);
         const $ = cheerio.load(data);
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr('content');
@@ -87,29 +94,71 @@ export class SwitchResolver implements InfoResolver {
             throw new Error('Could not find name of game');
         }
 
-        const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
+        const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
+        const price = await this.getPriceInformation(priceId, userCountry);
+
+        const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
         return {
             ...source.data,
             fullName,
             thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
+            releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
             originalReleaseDate: releaseDate,
-            priceInformation: await this.getPriceInformation(data),
+            priceInformation: this.parsePriceInformation(price),
+        };
+    }
+
+    private async resolveAUandNZ({ userCountry, source }: InfoResolverContext) {
+        const [{ data }, price] = await Promise.all([
+            this.axios.get<string>(source.data.url),
+            this.getPriceInformation(source.data.id, userCountry)
+        ]);
+
+        const $ = cheerio.load(data);
+
+        const fullName = $("meta[name='search.name']").attr('content');
+        if (!fullName) {
+            throw new Error('Could not find name of game');
+        }
+
+        const thumbnailUrl = $("meta[name='search.thumbnail']").attr('content');
+
+        const releaseDate = extract(data, /(?<=release_date_on_eshop":")([\d.]+-[\d.]+-[\d.]+)/);
+
+        return {
+            ...source.data,
+            fullName,
+            thumbnailUrl,
+            releaseDate: parseDate(releaseDate, ['YYYY-MM-DD']),
+            originalReleaseDate: releaseDate,
+            priceInformation: this.parsePriceInformation(price)
         };
     }
 
     private async getPriceInformation(
-        pageContents: string
+        id: string,
+        userCountry: Country
     ): Promise<StorePriceInformation | undefined> {
-        const priceId = extract(pageContents, /(?<=offdeviceNsuID": ").\d+/);
-        if (!priceId) {
+        const { data } = await this.axios.get<any>(
+            `https://api.ec.nintendo.com/v1/price`,
+            {
+                params: {
+                    country: userCountry,
+                    lang: 'en',
+                    ids: id
+                }
+            }
+        );
+
+        return data;
+    }
+
+    private parsePriceInformation(data: any): StorePriceInformation | undefined {
+        if (!data) {
             return undefined;
         }
 
-        const { data } = await this.axios.get<any>(
-            `https://api.ec.nintendo.com/v1/price?country=DE&lang=de&ids=${priceId}`
-        );
         const { regular_price, discount_price } = data.prices[0];
 
         const initial = parseCurrencyValue(regular_price.raw_value);

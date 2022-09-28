@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { withBrowser } from '@game-watch/browser';
 import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
@@ -29,6 +31,10 @@ export class SwitchSearcher implements InfoSearcher {
         search: string,
         { logger, userCountry }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
+        if (userCountry === 'NZ' || userCountry === 'AU') {
+            return await this.searchInAUAndNZ(search, { logger, userCountry });
+        }
+
         if (userCountry === 'DE') {
             const { numFound, docs: results } = await this.getSwitchSearchResponse(search);
 
@@ -91,6 +97,38 @@ export class SwitchSearcher implements InfoSearcher {
                 fullName
             };
         });
+    }
+
+    private async searchInAUAndNZ(
+        search: string,
+        { logger, userCountry }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
+        const lang = userCountry === 'AU' ? 'au' : 'nz';
+
+        const { data } = await this.axios.get(
+            `https://store.nintendo.com.au/${lang}/eshopsearch/result`,
+            { params: { q: search } }
+        );
+        const $ = cheerio.load(data);
+
+        const url = $('.product-item-link').attr('href')!;
+        const id = url.split('/')[url.split('/').length - 1];
+        const fullName = $('.product-item-link').text().trim();
+
+        if (!matchingName(fullName, search)) {
+            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
+
+            return null;
+
+        }
+
+        logger.debug(`Found gameId '${id}'`);
+
+        return {
+            id,
+            url,
+            fullName,
+        };
     }
 
     public async getSwitchSearchResponse(search: string) {

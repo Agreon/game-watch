@@ -1,4 +1,4 @@
-import { Country } from './country';
+import { Countries, Country } from './country';
 
 export enum InfoSourceType {
     Steam = 'steam',
@@ -78,10 +78,10 @@ export type GameDataU =
     | MetacriticData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
-    [InfoSourceType.Steam]: ['DE', 'US'] as const,
+    [InfoSourceType.Steam]: Countries,
+    [InfoSourceType.Metacritic]: Countries,
+    [InfoSourceType.Switch]: Countries,
     [InfoSourceType.PsStore]: ['DE', 'US'] as const,
-    [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: ['DE'] as const,
-    [InfoSourceType.Switch]: ['DE', 'US'] as const,
 } as const;

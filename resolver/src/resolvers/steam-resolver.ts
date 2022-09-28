@@ -1,5 +1,5 @@
 import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
-import { InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
+import { Country, InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -20,8 +20,10 @@ export class SteamResolver implements InfoResolver {
             {
                 params: {
                     appids: source.data.id,
+                    // Determines the returned currency.
                     cc: mapCountryCodeToLanguage(userCountry),
                 },
+                // Determines the returned language.
                 headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
             }
         );
@@ -44,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
-            releaseDate: this.getReleaseDate(json.release_date.date),
+            releaseDate: this.parseReleaseDate(json.release_date.date, userCountry),
             originalReleaseDate: json.release_date.date,
             priceInformation: json.is_free
                 ? { final: 0 }
@@ -59,7 +61,9 @@ export class SteamResolver implements InfoResolver {
         };
     }
 
-    private getReleaseDate(releaseDate: string) {
+    private parseReleaseDate(releaseDate: string, userCountry: Country) {
+        const locale = mapCountryCodeToLanguage(userCountry);
+
         releaseDate
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
@@ -68,7 +72,7 @@ export class SteamResolver implements InfoResolver {
 
         // Sometimes english, sometimes german..
         // TODO: What's with other countries?
-        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
+        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
             ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
             ?? parseDate(releaseDate);
     }

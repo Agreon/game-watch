@@ -35,7 +35,8 @@ export const ConfigureUserSettings: React.FC = () => {
             <Box mt={['0', '0', '1rem']}>
                 <Text fontSize="4xl" textAlign="center">Welcome to GameWatch!</Text>
                 <Text fontSize={['2xl', '2xl', '3xl']} mt="2rem">
-                    Before you start, please select the information sources that are relevant for you.
+                    Before you start, please select the information sources that are relevant for
+                    you.
                 </Text>
                 <Flex
                     align={['start', 'center']}
@@ -59,7 +60,7 @@ export const ConfigureUserSettings: React.FC = () => {
                     setFilterInfoSources={setInterestedInSources}
                 />
                 <Text mt="2rem">
-                    Missing a source? Let me know or contribute on
+                    Missing a source or a country? Let me know or contribute on
                     <Link href="https://github.com/agreon/game-watch" isExternal ml="0.5rem">
                         <Text as="u">GitHub<ExternalLinkIcon ml='0.2rem' mb="0.2rem" /></Text>
                     </Link>

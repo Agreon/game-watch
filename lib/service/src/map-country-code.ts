@@ -5,6 +5,8 @@ export const mapCountryCodeToLanguage = (country: Country) => {
         case 'DE':
             return 'de';
         case 'US':
+        case 'AU':
+        case 'NZ':
             return 'en';
     }
 };
@@ -15,5 +17,9 @@ export const mapCountryCodeToAcceptLanguage = (country: Country) => {
             return 'de-DE';
         case 'US':
             return 'en-US';
+        case 'AU':
+            return 'en-AU';
+        case 'NZ':
+            return 'en-NZ';
     }
 };
