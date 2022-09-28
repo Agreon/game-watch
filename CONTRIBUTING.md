@@ -15,7 +15,9 @@ Run the following commands to build all packages and create an initial environme
 
 ```
 cp .env.dist .env
+cp ./.env client/.env.local
 pnpm install
+pnpm build:lib
 pnpm build:docker
 ```
 
