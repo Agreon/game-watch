@@ -7,8 +7,8 @@ GameWatch (working title) is a service with which you can watch for changes in s
 ## Run it
 
 ### Necessary software
-- [docker](docker.com) + [docker-compose](docs.docker.com/compose/install)
-- [pnpm](pnpm.io)
+- [docker](https://docker.com) + [docker-compose](https://docs.docker.com/compose/install)
+- [pnpm](https://pnpm.io)
 
 ### First time setup
 
