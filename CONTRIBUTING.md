@@ -21,6 +21,15 @@ pnpm build:lib
 pnpm build:docker
 ```
 
+You have to generate a JWT keypair for the JWT handling. To do that, use the following commands:
+
+```
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+```
+
+These values must be inserted in the `.env` as `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY`.
+
 If you feel ready to start, execute `docker compose up -d` to start all services.
 
 ### During Development
