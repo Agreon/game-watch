@@ -1,9 +1,10 @@
-import { InfoSource, mikroOrmConfig } from "@game-watch/database";
-import { createQueue, QueueType } from "@game-watch/queue";
-import { parseEnvironment } from "@game-watch/service";
-import { MikroORM } from "@mikro-orm/core";
+import { InfoSource, mikroOrmConfig } from '@game-watch/database';
+import { createQueue, QueueType } from '@game-watch/queue';
+import { parseEnvironment } from '@game-watch/service';
+import { InfoSourceState } from '@game-watch/shared';
+import { MikroORM } from '@mikro-orm/core';
 
-import { EnvironmentStructure } from "../src/environment";
+import { EnvironmentStructure } from '../src/environment';
 
 const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 
@@ -14,15 +15,15 @@ const main = async () => {
     const infoSources = await orm.em.find(InfoSource, {});
 
     for (const infoSource of infoSources) {
-        console.log("Adding cron for", infoSource.id);
+        console.log('Adding cron for', infoSource.id);
 
         await queue.removeRepeatableByKey(
             `${QueueType.ResolveSource}:${infoSource.id}:::${SYNC_SOURCES_AT}`
         );
 
-        console.log("Removed old cron for", infoSource.id);
+        console.log('Removed old cron for', infoSource.id);
 
-        if(infoSource.disabled || !infoSource.remoteGameId){
+        if (infoSource.state === InfoSourceState.Disabled) {
             continue;
         }
 
@@ -38,10 +39,10 @@ const main = async () => {
             }
         );
 
-        console.log("Added cron for", infoSource.id);
+        console.log('Added cron for', infoSource.id);
     }
 
-    console.log("Added crons for", infoSources.length, "sources");
+    console.log('Added crons for', infoSources.length, 'sources');
 
     await queue.close();
 };

@@ -1,9 +1,9 @@
 import '../styles/globals.css';
 
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
 
-import Layout from "../components/Layout";
+import Layout from '../components/Layout';
 import { NotificationProvider } from '../providers/NotificationProvider';
 import { UserProvider } from '../providers/UserProvider';
 import theme from '../theme';

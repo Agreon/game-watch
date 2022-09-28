@@ -1,9 +1,9 @@
-import { Logger } from "@game-watch/service";
-import { Country, InfoSourceType } from "@game-watch/shared";
+import { Logger } from '@game-watch/service';
+import { BaseGameData, Country, InfoSourceType } from '@game-watch/shared';
 import * as Sentry from '@sentry/node';
-import axios from "axios";
-import { Redis } from "ioredis";
-import pRetry from "p-retry";
+import axios from 'axios';
+import { Redis } from 'ioredis';
+import pRetry from 'p-retry';
 
 export interface InfoSearcherContext {
     logger: Logger
@@ -14,14 +14,9 @@ export interface SearchServiceContext extends InfoSearcherContext {
     initialRun?: boolean
 }
 
-export interface SearchResponse {
-    remoteGameId: string
-    remoteGameName: string
-}
-
 export interface InfoSearcher {
     type: InfoSourceType
-    search(name: string, context: InfoSearcherContext): Promise<SearchResponse | null>
+    search(name: string, context: InfoSearcherContext): Promise<BaseGameData | null>
 }
 
 const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
@@ -42,14 +37,20 @@ export class SearchService {
     public constructor(
         private readonly searchers: InfoSearcher[],
         private readonly redis: Redis,
+        private readonly cachingEnabled: boolean
     ) { }
 
     public async searchForGameInSource(
         search: string,
         type: InfoSourceType,
         context: SearchServiceContext
-    ): Promise<SearchResponse | null> {
-        const logger = context.logger.child({ serviceName: SearchService.name, type, search });
+    ): Promise<BaseGameData | null> {
+        const logger = context.logger.child({
+            serviceName: SearchService.name,
+            type,
+            search,
+            context
+        });
 
         const searcherForType = this.searchers.find(searcher => searcher.type == type);
         if (!searcherForType) {
@@ -61,16 +62,18 @@ export class SearchService {
 
         try {
             return await pRetry(async () => {
-                const existingData = await this.redis.get(cacheKey);
-                if (existingData) {
-                    logger.debug(`Search data for ${cacheKey} was found in cache`);
+                if (this.cachingEnabled) {
+                    const existingData = await this.redis.get(cacheKey);
+                    if (existingData) {
+                        logger.debug(`Search data for ${cacheKey} was found in cache`);
 
-                    return JSON.parse(existingData);
+                        return JSON.parse(existingData);
+                    }
                 }
 
                 const foundData = await searcherForType.search(search, { ...context, logger });
-                if(foundData !== null){
-                    await this.redis.set(cacheKey, JSON.stringify(foundData), "EX", 60 * 60 * 23);
+                if (foundData !== null && this.cachingEnabled) {
+                    await this.redis.set(cacheKey, JSON.stringify(foundData), 'EX', 60 * 60 * 23);
                 }
 
                 return foundData;
@@ -79,12 +82,12 @@ export class SearchService {
                 ...(context.initialRun ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
                 onFailedAttempt: error => {
                     logger.warn(error, `Error thrown while searching ${type} for ${search}`);
-                    // We only want to retry on network errors that are not signaling us to stop anyway.
-                    if(
+                    // We only want to retry on network errors that are not signaling us to stop.
+                    if (
                         // Epic throws a 403 at the moment.
                         (axios.isAxiosError(error) && error.response?.status !== 403)
                         // This error occurs if Puppeteer timeouts.
-                        || error.name === "TimeoutError"
+                        || error.name === 'TimeoutError'
                     ) {
                         return;
                     }

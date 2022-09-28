@@ -1,28 +1,50 @@
 import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, IconButton, Text, useBreakpointValue, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { UserState } from "@game-watch/shared";
+import {
+    Box,
+    Button,
+    Flex,
+    IconButton,
+    Text,
+    useBreakpointValue,
+    useColorMode,
+    useColorModeValue,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { UserState } from '@game-watch/shared';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from "react";
+import React from 'react';
 
 import githubIconDark from '../assets/github-icon-dark.png';
 import githubIconLight from '../assets/github-icon-light.png';
 import { useNotificationContext } from '../providers/NotificationProvider';
-import { useUserContext } from "../providers/UserProvider";
-import { AuthModal } from "./Auth/AuthModal";
+import { useUserContext } from '../providers/UserProvider';
+import { AuthModal } from './Auth/AuthModal';
 import { ConfigureUserSettingsModal } from './UserSettings/ConfigureUserSettingsModal';
 
 export default function Header() {
     const { user, logoutUser } = useUserContext();
-    const { notifications, openNotificationSidebar } = useNotificationContext();
+    const {
+        notifications,
+        toggleNotificationSidebar,
+        notificationSidebarIconRef
+    } = useNotificationContext();
     const { colorMode } = useColorMode();
 
-    const { isOpen: showAuthModal, onOpen: openAuthModal, onClose: closeAuthModal } = useDisclosure();
-    const { isOpen: showSettingsModal, onOpen: openSettingsModal, onClose: closeSettingsModal } = useDisclosure();
+    const {
+        isOpen: showAuthModal,
+        onOpen: openAuthModal,
+        onClose: closeAuthModal,
+    } = useDisclosure();
+    const {
+        isOpen: showSettingsModal,
+        onOpen: openSettingsModal,
+        onClose: closeSettingsModal,
+    } = useDisclosure();
 
     return (
         <Flex
-            justify={["space-between", "space-between", "space-between", "center"]}
+            justify={['space-between', 'space-between', 'space-between', 'center']}
             align="center"
             position="absolute"
             bg={useColorModeValue('white', 'gray.800')}
@@ -33,7 +55,7 @@ export default function Header() {
         >
             <Text fontSize="2xl">
                 <Link href="/">
-                    {useBreakpointValue(["GW", "GameWatch"])}
+                    {useBreakpointValue(['GW', 'GameWatch'])}
                 </Link>
             </Text>
             <Flex
@@ -59,7 +81,7 @@ export default function Header() {
                         </Button>
                     </Box>
                     : <Flex align="center" mr="0.5rem">
-                        <Text display={["none", "none", "block"]}>Hey {user.username}!</Text>
+                        <Text display={['none', 'none', 'block']}>Hey {user.username}!</Text>
                         <Button
                             ml="1rem"
                             aria-label="logout"
@@ -80,7 +102,7 @@ export default function Header() {
                             onClick={openSettingsModal}
                             variant="ghost"
                             _focus={{
-                                boxShadow: "none"
+                                boxShadow: 'none'
                             }}
                         />
                         <ConfigureUserSettingsModal
@@ -91,16 +113,30 @@ export default function Header() {
                 }
                 <Box position="relative" mr="1rem">
                     <IconButton
+                        ref={notificationSidebarIconRef}
                         aria-label="notifications"
                         icon={<BellIcon w={6} h={6} />}
-                        onClick={openNotificationSidebar}
+                        onClick={toggleNotificationSidebar}
                         variant="ghost"
                         _focus={{
-                            boxShadow: "none"
+                            boxShadow: 'none'
                         }}
                     />
                     {notifications.length > 0 &&
-                        <Box position="absolute" bg="teal" rounded="3xl" mr="0.25rem" mt="0.1rem" top="0" right="0" width="1rem" height="1rem" display="flex" justifyContent="center" >
+                        <Box
+                            position="absolute"
+                            bg="teal"
+                            rounded="3xl"
+                            mr="0.25rem"
+                            mt="0.1rem"
+                            top="0"
+                            right="0"
+                            width="1rem"
+                            height="1rem"
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                        >
                             <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
                         </Box>
                     }
@@ -112,7 +148,7 @@ export default function Header() {
                         rel="noopener noreferrer"
                     >
                         <Image
-                            src={colorMode === "light" ? githubIconDark : githubIconLight}
+                            src={colorMode === 'light' ? githubIconDark : githubIconLight}
                             alt="Github"
                             width={32}
                             height={32}

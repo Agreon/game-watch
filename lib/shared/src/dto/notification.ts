@@ -1,6 +1,6 @@
-import { NotificationData, NotificationType } from "../types";
-import { GameDto } from "./game";
-import { InfoSourceDto } from "./info-source";
+import { NotificationData, NotificationType } from '../types';
+import { GameDto } from './game';
+import { InfoSourceDto } from './info-source';
 
 export interface NotificationDto<T extends NotificationType = NotificationType> {
     id: string;

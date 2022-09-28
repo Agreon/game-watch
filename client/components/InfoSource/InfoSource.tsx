@@ -1,9 +1,9 @@
-import { InfoSourceType, MetacriticData } from "@game-watch/shared";
-import React from "react";
+import { InfoSourceType, MetacriticData } from '@game-watch/shared';
+import React from 'react';
 
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { MetacriticInfoSource } from "./MetacriticInfoSource";
-import { StoreInfoSource } from "./StoreInfoSource";
+import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
+import { MetacriticInfoSource } from './MetacriticInfoSource';
+import { StoreInfoSource } from './StoreInfoSource';
 
 export const InfoSource: React.FC = () => {
     const { source } = useInfoSourceContext();

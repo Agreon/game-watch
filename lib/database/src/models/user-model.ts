@@ -1,10 +1,10 @@
-import { Country, InfoSourceType, UserState } from "@game-watch/shared";
-import { ArrayType, Collection, Entity, Enum, OneToMany, Property } from "@mikro-orm/core";
+import { Country, InfoSourceType, UserState } from '@game-watch/shared';
+import { ArrayType, Collection, Entity, Enum, OneToMany, Property } from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { Game } from "./game-model";
-import { InfoSource } from "./info-source-model";
-import { Tag } from "./tag-model";
+import { BaseEntity } from '../base-entity';
+import { Game } from './game-model';
+import { InfoSource } from './info-source-model';
+import { Tag } from './tag-model';
 
 @Entity()
 export class User extends BaseEntity<User> {

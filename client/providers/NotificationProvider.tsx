@@ -9,8 +9,9 @@ export interface NotificationCtx {
     markNotificationAsRead: (id: string) => Promise<void>
     showNotificationSidebar: boolean
     notificationSidebarRef: React.MutableRefObject<HTMLDivElement | null>
-    openNotificationSidebar: () => void
+    notificationSidebarIconRef: React.MutableRefObject<HTMLButtonElement | null>
     closeNotificationSidebar: () => void
+    toggleNotificationSidebar: () => void
 }
 
 export const NotificationContext = React.createContext<NotificationCtx | undefined>(undefined);
@@ -28,38 +29,40 @@ export const NotificationProvider: React.FC<{
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
     useEffect(() => {
-        (async () => {
+        const intervalId = setInterval(async () => {
             await withRequest(async http => {
-                do {
-                    try {
-                        const { data } = await http.get<NotificationDto[]>(`/notification`);
-                        setNotifications(data);
-                    } catch (error) {
-                        handleError(error);
-                    } finally {
-                        await new Promise(resolve => setTimeout(resolve, 5000));
-                    }
-                } while (true);
+                const { data } = await http.get<NotificationDto[]>(`/notification`);
+                setNotifications(data);
             });
-        }
-        )();
+        }, 5000);
+
+        return () => clearInterval(intervalId);
     }, [setNotifications, handleError, withRequest]);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
         await withRequest(async http => {
             await http.post(`/notification/${notificationId}/read`);
-            setNotifications(currentNotifications => currentNotifications.filter(({ id }) => id !== notificationId));
+            setNotifications(currentNotifications => currentNotifications.filter(
+                ({ id }) => id !== notificationId
+            ));
         });
     }, [withRequest]);
 
-    const { isOpen: showNotificationSidebar, onOpen: openNotificationSidebar, onClose: closeNotificationSidebar } = useDisclosure();
+    const {
+        isOpen: showNotificationSidebar,
+        onClose: closeNotificationSidebar,
+        onToggle: toggleNotificationSidebar
+    } = useDisclosure();
 
     const notificationSidebarRef = useRef<HTMLDivElement | null>(null);
+    const notificationSidebarIconRef = useRef<HTMLButtonElement | null>(null);
 
-    // TODO: https://chakra-ui.com/docs/hooks/use-outside-click?
     // Close sidebar on outside click
     const handleClick = useCallback((event: MouseEvent) => {
-        if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target as Node)) {
+        if (
+            notificationSidebarRef.current?.contains(event.target as Node) === false
+            && notificationSidebarIconRef.current?.contains(event.target as Node) === false
+        ) {
             closeNotificationSidebar();
         }
     }, [notificationSidebarRef, closeNotificationSidebar]);
@@ -80,19 +83,27 @@ export const NotificationProvider: React.FC<{
         };
     }, [handleClick, handleKeyDown]);
 
-
     const contextValue = useMemo(() => ({
         notifications,
         markNotificationAsRead,
         showNotificationSidebar,
-        openNotificationSidebar,
         closeNotificationSidebar,
-        notificationSidebarRef
-    }), [notifications, markNotificationAsRead, showNotificationSidebar, notificationSidebarRef, openNotificationSidebar, closeNotificationSidebar]);
+        toggleNotificationSidebar,
+        notificationSidebarRef,
+        notificationSidebarIconRef
+    }), [
+        notifications,
+        markNotificationAsRead,
+        showNotificationSidebar,
+        closeNotificationSidebar,
+        toggleNotificationSidebar,
+        notificationSidebarRef,
+        notificationSidebarIconRef
+    ]);
 
     return (
         <NotificationContext.Provider value={contextValue}>
             {children}
         </NotificationContext.Provider>
-        );
-    };
+    );
+};

@@ -1,17 +1,20 @@
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { ButtonGroup, Flex, IconButton, Input } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { ButtonGroup, Flex, IconButton, Input } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>, onAbort: () => void }> = ({ onSubmit, onAbort }) => {
+export const AddTagToGame: React.FC<{
+    onSubmit: (value: string) => Promise<void>,
+    onAbort: () => void
+}> = ({ onSubmit, onAbort }) => {
     // Focus initially
     const inputRef = useRef<HTMLInputElement | null>(null);
     useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
 
     const [loading, setLoading] = useState(false);
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
 
     const onCancel = useCallback(() => {
-        setName("");
+        setName('');
         onAbort();
     }, [onAbort]);
 
@@ -19,14 +22,14 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
         setLoading(true);
         try {
             await onSubmit(name);
-            setName("");
+            setName('');
         } finally {
             setLoading(false);
         }
     }, [onSubmit, name]);
 
     const onNameKeyPress = useCallback(async ({ key }: { key: string }) => {
-        if (key === "Enter") {
+        if (key === 'Enter') {
             onAdd();
         }
     }, [onAdd]);
@@ -43,8 +46,18 @@ export const AddTagToGame: React.FC<{ onSubmit: (value: string) => Promise<void>
                 onKeyPress={onNameKeyPress}
             />
             <ButtonGroup justifyContent="center" size="sm">
-                <IconButton aria-label="add" icon={<CheckIcon />} onClick={onAdd} disabled={loading} />
-                <IconButton aria-label="cancel" icon={<CloseIcon />} onClick={onCancel} disabled={loading} />
+                <IconButton
+                    aria-label="add"
+                    icon={<CheckIcon />}
+                    onClick={onAdd}
+                    disabled={loading}
+                />
+                <IconButton
+                    aria-label="cancel"
+                    icon={<CloseIcon />}
+                    onClick={onCancel}
+                    disabled={loading}
+                />
             </ButtonGroup>
         </Flex>
     );

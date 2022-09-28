@@ -1,9 +1,9 @@
-import { User } from "@game-watch/database";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { User } from '@game-watch/database';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MailService as SendgridMailClient } from '@sendgrid/mail';
 
-import { Environment } from "../environment";
+import { Environment } from '../environment';
 
 @Injectable()
 export class MailService {
@@ -13,12 +13,12 @@ export class MailService {
     ) { }
 
     public async sendDoiMail(receiver: User, token: string) {
-        const doiLink = new URL(`/user/confirm?token=${token}`, this.configService.get("API_URL"));
+        const doiLink = new URL(`/user/confirm?token=${token}`, this.configService.get('API_URL'));
 
         await this.sendgridClient.send({
             to: receiver.getEmailOrFail(),
-            from: "daniel@game-watch.agreon.de",
-            subject: "Confirm your E-Mail Address",
+            from: 'daniel@game-watch.agreon.de',
+            subject: 'Confirm your E-Mail Address',
             text: `
         Hey ${receiver.username}!
 

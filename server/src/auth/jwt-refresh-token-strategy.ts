@@ -11,7 +11,7 @@ import { Strategy } from 'passport-jwt';
 
 import { Environment } from '../environment';
 
-export const JWT_REFRESH_TOKEN_NAME = "game-watch-refresh-token";
+export const JWT_REFRESH_TOKEN_NAME = 'game-watch-refresh-token';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh-token') {
@@ -24,12 +24,15 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
         super({
             jwtFromRequest: (request: Request) => request.cookies?.[JWT_REFRESH_TOKEN_NAME],
             ignoreExpiration: false,
-            secretOrKey: Buffer.from(configService.get<string>("JWT_PUBLIC_KEY"), "base64").toString()
+            secretOrKey: Buffer.from(
+                configService.get<string>('JWT_PUBLIC_KEY'),
+                'base64'
+            ).toString()
         });
     }
 
     public async validate({ sub }: Record<string, unknown>): Promise<User> {
-        if (typeof sub !== "string") {
+        if (typeof sub !== 'string') {
             throw new UnauthorizedException();
         }
 

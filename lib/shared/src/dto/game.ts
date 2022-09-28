@@ -1,7 +1,7 @@
-import { IsString, Length } from "class-validator";
+import { IsString, Length } from 'class-validator';
 
-import { InfoSourceDto } from "./info-source";
-import { TagDto } from "./tag";
+import { InfoSourceDto } from './info-source';
+import { TagDto } from './tag';
 
 export interface GameDto {
     id: string

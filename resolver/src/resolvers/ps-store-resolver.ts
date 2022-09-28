@@ -1,11 +1,16 @@
-import { withBrowser } from "@game-watch/browser";
-import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { Country, InfoSourceType, PsStoreGameData, StorePriceInformation } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { withBrowser } from '@game-watch/browser';
+import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
+import {
+    Country,
+    InfoSourceType,
+    PsStoreGameData,
+    StorePriceInformation,
+} from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 
-import { InfoResolver, InfoResolverContext } from "../resolve-service";
-import { parseCurrencyValue } from "../util/parse-currency-value";
-import { parseDate } from "../util/parse-date";
+import { InfoResolver, InfoResolverContext } from '../resolve-service';
+import { parseCurrencyValue } from '../util/parse-currency-value';
+import { parseDate } from '../util/parse-date';
 
 /**
  * TODO:
@@ -17,12 +22,13 @@ import { parseDate } from "../util/parse-date";
 export class PsStoreResolver implements InfoResolver {
     public type = InfoSourceType.PsStore;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(storePage: string, { userCountry }: InfoResolverContext): Promise<PsStoreGameData> {
+    public async resolve({ userCountry, source }: InfoResolverContext): Promise<PsStoreGameData> {
+
         return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
-            await browser.goto(storePage);
-            await browser.waitForSelector(".psw-t-title-m");
+            await browser.goto(source.data.id);
+            await browser.waitForSelector('.psw-t-title-m');
 
             // const { data } = await axios.get<string>(
             //     storePage
@@ -51,15 +57,21 @@ export class PsStoreResolver implements InfoResolver {
             // cta => price
             // thumbnail => background-image
 
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const fullName = await browser.$eval('h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim());
+            const fullName = await browser.$eval(
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                'h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim()
+            );
 
             const price = await browser.evaluate(
-                () => document.querySelector('.psw-t-title-m[data-qa="mfeCtaMain#offer0#finalPrice"]')?.textContent?.trim()
+                () => document
+                    .querySelector('.psw-t-title-m[data-qa="mfeCtaMain#offer0#finalPrice"]')
+                    ?.textContent
+                    ?.trim()
             );
             const originalPrice = await browser.evaluate(
                 () => document.querySelector('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]')?.textContent?.trim()
             );
+
             // const discountDescription = await browser.evaluate(
             //     () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
             // );
@@ -69,16 +81,17 @@ export class PsStoreResolver implements InfoResolver {
             );
 
             const thumbnailUrl = await browser.evaluate(
-                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')?.getAttribute("src")
+                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')?.getAttribute('src')
             );
 
             return {
-                id: storePage,
-                url: storePage,
+                ...source.data,
                 fullName,
                 thumbnailUrl: thumbnailUrl ?? undefined,
                 priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
-                releaseDate: userCountry === "DE" ? parseDate(releaseDate, ["D.M.YYYY"]) : parseDate(releaseDate, ["MM/DD/YYYY"]),
+                releaseDate: userCountry === 'DE'
+                    ? parseDate(releaseDate, ['D.M.YYYY'])
+                    : parseDate(releaseDate, ['M/DD/YYYY']),
                 originalReleaseDate: releaseDate
             };
         });
@@ -89,8 +102,8 @@ export class PsStoreResolver implements InfoResolver {
         userCountry: Country
     ): StorePriceInformation | undefined {
         if (
-            (userCountry === "DE" && price === "Kostenlos")
-            || (userCountry === "US" && price === "Free")
+            (userCountry === 'DE' && price === 'Kostenlos')
+            || (userCountry === 'US' && price === 'Free')
         ) {
             return {
                 final: 0

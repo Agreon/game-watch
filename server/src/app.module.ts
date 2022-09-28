@@ -41,8 +41,8 @@ import { UserModule } from './user/user-module';
       inject: [ConfigService],
       useFactory: (config: ConfigService<environment, true>) => ({
         pinoHttp: {
-          autoLogging: !config.get("PRETTY_LOGGING"),
-          quietReqLogger: config.get("PRETTY_LOGGING"),
+          autoLogging: !config.get('PRETTY_LOGGING'),
+          quietReqLogger: config.get('PRETTY_LOGGING'),
           redact: {
             paths: [
               'req.headers.cookie',
@@ -50,7 +50,7 @@ import { UserModule } from './user/user-module';
             ],
             remove: true,
           },
-          logger: createLogger("Server"),
+          logger: createLogger('Server'),
         },
       }),
     }),

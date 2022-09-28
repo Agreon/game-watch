@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState } from 'react';
 
-import { useGameContext } from "../../providers/GameProvider";
-import { useTagContext } from "../../providers/TagProvider";
-import { AddTagToGame } from "./AddTagToGame";
-import { EditGameTags } from "./EditGameTags";
-import { GameTagList } from "./GameTagList";
+import { useGameContext } from '../../providers/GameProvider';
+import { useTagContext } from '../../providers/TagProvider';
+import { AddTagToGame } from './AddTagToGame';
+import { EditGameTags } from './EditGameTags';
+import { GameTagList } from './GameTagList';
 
 enum EditMode {
     None,
@@ -30,7 +30,10 @@ export const GameTags: React.FC = () => {
         case EditMode.None:
             return <GameTagList onEdit={() => setEditMode(EditMode.Edit)} />;
         case EditMode.Edit:
-            return <EditGameTags onNewTag={() => setEditMode(EditMode.Add)} onCancel={() => setEditMode(EditMode.None)} />;
+            return <EditGameTags
+                onNewTag={() => setEditMode(EditMode.Add)}
+                onCancel={() => setEditMode(EditMode.None)}
+            />;
         case EditMode.Add:
             return <AddTagToGame onSubmit={onAdd} onAbort={() => setEditMode(EditMode.Edit)} />;
     }

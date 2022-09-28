@@ -16,15 +16,15 @@
     "scripts": {
         "build": "pnpm turbo run build",
         "build:lib": "pnpm turbo run build --filter=\"./lib/*\"",
+        "build:docker": "COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build",
         "lint": "pnpm turbo run lint",
         "lint:fix": "pnpm turbo run lint:fix",
-        "docker-build": "COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build",
         "clean": "rm -rf ./**/node_modules && rm -rf ./node_modules",
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
         "pnpm": "7.5.2",
-        "turbo": "^1.4.5"
+        "turbo": "^1.5.1"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"
