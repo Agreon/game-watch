@@ -57,7 +57,7 @@ export class SwitchResolver implements InfoResolver {
         if (!priceId) {
             logger.warn(`Could not get game id. Game might not have a price yet`);
 
-            const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
+            const releaseDate = extract(data, /(?<=Erscheinungsdatum: )(.*[\d.]+)/);
 
             return {
                 ...source.data,

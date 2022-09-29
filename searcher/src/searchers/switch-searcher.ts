@@ -111,13 +111,34 @@ export class SwitchSearcher implements InfoSearcher {
         );
         const $ = cheerio.load(data);
 
+        let url: string;
+
         const gameInfo = $('.product-item-link').attr('data-eshop-confirmation-post')!;
-        const url = JSON.parse(gameInfo).action;
+        if (gameInfo) {
+            try {
+                url = JSON.parse(gameInfo).action;
+            } catch (error) {
+                logger.error('Could not parse', { gameInfo });
+                throw error;
+            }
+        } else {
+            // Sometimes the link is added as href.
+            url = $('.product-item-link').attr('href')!;
+
+            if (!url) {
+                logger.debug('No results found');
+
+                return null;
+            }
+        }
+
         const id = url.split('/')[url.split('/').length - 1];
         const fullName = $('.product-item-link').text().trim();
 
         if (!matchingName(fullName, search)) {
-            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
+            logger.debug(
+                `Found name '${fullName}' does not include search '${search}'. Skipping`
+            );
 
             return null;
 
