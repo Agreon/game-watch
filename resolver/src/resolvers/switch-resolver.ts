@@ -95,7 +95,10 @@ export class SwitchResolver implements InfoResolver {
         }
 
         const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
-        const price = await this.getPriceInformation(priceId, userCountry);
+        let price;
+        if (priceId !== 'not_defined') {
+            price = await this.getPriceInformation(priceId, userCountry);
+        }
 
         const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
