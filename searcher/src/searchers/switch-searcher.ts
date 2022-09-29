@@ -111,7 +111,8 @@ export class SwitchSearcher implements InfoSearcher {
         );
         const $ = cheerio.load(data);
 
-        const url = $('.product-item-link').attr('href')!;
+        const gameInfo = $('.product-item-link').attr('data-eshop-confirmation-post')!;
+        const url = JSON.parse(gameInfo).action;
         const id = url.split('/')[url.split('/').length - 1];
         const fullName = $('.product-item-link').text().trim();
 

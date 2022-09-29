@@ -117,12 +117,12 @@ export class SwitchResolver implements InfoResolver {
 
         const $ = cheerio.load(data);
 
-        const fullName = $("meta[name='search.name']").attr('content');
+        const fullName = $("meta[property='og:title']").attr('content')!.split('/')[0];
         if (!fullName) {
             throw new Error('Could not find name of game');
         }
 
-        const thumbnailUrl = $("meta[name='search.thumbnail']").attr('content');
+        const thumbnailUrl = $("meta[property='og:image']").attr('content');
 
         const releaseDate = extract(data, /(?<=release_date_on_eshop":")([\d.]+-[\d.]+-[\d.]+)/);
 
