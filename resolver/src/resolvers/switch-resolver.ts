@@ -38,7 +38,7 @@ export class SwitchResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve(context: InfoResolverContext): Promise<SwitchGameData> {
-        const { userCountry, source } = context;
+        const { userCountry, source, logger } = context;
 
         if (userCountry === 'NZ' || userCountry === 'AU') {
             return await this.resolveAUandNZ(context);
@@ -95,11 +95,21 @@ export class SwitchResolver implements InfoResolver {
         }
 
         const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
-        let price;
-        if (priceId !== 'not_defined') {
-            price = await this.getPriceInformation(priceId, userCountry);
+        if (!priceId) {
+            logger.warn(`Could not get game id. Game might not have a price yet`);
+
+            const releaseDate = extract(data, /(?<=Erscheinungsdatum: )[\d.]+/);
+
+            return {
+                ...source.data,
+                fullName,
+                thumbnailUrl,
+                releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
+                originalReleaseDate: releaseDate
+            };
         }
 
+        const price = await this.getPriceInformation(priceId, userCountry);
         const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
         return {
