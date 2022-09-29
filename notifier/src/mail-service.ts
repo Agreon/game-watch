@@ -88,7 +88,9 @@ ${unsubscribeLink}
 
                 return `${gameName} was reduced from ${initial} to ${final}.`;
             case NotificationType.ReleaseDateChanged:
-                const formattedDate = formatReleaseDate(notification.data as NotificationData[NotificationType.ReleaseDateChanged]);
+                const formattedDate = formatReleaseDate(
+                    notification.data as NotificationData[NotificationType.ReleaseDateChanged]
+                );
 
                 return `${gameName} will be released on ${formattedDate}.`;
             case NotificationType.NewStoreEntry:
@@ -98,7 +100,9 @@ ${unsubscribeLink}
             case NotificationType.NewMetacriticRating:
                 return `${gameName} received a rating.`;
             case NotificationType.ResolveError:
-                return `${gameName} could not be resolved.`;
+                return `${gameName} could not be resolved. Try to trigger it manually again.`
+                    + " If that didn't help, there might be an issue with our implementation."
+                    + ' But worry not, the team is already notified.';
         }
     }
 

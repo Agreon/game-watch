@@ -1,4 +1,4 @@
-import { Game, InfoSource, Notification, Tag, User } from '@game-watch/database';
+import { Game, InfoSource, Tag, User } from '@game-watch/database';
 import { QueueType } from '@game-watch/queue';
 import { InfoSourceState } from '@game-watch/shared';
 import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
@@ -16,8 +16,6 @@ export class GameService {
         private readonly gameRepository: EntityRepository<Game>,
         @InjectRepository(InfoSource)
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
-        @InjectRepository(Notification)
-        private readonly notificationRepository: EntityRepository<Notification>,
     ) { }
 
     public async createGame(search: string, user: IdentifiedReference<User>) {
@@ -107,16 +105,11 @@ export class GameService {
     public async deleteGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(
             id,
-            { populate: ['infoSources', 'notifications'] }
+            { populate: ['infoSources'] }
         );
-
-        for (const notification of game.notifications) {
-            this.notificationRepository.remove(notification);
-        }
 
         for (const source of game.infoSources) {
             await this.queueService.removeRepeatableInfoSourceResolveJob(source);
-            this.infoSourceRepository.remove(source);
         }
 
         await this.queueService.removeRepeatableGameSearchJob(game);

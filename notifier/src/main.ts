@@ -13,15 +13,15 @@ import { Worker } from 'bullmq';
 import { EnvironmentStructure } from './environment';
 import { MailService } from './mail-service';
 import { NotificationService } from './notification-service';
-import { GameReducedNotificationCreator } from './notifier/game-reduced-notification-creator';
-import { GameReleasedNotificationCreator } from './notifier/game-released-notification-creator';
+import { GameReducedNotificationCreator } from './notifiers/game-reduced-notification-creator';
+import { GameReleasedNotificationCreator } from './notifiers/game-released-notification-creator';
 import {
     NewMetaCriticRatingNotificationCreator
-} from './notifier/new-meta-critic-rating-notification-creator';
-import { NewStoreEntryNotificationCreator } from './notifier/new-store-entry-notification-creator';
+} from './notifiers/new-meta-critic-rating-notification-creator';
+import { NewStoreEntryNotificationCreator } from './notifiers/new-store-entry-notification-creator';
 import {
     ReleaseDateChangedNotificationCreator
-} from './notifier/release-date-changed-notification-creator';
+} from './notifiers/release-date-changed-notification-creator';
 
 const {
     CREATE_NOTIFICATIONS_CONCURRENCY,

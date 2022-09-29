@@ -38,10 +38,10 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     @Property()
     public foundAt: Date = new Date();
 
-    @ManyToOne(() => Game, { wrappedReference: true, hidden: true })
+    @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
     public game!: IdentifiedReference<Game>;
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)

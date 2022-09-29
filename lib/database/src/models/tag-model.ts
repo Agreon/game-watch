@@ -22,7 +22,7 @@ export class Tag extends BaseEntity<Tag> {
     @ManyToMany(() => Game, game => game.tags)
     public games = new Collection<Game>(this);
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
     public constructor(
