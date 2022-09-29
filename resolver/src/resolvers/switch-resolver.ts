@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { extract } from '@game-watch/service';
 import { Country, InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
@@ -6,12 +7,6 @@ import * as cheerio from 'cheerio';
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
 import { parseCurrencyValue } from '../util/parse-currency-value';
 import { parseDate } from '../util/parse-date';
-
-const extract = (content: string, regex: RegExp) => {
-    const result = new RegExp(regex).exec(content);
-
-    return result ? result[0] : undefined;
-};
 
 interface SwitchUSGraphqlPriceResponse {
     minimum: {
@@ -45,43 +40,7 @@ export class SwitchResolver implements InfoResolver {
         }
 
         if (userCountry === 'US') {
-            const urlParts = source.data.id.split('/');
-            const slug = urlParts[urlParts.length - 2];
-
-            const { data: { data } } = await this.axios.get(
-                'https://graph.nintendo.com',
-                {
-                    params: {
-                        operationName: 'ProductDetail',
-                        variables: {
-                            slug,
-                            locale: 'en_US'
-                        },
-                        extensions: {
-                            'persistedQuery': {
-                                'version': 1,
-                                'sha256Hash': 'bfa2734b3ac921de5a7297bbd70fdd10492a1b072cb4b6bc6b9cc91d3a366fbc'
-                            }
-                        }
-                    }
-                }
-            );
-
-            const product = (data.products as SwitchUsGraphqlResponse[]).find(
-                ({ productType }) => productType === 'SIMPLE'
-            );
-
-            if (product) {
-                return {
-                    id: source.data.id,
-                    url: source.data.url,
-                    fullName: product.name,
-                    thumbnailUrl: `https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.2/c_scale,w_400/${product.productImage.publicId}`,
-                    releaseDate: parseDate(product.releaseDate),
-                    originalReleaseDate: product.releaseDate,
-                    priceInformation: this.getPriceInformationForUsStore(product.prices),
-                };
-            }
+            return await this.resolveUSA(context);
         }
 
         const { data } = await this.axios.get<string>(source.data.url);
@@ -119,6 +78,66 @@ export class SwitchResolver implements InfoResolver {
             releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
             originalReleaseDate: releaseDate,
             priceInformation: this.parsePriceInformation(price),
+        };
+    }
+
+    private async resolveUSA({ source }: InfoResolverContext) {
+        const urlParts = source.data.id.split('/');
+        const slug = urlParts[urlParts.length - 2];
+
+        const { data: { data } } = await this.axios.get(
+            'https://graph.nintendo.com',
+            {
+                params: {
+                    operationName: 'ProductDetail',
+                    variables: {
+                        slug,
+                        locale: 'en_US'
+                    },
+                    extensions: {
+                        persistedQuery: {
+                            version: 1,
+                            sha256Hash:
+                                'bfa2734b3ac921de5a7297bbd70fdd10492a1b072cb4b6bc6b9cc91d3a366fbc'
+                        }
+                    }
+                }
+            }
+        );
+
+        const product = (data.products as SwitchUsGraphqlResponse[]).find(
+            ({ productType }) => productType === 'SIMPLE'
+        );
+
+        if (!product) {
+            throw new Error("Could not find 'SIMPLE' product in the response");
+        }
+
+        return {
+            id: source.data.id,
+            url: source.data.url,
+            fullName: product.name,
+            thumbnailUrl: 'https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad'
+                + `/b_white/f_auto/q_auto/dpr_1.2/c_scale,w_400/${product.productImage.publicId}`,
+            releaseDate: parseDate(product.releaseDate),
+            originalReleaseDate: product.releaseDate,
+            priceInformation: this.getPriceInformationForUsStore(product.prices),
+        };
+    }
+
+    private getPriceInformationForUsStore(
+        { minimum, maximum }: SwitchUSGraphqlPriceResponse
+    ): StorePriceInformation | undefined {
+        if (minimum === null) {
+            return undefined;
+        }
+
+        const initial = maximum?.finalPrice || minimum.finalPrice;
+        const final = minimum.finalPrice;
+
+        return {
+            initial,
+            final,
         };
     }
 
@@ -187,19 +206,4 @@ export class SwitchResolver implements InfoResolver {
         };
     }
 
-    private getPriceInformationForUsStore(
-        { minimum, maximum }: SwitchUSGraphqlPriceResponse
-    ): StorePriceInformation | undefined {
-        if (minimum === null) {
-            return undefined;
-        }
-
-        const initial = maximum?.finalPrice || minimum.finalPrice;
-        const final = minimum.finalPrice;
-
-        return {
-            initial,
-            final,
-        };
-    }
 }

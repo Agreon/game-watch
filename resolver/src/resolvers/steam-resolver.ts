@@ -64,7 +64,7 @@ export class SteamResolver implements InfoResolver {
     private parseReleaseDate(releaseDate: string, userCountry: Country) {
         const locale = mapCountryCodeToLanguage(userCountry);
 
-        releaseDate
+        const parsedReleaseDate = releaseDate
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
             // For some reason "Okt" is leading to an invalid date. So we use the english one.
@@ -72,9 +72,9 @@ export class SteamResolver implements InfoResolver {
 
         // Sometimes english, sometimes german..
         // TODO: What's with other countries?
-        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
-            ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-            ?? parseDate(releaseDate);
+        return parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
+            ?? parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
+            ?? parseDate(parsedReleaseDate);
     }
 
     private getPriceInformation(
