@@ -28,4 +28,13 @@ export class NotificationService {
 
         return notification;
     }
+
+    public async markAllNotificationAsRead(user: IdentifiedReference<User>): Promise<void> {
+        const notifications = await this.notificationRepository.find({ read: false, user });
+
+        for (const notification of notifications) {
+            notification.read = true;
+        }
+        await this.notificationRepository.persistAndFlush(notifications);
+    }
 }
