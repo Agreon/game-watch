@@ -1,5 +1,4 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { CheckCircleIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Kbd, Slide, Text } from '@chakra-ui/react';
 import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback } from 'react';
