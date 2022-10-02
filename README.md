@@ -7,7 +7,13 @@ Overview of game release dates, prices and news
 ## Features
 
 - Nightly update of Game data
-- (E-Mail) Notifications
+- Custom Tags
+- (E-Mail) Notifications for
+    - Price reduction
+    - Release date change
+    - Release of game
+    - Addition to store
+    - Addition of Metacritic rating
 
 ## Contributing
 

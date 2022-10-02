@@ -41,9 +41,10 @@ export class ResolveService {
         private readonly sourceScopedLogger: Logger
     ) { }
 
-    public async resolveSource({ sourceId, triggeredManually }: {
+    public async resolveSource({ sourceId, triggeredManually, isLastAttempt }: {
         sourceId: string
         triggeredManually?: boolean
+        isLastAttempt: boolean
     }) {
         const startTime = new Date().getTime();
 
@@ -96,32 +97,46 @@ export class ResolveService {
         } catch (error) {
             logger.warn(`Source ${source.type} could not be resolved`);
 
-            if (!triggeredManually) {
-                await this.addToNotificationQueue({
-                    sourceId,
-                    // Will trigger a ResolveError Notification.
-                    resolvedGameData: null,
-                    existingGameData: source.data as GameDataU,
-                });
-            }
-
-            await this.em.nativeUpdate(InfoSource, sourceId, {
-                state: InfoSourceState.Error,
-                updatedAt: new Date()
-            });
-
+            // Critical error
             if (
-                // We only want to retry on network errors that are not signaling us to stop.
-                (axios.isAxiosError(error) && error.response?.status !== 403)
                 // This error occurs if Puppeteer timeouts.
-                || error.name === 'TimeoutError'
+                error.name !== 'TimeoutError'
+                // We only want to retry on network errors that are not signaling us to stop.
+                && (!axios.isAxiosError(error) || error.response?.status === 403)
             ) {
-                throw error;
+                await this.setResolveError({ source, triggeredManually });
+
+                logger.warn("Retrying likely won't help. Aborting immediately");
+                throw new CriticalError(source.type, error);
             }
 
-            logger.warn("Retrying likely won't help. Aborting immediately");
-            throw new CriticalError(source.type, error);
+            if (isLastAttempt) {
+                await this.setResolveError({ source, triggeredManually });
+            }
+
+            throw error;
         }
+    }
+
+    private async setResolveError(
+        { source, triggeredManually }: {
+            source: InfoSource<InfoSourceType, InfoSourceState.Found>;
+            triggeredManually?: boolean;
+        },
+    ) {
+        if (!triggeredManually) {
+            await this.addToNotificationQueue({
+                sourceId: source.id,
+                // Will trigger a ResolveError Notification.
+                resolvedGameData: null,
+                existingGameData: source.data as GameDataU,
+            });
+        }
+
+        await this.em.nativeUpdate(InfoSource, source.id, {
+            state: InfoSourceState.Error,
+            updatedAt: new Date()
+        });
     }
 
     private async resolveGameInformation(context: InfoResolverContext): Promise<GameDataU> {

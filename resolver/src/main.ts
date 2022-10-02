@@ -92,7 +92,7 @@ const main = async () => {
             );
 
             try {
-                await resolveService.resolveSource({ sourceId, triggeredManually });
+                await resolveService.resolveSource({ sourceId, triggeredManually, isLastAttempt });
             } catch (error) {
                 if (error instanceof NotFoundError) {
                     sourceScopedLogger.warn(
