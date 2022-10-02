@@ -14,9 +14,11 @@ export class QueueService {
     ) { }
 
     public async addToQueue<T extends QueueType>(
-        type: T, payload: QueueParams[T], opts?: JobsOptions
+        type: T,
+        payload: QueueParams[T],
+        options: JobsOptions,
     ) {
-        await this.queues[type].add(type, payload, opts);
+        await this.queues[type].add(type, payload, options);
     }
 
     public async createRepeatableInfoSourceResolveJob(infoSource: InfoSource) {

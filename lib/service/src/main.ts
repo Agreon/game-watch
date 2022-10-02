@@ -3,3 +3,4 @@ export { parseEnvironment } from './parse-environment';
 export { initializeSentry } from './initialize-sentry';
 export { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from './map-country-code';
 export { extract } from './extract';
+export { CacheService, RedisCacheService, NonCachingService } from './cache-service';

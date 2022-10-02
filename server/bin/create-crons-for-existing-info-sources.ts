@@ -1,5 +1,5 @@
 import { InfoSource, mikroOrmConfig } from '@game-watch/database';
-import { createQueue, QueueType } from '@game-watch/queue';
+import { createQueueHandle, QueueType } from '@game-watch/queue';
 import { parseEnvironment } from '@game-watch/service';
 import { InfoSourceState } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
@@ -9,7 +9,7 @@ import { EnvironmentStructure } from '../src/environment';
 const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 
 const main = async () => {
-    const queue = createQueue(QueueType.ResolveSource);
+    const queue = createQueueHandle(QueueType.ResolveSource);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const infoSources = await orm.em.find(InfoSource, {});

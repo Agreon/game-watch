@@ -1,10 +1,7 @@
 import { InfoSource } from '@game-watch/database';
-import { Logger } from '@game-watch/service';
+import { CacheService, Logger } from '@game-watch/service';
 import { Country, GameDataU, InfoSourceState, InfoSourceType } from '@game-watch/shared';
-import * as Sentry from '@sentry/node';
 import axios from 'axios';
-import { Redis } from 'ioredis';
-import pRetry from 'p-retry';
 
 export interface InfoResolverContext {
     logger: Logger
@@ -12,38 +9,25 @@ export interface InfoResolverContext {
     source: InfoSource<InfoSourceType, InfoSourceState.Found>
 }
 
-export interface ResolveServiceContext extends InfoResolverContext {
-    skipCache?: boolean
-    initialRun?: boolean
-}
-
 export interface InfoResolver<T extends GameDataU = GameDataU> {
     type: InfoSourceType
     resolve: (context: InfoResolverContext) => Promise<T>
 }
 
-const DEFAULT_RETRY_OPTIONS: pRetry.Options = {
-    minTimeout: 5000,
-    // 15 Minutes
-    maxTimeout: 60000 * 15,
-    factor: 3,
-    retries: 9
-};
-
-const MANUAL_TRIGGER_RETRY_OPTIONS: pRetry.Options = {
-    minTimeout: 3000,
-    factor: 1,
-    retries: 1
-};
+export class CriticalError extends Error {
+    public constructor(
+        public sourceType: InfoSourceType,
+        public originalError: Error
+    ) { super(); }
+}
 
 export class ResolveService {
     public constructor(
         private readonly resolvers: InfoResolver[],
-        private readonly redis: Redis,
-        private readonly cachingEnabled: boolean
+        private readonly cacheService: CacheService,
     ) { }
 
-    public async resolveGameInformation(context: ResolveServiceContext): Promise<GameDataU | null> {
+    public async resolveGameInformation(context: InfoResolverContext): Promise<GameDataU> {
         const { type, data: { id } } = context.source;
         const logger = context.logger.child({ serviceName: ResolveService.name, type, id });
 
@@ -55,52 +39,30 @@ export class ResolveService {
         const start = new Date().getTime();
         const cacheKey = `${type}:${context.userCountry}:${id}`.toLocaleLowerCase();
 
+        const existingData = await this.cacheService.get<GameDataU>(cacheKey);
+        if (existingData) {
+            logger.debug(`Data for ${cacheKey} was found in cache`);
+
+            return existingData;
+        }
+
         try {
-            return await pRetry(async () => {
-                if (this.cachingEnabled) {
-                    const existingData = await this.redis.get(cacheKey);
-                    if (existingData && !context.skipCache) {
-                        logger.debug(`Data for ${cacheKey} was found in cache`);
+            const resolvedData = await resolverForType.resolve({ ...context, logger });
+            await this.cacheService.set(cacheKey, resolvedData);
 
-                        return JSON.parse(existingData);
-                    }
-                }
-
-                const resolvedData = await resolverForType.resolve({ ...context, logger });
-                if (this.cachingEnabled) {
-                    await this.redis.set(cacheKey, JSON.stringify(resolvedData), 'EX', 60 * 60 * 23);
-                }
-
-                return resolvedData;
-            }, {
-                // If the user is actively waiting don't retry to often
-                ...(context.initialRun || context.skipCache ? MANUAL_TRIGGER_RETRY_OPTIONS : DEFAULT_RETRY_OPTIONS),
-                onFailedAttempt: error => {
-                    logger.warn(error, `Error thrown while resolving ${type} for ${id}`);
-                    // We only want to retry on network errors that are not signaling us to stop.
-                    if (
-                        // Epic throws a 403 at the moment.
-                        (axios.isAxiosError(error) && error.response?.status !== 403)
-                        // This error occurs if Puppeteer timeouts.
-                        || error.name === 'TimeoutError'
-                    ) {
-                        return;
-                    }
-                    logger.warn("Retrying likely won't help. Aborting immediately");
-                    throw error;
-                }
-            });
+            return resolvedData;
         } catch (error) {
-            Sentry.captureException(error, {
-                contexts: {
-                    resolveParameters: {
-                        id,
-                        type
-                    }
-                }
-            });
-            logger.error(error);
-            return null;
+            if (
+                // We only want to retry on network errors that are not signaling us to stop.
+                (axios.isAxiosError(error) && error.response?.status !== 403)
+                // This error occurs if Puppeteer timeouts.
+                || error.name === 'TimeoutError'
+            ) {
+                throw error;
+            }
+
+            logger.warn("Retrying likely won't help. Aborting immediately");
+            throw new CriticalError(type, error);
         } finally {
             const duration = new Date().getTime() - start;
             logger.debug(`Resolving ${type} took ${duration} ms`);

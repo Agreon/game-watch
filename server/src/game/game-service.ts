@@ -1,5 +1,5 @@
 import { Game, InfoSource, Tag, User } from '@game-watch/database';
-import { QueueType } from '@game-watch/queue';
+import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { InfoSourceState } from '@game-watch/shared';
 import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -25,7 +25,8 @@ export class GameService {
 
         await this.queueService.addToQueue(
             QueueType.SearchGame,
-            { gameId: game.id, initialRun: true }
+            { gameId: game.id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS
         );
         await this.queueService.addToQueue(
             QueueType.DeleteUnfinishedGameAdds,
@@ -44,7 +45,11 @@ export class GameService {
         // syncing to false to early.
         await this.gameRepository.persistAndFlush(game);
 
-        await this.queueService.addToQueue(QueueType.SearchGame, { gameId: game.id });
+        await this.queueService.addToQueue(
+            QueueType.SearchGame,
+            { gameId: game.id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS
+        );
 
         const activeInfoSources = game.infoSources.getItems().filter(
             ({ state }) => state !== InfoSourceState.Disabled
@@ -54,7 +59,8 @@ export class GameService {
             source.state = InfoSourceState.Found;
             await this.queueService.addToQueue(
                 QueueType.ResolveSource,
-                { sourceId: source.id, skipCache: true }
+                { sourceId: source.id, triggeredManually: true },
+                MANUALLY_TRIGGERED_JOB_OPTIONS
             );
         }
 

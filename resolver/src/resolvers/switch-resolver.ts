@@ -46,7 +46,7 @@ export class SwitchResolver implements InfoResolver {
         const { data } = await this.axios.get<string>(source.data.url);
         const $ = cheerio.load(data);
 
-        const thumbnailUrl = $("meta[property='og:image']").first().attr('content');
+        const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
 
         const fullName = extract(data, /(?<=gameTitle": ").+\b/);
         if (!fullName) {
@@ -154,7 +154,7 @@ export class SwitchResolver implements InfoResolver {
             throw new Error('Could not find name of game');
         }
 
-        const thumbnailUrl = $("meta[property='og:image']").attr('content');
+        const thumbnailUrl = $("meta[property='og:image']").attr('content')!;
 
         const releaseDate = extract(data, /(?<=release_date_on_eshop":")([\d.]+-[\d.]+-[\d.]+)/);
 

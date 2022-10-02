@@ -16,7 +16,7 @@ export class NewStoreEntryNotificationCreator
     public async createNotification(
         { existingGameData, resolvedGameData, logger }: NotificationCreatorContext<StoreInfoSource>
     ) {
-        const hasExistingData = !!existingGameData;
+        const hasExistingData = !!existingGameData?.thumbnailUrl;
         if (hasExistingData) {
             logger.debug({ context: { hasExistingData } }, 'Not adding notification because');
             return null;

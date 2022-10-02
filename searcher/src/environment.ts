@@ -8,6 +8,7 @@ export const EnvironmentStructure = t.type({
     REDIS_PASSWORD: t.string,
     REDIS_PORT: IntFromString,
     CACHING_ENABLED: BooleanFromString,
+    CACHE_TIME_IN_SECONDS: IntFromString,
     SENDGRID_API_KEY: t.string,
 });
 

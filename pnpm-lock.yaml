@@ -153,11 +153,13 @@ importers:
     specifiers:
       '@game-watch/shared': 0.0.1
       '@sentry/node': ^7.13.0
+      '@types/ioredis': ^4.28.10
       eslint: ^8.23.1
       fp-ts: ^2.12.3
       io-ts: ^2.2.18
       io-ts-reporters: ^2.0.1
       io-ts-types: ^0.5.16
+      ioredis: ^5.2.3
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
       pino: ^8.6.0
@@ -170,11 +172,13 @@ importers:
       io-ts: 2.2.18_fp-ts@2.12.3
       io-ts-reporters: 2.0.1_fp-ts@2.12.3+io-ts@2.2.18
       io-ts-types: 0.5.16_dhmfpnscpd24jpxuuq6qk4imtu
+      ioredis: 5.2.3
       monocle-ts: 2.3.13_fp-ts@2.12.3
       newtype-ts: 0.3.5_x3dhd2jyfdvkp6zhnkjzhfb2vy
       pino: 8.6.0
       pino-pretty: 9.1.0
     devDependencies:
+      '@types/ioredis': 4.28.10
       eslint: 8.23.1
       typescript: 4.8.3
 

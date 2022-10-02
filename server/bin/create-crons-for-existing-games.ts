@@ -1,5 +1,5 @@
 import { Game, mikroOrmConfig } from '@game-watch/database';
-import { createQueue, QueueType } from '@game-watch/queue';
+import { createQueueHandle, QueueType } from '@game-watch/queue';
 import { parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 
@@ -8,7 +8,7 @@ import { EnvironmentStructure } from '../src/environment';
 const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
 
 const main = async () => {
-    const queue = createQueue(QueueType.SearchGame);
+    const queue = createQueueHandle(QueueType.SearchGame);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const games = await orm.em.find(Game, { setupCompleted: true });

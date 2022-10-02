@@ -1,5 +1,5 @@
 import { Game, InfoSource, Notification, User } from '@game-watch/database';
-import { QueueType } from '@game-watch/queue';
+import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -55,7 +55,8 @@ export class InfoSourceService {
 
         await this.queueService.addToQueue(
             QueueType.ResolveSource,
-            { sourceId: infoSource.id, initialRun: true }
+            { sourceId: infoSource.id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS,
         );
         await this.queueService.createRepeatableInfoSourceResolveJob(infoSource);
 
@@ -74,7 +75,8 @@ export class InfoSourceService {
 
         await this.queueService.addToQueue(
             QueueType.ResolveSource,
-            { sourceId: id, skipCache: true }
+            { sourceId: id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS,
         );
 
         return infoSource;

@@ -23,14 +23,15 @@ export enum QueueType {
 export type QueueParams = {
     [QueueType.SearchGame]: {
         gameId: string
-        initialRun?: boolean
+        triggeredManually?: boolean
     },
     [QueueType.ResolveSource]: {
         sourceId: string
-        initialRun?: boolean
-        skipCache?: boolean
+        triggeredManually?: boolean
     },
-    [QueueType.DeleteUnfinishedGameAdds]: { gameId: string },
+    [QueueType.DeleteUnfinishedGameAdds]: {
+        gameId: string
+    },
     [QueueType.CreateNotifications]: {
         sourceId: string
         existingGameData: GameDataU | null
@@ -55,6 +56,24 @@ export const DEFAULT_JOB_OPTIONS: JobsOptions = {
     removeOnFail: true,
 };
 
+export const NIGHTLY_JOB_OPTIONS: JobsOptions = {
+    ...DEFAULT_JOB_OPTIONS,
+    attempts: 8,
+    backoff: {
+        type: 'exponential',
+        delay: 5000,
+    },
+};
+
+export const MANUALLY_TRIGGERED_JOB_OPTIONS: JobsOptions = {
+    ...DEFAULT_JOB_OPTIONS,
+    attempts: 2,
+    backoff: {
+        type: 'fixed',
+        delay: 5000,
+    },
+};
+
 export const createWorkerForQueue = <T extends QueueType>(
     type: T,
     processor: Processor<QueueParams[T]>,
@@ -65,7 +84,7 @@ export const createWorkerForQueue = <T extends QueueType>(
     {
         connection: QUEUE_CONNECTION_OPTIONS,
         // We only want to remove the lock if the worker is surely hanging.
-        // The max timeout of p-retry is 15 minutes while having max 9 retries.
+        // With the default retry settings a nightly job is taking 41 Minutes + execution time.
         // So 60 Minutes should be enough time for any worker to finish.
         lockDuration: 60 * 60 * 1000,
         ...options,
@@ -83,7 +102,7 @@ export const createSchedulerForQueue = <T extends QueueType>(
     }
 );
 
-export const createQueue = (type: QueueType, options?: QueueOptions) =>
+export const createQueueHandle = (type: QueueType, options?: QueueOptions) =>
     new Queue(type, {
         connection: QUEUE_CONNECTION_OPTIONS,
         defaultJobOptions: DEFAULT_JOB_OPTIONS,

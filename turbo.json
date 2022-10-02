@@ -10,6 +10,14 @@
                 ".next/**"
             ]
         },
+        "watch": {
+            "dependsOn": [
+                "^build"
+            ],
+            "outputs": [
+                ".next/**"
+            ]
+        },
         "test": {
             "dependsOn": [
                 "^build"

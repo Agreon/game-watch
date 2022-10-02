@@ -1,12 +1,26 @@
 import { InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
-import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from '@mikro-orm/core';
+import {
+    ArrayType,
+    Collection,
+    Entity,
+    Enum,
+    IdentifiedReference,
+    ManyToOne,
+    OneToMany,
+    Property,
+    Reference,
+    Unique,
+} from '@mikro-orm/core';
 
 import { BaseEntity } from '../base-entity';
 import { Game } from './game-model';
 import { Notification } from './notification-model';
 import { User } from './user-model';
 
-interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> {
+interface InfoSourceParams<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> {
     type: T
     state: S
     user: IdentifiedReference<User>
@@ -17,7 +31,10 @@ interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends 
 
 @Entity()
 @Unique({ properties: ['type', 'game'] })
-export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> extends BaseEntity<InfoSource> {
+export class InfoSource<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
 

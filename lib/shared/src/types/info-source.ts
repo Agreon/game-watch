@@ -39,7 +39,7 @@ export interface StorePriceInformation {
 }
 
 export interface StoreGameData extends BaseGameData {
-    thumbnailUrl?: string;
+    thumbnailUrl: string;
     releaseDate?: Date;
     originalReleaseDate?: string;
     priceInformation?: StorePriceInformation;

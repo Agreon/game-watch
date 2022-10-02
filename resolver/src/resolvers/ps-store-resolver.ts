@@ -47,13 +47,13 @@ export class PsStoreResolver implements InfoResolver {
             );
 
             const thumbnailUrl = await browser.evaluate(
-                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')?.getAttribute('src')
+                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')!.getAttribute('src')!
             );
 
             return {
                 ...source.data,
                 fullName,
-                thumbnailUrl: thumbnailUrl ?? undefined,
+                thumbnailUrl,
                 priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
                 releaseDate: userCountry === 'DE'
                     ? parseDate(releaseDate, ['D.M.YYYY'])

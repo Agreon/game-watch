@@ -6,6 +6,7 @@
     "types": "dist/main.d.ts",
     "scripts": {
         "build": "tsc -b .",
+        "watch": "tsc -b -w .",
         "lint": "eslint \"src/**/*.ts\"",
         "lint:fix": "eslint \"src/**/*.ts\" --fix",
         "mikro-orm": "mikro-orm"
