@@ -291,7 +291,7 @@ export class SearchService {
         errorToThrow = errors.find(error => error instanceof CriticalError);
 
         if (errorToThrow) {
-            if (this.isLastAttempt || errorToThrow instanceof CriticalError) {
+            if (this.isLastAttempt) {
                 // We already set syncing to false here to signal the AddGameModal that the
                 // search is done.
                 await this.em.nativeUpdate(Game, game.id, {
