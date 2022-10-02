@@ -29,7 +29,7 @@ export class NotificationService {
         return notification;
     }
 
-    public async markAllNotificationAsRead(user: IdentifiedReference<User>): Promise<void> {
+    public async markAllNotificationsAsRead(user: IdentifiedReference<User>): Promise<void> {
         const notifications = await this.notificationRepository.find({ read: false, user });
 
         for (const notification of notifications) {

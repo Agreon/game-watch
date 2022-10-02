@@ -29,9 +29,9 @@ export class NotificationController {
     }
 
     @Post('/mark-all-as-read')
-    public async markAllNotificationAsRead(
+    public async markAllNotificationsAsRead(
         @CurrentUser() user: IdentifiedReference<User>,
     ): Promise<void> {
-        return await this.notificationService.markAllNotificationAsRead(user);
+        return await this.notificationService.markAllNotificationsAsRead(user);
     }
 }
