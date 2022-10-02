@@ -1,5 +1,5 @@
 import { Game, mikroOrmConfig } from '@game-watch/database';
-import { createQueueHandle, QueueType } from '@game-watch/queue';
+import { createQueueHandle, NIGHTLY_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 
@@ -30,7 +30,8 @@ const main = async () => {
                     cron: SYNC_SOURCES_AT
                 },
                 jobId: game.id,
-                priority: 2
+                priority: 2,
+                ...NIGHTLY_JOB_OPTIONS
             }
         );
 
