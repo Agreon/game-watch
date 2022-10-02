@@ -227,7 +227,6 @@ importers:
       ioredis: ^5.2.3
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
-      p-retry: ^4.6.2
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.0
@@ -255,7 +254,6 @@ importers:
       ioredis: 5.2.3
       monocle-ts: 2.3.13_fp-ts@2.12.3
       newtype-ts: 0.3.5_x3dhd2jyfdvkp6zhnkjzhfb2vy
-      p-retry: 4.6.2
       reflect-metadata: 0.1.13
     devDependencies:
       '@types/ioredis': 4.28.10
@@ -298,7 +296,6 @@ importers:
       ioredis: ^5.2.3
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
-      p-retry: ^4.6.2
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.0
@@ -326,7 +323,6 @@ importers:
       ioredis: 5.2.3
       monocle-ts: 2.3.13_fp-ts@2.12.3
       newtype-ts: 0.3.5_x3dhd2jyfdvkp6zhnkjzhfb2vy
-      p-retry: 4.6.2
       reflect-metadata: 0.1.13
     devDependencies:
       '@types/ioredis': 4.28.10
@@ -368,7 +364,6 @@ importers:
       ioredis: ^5.2.3
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
-      p-retry: ^4.6.2
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.0
@@ -395,7 +390,6 @@ importers:
       ioredis: 5.2.3
       monocle-ts: 2.3.13_fp-ts@2.12.3
       newtype-ts: 0.3.5_x3dhd2jyfdvkp6zhnkjzhfb2vy
-      p-retry: 4.6.2
       reflect-metadata: 0.1.13
     devDependencies:
       '@types/ioredis': 4.28.10
@@ -3508,10 +3502,6 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
-
-  /@types/retry/0.12.0:
-    resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
-    dev: false
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
@@ -7146,14 +7136,6 @@ packages:
       p-limit: 3.1.0
     dev: true
 
-  /p-retry/4.6.2:
-    resolution: {integrity: sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@types/retry': 0.12.0
-      retry: 0.13.1
-    dev: false
-
   /p-try/2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
     engines: {node: '>=6'}
@@ -7880,11 +7862,6 @@ packages:
       onetime: 5.1.2
       signal-exit: 3.0.7
     dev: true
-
-  /retry/0.13.1:
-    resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
-    engines: {node: '>= 4'}
-    dev: false
 
   /reusify/1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
