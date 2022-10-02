@@ -24,7 +24,6 @@ import { Worker } from 'bullmq';
 import Redis from 'ioredis';
 
 import { EnvironmentStructure } from './environment';
-import { searchForGame } from './search-for-game';
 import { CriticalError, SearchService } from './search-service';
 import { EpicSearcher } from './searchers/epic-searcher';
 import { MetacriticSearcher } from './searchers/metacritic-searcher';
@@ -57,21 +56,20 @@ const redis = new Redis({
     port: REDIS_PORT
 });
 
-const searchService = new SearchService(
-    [
-        new EpicSearcher(axiosInstance),
-        new MetacriticSearcher(axiosInstance),
-        new PsStoreSearcher(axiosInstance),
-        new SteamSearcher(axiosInstance),
-        new SwitchSearcher(axiosInstance)
-    ],
-    CACHING_ENABLED
-        ? new RedisCacheService(
-            redis,
-            CACHE_TIME_IN_SECONDS
-        )
-        : new NonCachingService()
-);
+const searchers = [
+    new EpicSearcher(axiosInstance),
+    new MetacriticSearcher(axiosInstance),
+    new PsStoreSearcher(axiosInstance),
+    new SteamSearcher(axiosInstance),
+    new SwitchSearcher(axiosInstance)
+];
+
+const cacheService = CACHING_ENABLED
+    ? new RedisCacheService(
+        redis,
+        CACHE_TIME_IN_SECONDS
+    )
+    : new NonCachingService();
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
@@ -88,22 +86,26 @@ const main = async () => {
 
             const gameScopedLogger = logger.child({ gameId, attemptsMade, isLastAttempt });
 
+            const searchService = new SearchService(
+                searchers,
+                cacheService,
+                resolveSourceQueue,
+                orm.em.fork(),
+                gameScopedLogger,
+                isLastAttempt,
+                triggeredManually
+            );
+
             try {
                 const excludedSources = await redis.get(`exclude:${jobId}`);
 
-                await searchForGame({
+                await searchService.searchForGame({
                     gameId,
-                    triggeredManually,
-                    isLastAttempt,
-                    searchService,
-                    logger: gameScopedLogger,
-                    em: orm.em.fork(),
-                    resolveSourceQueue,
                     excludedSourceTypes: excludedSources ? JSON.parse(excludedSources) : []
                 });
             } catch (error) {
                 if (error instanceof NotFoundError) {
-                    logger.warn(`Game '${gameId}' could not be found in database`);
+                    gameScopedLogger.warn(`Game '${gameId}' could not be found in database`);
 
                     searchGameQueue.removeRepeatableByKey(
                         `${QueueType.SearchGame}:${gameId}:::${SYNC_SOURCES_AT}`
@@ -113,7 +115,7 @@ const main = async () => {
 
                 if (error instanceof CriticalError) {
                     // We need to wrap this because otherwise the error is swallowed by the worker.
-                    logger.error(error.originalError);
+                    gameScopedLogger.error(error.originalError);
                     Sentry.captureException(error.originalError, {
                         tags: { gameId },
                         contexts: { searchParameters: { type: error.sourceType } }
@@ -139,11 +141,11 @@ const main = async () => {
                 }
 
                 if (isLastAttempt) {
-                    logger.error(error);
+                    gameScopedLogger.error(error);
                     Sentry.captureException(error, { tags: { gameId }, });
                 }
                 else {
-                    logger.warn(
+                    gameScopedLogger.warn(
                         error,
                         `Error thrown while searching in attempt ${attemptsMade}. Will retry`
                     );

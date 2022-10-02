@@ -25,7 +25,6 @@ import Redis from 'ioredis';
 
 import { EnvironmentStructure } from './environment';
 import { CriticalError, ResolveService } from './resolve-service';
-import { resolveSource } from './resolve-source';
 import { EpicResolver } from './resolvers/epic-resolver';
 import { MetacriticResolver } from './resolvers/metacritic-resolver';
 import { PsStoreResolver } from './resolvers/ps-store-resolver';
@@ -50,25 +49,24 @@ let resolveSourceWorker: Worker | undefined;
 // Fail fast
 const axiosInstance = axios.create({ timeout: 10000, maxRedirects: 2 });
 
-const resolveService = new ResolveService(
-    [
-        new SteamResolver(axiosInstance),
-        new SwitchResolver(axiosInstance),
-        new PsStoreResolver(axiosInstance),
-        new EpicResolver(axiosInstance),
-        new MetacriticResolver(axiosInstance),
-    ],
-    CACHING_ENABLED
-        ? new RedisCacheService(
-            new Redis({
-                host: REDIS_HOST,
-                password: REDIS_PASSWORD,
-                port: REDIS_PORT
-            }),
-            CACHE_TIME_IN_SECONDS
-        )
-        : new NonCachingService()
-);
+const cacheService = CACHING_ENABLED
+    ? new RedisCacheService(
+        new Redis({
+            host: REDIS_HOST,
+            password: REDIS_PASSWORD,
+            port: REDIS_PORT
+        }),
+        CACHE_TIME_IN_SECONDS
+    )
+    : new NonCachingService();
+
+const resolvers = [
+    new SteamResolver(axiosInstance),
+    new SwitchResolver(axiosInstance),
+    new PsStoreResolver(axiosInstance),
+    new EpicResolver(axiosInstance),
+    new MetacriticResolver(axiosInstance),
+];
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
@@ -85,18 +83,19 @@ const main = async () => {
 
             const sourceScopedLogger = logger.child({ sourceId, attemptsMade, isLastAttempt });
 
+            const resolveService = new ResolveService(
+                resolvers,
+                cacheService,
+                createNotificationsQueue,
+                orm.em.fork(),
+                sourceScopedLogger
+            );
+
             try {
-                await resolveSource({
-                    sourceId,
-                    triggeredManually,
-                    resolveService,
-                    createNotificationsQueue,
-                    logger: sourceScopedLogger,
-                    em: orm.em.fork(),
-                });
+                await resolveService.resolveSource({ sourceId, triggeredManually });
             } catch (error) {
                 if (error instanceof NotFoundError) {
-                    logger.warn(
+                    sourceScopedLogger.warn(
                         `Source '${sourceId}' could not be found in database. Removing nightly job`
                     );
 
@@ -108,7 +107,7 @@ const main = async () => {
 
                 if (error instanceof CriticalError) {
                     // We need to wrap this because otherwise the error is swallowed by the worker.
-                    logger.error(error.originalError);
+                    sourceScopedLogger.error(error.originalError);
                     Sentry.captureException(error.originalError, {
                         tags: { sourceId },
                         contexts: { resolveParameters: { type: error.sourceType } }
@@ -120,10 +119,10 @@ const main = async () => {
 
                 if (isLastAttempt) {
                     // Need to wrap this because otherwise the error is swallowed by the worker.
-                    logger.error(error.originalError);
+                    sourceScopedLogger.error(error.originalError);
                     Sentry.captureException(error.originalError, { tags: { sourceId }, });
                 } else {
-                    logger.warn(
+                    sourceScopedLogger.warn(
                         error,
                         `Error thrown while resolving in attempt ${attemptsMade}. Will retry`
                     );
