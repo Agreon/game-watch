@@ -1,10 +1,11 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Kbd, Slide, Text } from '@chakra-ui/react';
 import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback } from 'react';
 
 import { useNotificationContext } from '../../providers/NotificationProvider';
 import { Notification } from './Notification';
+import { useAction } from '../../util/useAction';
 
 export const NotificationSidebar = () => {
     const {
@@ -13,7 +14,10 @@ export const NotificationSidebar = () => {
         notificationSidebarRef,
         closeNotificationSidebar,
         markNotificationAsRead,
+        markAllNotificationsAsRead,
     } = useNotificationContext();
+
+    const { loading, execute: markAllAsRead } = useAction(markAllNotificationsAsRead);
 
     const onClick = useCallback((notification: NotificationDto) => {
         const scrollContainer = document.getElementById('scrollContainer');
@@ -62,6 +66,21 @@ export const NotificationSidebar = () => {
                         Collapse<Kbd ml="0.5rem" display={['none', 'none', 'block']}>Esc</Kbd>
                     </Button>
                 </Flex>
+                {notifications.length > 0
+                    && <Flex p="1rem" pt="0rem" px="1.5rem" align="center" justifyContent="center">
+                        <Button
+                            onClick={markAllAsRead}
+                            width="100%"
+                            size="sm"
+                            colorScheme='teal'
+                            variant='outline'
+                            rightIcon={<CheckCircleIcon />}
+                            isLoading={loading}
+                        >
+                            Mark all as read
+                        </Button>
+                    </Flex>
+                }
                 <Box overflowY="auto" height="calc(100vh - 7rem)">
                     <Flex direction="column">
                         {notifications.map(notification =>
