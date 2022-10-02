@@ -90,5 +90,6 @@ export const resolveSource = async ({
             updatedAt: new Date()
         });
 
+        throw error;
     }
 };

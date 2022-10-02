@@ -36,7 +36,6 @@ export class ResolveService {
             throw new Error(`No resolver for type ${type} found`);
         }
 
-        const start = new Date().getTime();
         const cacheKey = `${type}:${context.userCountry}:${id}`.toLocaleLowerCase();
 
         const existingData = await this.cacheService.get<GameDataU>(cacheKey);
@@ -45,6 +44,8 @@ export class ResolveService {
 
             return existingData;
         }
+
+        const start = new Date().getTime();
 
         try {
             const resolvedData = await resolverForType.resolve({ ...context, logger });
