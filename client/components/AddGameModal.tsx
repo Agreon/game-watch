@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    Fade,
     Flex,
     FormControl,
     Input,
@@ -181,11 +180,9 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     setGameInfoSource={setGameInfoSource}
                                     removeGameInfoSource={removeGameInfoSource}
                                 >
-                                    <Fade in={true}>
-                                        <Box mb="1rem">
-                                            <InfoSourcePreview />
-                                        </Box>
-                                    </Fade>
+                                    <Box mb="1rem">
+                                        <InfoSourcePreview />
+                                    </Box>
                                 </InfoSourceProvider>
                             )}
                             <Box position="relative" my="2rem">
