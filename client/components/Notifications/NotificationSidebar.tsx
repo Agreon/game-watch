@@ -4,8 +4,8 @@ import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback } from 'react';
 
 import { useNotificationContext } from '../../providers/NotificationProvider';
-import { Notification } from './Notification';
 import { useAction } from '../../util/useAction';
+import { Notification } from './Notification';
 
 export const NotificationSidebar = () => {
     const {
