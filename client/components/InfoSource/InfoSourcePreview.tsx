@@ -61,7 +61,7 @@ export const InfoSourcePreview: React.FC = () => {
                                 fontSize="xl"
                                 overflow="hidden"
                                 textOverflow="ellipsis"
-                                whiteSpace="nowrap"
+                                whiteSpace={['normal', 'normal', 'nowrap']}
                             >
                                 {source.data.fullName}
                             </Text>
