@@ -40,16 +40,13 @@ export const InfoSourcePreview: React.FC = () => {
                 </a>
             </Box>
             <Flex
-                justify="space-between"
                 flex="2"
+                justify="space-between"
                 align="center"
                 width="100%"
                 overflow="hidden"
             >
-                <Box
-                    maxWidth="85%"
-                    position="relative"
-                >
+                <Box maxWidth="85%">
                     {source.state === InfoSourceState.Error
                         && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
                     {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
