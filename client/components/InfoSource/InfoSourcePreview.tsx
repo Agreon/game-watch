@@ -29,7 +29,6 @@ export const InfoSourcePreview: React.FC = () => {
             rounded="lg"
             shadow="lg"
             boxShadow="xl"
-            overflow="hidden"
             _hover={{
                 // borderColor: useColorModeValue("grey", "white")
             }}
