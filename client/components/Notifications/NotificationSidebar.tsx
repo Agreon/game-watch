@@ -81,7 +81,7 @@ export const NotificationSidebar = () => {
                         </Button>
                     </Flex>
                 }
-                <Box overflowY="auto" height="calc(100vh - 7rem)">
+                <Box overflowY="auto" height="calc(100vh - 10rem)">
                     <Flex direction="column">
                         {notifications.map(notification =>
                             <Box
