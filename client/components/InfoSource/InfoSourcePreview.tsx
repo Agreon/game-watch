@@ -41,16 +41,15 @@ export const InfoSourcePreview: React.FC = () => {
                 </a>
             </Box>
             <Flex
-                flex="2"
                 justify="space-between"
+                flex="2"
                 align="center"
-                maxWidth="100%"
                 width="100%"
                 overflow="hidden"
             >
                 <Box
-                    position="relative"
                     maxWidth="85%"
+                    position="relative"
                 >
                     {source.state === InfoSourceState.Error
                         && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
