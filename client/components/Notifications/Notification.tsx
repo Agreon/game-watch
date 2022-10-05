@@ -1,6 +1,11 @@
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Flex, IconButton, Text, Tooltip } from '@chakra-ui/react';
-import { formatReleaseDate, NotificationDto, NotificationType } from '@game-watch/shared';
+import {
+    formatPrice,
+    formatReleaseDate,
+    NotificationDto,
+    NotificationType
+} from '@game-watch/shared';
 import dayjs from 'dayjs';
 import React, { useCallback, useMemo } from 'react';
 
@@ -25,13 +30,15 @@ function isNotificationOfType<T extends NotificationType, TValue extends Notific
 }
 
 const getNotificationText = (notification: NotificationDto) => {
-    const { game } = notification;
+    const { game, infoSource } = notification;
 
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
 
     if (isNotificationOfType(notification, NotificationType.GameReduced)) {
         const { final, initial } = notification.data;
-        return <>{gameName} {`was reduced from ${initial}€ to ${final}€!`}</>;
+        const initialPrice = formatPrice({ price: initial, country: infoSource.country });
+        const finalPrice = formatPrice({ price: final, country: infoSource.country });
+        return <>{gameName} {`was reduced from ${initialPrice} to ${finalPrice}!`}</>;
     }
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {

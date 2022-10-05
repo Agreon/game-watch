@@ -13,7 +13,7 @@ export const InfoSource: React.FC = () => {
         case InfoSourceType.Switch:
         case InfoSourceType.PsStore:
         case InfoSourceType.Epic:
-            return <StoreInfoSource data={source.data as StoreGameData} />;
+            return <StoreInfoSource data={source.data as StoreGameData} country={source.country} />;
         case InfoSourceType.Metacritic:
             return <MetacriticInfoSource data={source.data as MetacriticData} />;
     }

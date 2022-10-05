@@ -1,4 +1,4 @@
-import { InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import { Country, InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import {
     ArrayType,
     Collection,
@@ -27,6 +27,7 @@ interface InfoSourceParams<
     data: InfoSourceData<T, S>
     excludedRemoteGameIds?: string[]
     game?: Game
+    country: Country
 }
 
 @Entity()
@@ -55,6 +56,9 @@ export class InfoSource<
     @Property()
     public foundAt: Date = new Date();
 
+    @Property()
+    public country: Country;
+
     @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
     public game!: IdentifiedReference<Game>;
 
@@ -72,6 +76,7 @@ export class InfoSource<
             data,
             game,
             user,
+            country,
         }: InfoSourceParams<T, S>
     ) {
         super();
@@ -80,6 +85,7 @@ export class InfoSource<
         this.excludedRemoteGameIds = excludedRemoteGameIds ?? [];
         this.user = user;
         this.data = data;
+        this.country = country;
         if (game) {
             this.game = Reference.create(game);
         }

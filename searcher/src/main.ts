@@ -81,8 +81,8 @@ const main = async () => {
         QueueType.SearchGame,
         async ({ data: { gameId, triggeredManually }, attemptsMade, id: jobId }) => {
             const isLastAttempt = triggeredManually
-                ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts! === attemptsMade
-                : NIGHTLY_JOB_OPTIONS.attempts! === attemptsMade;
+                ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts === attemptsMade
+                : NIGHTLY_JOB_OPTIONS.attempts === attemptsMade;
 
             const gameScopedLogger = logger.child({ gameId, attemptsMade, isLastAttempt });
 
