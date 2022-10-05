@@ -17,9 +17,9 @@ export class PsStoreResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ userCountry, source }: InfoResolverContext): Promise<PsStoreGameData> {
+    public async resolve({ source }: InfoResolverContext): Promise<PsStoreGameData> {
 
-        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
+        return await withBrowser(mapCountryCodeToAcceptLanguage(source.country), async browser => {
             await browser.goto(source.data.id);
             await browser.waitForSelector('.psw-t-title-m');
 
@@ -54,8 +54,9 @@ export class PsStoreResolver implements InfoResolver {
                 ...source.data,
                 fullName,
                 thumbnailUrl,
-                priceInformation: this.getPriceInformation({ price, originalPrice }, userCountry),
-                releaseDate: userCountry === 'DE'
+                priceInformation:
+                    this.getPriceInformation({ price, originalPrice }, source.country),
+                releaseDate: source.country === 'DE'
                     ? parseDate(releaseDate, ['D.M.YYYY'])
                     : parseDate(releaseDate, ['M/DD/YYYY']),
                 originalReleaseDate: releaseDate

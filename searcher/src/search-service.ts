@@ -137,6 +137,7 @@ export class SearchService {
             type: sourceType,
             game,
             user: game.user,
+            country: userCountry,
         });
 
         await this.em.nativeInsert(newSource);
@@ -176,6 +177,7 @@ export class SearchService {
             data: searchResponse,
             updatedAt: new Date(),
             foundAt: new Date(),
+            country: userCountry,
         });
 
         await this.addSourceToResolveQueues(source.id);

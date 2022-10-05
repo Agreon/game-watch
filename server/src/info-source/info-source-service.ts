@@ -46,7 +46,8 @@ export class InfoSourceService {
                 // It is later overwritten by the resolvers.
                 fullName: 'Sync in progress',
                 url,
-            }
+            },
+            country: (await user.load()).country,
         });
 
         game.infoSources.add(infoSource);

@@ -2,7 +2,6 @@ import { InfoSource, Notification } from '@game-watch/database';
 import { NIGHTLY_JOB_OPTIONS, QueueParams, QueueType } from '@game-watch/queue';
 import { CacheService, Logger } from '@game-watch/service';
 import {
-    Country,
     GameDataU,
     InfoSourceState,
     InfoSourceType,
@@ -14,7 +13,6 @@ import { Queue } from 'bullmq';
 
 export interface InfoResolverContext {
     logger: Logger
-    userCountry: Country
     source: InfoSource<InfoSourceType, InfoSourceState.Found>
 }
 
@@ -58,15 +56,16 @@ export class ResolveService {
                 { populate: ['user'] }
             );
 
-        const userCountry = source.user.get().country;
+        const logger = this.sourceScopedLogger.child({
+            type: source.type,
+            country: source.country
+        });
 
-        const logger = this.sourceScopedLogger.child({ type: source.type, userCountry });
-
-        logger.info(`Resolving ${source.type}`);
+        logger.info(`Resolving ${source.type} for country ${source.country}`);
 
         try {
             const resolvedGameData = await this.resolveGameInformation(
-                { source, logger, userCountry }
+                { source, logger }
             );
 
             logger.debug(`Resolved source information in ${source.type}`);
@@ -140,9 +139,9 @@ export class ResolveService {
     }
 
     private async resolveGameInformation(context: InfoResolverContext): Promise<GameDataU> {
-        const { source: { type, data: { id } }, userCountry, logger } = context;
+        const { source: { country, type, data: { id } }, logger } = context;
 
-        const cacheKey = `${type}:${userCountry}:${id}`.toLocaleLowerCase();
+        const cacheKey = `${type}:${country}:${id}`.toLocaleLowerCase();
         const existingData = await this.cacheService.get<GameDataU>(cacheKey);
         if (existingData) {
             logger.debug(`Data for ${cacheKey} was found in cache`);

@@ -78,8 +78,8 @@ const main = async () => {
         QueueType.ResolveSource,
         async ({ data: { sourceId, triggeredManually }, attemptsMade }) => {
             const isLastAttempt = triggeredManually
-                ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts! === attemptsMade
-                : NIGHTLY_JOB_OPTIONS.attempts! === attemptsMade;
+                ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts === attemptsMade
+                : NIGHTLY_JOB_OPTIONS.attempts === attemptsMade;
 
             const sourceScopedLogger = logger.child({ sourceId, attemptsMade, isLastAttempt });
 

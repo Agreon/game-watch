@@ -33,13 +33,13 @@ export class SwitchResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve(context: InfoResolverContext): Promise<SwitchGameData> {
-        const { userCountry, source, logger } = context;
+        const { source, logger } = context;
 
-        if (userCountry === 'NZ' || userCountry === 'AU') {
+        if (source.country === 'NZ' || source.country === 'AU') {
             return await this.resolveAUandNZ(context);
         }
 
-        if (userCountry === 'US') {
+        if (source.country === 'US') {
             return await this.resolveUSA(context);
         }
 
@@ -65,7 +65,7 @@ export class SwitchResolver implements InfoResolver {
             };
         }
 
-        const price = await this.getPriceInformation(priceId, userCountry);
+        const price = await this.getPriceInformation(priceId, source.country);
         const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
         return {
@@ -138,10 +138,10 @@ export class SwitchResolver implements InfoResolver {
         };
     }
 
-    private async resolveAUandNZ({ userCountry, source }: InfoResolverContext) {
+    private async resolveAUandNZ({ source }: InfoResolverContext) {
         const [{ data }, price] = await Promise.all([
             this.axios.get<string>(source.data.url),
-            this.getPriceInformation(source.data.id, userCountry)
+            this.getPriceInformation(source.data.id, source.country)
         ]);
 
         const $ = cheerio.load(data);

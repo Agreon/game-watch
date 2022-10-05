@@ -52,7 +52,7 @@ export class MailService {
     }
 
     private getMailText(receiver: User, notification: Notification) {
-        const body = this.getNotificationText(receiver, notification);
+        const body = this.getNotificationText(notification);
         const unsubscribeLink = new URL(`/user/unsubscribe?id=${receiver.id}`, API_URL);
 
         const remoteGameUrl = notification.infoSource.getEntity().data.url;
@@ -74,7 +74,7 @@ ${unsubscribeLink}
         `;
     }
 
-    private getNotificationText(receiver: User, notification: Notification): string {
+    private getNotificationText(notification: Notification): string {
         const game = notification.game.getEntity();
         const infoSource = notification.infoSource.getEntity();
 
@@ -83,8 +83,8 @@ ${unsubscribeLink}
         switch (notification.type) {
             case NotificationType.GameReduced:
                 const data = notification.data as NotificationData[NotificationType.GameReduced];
-                const initial = formatPrice({ price: data.initial, country: receiver.country });
-                const final = formatPrice({ price: data.final, country: receiver.country });
+                const initial = formatPrice({ price: data.initial, country: infoSource.country });
+                const final = formatPrice({ price: data.final, country: infoSource.country });
 
                 return `${gameName} was reduced from ${initial} to ${final}.`;
             case NotificationType.ReleaseDateChanged:

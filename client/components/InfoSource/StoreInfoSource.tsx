@@ -8,7 +8,6 @@ import {
 import { Country, formatPrice, formatReleaseDate, StoreGameData } from '@game-watch/shared';
 import React, { useMemo } from 'react';
 
-import { useUserContext } from '../../providers/UserProvider';
 import { InfoSourceWrapper } from './InfoSourceWrapper';
 
 const ReleaseDate: React.FC<{
@@ -31,19 +30,16 @@ const ReleaseDate: React.FC<{
 const Price: React.FC<{
     price?: number,
     initial?: number,
-    userCountry: Country
-}> = ({ price, initial, userCountry }) => {
+    country: Country
+}> = ({ price, initial, country }) => {
     const hasDiscount = useMemo(
         () => price && initial && price !== initial,
         [price, initial]
     );
-    const parsedPrice = useMemo(
-        () => formatPrice({ price, country: userCountry }),
-        [price, userCountry]
-    );
+    const parsedPrice = useMemo(() => formatPrice({ price, country }), [price, country]);
     const parsedInitial = useMemo(
-        () => formatPrice({ price: initial, country: userCountry }),
-        [initial, userCountry]
+        () => formatPrice({ price: initial, country }),
+        [initial, country]
     );
 
     return (
@@ -56,24 +52,23 @@ const Price: React.FC<{
     );
 };
 
-export const StoreInfoSource: React.FC<{ data: StoreGameData }> = ({ data }) => {
-    const { user } = useUserContext();
-
-    return (
-        <InfoSourceWrapper>
-            <Box flex="1">
-                <ReleaseDate
-                    releaseDate={data.releaseDate}
-                    originalDate={data.originalReleaseDate}
-                />
-            </Box>
-            <Box flex="1">
-                <Price
-                    price={data.priceInformation?.final}
-                    initial={data.priceInformation?.initial}
-                    userCountry={user.country}
-                />
-            </Box>
-        </InfoSourceWrapper>
-    );
-};
+export const StoreInfoSource: React.FC<{
+    data: StoreGameData,
+    country: Country
+}> = ({ data, country }) => (
+    <InfoSourceWrapper>
+        <Box flex="1">
+            <ReleaseDate
+                releaseDate={data.releaseDate}
+                originalDate={data.originalReleaseDate}
+            />
+        </Box>
+        <Box flex="1">
+            <Price
+                price={data.priceInformation?.final}
+                initial={data.priceInformation?.initial}
+                country={country}
+            />
+        </Box>
+    </InfoSourceWrapper>
+);

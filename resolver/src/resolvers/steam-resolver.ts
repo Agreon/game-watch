@@ -14,17 +14,17 @@ export class SteamResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SteamGameData> {
+    public async resolve({ source }: InfoResolverContext): Promise<SteamGameData> {
         const { data } = await this.axios.get<any>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {
                     appids: source.data.id,
                     // Determines the returned currency.
-                    cc: mapCountryCodeToLanguage(userCountry),
+                    cc: mapCountryCodeToLanguage(source.country),
                 },
                 // Determines the returned language.
-                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
+                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
             }
         );
 
@@ -46,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
-            releaseDate: this.parseReleaseDate(json.release_date.date, userCountry),
+            releaseDate: this.parseReleaseDate(json.release_date.date, source.country),
             originalReleaseDate: json.release_date.date,
             priceInformation: json.is_free
                 ? { final: 0 }
