@@ -48,10 +48,7 @@ export class SwitchResolver implements InfoResolver {
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
 
-        const fullName = extract(data, /(?<=gameTitle": ").+\b/);
-        if (!fullName) {
-            throw new Error('Could not find name of game');
-        }
+        const fullName = $("meta[property='og:title']").first().attr('content')!;
 
         const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
         if (!priceId) {

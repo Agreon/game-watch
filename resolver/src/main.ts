@@ -119,8 +119,8 @@ const main = async () => {
 
                 if (isLastAttempt) {
                     // Need to wrap this because otherwise the error is swallowed by the worker.
-                    sourceScopedLogger.error(error.originalError ?? error);
-                    Sentry.captureException(error.originalError ?? error, { tags: { sourceId }, });
+                    sourceScopedLogger.error(error);
+                    Sentry.captureException(error, { tags: { sourceId }, });
                 } else {
                     sourceScopedLogger.warn(
                         error,
