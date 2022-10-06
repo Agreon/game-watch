@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Fade,
     Flex,
     FormControl,
     Input,
@@ -126,7 +127,6 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
 
-    // TODO: use ModalFooter
     return (
         <Modal
             isCentered
@@ -180,9 +180,11 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                     setGameInfoSource={setGameInfoSource}
                                     removeGameInfoSource={removeGameInfoSource}
                                 >
-                                    <Box mb="1rem">
-                                        <InfoSourcePreview />
-                                    </Box>
+                                    <Fade in={true}>
+                                        <Box mb="1rem">
+                                            <InfoSourcePreview />
+                                        </Box>
+                                    </Fade>
                                 </InfoSourceProvider>
                             )}
                             <Box position="relative" my="2rem">
