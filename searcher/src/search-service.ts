@@ -219,7 +219,14 @@ export class SearchService {
             if (
                 error instanceof GameNotFoundError
                 // We only want to retry on network errors that are not signaling us to stop.
-                || (axios.isAxiosError(error) && error.response?.status !== 403)
+                || (
+                    axios.isAxiosError(error)
+                    &&
+                    (
+                        error.response?.status === undefined
+                        || [400, 401, 403].includes(error.response.status) === false
+                    )
+                )
                 // This error occurs if Puppeteer timeouts.
                 || error.name === 'TimeoutError'
             ) {

@@ -34,7 +34,8 @@ export class ResolveService {
     public constructor(
         private readonly resolvers: InfoResolver[],
         private readonly cacheService: CacheService,
-        private readonly createNotificationsQueue: Queue<QueueParams[QueueType.CreateNotifications]>,
+        private readonly createNotificationsQueue:
+            Queue<QueueParams[QueueType.CreateNotifications]>,
         private readonly em: EntityManager,
         private readonly sourceScopedLogger: Logger
     ) { }
@@ -101,7 +102,13 @@ export class ResolveService {
                 // This error occurs if Puppeteer timeouts.
                 error.name !== 'TimeoutError'
                 // We only want to retry on network errors that are not signaling us to stop.
-                && (!axios.isAxiosError(error) || error.response?.status === 403)
+                && (
+                    !axios.isAxiosError(error)
+                    || (
+                        error.response?.status !== undefined
+                        && [403, 401, 400].includes(error.response.status)
+                    )
+                )
             ) {
                 await this.setResolveError({ source, triggeredManually });
 
