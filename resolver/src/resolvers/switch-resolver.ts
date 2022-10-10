@@ -87,17 +87,17 @@ export class SwitchResolver implements InfoResolver {
             {
                 params: {
                     operationName: 'ProductDetail',
-                    variables: JSON.stringify({
+                    variables: {
                         slug,
                         locale: 'en_US'
-                    }),
-                    extensions: JSON.stringify({
+                    },
+                    extensions: {
                         persistedQuery: {
                             version: 1,
                             sha256Hash:
                                 '045da5dd0a3d883247d9e9d435547624dec15786fe2470f5d4c51b380859e809'
                         }
-                    })
+                    }
                 }
             }
         );

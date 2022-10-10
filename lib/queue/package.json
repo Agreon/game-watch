@@ -11,14 +11,14 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.24.0",
+        "eslint": "^8.25.0",
         "typescript": "^4.8.4"
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
         "bullmq": "1.91.1",
         "fp-ts": "^2.12.3",
-        "io-ts": "^2.2.18",
+        "io-ts": "^2.2.19",
         "io-ts-reporters": "^2.0.1",
         "io-ts-types": "^0.5.17",
         "monocle-ts": "^2.3.13",
