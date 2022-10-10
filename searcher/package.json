@@ -24,7 +24,7 @@
         "@mikro-orm/postgresql": "^5.4.2",
         "@sentry/node": "^7.14.2",
         "@sentry/tracing": "^7.14.2",
-        "axios": "^0.27.2",
+        "axios": "^1.1.2",
         "bullmq": "1.91.1",
         "cheerio": "1.0.0-rc.12",
         "dotenv": "^16.0.3",
