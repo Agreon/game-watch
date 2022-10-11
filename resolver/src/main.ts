@@ -76,7 +76,7 @@ const main = async () => {
 
     resolveSourceWorker = createWorkerForQueue(
         QueueType.ResolveSource,
-        async ({ data: { sourceId, triggeredManually }, attemptsMade }) => {
+        async ({ data: { sourceId, triggeredManually }, attemptsMade, repeatJobKey }) => {
             const isLastAttempt = triggeredManually
                 ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts === attemptsMade
                 : NIGHTLY_JOB_OPTIONS.attempts === attemptsMade;
@@ -99,9 +99,9 @@ const main = async () => {
                         `Source '${sourceId}' could not be found in database. Removing nightly job`
                     );
 
-                    resolveSourceQueue.removeRepeatableByKey(
-                        `${QueueType.ResolveSource}:${sourceId}:::${process.env.SYNC_SOURCES_AT}`
-                    );
+                    if (repeatJobKey) {
+                        resolveSourceQueue.removeRepeatableByKey(repeatJobKey);
+                    }
                     return;
                 }
 

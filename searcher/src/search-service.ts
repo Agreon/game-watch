@@ -5,7 +5,7 @@ import {
     QueueParams,
     QueueType,
 } from '@game-watch/queue';
-import { CacheService, Logger } from '@game-watch/service';
+import { CacheService, getCronForNightlySync, Logger } from '@game-watch/service';
 import { BaseGameData, Country, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import { EntityManager } from '@mikro-orm/core';
 import axios from 'axios';
@@ -142,7 +142,7 @@ export class SearchService {
 
         await this.em.nativeInsert(newSource);
 
-        await this.addSourceToResolveQueues(newSource.id);
+        await this.addSourceToResolveQueues(newSource.id, userCountry);
     }
 
     private async searchForExistingSource({ logger, game, userCountry, source }: {
@@ -180,7 +180,7 @@ export class SearchService {
             country: userCountry,
         });
 
-        await this.addSourceToResolveQueues(source.id);
+        await this.addSourceToResolveQueues(source.id, userCountry);
     }
 
     private async searchForGameInSource(
@@ -249,7 +249,7 @@ export class SearchService {
         return searcherForType;
     }
 
-    private async addSourceToResolveQueues(sourceId: string) {
+    private async addSourceToResolveQueues(sourceId: string, userCountry: Country) {
         await this.resolveSourceQueue.add(
             QueueType.ResolveSource,
             {
@@ -268,7 +268,7 @@ export class SearchService {
             { sourceId },
             {
                 repeat: {
-                    cron: process.env.SYNC_SOURCES_AT
+                    cron: getCronForNightlySync(userCountry)
                 },
                 jobId: sourceId,
                 priority: 2,

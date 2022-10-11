@@ -33,7 +33,6 @@ import { SwitchSearcher } from './searchers/switch-searcher';
 
 const {
     SEARCH_GAME_CONCURRENCY,
-    SYNC_SOURCES_AT,
     REDIS_HOST,
     REDIS_PASSWORD,
     REDIS_PORT,
@@ -79,7 +78,7 @@ const main = async () => {
 
     worker = createWorkerForQueue(
         QueueType.SearchGame,
-        async ({ data: { gameId, triggeredManually }, attemptsMade, id: jobId }) => {
+        async ({ data: { gameId, triggeredManually }, attemptsMade, id: jobId, repeatJobKey }) => {
             const isLastAttempt = triggeredManually
                 ? MANUALLY_TRIGGERED_JOB_OPTIONS.attempts === attemptsMade
                 : NIGHTLY_JOB_OPTIONS.attempts === attemptsMade;
@@ -107,9 +106,9 @@ const main = async () => {
                 if (error instanceof NotFoundError) {
                     gameScopedLogger.warn(`Game '${gameId}' could not be found in database`);
 
-                    searchGameQueue.removeRepeatableByKey(
-                        `${QueueType.SearchGame}:${gameId}:::${SYNC_SOURCES_AT}`
-                    );
+                    if (repeatJobKey) {
+                        searchGameQueue.removeRepeatableByKey(repeatJobKey);
+                    }
                     return;
                 }
 

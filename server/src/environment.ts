@@ -4,7 +4,6 @@ import { BooleanFromString, IntFromString } from 'io-ts-types';
 export const EnvironmentStructure = t.type({
     SERVER_PORT: t.string,
     CORS_ORIGIN: t.string,
-    SYNC_SOURCES_AT: t.string,
     BCRYPT_HASH_SALT_ROUNDS: IntFromString,
     JWT_ALGORITHM: t.string,
     JWT_PUBLIC_KEY: t.string,

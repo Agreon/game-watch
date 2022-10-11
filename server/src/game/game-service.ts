@@ -1,5 +1,6 @@
 import { Game, InfoSource, Tag, User } from '@game-watch/database';
 import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
+import { getCronForNightlySync } from '@game-watch/service';
 import { InfoSourceState } from '@game-watch/shared';
 import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -70,13 +71,16 @@ export class GameService {
     }
 
     public async setupGame(id: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(id);
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ["user"] });
 
         game.setupCompleted = true;
         game.name = name;
         await this.gameRepository.persistAndFlush(game);
 
-        await this.queueService.createRepeatableGameSearchJob(game);
+        await this.queueService.createRepeatableGameSearchJob(
+            game,
+            getCronForNightlySync(game.user.getEntity().country)
+        );
 
         return game;
     }
@@ -111,14 +115,17 @@ export class GameService {
     public async deleteGame(id: string) {
         const game = await this.gameRepository.findOneOrFail(
             id,
-            { populate: ['infoSources'] }
+            { populate: ['infoSources', 'user'] }
         );
 
         for (const source of game.infoSources) {
             await this.queueService.removeRepeatableInfoSourceResolveJob(source);
         }
 
-        await this.queueService.removeRepeatableGameSearchJob(game);
+        await this.queueService.removeRepeatableGameSearchJob(
+            game,
+            getCronForNightlySync(game.user.getEntity().country)
+        );
         await this.gameRepository.removeAndFlush(game);
     }
 
