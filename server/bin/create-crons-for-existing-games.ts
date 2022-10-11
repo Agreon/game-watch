@@ -7,7 +7,7 @@ const main = async () => {
     const queue = createQueueHandle(QueueType.SearchGame);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
-    const games = await orm.em.find(Game, { setupCompleted: true }, { populate: ["user"] });
+    const games = await orm.em.find(Game, { setupCompleted: true }, { populate: ['user'] });
 
     for (const game of games) {
         console.log('Adding cron for', game.id);

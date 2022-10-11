@@ -1,8 +1,8 @@
-import { useDisclosure } from "@chakra-ui/react";
-import { NotificationDto } from "@game-watch/shared";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useDisclosure } from '@chakra-ui/react';
+import { NotificationDto } from '@game-watch/shared';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useHttp } from "../util/useHttp";
+import { useHttp } from '../util/useHttp';
 
 export interface NotificationCtx {
     notifications: NotificationDto[]

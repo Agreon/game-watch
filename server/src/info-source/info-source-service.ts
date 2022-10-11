@@ -22,10 +22,16 @@ export class InfoSourceService {
     ) { }
 
     public async addInfoSource(
-        { gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
+        {
+            gameId,
+            type,
+            url,
+            user: userRef,
+        }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
     ) {
+        const user = await userRef.load();
         const game = await this.gameRepository.findOneOrFail(gameId);
-        const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
+        const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type, user.country);
 
         const existingInfoSource = await this.infoSourceRepository.findOne({
             game,
@@ -38,7 +44,7 @@ export class InfoSourceService {
 
         const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
-            user,
+            user: userRef,
             state: InfoSourceState.Found,
             data: {
                 id: remoteGameId,
@@ -47,7 +53,7 @@ export class InfoSourceService {
                 fullName: 'Sync in progress',
                 url,
             },
-            country: (await user.load()).country,
+            country: user.country,
         });
 
         game.infoSources.add(infoSource);

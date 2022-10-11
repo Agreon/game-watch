@@ -13,7 +13,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList
+    MenuList,
 } from '@chakra-ui/react';
 import { useCallback, useRef, useState } from 'react';
 
@@ -47,13 +47,14 @@ export const InfoSourceOptions: React.FC = () => {
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Remove {source.type} InfoSource from {game.name}
+                        <AlertDialogHeader fontSize="lg" pr="2rem">
+                            Remove {source.type} source {"'"}{source.data.fullName}{"'"}?
                         </AlertDialogHeader>
                         <AlertDialogCloseButton />
 
                         <AlertDialogBody>
-                            Do you not want to be bothered again or should we keep searching for alternatives?
+                            Do you not want to be bothered again or should we keep searching
+                            for alternatives?
                         </AlertDialogBody>
 
                         <AlertDialogFooter display="flex" justifyContent="space-between">

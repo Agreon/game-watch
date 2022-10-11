@@ -3,7 +3,6 @@ import { withBrowser } from '@game-watch/browser';
 import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
-import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
@@ -63,6 +62,7 @@ export class SwitchSearcher implements InfoSearcher {
             };
         }
 
+        // TODO: Algolia search responded mit price?
         return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
             await page.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
 
@@ -101,55 +101,54 @@ export class SwitchSearcher implements InfoSearcher {
 
     private async searchInAUAndNZ(
         search: string,
-        { logger, userCountry }: InfoSearcherContext
+        { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
-        const lang = userCountry === 'AU' ? 'au' : 'nz';
-
-        const { data } = await this.axios.get(
-            `https://store.nintendo.com.au/${lang}/eshopsearch/result`,
-            { params: { q: search } }
+        const urlParams = new URLSearchParams({
+            hitsPerPage: '5',
+            page: '0',
+            query: search
+        });
+        const { data: { results: [{ hits }] } } = await this.axios.post(
+            'https://fmw57f6erv-dsn.algolia.net/1/indexes/*/queries',
+            {
+                requests: [{
+                    indexName: 'prod_games',
+                    params: urlParams.toString()
+                }],
+            },
+            {
+                headers: {
+                    'x-algolia-api-key': '82705f954734e1cfb0e7285e2d5ca33f',
+                    'x-algolia-application-id': 'FMW57F6ERV'
+                }
+            }
         );
-        const $ = cheerio.load(data);
 
-        let url: string;
+        const result = hits.find(
+            ({ fullURL }: { fullURL: string }) => fullURL.includes('nintendo-switch')
+        );
+        if (!result) {
+            logger.debug('No results found');
 
-        const gameInfo = $('.product-item-link').attr('data-eshop-confirmation-post')!;
-        if (gameInfo) {
-            try {
-                url = JSON.parse(gameInfo).action;
-            } catch (error) {
-                logger.error('Could not parse', { gameInfo });
-                throw error;
-            }
-        } else {
-            // Sometimes the link is added as href.
-            url = $('.product-item-link').attr('href')!;
-
-            if (!url) {
-                logger.debug('No results found');
-
-                return null;
-            }
+            return null;
         }
 
-        const id = url.split('/')[url.split('/').length - 1];
-        const fullName = $('.product-item-link').text().trim();
+        const { title, slug, fullURL } = result;
 
-        if (!matchingName(fullName, search)) {
+        if (!matchingName(title, search)) {
             logger.debug(
-                `Found name '${fullName}' does not include search '${search}'. Skipping`
+                `Found name '${title}' does not include search '${search}'. Skipping`
             );
 
             return null;
-
         }
 
-        logger.debug(`Found gameId '${id}'`);
+        logger.debug(`Found gameId '${slug}'`);
 
         return {
-            id,
-            url,
-            fullName,
+            id: slug,
+            fullName: title,
+            url: `https://www.nintendo.com.au${fullURL}`
         };
     }
 

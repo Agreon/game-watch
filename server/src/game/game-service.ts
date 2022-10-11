@@ -71,7 +71,7 @@ export class GameService {
     }
 
     public async setupGame(id: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ["user"] });
+        const game = await this.gameRepository.findOneOrFail(id, { populate: ['user'] });
 
         game.setupCompleted = true;
         game.name = name;

@@ -139,10 +139,7 @@ export class SwitchResolver implements InfoResolver {
     }
 
     private async resolveAUandNZ({ source }: InfoResolverContext) {
-        const [{ data }, price] = await Promise.all([
-            this.axios.get<string>(source.data.url),
-            this.getPriceInformation(source.data.id, source.country)
-        ]);
+        const { data } = await this.axios.get<string>(source.data.url);
 
         const $ = cheerio.load(data);
 
@@ -153,15 +150,26 @@ export class SwitchResolver implements InfoResolver {
 
         const thumbnailUrl = $("meta[property='og:image']").attr('content')!;
 
-        const releaseDate = extract(data, /(?<=release_date_on_eshop":")([\d.]+-[\d.]+-[\d.]+)/);
+        const releaseDate = $("div[itemprop='releaseDate']").text();
+
+        let priceInformation;
+        const eshopUrl = $('a.nal-button-primary').attr('href');
+        if (eshopUrl) {
+            const urlParts = eshopUrl.split('/');
+            const eshopId = urlParts[urlParts.length - 2];
+
+            priceInformation = this.parsePriceInformation(
+                await this.getPriceInformation(eshopId, source.country)
+            );
+        }
 
         return {
             ...source.data,
             fullName,
             thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ['YYYY-MM-DD']),
+            releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
             originalReleaseDate: releaseDate,
-            priceInformation: this.parsePriceInformation(price)
+            priceInformation
         };
     }
 
