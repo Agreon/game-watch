@@ -1,10 +1,8 @@
 import { QueueType } from '@game-watch/queue';
 import { BullModule, getQueueToken } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import type { Queue } from 'bullmq';
 
-import { Environment } from '../environment';
 import { QueueService } from './queue-service';
 
 @Module({
@@ -24,19 +22,17 @@ import { QueueService } from './queue-service';
                 resolveSourceQueue: Queue,
                 deleteUnfinishedGameAddsQueue: Queue,
                 createNotificationsQueue: Queue,
-                configService: ConfigService<Environment, true>
             ) => new QueueService({
                 [QueueType.SearchGame]: searchGameQueue,
                 [QueueType.ResolveSource]: resolveSourceQueue,
                 [QueueType.DeleteUnfinishedGameAdds]: deleteUnfinishedGameAddsQueue,
                 [QueueType.CreateNotifications]: createNotificationsQueue,
-            }, configService),
+            }),
             inject: [
                 getQueueToken(QueueType.SearchGame),
                 getQueueToken(QueueType.ResolveSource),
                 getQueueToken(QueueType.DeleteUnfinishedGameAdds),
                 getQueueToken(QueueType.CreateNotifications),
-                ConfigService
             ]
         },
     ],

@@ -16,6 +16,7 @@
     "scripts": {
         "build": "pnpm turbo run build",
         "build:lib": "pnpm turbo run build --filter=\"./lib/*\"",
+        "watch:lib": "pnpm turbo run watch --filter=\"./lib/*\"",
         "build:docker": "COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build",
         "lint": "pnpm turbo run lint",
         "lint:fix": "pnpm turbo run lint:fix",
@@ -24,7 +25,7 @@
     },
     "devDependencies": {
         "pnpm": "7.5.2",
-        "turbo": "^1.5.1"
+        "turbo": "^1.5.5"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"

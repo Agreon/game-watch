@@ -1,5 +1,5 @@
 import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
-import { InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
+import { Country, InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -14,15 +14,17 @@ export class SteamResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ userCountry, source }: InfoResolverContext): Promise<SteamGameData> {
+    public async resolve({ source }: InfoResolverContext): Promise<SteamGameData> {
         const { data } = await this.axios.get<any>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {
                     appids: source.data.id,
-                    cc: mapCountryCodeToLanguage(userCountry),
+                    // Determines the returned currency.
+                    cc: mapCountryCodeToLanguage(source.country),
                 },
-                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
+                // Determines the returned language.
+                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
             }
         );
 
@@ -44,7 +46,7 @@ export class SteamResolver implements InfoResolver {
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: json.header_image,
-            releaseDate: this.getReleaseDate(json.release_date.date),
+            releaseDate: this.parseReleaseDate(json.release_date.date, source.country),
             originalReleaseDate: json.release_date.date,
             priceInformation: json.is_free
                 ? { final: 0 }
@@ -59,8 +61,10 @@ export class SteamResolver implements InfoResolver {
         };
     }
 
-    private getReleaseDate(releaseDate: string) {
-        releaseDate
+    private parseReleaseDate(releaseDate: string, userCountry: Country) {
+        const locale = mapCountryCodeToLanguage(userCountry);
+
+        const parsedReleaseDate = releaseDate
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
             // For some reason "Okt" is leading to an invalid date. So we use the english one.
@@ -68,9 +72,9 @@ export class SteamResolver implements InfoResolver {
 
         // Sometimes english, sometimes german..
         // TODO: What's with other countries?
-        return parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'], 'de')
-            ?? parseDate(releaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-            ?? parseDate(releaseDate);
+        return parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
+            ?? parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
+            ?? parseDate(parsedReleaseDate);
     }
 
     private getPriceInformation(

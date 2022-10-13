@@ -127,7 +127,6 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
     const [name, setName] = useState(game.search);
 
-    // TODO: use ModalFooter
     return (
         <Modal
             isCentered

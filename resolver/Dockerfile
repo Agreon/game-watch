@@ -44,8 +44,6 @@ RUN \
     pnpm --filter @game-watch/resolver build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
-RUN chmod -R o+rwx lib/browser/node_modules/puppeteer/.local-chromium
-
 ENV NODE_ENV production
 
 EXPOSE 3000

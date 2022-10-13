@@ -65,7 +65,7 @@ export class AuthController {
     @Post('/create')
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard)
-    @Throttle(2, 10)
+    @Throttle(4, 10)
     public async createUser(
         @Body() { id }: CreateUserDto,
         @Req() request: Request,

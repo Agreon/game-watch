@@ -1,12 +1,13 @@
-import { useDisclosure } from "@chakra-ui/react";
-import { NotificationDto } from "@game-watch/shared";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useDisclosure } from '@chakra-ui/react';
+import { NotificationDto } from '@game-watch/shared';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useHttp } from "../util/useHttp";
+import { useHttp } from '../util/useHttp';
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
     markNotificationAsRead: (id: string) => Promise<void>
+    markAllNotificationsAsRead: () => Promise<void>
     showNotificationSidebar: boolean
     notificationSidebarRef: React.MutableRefObject<HTMLDivElement | null>
     notificationSidebarIconRef: React.MutableRefObject<HTMLButtonElement | null>
@@ -48,6 +49,13 @@ export const NotificationProvider: React.FC<{
         });
     }, [withRequest]);
 
+    const markAllNotificationsAsRead = useCallback(async () => {
+        await withRequest(async http => {
+            await http.post(`/notification/mark-all-as-read`);
+            setNotifications(() => []);
+        });
+    }, [withRequest]);
+
     const {
         isOpen: showNotificationSidebar,
         onClose: closeNotificationSidebar,
@@ -86,6 +94,7 @@ export const NotificationProvider: React.FC<{
     const contextValue = useMemo(() => ({
         notifications,
         markNotificationAsRead,
+        markAllNotificationsAsRead,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,
@@ -94,6 +103,7 @@ export const NotificationProvider: React.FC<{
     }), [
         notifications,
         markNotificationAsRead,
+        markAllNotificationsAsRead,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,

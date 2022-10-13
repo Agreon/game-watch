@@ -7,30 +7,39 @@ GameWatch (working title) is a service with which you can watch for changes in s
 ## Run it
 
 ### Necessary software
-- [docker](docker.com) + [docker-compose](docs.docker.com/compose/install)
-- [pnpm](pnpm.io)
+- [docker](https://docker.com) + [docker-compose](https://docs.docker.com/compose/install)
+- [pnpm](https://pnpm.io)
 
-### First time setup
 
-Create a copy of `.env.dist` and name it `.env`. Run `pnpm build` to build all libraries and packages.
+Run the following commands to build all packages and create an initial environment:
 
-### Helpful Commands
+```
+cp .env.dist .env
+cp ./.env client/.env.local
+pnpm install
+pnpm build:lib
+pnpm build:docker
+```
 
-GameWatch is created as a monorepo with multiple packages and libraries. Each component can be independently started in docker or for active development with `pnpm start:dev`.
+If you feel ready to start, execute `docker compose up -d` to start all services.
 
-The docker setup is leveraging [buildkit](github.com/moby/buildkit), so you'll need to use additional flags for it to work:
+### During Development
+
+GameWatch is created as a monorepo with multiple packages and libraries. Each component can be independently started in docker or for active development with `pnpm start:dev`. When I develop locally, I normally start up the non-development services with docker and the ones I work on with `pnpm start:dev`. Hot reloading in containers is not done yet. Feel free to help in https://github.com/Agreon/game-watch/issues/142 ;)
+
+---
+
+The docker setup leverages [buildkit](https://github.com/moby/buildkit), so you'll need to use additional flags for it to work:
 
 ```
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up -d
 ```
 
-You can just use `pnpm build:docker <service>` so you don't have to remember that.
-
-When I develop locally, I normally start up the non-development services  like `redis` or `db` with docker and the ones I actively work on with `pnpm start:dev`.
+But you can just use `pnpm build:docker <service>` so you don't have to remember that.
 
 ### Basic Scripts
 
-- Build all packages: `pnpm build:lib`
+- Build all packages: `pnpm build`
 - Build only libraries: `pnpm build:lib`
 - Build all packages in docker: `pnpm build:docker`
 

@@ -1,5 +1,5 @@
 import { Game, InfoSource, Notification, User } from '@game-watch/database';
-import { QueueType } from '@game-watch/queue';
+import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -22,10 +22,16 @@ export class InfoSourceService {
     ) { }
 
     public async addInfoSource(
-        { gameId, type, url, user }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
+        {
+            gameId,
+            type,
+            url,
+            user: userRef,
+        }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
     ) {
+        const user = await userRef.load();
         const game = await this.gameRepository.findOneOrFail(gameId);
-        const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type);
+        const remoteGameId = await this.mapperService.mapUrlToResolverId(url, type, user.country);
 
         const existingInfoSource = await this.infoSourceRepository.findOne({
             game,
@@ -38,7 +44,7 @@ export class InfoSourceService {
 
         const infoSource = new InfoSource<InfoSourceType, InfoSourceState>({
             type,
-            user,
+            user: userRef,
             state: InfoSourceState.Found,
             data: {
                 id: remoteGameId,
@@ -46,7 +52,8 @@ export class InfoSourceService {
                 // It is later overwritten by the resolvers.
                 fullName: 'Sync in progress',
                 url,
-            }
+            },
+            country: user.country,
         });
 
         game.infoSources.add(infoSource);
@@ -55,7 +62,8 @@ export class InfoSourceService {
 
         await this.queueService.addToQueue(
             QueueType.ResolveSource,
-            { sourceId: infoSource.id, initialRun: true }
+            { sourceId: infoSource.id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS,
         );
         await this.queueService.createRepeatableInfoSourceResolveJob(infoSource);
 
@@ -74,7 +82,8 @@ export class InfoSourceService {
 
         await this.queueService.addToQueue(
             QueueType.ResolveSource,
-            { sourceId: id, skipCache: true }
+            { sourceId: id, triggeredManually: true },
+            MANUALLY_TRIGGERED_JOB_OPTIONS,
         );
 
         return infoSource;

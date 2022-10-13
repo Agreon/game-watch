@@ -1,9 +1,9 @@
-import { useToast, UseToastOptions } from "@chakra-ui/react";
-import axios, { AxiosError, AxiosInstance } from "axios";
-import { useCallback, useMemo } from "react";
+import { useToast, UseToastOptions } from '@chakra-ui/react';
+import axios, { AxiosError, AxiosInstance } from 'axios';
+import { useCallback, useMemo } from 'react';
 
-import { setLocalStoredUser } from "../providers/UserProvider";
-import { DEFAULT_TOAST_OPTIONS } from "./default-toast-options";
+import { setLocalStoredUser } from '../providers/UserProvider';
+import { DEFAULT_TOAST_OPTIONS } from './default-toast-options';
 
 axios.defaults.withCredentials = true;
 
@@ -15,18 +15,23 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
         client.interceptors.response.use(
             undefined,
             async (error) => {
-                if (error.response?.status === 401 && error.config.url !== "/auth/login") {
-                    if (logoutOnAuthFailure && (error.config.url === "/auth/refresh" || error.config.url === "/auth/logout")) {
+                if (error.response?.status === 401 && error.config.url !== '/auth/login') {
+                    if (
+                        logoutOnAuthFailure
+                        && (
+                            error.config.url === '/auth/refresh'
+                            || error.config.url === '/auth/logout'
+                        )) {
                         setLocalStoredUser(null);
-                        location.href = "/?loggedOut=true";
+                        location.href = '/?loggedOut=true';
                         return;
                     }
 
-                    if (!logoutOnAuthFailure && error.config.url === "/auth/refresh") {
+                    if (!logoutOnAuthFailure && error.config.url === '/auth/refresh') {
                         throw error;
                     }
 
-                    await client.post("/auth/refresh");
+                    await client.post('/auth/refresh');
 
                     return await client.request(error.config);
                 }
@@ -41,9 +46,9 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
     const handleError = useCallback((error: unknown, toastOptions?: Partial<UseToastOptions>) => {
         console.error(error);
         toast({
-            title: "Error",
-            description: "Unexpected Error. Please try again.",
-            status: "error",
+            title: 'Error',
+            description: 'Unexpected Error. Please try again.',
+            status: 'error',
             ...toastOptions
         });
     }, [toast]);

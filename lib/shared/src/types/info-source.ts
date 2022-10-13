@@ -1,4 +1,4 @@
-import { Country } from './country';
+import { Countries, Country } from './country';
 
 export enum InfoSourceType {
     Steam = 'steam',
@@ -39,7 +39,7 @@ export interface StorePriceInformation {
 }
 
 export interface StoreGameData extends BaseGameData {
-    thumbnailUrl?: string;
+    thumbnailUrl: string;
     releaseDate?: Date;
     originalReleaseDate?: string;
     priceInformation?: StorePriceInformation;
@@ -78,10 +78,10 @@ export type GameDataU =
     | MetacriticData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
-    [InfoSourceType.Steam]: ['DE', 'US'] as const,
-    [InfoSourceType.PsStore]: ['DE', 'US'] as const,
-    [InfoSourceType.Metacritic]: ['DE', 'US'] as const,
+    [InfoSourceType.Steam]: Countries,
+    [InfoSourceType.Metacritic]: Countries,
+    [InfoSourceType.Switch]: Countries,
+    [InfoSourceType.PsStore]: Countries,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: ['DE'] as const,
-    [InfoSourceType.Switch]: ['DE', 'US'] as const,
 } as const;

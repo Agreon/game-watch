@@ -1,7 +1,7 @@
-import { InfoSourceDto, InfoSourceState } from "@game-watch/shared";
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import { InfoSourceDto, InfoSourceState } from '@game-watch/shared';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { useHttp } from "../util/useHttp";
+import { useHttp } from '../util/useHttp';
 
 export interface InfoSourceCtx {
     source: InfoSourceDto

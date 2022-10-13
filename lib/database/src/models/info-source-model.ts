@@ -1,23 +1,41 @@
-import { InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
-import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference, Unique } from '@mikro-orm/core';
+import { Country, InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import {
+    ArrayType,
+    Collection,
+    Entity,
+    Enum,
+    IdentifiedReference,
+    ManyToOne,
+    OneToMany,
+    Property,
+    Reference,
+    Unique,
+} from '@mikro-orm/core';
 
 import { BaseEntity } from '../base-entity';
 import { Game } from './game-model';
 import { Notification } from './notification-model';
 import { User } from './user-model';
 
-interface InfoSourceParams<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> {
+interface InfoSourceParams<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> {
     type: T
     state: S
     user: IdentifiedReference<User>
     data: InfoSourceData<T, S>
     excludedRemoteGameIds?: string[]
     game?: Game
+    country: Country
 }
 
 @Entity()
 @Unique({ properties: ['type', 'game'] })
-export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends InfoSourceState = InfoSourceState> extends BaseEntity<InfoSource> {
+export class InfoSource<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
 
@@ -38,10 +56,13 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
     @Property()
     public foundAt: Date = new Date();
 
-    @ManyToOne(() => Game, { wrappedReference: true, hidden: true })
+    @Property()
+    public country: Country;
+
+    @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
     public game!: IdentifiedReference<Game>;
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)
@@ -55,6 +76,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
             data,
             game,
             user,
+            country,
         }: InfoSourceParams<T, S>
     ) {
         super();
@@ -63,6 +85,7 @@ export class InfoSource<T extends InfoSourceType = InfoSourceType, S extends Inf
         this.excludedRemoteGameIds = excludedRemoteGameIds ?? [];
         this.user = user;
         this.data = data;
+        this.country = country;
         if (game) {
             this.game = Reference.create(game);
         }

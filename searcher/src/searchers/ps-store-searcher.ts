@@ -15,7 +15,6 @@ interface SearchResponse {
             }>
         }
     }
-
 }
 
 export class PsStoreSearcher implements InfoSearcher {
@@ -67,7 +66,7 @@ export class PsStoreSearcher implements InfoSearcher {
 
         logger.debug(`Found gameId '${gameId}'`);
 
-        const url = `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry)}/product/${gameId}`;
+        const url = `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry).toLowerCase()}/product/${gameId}`;
 
         return {
             id: url,

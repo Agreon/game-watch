@@ -1,15 +1,11 @@
 import { InfoSource, mikroOrmConfig } from '@game-watch/database';
-import { createQueue, QueueType } from '@game-watch/queue';
-import { parseEnvironment } from '@game-watch/service';
+import { createQueueHandle, NIGHTLY_JOB_OPTIONS, QueueType } from '@game-watch/queue';
+import { getCronForNightlySync } from '@game-watch/service';
 import { InfoSourceState } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
 
-import { EnvironmentStructure } from '../src/environment';
-
-const { SYNC_SOURCES_AT } = parseEnvironment(EnvironmentStructure, process.env);
-
 const main = async () => {
-    const queue = createQueue(QueueType.ResolveSource);
+    const queue = createQueueHandle(QueueType.ResolveSource);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const infoSources = await orm.em.find(InfoSource, {});
@@ -17,8 +13,10 @@ const main = async () => {
     for (const infoSource of infoSources) {
         console.log('Adding cron for', infoSource.id);
 
+        const cron = getCronForNightlySync(infoSource.country);
+
         await queue.removeRepeatableByKey(
-            `${QueueType.ResolveSource}:${infoSource.id}:::${SYNC_SOURCES_AT}`
+            `${QueueType.ResolveSource}:${infoSource.id}:::${cron}`
         );
 
         console.log('Removed old cron for', infoSource.id);
@@ -32,10 +30,11 @@ const main = async () => {
             { sourceId: infoSource.id },
             {
                 repeat: {
-                    cron: SYNC_SOURCES_AT
+                    cron
                 },
                 jobId: infoSource.id,
-                priority: 2
+                priority: 2,
+                ...NIGHTLY_JOB_OPTIONS
             }
         );
 

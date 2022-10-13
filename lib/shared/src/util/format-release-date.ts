@@ -15,8 +15,7 @@ export const formatReleaseDate = (
     }
 
     if (releaseDate) {
-        // TODO: Depend on user lang?
-        return dayjs(releaseDate).format('DD MMM, YYYY');
+        return dayjs(releaseDate).format('DD MMM. YYYY');
     }
 
     return 'TBD';

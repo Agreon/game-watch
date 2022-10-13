@@ -1,4 +1,4 @@
-import { InfoSourceType, MetacriticData } from '@game-watch/shared';
+import { InfoSourceType, MetacriticData, StoreGameData } from '@game-watch/shared';
 import React from 'react';
 
 import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
@@ -13,7 +13,7 @@ export const InfoSource: React.FC = () => {
         case InfoSourceType.Switch:
         case InfoSourceType.PsStore:
         case InfoSourceType.Epic:
-            return <StoreInfoSource data={source.data} />;
+            return <StoreInfoSource data={source.data as StoreGameData} country={source.country} />;
         case InfoSourceType.Metacritic:
             return <MetacriticInfoSource data={source.data as MetacriticData} />;
     }

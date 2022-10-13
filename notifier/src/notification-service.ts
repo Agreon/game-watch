@@ -1,23 +1,15 @@
 import { Game, InfoSource, Notification, User } from '@game-watch/database';
 import { Logger } from '@game-watch/service';
-import { GameData, InfoSourceType, NotificationData, NotificationType } from '@game-watch/shared';
+import {
+    GameData,
+    GameDataU,
+    InfoSourceType,
+    NotificationData,
+    NotificationType,
+} from '@game-watch/shared';
 import { EntityManager } from '@mikro-orm/core';
 
 import { MailService } from './mail-service';
-
-export interface CreateNotificationsParams<T extends InfoSourceType = InfoSourceType> {
-    sourceId: string
-    existingGameData: GameData[T] | null
-    resolvedGameData: GameData[T] | null
-    em: EntityManager
-}
-
-interface PersistNotificationParams {
-    notification: Notification;
-    logger: Logger;
-    em: EntityManager;
-    user: User;
-}
 
 export interface NotificationCreatorContext<T extends InfoSourceType = InfoSourceType> {
     game: Game
@@ -40,13 +32,18 @@ export class NotificationService {
     public constructor(
         private readonly notificationCreators: NotificationCreator<NotificationType>[],
         private readonly mailService: MailService,
-        private readonly logger: Logger
+        private readonly em: EntityManager,
+        private readonly sourceScopedLogger: Logger
     ) { }
 
     public async createNotifications(
-        { sourceId, existingGameData, resolvedGameData, em }: CreateNotificationsParams
+        { sourceId, existingGameData, resolvedGameData }: {
+            sourceId: string
+            existingGameData: GameDataU | null
+            resolvedGameData: GameDataU | null
+        }
     ) {
-        const infoSource = await em.findOneOrFail<InfoSource, 'game' | 'user'>(
+        const infoSource = await this.em.findOneOrFail<InfoSource, 'game' | 'user'>(
             InfoSource,
             sourceId,
             { populate: ['game', 'user'] }
@@ -54,28 +51,14 @@ export class NotificationService {
         const game = infoSource.game.getEntity();
         const user = infoSource.user.getEntity();
 
-        const scopedLogger = this.logger.child({ sourceId, gameId: game.id, userId: user.id });
+        const logger = this.sourceScopedLogger.child({ gameId: game.id, userId: user.id });
 
         if (resolvedGameData === null) {
-            const existingNotification = await em.findOne(Notification, {
+            return await this.createResolveErrorNotification({
+                game,
                 infoSource,
-                type: NotificationType.ResolveError
-            });
-            if (existingNotification) {
-                scopedLogger.debug('Not adding notification because there is already another ResolveError notification for that game');
-                return;
-            }
-
-            return await this.persistNotification({
-                notification: new Notification<NotificationType>({
-                    game,
-                    infoSource,
-                    type: NotificationType.ResolveError,
-                    data: {}
-                }),
-                em,
                 user,
-                logger: scopedLogger
+                logger
             });
         }
 
@@ -83,50 +66,100 @@ export class NotificationService {
             ({ supportsInfoSourceTypes }) => supportsInfoSourceTypes.includes(infoSource.type)
         );
 
-        scopedLogger.info(
+        logger.info(
             `Checking for ${JSON.stringify(relevantNotificationCreators.map(creator => creator.forNotificationType))}`
         );
 
         await Promise.all(
-            relevantNotificationCreators.map(async creator => {
-                const data = await creator.createNotification({
-                    logger: scopedLogger.child({
-                        notificationType: creator.forNotificationType,
-                    }),
-                    game,
-                    infoSource,
-                    em,
-                    existingGameData,
-                    resolvedGameData
-                });
-
-                if (!data) {
-                    return;
-                }
-
-                const notification = new Notification({
-                    game,
-                    infoSource,
-                    type: creator.forNotificationType,
-                    data,
-                });
-
-                await this.persistNotification({
-                    notification,
-                    em,
-                    user,
-                    logger: scopedLogger
-                });
-            })
+            relevantNotificationCreators.map(async creator => await this.createNotification({
+                creator,
+                game,
+                infoSource,
+                user,
+                existingGameData,
+                resolvedGameData,
+                logger
+            }))
         );
     }
 
+    private async createResolveErrorNotification({ game, infoSource, user, logger }: {
+        game: Game
+        infoSource: InfoSource
+        user: User
+        logger: Logger
+    }) {
+        const existingNotification = await this.em.findOne(Notification, {
+            infoSource,
+            type: NotificationType.ResolveError
+        });
+        if (existingNotification) {
+            logger.debug('Not adding notification because there is already another ResolveError notification for that game');
+            return;
+        }
+
+        return await this.persistNotification({
+            notification: new Notification<NotificationType>({
+                game,
+                infoSource,
+                type: NotificationType.ResolveError,
+                data: {}
+            }),
+            user,
+            logger
+        });
+    }
+
+    private async createNotification({
+        creator,
+        game,
+        infoSource,
+        user,
+        existingGameData,
+        resolvedGameData,
+        logger,
+    }: {
+        creator: NotificationCreator<NotificationType>,
+        game: Game
+        infoSource: InfoSource
+        user: User
+        existingGameData: GameDataU | null
+        resolvedGameData: GameDataU
+        logger: Logger
+    }) {
+        const notificationData = await creator.createNotification({
+            logger: logger.child({
+                notificationType: creator.forNotificationType,
+            }),
+            game,
+            infoSource,
+            em: this.em,
+            existingGameData,
+            resolvedGameData
+        });
+
+        if (!notificationData) {
+            return;
+        }
+
+        await this.persistNotification({
+            notification: new Notification({
+                game,
+                infoSource,
+                type: creator.forNotificationType,
+                data: notificationData,
+            }),
+            user,
+            logger
+        });
+    }
+
     private async persistNotification(
-        { notification, logger, em, user }: PersistNotificationParams
+        { notification, user, logger }: { notification: Notification, user: User, logger: Logger }
     ) {
         logger.info(`Creating Notification of type '${notification.type}'`);
 
-        await em.transactional(async transactionEm => {
+        await this.em.transactional(async transactionEm => {
             await transactionEm.nativeInsert(notification);
 
             if (user.enableEmailNotifications && user.emailConfirmed) {

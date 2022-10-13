@@ -28,7 +28,7 @@ export class EpicResolver implements InfoResolver {
         const discountedFromPrice = $('div[data-component=PDPDiscountedFromPrice]')
             .first().text().trim();
         const releaseDate = $('time').first().attr('datetime')?.trim();
-        const thumbnailUrl = $('div[data-component=PDPSidebarLogo] img').attr('src');
+        const thumbnailUrl = $('div[data-component=PDPSidebarLogo] img').attr('src')!;
 
         return {
             ...source.data,

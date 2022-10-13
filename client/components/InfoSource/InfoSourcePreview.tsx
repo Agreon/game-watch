@@ -9,10 +9,13 @@ import {
 import { InfoSourceState } from '@game-watch/shared';
 import React, { useCallback } from 'react';
 
+import { useGameContext } from '../../providers/GameProvider';
 import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
+import { ResolveError } from '../ResolveError';
 import { SourceTypeLogo } from './SourceTypeLogo';
 
 export const InfoSourcePreview: React.FC = () => {
+    const { game } = useGameContext();
     const { source, disableInfoSource } = useInfoSourceContext();
     const onRemove = useCallback(() => disableInfoSource(true), [disableInfoSource]);
 
@@ -39,10 +42,16 @@ export const InfoSourcePreview: React.FC = () => {
                     {SourceTypeLogo[source.type]}
                 </a>
             </Box>
-            <Flex justify="space-between" flex="2" align="center" width="100%">
-                <Box width="100%" position="relative">
+            <Flex
+                flex="2"
+                justify="space-between"
+                align="center"
+                width="100%"
+                overflow="hidden"
+            >
+                <Box maxWidth="85%">
                     {source.state === InfoSourceState.Error
-                        && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                        && <Box flex="1"><ResolveError /></Box>}
                     {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
                         <a href={source.data.url} target="_blank" rel="noreferrer">
                             <Text
@@ -50,7 +59,7 @@ export const InfoSourcePreview: React.FC = () => {
                                 fontSize="xl"
                                 overflow="hidden"
                                 textOverflow="ellipsis"
-                                whiteSpace="nowrap"
+                                whiteSpace={['normal', 'normal', 'nowrap']}
                             >
                                 {source.data.fullName}
                             </Text>
@@ -58,7 +67,12 @@ export const InfoSourcePreview: React.FC = () => {
                     }
                 </Box>
                 <Box pl="0.5rem">
-                    <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />
+                    <IconButton
+                        aria-label='Delete'
+                        onClick={onRemove}
+                        icon={<DeleteIcon />}
+                        disabled={game.syncing}
+                    />
                 </Box>
             </Flex>
         </Flex>

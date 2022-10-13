@@ -7,9 +7,6 @@ updates:
     schedule:
       interval: 'daily'
     ignore:
-      - dependency-name: 'p-retry'
-        versions:
-          - '>= 5.0.0'
       - dependency-name: 'pnpm'
         versions:
           - '> 7.5.2'

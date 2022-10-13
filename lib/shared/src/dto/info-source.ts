@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsString, Length } from 'class-validator';
 
-import { BaseGameData, GameData, InfoSourceState, InfoSourceType } from '../types';
+import { BaseGameData, Country, GameData, InfoSourceState, InfoSourceType } from '../types';
 
 export type InfoSourceData<
     T extends InfoSourceType = InfoSourceType,
@@ -18,6 +18,7 @@ export interface InfoSourceDto<
     type: T
     state: S
     data: InfoSourceData<T, S>
+    country: Country
 }
 
 export class CreateInfoSourceDto {

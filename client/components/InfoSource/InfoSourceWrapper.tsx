@@ -1,14 +1,10 @@
-import {
-    Box,
-    Flex,
-    Text,
-    Tooltip
-} from '@chakra-ui/react';
+import { Box, Flex, Tooltip } from '@chakra-ui/react';
 import { InfoSourceState } from '@game-watch/shared';
 import React, { PropsWithChildren } from 'react';
 
 import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
 import { LoadingSpinner } from '../LoadingSpinner';
+import { ResolveError } from '../ResolveError';
 import { InfoSourceOptions } from './InfoSourceOptions';
 import { SourceTypeLogo } from './SourceTypeLogo';
 
@@ -27,7 +23,7 @@ export const InfoSourceWrapper: React.FC<PropsWithChildren> = ({ children }) => 
             {source.state === InfoSourceState.Found
                 && <Box flex="2" position="relative"><LoadingSpinner size="lg" /></Box>}
             {source.state === InfoSourceState.Error
-                && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
+                && <Box flex="1"><ResolveError /></Box>}
             {source.state === InfoSourceState.Resolved && children}
             <Box><InfoSourceOptions /></Box>
         </Flex>

@@ -2,7 +2,9 @@ import { Country } from '../types/country';
 
 const countryUnitMap: Record<Country, string> = {
     'DE': '€',
-    'US': '$'
+    'US': '$',
+    'AU': '$',
+    'NZ': '$',
 };
 
 export const formatPrice = ({ price, country }: { price?: number, country: Country }) => {

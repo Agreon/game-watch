@@ -6,7 +6,8 @@ export const EnvironmentStructure = t.type({
     REDIS_HOST: t.string,
     REDIS_PASSWORD: t.string,
     REDIS_PORT: IntFromString,
-    CACHING_ENABLED: BooleanFromString
+    CACHING_ENABLED: BooleanFromString,
+    CACHE_TIME_IN_SECONDS: IntFromString,
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;

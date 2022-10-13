@@ -6,13 +6,14 @@
     "types": "dist/main.d.ts",
     "scripts": {
         "build": "tsc -b .",
+        "watch": "tsc -b -w .",
         "lint": "eslint \"src/**/*.ts\"",
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "@types/node": "^18.7.18",
-        "eslint": "^8.23.1",
-        "typescript": "^4.8.3"
+        "@types/node": "^18.8.3",
+        "eslint": "^8.25.0",
+        "typescript": "^4.8.4"
     },
     "dependencies": {
         "class-validator": "^0.13.1",

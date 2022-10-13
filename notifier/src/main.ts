@@ -36,17 +36,15 @@ let createNotificationsWorker: Worker | undefined;
 
 SendgridMailClient.setApiKey(SENDGRID_API_KEY);
 
-const notificationService = new NotificationService(
-    [
-        new GameReducedNotificationCreator(),
-        new GameReleasedNotificationCreator(),
-        new NewMetaCriticRatingNotificationCreator(),
-        new NewStoreEntryNotificationCreator(),
-        new ReleaseDateChangedNotificationCreator()
-    ],
-    new MailService(SendgridMailClient),
-    logger
-);
+const notificationCreators = [
+    new GameReducedNotificationCreator(),
+    new GameReleasedNotificationCreator(),
+    new NewMetaCriticRatingNotificationCreator(),
+    new NewStoreEntryNotificationCreator(),
+    new ReleaseDateChangedNotificationCreator()
+];
+
+const mailService = new MailService(SendgridMailClient);
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
@@ -54,16 +52,24 @@ const main = async () => {
     createNotificationsWorker = createWorkerForQueue(
         QueueType.CreateNotifications,
         async ({ data: { sourceId, existingGameData, resolvedGameData } }) => {
+            const sourceScopedLogger = logger.child({ sourceId });
+
+            const notificationService = new NotificationService(
+                notificationCreators,
+                mailService,
+                orm.em.fork(),
+                sourceScopedLogger
+            );
+
             try {
                 await notificationService.createNotifications({
                     sourceId,
                     existingGameData,
                     resolvedGameData,
-                    em: orm.em.fork()
                 });
             } catch (error) {
                 // Need to wrap this because otherwise the error is swallowed by the worker.
-                logger.error(error);
+                sourceScopedLogger.error(error);
                 Sentry.captureException(error, { tags: { sourceId } });
                 throw error;
             }
