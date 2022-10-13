@@ -6,7 +6,7 @@ const IGNORED_TOKENS = [
 
 export const matchingName = (name: string, search: string) => {
     const nameTokens = name
-        .replace(/:|™|®|-/g, '')
+        .replace(/:|™|®|-|\(|\)/g, '')
         .toLowerCase()
         .split(' ')
         .filter(value => !!value);
@@ -15,10 +15,9 @@ export const matchingName = (name: string, search: string) => {
         .replace(/\d/, '')
         .toLowerCase()
         .split(' ')
-        .filter(value => !!value);
+        .filter(value => !!value && !IGNORED_TOKENS.includes(value.trim()));
 
     return searchTokens.some(searchToken =>
-        !IGNORED_TOKENS.includes(searchToken.trim())
-        && nameTokens.some(nameToken => nameToken.includes(searchToken.trim()))
+        nameTokens.some(nameToken => nameToken.includes(searchToken.trim()))
     );
 };
