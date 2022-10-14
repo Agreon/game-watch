@@ -8,6 +8,7 @@ import {
     FormErrorMessage,
     FormLabel,
     Input,
+    Link,
     Text,
     useToast,
 } from '@chakra-ui/react';
@@ -55,7 +56,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
     return (
         <Box>
-            <Text mt="0.25rem">Don&apos;t worry about your data</Text>
+            <Text mt="0.25rem">Don&apos;t worry about your data {':)'}</Text>
 
             <Form mt="1rem" onSubmit={handleSubmit(onRegister)} >
                 <FormControl variant="floating" isInvalid={!!errors.username}>
@@ -79,7 +80,9 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                         id="enableEmailNotifications"
                         {...register('enableEmailNotifications', { value: false })}
                     >
-                        Enable E-Mail Notifications
+                        <Text mt="0.3rem">
+                            Enable E-Mail Notifications
+                        </Text>
                     </Checkbox>
                 </FormControl>
 
@@ -93,10 +96,33 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                     </FormControl>
                 }
 
-                <FormControl mt="1.5rem" isInvalid={!!errors.agreeToTermsOfService}>
-                    <Checkbox id="agreeToTermsOfService" {...register('agreeToTermsOfService')}>
-                        I agree with everything
-                    </Checkbox>
+                <FormControl mt="1rem" isInvalid={!!errors.agreeToTermsOfService}>
+                    <Flex alignItems="start">
+                        <Checkbox
+                            id="agreeToTermsOfService"
+                            {...register('agreeToTermsOfService')}
+                        />
+                        <Box width="100%" mt="-0.1rem">
+                            <Text ml="0.5rem">
+                                I agree with the{' '}
+                                <Link
+                                    href="/privacy-policy"
+                                    target="_blank"
+                                    fontWeight="bold"
+                                >
+                                    Privacy Policy
+                                </Link>
+                                {' '}and the{' '}
+                                <Link
+                                    href="/tos"
+                                    target="_blank"
+                                    fontWeight="bold"
+                                >
+                                    Terms of Service
+                                </Link>
+                            </Text>
+                        </Box>
+                    </Flex>
                     {errors.agreeToTermsOfService
                         && <FormErrorMessage>
                             {errors.agreeToTermsOfService.message}
@@ -115,7 +141,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                         Register
                     </Button>
                 </Flex>
-            </Form>
-        </Box>
+            </Form >
+        </Box >
     );
 };

@@ -64,9 +64,8 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
                             <Link href="/imprint" prefetch={false}>Imprint</Link>
                         </Box>
                         <Box ml="1rem">
-                            <Link href="/note" prefetch={false}>Privacy Policy</Link>
+                            <Link href="/privacy-policy" prefetch={false}>Privacy Policy</Link>
                         </Box>
-
                         <Box ml="1rem">
                             <Link href="/tos" prefetch={false}>Terms of Service</Link>
                         </Box>

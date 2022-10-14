@@ -1,4 +1,4 @@
-import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
+import { BellIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
     Box,
     Button,
@@ -72,12 +72,11 @@ export default function Header() {
                         />
                         <Button
                             aria-label="save-data"
-                            leftIcon={<WarningIcon />}
                             onClick={openAuthModal}
                             variant="outline"
                             colorScheme="orange"
                         >
-                            Save Data
+                            Register / Login
                         </Button>
                     </Box>
                     : <Flex align="center" mr="0.5rem">
