@@ -65,7 +65,7 @@ export default function Header() {
                 mr="1rem"
             >
                 {user.state === UserState.Trial ?
-                    <Box mr="1.5rem">
+                    <Box mr={['0.5rem', '1.5rem']}>
                         <AuthModal
                             show={showAuthModal}
                             onClose={closeAuthModal}

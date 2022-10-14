@@ -56,7 +56,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
     return (
         <Box>
-            <Text mt="0.25rem">Don&apos;t worry about your data {':)'}</Text>
+            <Text mt="0.25rem">Don&apos;t worry about your data {';)'}</Text>
 
             <Form mt="1rem" onSubmit={handleSubmit(onRegister)} >
                 <FormControl variant="floating" isInvalid={!!errors.username}>

@@ -66,7 +66,7 @@ const PrivacyPolicy: NextPage = () => {
                 We store on our servers the content that you upload or receive or maintain in
                 your account. This is so you can use our products as intended,
                 We keep this content as long as your account is active. If you delete your account,
-                we’ll delete the content within 60 days.
+                we’ll delete the content instantly.
             </Text>
 
             <Text fontSize="xl" id="website-interactions">Website interactions</Text>
