@@ -1,9 +1,9 @@
-import { CreateGameDto, GameDto, InfoSourceType, TagDto } from "@game-watch/shared";
-import { AxiosResponse } from "axios";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { CreateGameDto, GameDto, InfoSourceType, TagDto } from '@game-watch/shared';
+import { AxiosResponse } from 'axios';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useHttp } from "../util/useHttp";
-import { useUserContext } from "./UserProvider";
+import { useHttp } from '../util/useHttp';
+import { useUserContext } from './UserProvider';
 
 export interface GamesFilter {
     tags: TagDto[]
@@ -25,7 +25,7 @@ export const GamesContext = React.createContext<GamesCtx | null>(null);
 export function useGamesContext() {
     const context = useContext(GamesContext);
     if (!context) {
-        throw new Error("GamesContext must be used inside GamesProvider");
+        throw new Error('GamesContext must be used inside GamesProvider');
     }
     return context;
 }
@@ -56,7 +56,7 @@ export const GamesProvider: React.FC<{
     const setGame = useCallback((id: string, cb: ((current: GameDto) => GameDto) | GameDto) => {
         setGames(currentGames => {
             const currentGame = currentGames.find(game => id === game.id) as GameDto;
-            const newGame = typeof cb === "function" ? cb(currentGame) : cb;
+            const newGame = typeof cb === 'function' ? cb(currentGame) : cb;
             return currentGames.map(game => game.id === newGame.id ? newGame : game);
         });
     }, []);
@@ -67,14 +67,17 @@ export const GamesProvider: React.FC<{
 
     const addGame = useCallback(async (search: string) => {
         return await withRequest(async http => {
-            const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>("/game", { search });
+            const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>(
+                '/game',
+                { search }
+            );
             setGames(currentGames => [
                 data,
                 ...currentGames
             ]);
 
             return data;
-        }, () => {});
+        }, () => { });
     }, [withRequest, setGames]);
 
     useEffect(() => { fetchGames(); }, [fetchGames, user.id]);
@@ -93,5 +96,5 @@ export const GamesProvider: React.FC<{
         <GamesContext.Provider value={contextValue}>
             {children}
         </GamesContext.Provider>
-        );
-    };
+    );
+};

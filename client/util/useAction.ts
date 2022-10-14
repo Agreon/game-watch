@@ -1,7 +1,7 @@
-import { useToast } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useToast } from '@chakra-ui/react';
+import { useCallback, useState } from 'react';
 
-import { DEFAULT_TOAST_OPTIONS } from "./default-toast-options";
+import { DEFAULT_TOAST_OPTIONS } from './default-toast-options';
 
 interface UseActionOptions<R> {
     onSuccess?: (result: R) => void
@@ -23,9 +23,9 @@ export const useAction = <T, R>(
                 const errorText = options?.onError && options.onError(result);
                 if (errorText) {
                     toast({
-                        title: "Error",
+                        title: 'Error',
                         description: errorText,
-                        status: "error",
+                        status: 'error',
                     });
                 }
                 return;
