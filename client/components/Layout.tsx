@@ -1,5 +1,6 @@
-import { Flex, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import React, { PropsWithChildren } from 'react';
 
 import Header from './Header';
@@ -16,6 +17,7 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
             <Head>
                 <title>GameWatch</title>
                 <meta
+                    key="description"
                     name="description"
                     content="Overview of game release dates, prices and news"
                 />
@@ -41,21 +43,33 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
                     {children}
                 </Flex>
                 <Flex
-                    justify="center"
+                    justify="space-between"
                     align="center"
                     width="100%"
                     p="1rem"
-                    pt="1.25rem"
                     bg={useColorModeValue('white', 'gray.800')}
                     boxShadow="xl"
                 >
-                    <a
-                        href="https://github.com/Agreon"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Made by <b>Agreon</b>
-                    </a>
+                    <Box>
+                        <a
+                            href="https://github.com/Agreon"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Made by <b>Agreon</b>
+                        </a>
+                    </Box>
+                    <Flex>
+                        <Box>
+                            <Link href="/imprint" prefetch={false}>Imprint</Link>
+                        </Box>
+                        <Box ml="1rem">
+                            <Link href="/privacy-policy" prefetch={false}>Privacy Policy</Link>
+                        </Box>
+                        <Box ml="1rem">
+                            <Link href="/tos" prefetch={false}>Terms of Service</Link>
+                        </Box>
+                    </Flex>
                 </Flex>
             </Flex>
 

@@ -1,4 +1,4 @@
-import { BellIcon, SettingsIcon, WarningIcon } from '@chakra-ui/icons';
+import { BellIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
     Box,
     Button,
@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { UserState } from '@game-watch/shared';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 import githubIconDark from '../assets/github-icon-dark.png';
@@ -52,7 +53,11 @@ export default function Header() {
             boxShadow="lg"
             zIndex="1"
         >
-            <Text fontSize="2xl">{useBreakpointValue(['GW', 'GameWatch'])}</Text>
+            <Text fontSize="2xl">
+                <Link href="/">
+                    {useBreakpointValue(['GW', 'GameWatch'])}
+                </Link>
+            </Text>
             <Flex
                 align="center"
                 position="absolute"
@@ -60,19 +65,18 @@ export default function Header() {
                 mr="1rem"
             >
                 {user.state === UserState.Trial ?
-                    <Box mr="1.5rem">
+                    <Box mr={['0.5rem', '1.5rem']}>
                         <AuthModal
                             show={showAuthModal}
                             onClose={closeAuthModal}
                         />
                         <Button
                             aria-label="save-data"
-                            leftIcon={<WarningIcon />}
                             onClick={openAuthModal}
                             variant="outline"
                             colorScheme="orange"
                         >
-                            Save Data
+                            Register / Login
                         </Button>
                     </Box>
                     : <Flex align="center" mr="0.5rem">

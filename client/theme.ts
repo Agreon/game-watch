@@ -1,12 +1,12 @@
-import { extendTheme, ThemeConfig } from "@chakra-ui/react"
+import { extendTheme, ThemeConfig } from '@chakra-ui/react';
 
-const config : ThemeConfig = {
-  initialColorMode: "dark",
-}
+const config: ThemeConfig = {
+  initialColorMode: 'dark',
+};
 
 const activeLabelStyles = {
   transform: 'scale(0.85) translateY(-24px) translateX(-10px)',
-}
+};
 
 const theme = extendTheme({
   config,
@@ -40,6 +40,18 @@ const theme = extendTheme({
       },
     },
   },
-})
+  styles: {
+    global: {
+      ul: {
+        margin: '1rem',
+        padding: '1rem',
+      },
+      ol: {
+        margin: '1rem',
+        padding: '1rem',
+      },
+    }
+  }
+});
 
-export default theme
+export default theme;

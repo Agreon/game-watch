@@ -1,4 +1,5 @@
-import { Box, Flex, useToast } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Flex, useToast } from '@chakra-ui/react';
+import { UserState } from '@game-watch/shared';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
@@ -44,6 +45,18 @@ const Home: NextPage = () => {
           : (
             <Box>
               <NoGamesYet />
+              {
+                user.state === UserState.Trial &&
+                <Flex justify="center" mb="1.5rem">
+                  <Alert status="warning" width={['90%', '90%', '90%', '70%']}>
+                    <AlertIcon />
+                    You are currently using this site with a trial account. If your browser
+                    cache is cleared, your data will not be accessible anymore. We also delete
+                    trial accounts that were inactive for 30 days. Register now to create
+                    a free account and save your data.
+                  </Alert>
+                </Flex>
+              }
               <Flex
                 justify={['space-between', 'center']}
                 align="center"

@@ -1,6 +1,4 @@
 import {
-    Alert,
-    AlertIcon,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -12,7 +10,6 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-    Text,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 
@@ -37,12 +34,6 @@ export const AuthModal: React.FC<ModalProps> = ({ show, onClose }) => {
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb="1rem">
-                    <Alert status='warning' mb="1rem">
-                        <AlertIcon />
-                        <Text>
-                            Any unsaved data will be lost, if your browser cache is cleared!
-                        </Text>
-                    </Alert>
                     <Tabs isFitted>
                         <TabList>
                             <Tab _focus={{ boxShadow: 'none' }}>Register</Tab>
