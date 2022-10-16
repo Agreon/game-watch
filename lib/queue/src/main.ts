@@ -1,4 +1,4 @@
-import { GameDataU } from '@game-watch/shared';
+import { AnyGameData } from '@game-watch/shared';
 import {
     JobsOptions,
     Processor,
@@ -34,8 +34,8 @@ export type QueueParams = {
     },
     [QueueType.CreateNotifications]: {
         sourceId: string
-        existingGameData: GameDataU | null
-        resolvedGameData: GameDataU | null
+        existingGameData: AnyGameData | null
+        resolvedGameData: AnyGameData | null
     },
 };
 

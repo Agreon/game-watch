@@ -2,7 +2,7 @@ import { InfoSource, Notification } from '@game-watch/database';
 import { NIGHTLY_JOB_OPTIONS, QueueParams, QueueType } from '@game-watch/queue';
 import { CacheService, Logger } from '@game-watch/service';
 import {
-    GameDataU,
+    AnyGameData,
     InfoSourceState,
     InfoSourceType,
     NotificationType,
@@ -16,7 +16,7 @@ export interface InfoResolverContext {
     source: InfoSource<InfoSourceType, InfoSourceState.Found>
 }
 
-export interface InfoResolver<T extends GameDataU = GameDataU> {
+export interface InfoResolver<T extends AnyGameData = AnyGameData> {
     type: InfoSourceType
     resolve: (context: InfoResolverContext) => Promise<T>
 }
@@ -75,7 +75,7 @@ export class ResolveService {
                 await this.addToNotificationQueue({
                     sourceId,
                     resolvedGameData,
-                    existingGameData: source.data as GameDataU,
+                    existingGameData: source.data as AnyGameData,
                 });
             }
 
@@ -135,7 +135,7 @@ export class ResolveService {
                 sourceId: source.id,
                 // Will trigger a ResolveError Notification.
                 resolvedGameData: null,
-                existingGameData: source.data as GameDataU,
+                existingGameData: source.data as AnyGameData,
             });
         }
 
@@ -145,11 +145,11 @@ export class ResolveService {
         });
     }
 
-    private async resolveGameInformation(context: InfoResolverContext): Promise<GameDataU> {
+    private async resolveGameInformation(context: InfoResolverContext): Promise<AnyGameData> {
         const { source: { country, type, data: { id } }, logger } = context;
 
         const cacheKey = `${type}:${country}:${id}`.toLocaleLowerCase();
-        const existingData = await this.cacheService.get<GameDataU>(cacheKey);
+        const existingData = await this.cacheService.get<AnyGameData>(cacheKey);
         if (existingData) {
             logger.debug(`Data for ${cacheKey} was found in cache`);
 
@@ -181,8 +181,8 @@ export class ResolveService {
     private async addToNotificationQueue(
         { sourceId, existingGameData, resolvedGameData }: {
             sourceId: string
-            existingGameData: GameDataU | null
-            resolvedGameData: GameDataU | null
+            existingGameData: AnyGameData | null
+            resolvedGameData: AnyGameData | null
         }
     ) {
         await this.createNotificationsQueue.add(

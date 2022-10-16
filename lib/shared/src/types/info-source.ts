@@ -70,7 +70,7 @@ export type GameData = {
     [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
-export type GameDataU =
+export type AnyGameData =
     | SteamGameData
     | SwitchGameData
     | PsStoreGameData

@@ -1,8 +1,8 @@
 import { Game, InfoSource, Notification, User } from '@game-watch/database';
 import { Logger } from '@game-watch/service';
 import {
+    AnyGameData,
     GameData,
-    GameDataU,
     InfoSourceType,
     NotificationData,
     NotificationType,
@@ -39,8 +39,8 @@ export class NotificationService {
     public async createNotifications(
         { sourceId, existingGameData, resolvedGameData }: {
             sourceId: string
-            existingGameData: GameDataU | null
-            resolvedGameData: GameDataU | null
+            existingGameData: AnyGameData | null
+            resolvedGameData: AnyGameData | null
         }
     ) {
         const infoSource = await this.em.findOneOrFail<InfoSource, 'game' | 'user'>(
@@ -123,8 +123,8 @@ export class NotificationService {
         game: Game
         infoSource: InfoSource
         user: User
-        existingGameData: GameDataU | null
-        resolvedGameData: GameDataU
+        existingGameData: AnyGameData | null
+        resolvedGameData: AnyGameData
         logger: Logger
     }) {
         const notificationData = await creator.createNotification({
