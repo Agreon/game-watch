@@ -11,7 +11,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { UserState } from '@game-watch/shared';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import Link from 'next/link';
 import React from 'react';
 
