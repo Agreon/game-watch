@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 
 const PrivacyPolicy: NextPage = () => {
     return (
-        <Box>
+        <Box padding="1rem">
             <Text fontSize="2xl" textAlign="center" mb="2rem">Our Privacy Policy</Text>
             <Text mb="1rem"><em>Last updated: Oct 15, 2022</em></Text>
             <p>

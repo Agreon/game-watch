@@ -48,7 +48,7 @@ export class SwitchResolver implements InfoResolver {
 
         const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
 
-        const fullName = $("meta[property='og:title']").first().attr('content')!;
+        const fullName = $('title').first().text().split('|')[0].trim();
 
         const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
         if (!priceId) {

@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 
 const Legal: NextPage = () => {
     return (
-        <Box>
+        <Box padding="1rem">
             <Text fontSize="2xl" textAlign="center" mb="2rem">Imprint</Text>
 
             <Text mb="1rem" fontSize="xl">
