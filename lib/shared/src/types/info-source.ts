@@ -83,5 +83,5 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Switch]: Countries,
     [InfoSourceType.PsStore]: Countries,
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
-    [InfoSourceType.Epic]: ['DE'] as const,
+    [InfoSourceType.Epic]: [] as const,
 } as const;

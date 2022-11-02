@@ -62,7 +62,7 @@ const GameTileComponent: React.FC = () => {
                             ? <SkeletonText mt="1rem" />
                             : (
                                 <Text size="xl" textAlign="center" my="1rem">
-                                    No sources found :C
+                                    No sources found yet :C
                                 </Text>
                             )
                     )}

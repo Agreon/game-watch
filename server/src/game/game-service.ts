@@ -173,11 +173,6 @@ export class GameService {
             .where({ setupCompleted: true, user })
             .leftJoinAndSelect('game.tags', 'tags')
             .leftJoinAndSelect('game.infoSources', 'infoSources')
-            .andWhere({
-                infoSources: {
-                    state: { $ne: InfoSourceState.Disabled },
-                }
-            })
             .orderBy({
                 createdAt: QueryOrder.DESC,
                 infoSources: { createdAt: QueryOrder.DESC },
