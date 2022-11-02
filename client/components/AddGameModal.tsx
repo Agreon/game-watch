@@ -21,22 +21,14 @@ import React, { useEffect, useState } from 'react';
 import { useGameContext } from '../providers/GameProvider';
 import { InfoSourceProvider } from '../providers/InfoSourceProvider';
 import { useUserContext } from '../providers/UserProvider';
+import { SourceUrlPlaceholder } from '../util/source-url-placeholder';
 import { ModalProps } from '../util/types';
 import { useAction } from '../util/useAction';
 import { InfoSourcePreview } from './InfoSource/InfoSourcePreview';
 import { LoadingSpinner } from './LoadingSpinner';
 
-// TODO: Localize
-export const PlaceholderMap: Record<InfoSourceType, string> = {
-    [InfoSourceType.Steam]: 'https://store.steampowered.com/app/...',
-    [InfoSourceType.Switch]: 'https://nintendo.de/Spiele/Nintendo-Switch-Download-Software/...',
-    [InfoSourceType.Epic]: 'https://www.epicgames.com/store/de-DE/p/...',
-    [InfoSourceType.PsStore]: 'https://store.playstation.com/de-de/product/...',
-    [InfoSourceType.Metacritic]: 'https://www.metacritic.com/game/pc/...',
-};
-
 const AddSource: React.FC = () => {
-    const { user: { interestedInSources } } = useUserContext();
+    const { user: { interestedInSources, country: userCountry } } = useUserContext();
     const { addInfoSource, activeInfoSources } = useGameContext();
 
     const availableInfoSources = interestedInSources.filter(
@@ -73,7 +65,7 @@ const AddSource: React.FC = () => {
                     <Input
                         value={url}
                         disabled={loading}
-                        placeholder={PlaceholderMap[type]}
+                        placeholder={SourceUrlPlaceholder(type, userCountry)}
                         onChange={event => setUrl(event.target.value)}
                     />
                 </FormControl>

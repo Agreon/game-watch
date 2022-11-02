@@ -1,5 +1,5 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
-import { InfoSourceType } from '@game-watch/shared';
+import { mapCountryCodeToLanguage } from '@game-watch/service';
+import { InfoSourceType, mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';

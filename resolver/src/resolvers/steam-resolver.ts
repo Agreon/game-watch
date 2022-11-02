@@ -1,5 +1,11 @@
-import { mapCountryCodeToAcceptLanguage, mapCountryCodeToLanguage } from '@game-watch/service';
-import { Country, InfoSourceType, SteamGameData, StorePriceInformation } from '@game-watch/shared';
+import { mapCountryCodeToLanguage } from '@game-watch/service';
+import {
+    Country,
+    InfoSourceType,
+    mapCountryCodeToAcceptLanguage,
+    SteamGameData,
+    StorePriceInformation,
+} from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';

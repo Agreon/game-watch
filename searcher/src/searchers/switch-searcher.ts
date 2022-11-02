@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { withBrowser } from '@game-watch/browser';
-import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
+import { mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';

@@ -1,8 +1,8 @@
 import { withBrowser } from '@game-watch/browser';
-import { mapCountryCodeToAcceptLanguage } from '@game-watch/service';
 import {
     Country,
     InfoSourceType,
+    mapCountryCodeToAcceptLanguage,
     PsStoreGameData,
     StorePriceInformation,
 } from '@game-watch/shared';

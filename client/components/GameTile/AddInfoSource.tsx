@@ -19,11 +19,11 @@ import React, { useRef, useState } from 'react';
 
 import { useGameContext } from '../../providers/GameProvider';
 import { useUserContext } from '../../providers/UserProvider';
+import { SourceUrlPlaceholder } from '../../util/source-url-placeholder';
 import { useAction } from '../../util/useAction';
-import { PlaceholderMap } from '../AddGameModal';
 
 export const AddInfoSource: React.FC = () => {
-    const { user: { interestedInSources } } = useUserContext();
+    const { user: { interestedInSources, country: userCountry } } = useUserContext();
 
     const { addInfoSource, activeInfoSources } = useGameContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,7 +58,7 @@ export const AddInfoSource: React.FC = () => {
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <Flex>
-                            <FormControl flex="0.5" mr="1rem">
+                            <FormControl flex="0.4" mr="1rem">
                                 <FormLabel>Type</FormLabel>
                                 <Select
                                     onChange={evt => setType(evt.target.value as InfoSourceType)}
@@ -73,7 +73,7 @@ export const AddInfoSource: React.FC = () => {
                                 <Input
                                     value={url}
                                     disabled={loading}
-                                    placeholder={PlaceholderMap[type]}
+                                    placeholder={SourceUrlPlaceholder(type, userCountry)}
                                     onChange={event => setUrl(event.target.value)}
                                     ref={initialRef} />
                             </FormControl>
