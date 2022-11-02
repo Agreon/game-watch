@@ -166,9 +166,14 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 !game.syncing && (
                                     activeInfoSources.length > 0
                                         ? <Text fontSize="2xl">Here is what we found: </Text>
-                                        : <Text fontSize="2xl">
-                                            {`We couldn't find any sources for '${game.search}' :/`}
-                                        </Text>
+                                        : <Flex direction="column" align="center">
+                                            <Text fontSize="2xl">
+                                                {`We couldn't find any sources for '${game.search}' :/`}
+                                            </Text>
+                                            <Text fontSize="xl" mt="2rem">
+                                                {`You can still save the game and we'll add the entries as soon as the game is added to a store.`}
+                                            </Text>
+                                        </Flex>
                                 )
                             }
                         </Flex>
@@ -206,7 +211,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                                 size="lg"
                                 colorScheme="teal"
                                 isLoading={loading}
-                                disabled={loading || game.syncing || !activeInfoSources.length}
+                                disabled={loading || game.syncing}
                                 onClick={() => onAdd({ name })}
                             >
                                 Save
