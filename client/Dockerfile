@@ -1,4 +1,5 @@
 FROM node:alpine AS deps
+RUN apk add --no-cache libc6-compat
 RUN npm i -g pnpm@7.5.2
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
