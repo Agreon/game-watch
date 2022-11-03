@@ -18,6 +18,7 @@
         "build:lib": "pnpm turbo run build --filter=\"./lib/*\"",
         "watch:lib": "pnpm turbo run watch --filter=\"./lib/*\"",
         "build:docker": "COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build",
+        "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.development.yml",
         "lint": "pnpm turbo run lint",
         "lint:fix": "pnpm turbo run lint:fix",
         "clean": "rm -rf ./**/node_modules && rm -rf ./node_modules",
