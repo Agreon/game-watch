@@ -1,5 +1,11 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import {ExternalLinkIcon} from '@chakra-ui/icons';
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
     Box,
     Button,
     Checkbox,
@@ -15,7 +21,7 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Text
+    Text,
 } from '@chakra-ui/react';
 import { Country, InfoSourceType, SupportedCountries, UserState } from '@game-watch/shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -24,12 +30,14 @@ import { INFO_SOURCE_PRIORITY } from '../../providers/GameProvider';
 import { useUserContext } from '../../providers/UserProvider';
 import { ModalProps } from '../../util/types';
 import { useAction } from '../../util/useAction';
+import { useHttp } from '../../util/useHttp';
 import { InfoSourceFilter } from '../InfoSourceFilter';
 import { CountrySelect } from './CountrySelect';
 
+
 export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const initialRef = useRef(null);
-    const { user, updateUserSettings } = useUserContext();
+    const { user, updateUserSettings, logoutUser } = useUserContext();
     const {
         loading,
         execute: updateSettings
@@ -65,6 +73,19 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
             interestedInSources,
         });
     }, [updateSettings, country, interestedInSources, enableEmailNotifications, email]);
+
+    const { withRequest, handleError } = useHttp();
+
+    const deleteUser = useCallback(async () => {
+        await withRequest(async http => {
+            await (await http.delete(`/user`));
+        });
+    }, [withRequest]);
+
+    const cancelAlertRef = React.useRef(null);
+    const [showDialog, setShowDialog] = React.useState(false);
+    const closeAlert = () => setShowDialog(false);
+    const openAlert = () => setShowDialog(true);
 
     return (
         <Modal
@@ -135,7 +156,45 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                             <Text as="u">GitHub<ExternalLinkIcon ml='0.2rem' mb="0.2rem" /></Text>
                         </Link>
                     </Text>
-                    <Flex justify="flex-end" width="100%" mt="2rem">
+                    <Flex
+                    justify="space-between" width="100%" mt="2rem"
+                    >
+                        <Button colorScheme='red' onClick={openAlert} size={"lg"}>
+                        Delete Account
+                        </Button>
+
+                        <AlertDialog
+                        isOpen={showDialog}
+                        leastDestructiveRef={cancelAlertRef}
+                        onClose={onClose}
+                        >
+                            <AlertDialogOverlay>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                        Delete Account
+                                    </AlertDialogHeader>
+                                    <AlertDialogBody>
+                                        Are you sure you want to delete your account? This action can't be undone.
+                                    </AlertDialogBody>
+                                    <AlertDialogFooter>
+                                        <Button ref={cancelAlertRef} onClick={closeAlert}>
+                                            Cancel
+                                        </Button>
+                                        <Button colorScheme='red' onClick={()=> {
+                                            closeAlert();
+                                            onClose();
+                                            deleteUser();
+                                            logoutUser();
+                                        }} ml={3}>
+                                            Delete
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialogOverlay>
+                        </AlertDialog>
+                    <Flex
+                    justify="flex-end"
+                    >
                         <Button size="lg" onClick={onClose}>
                             Cancel
                         </Button>
@@ -157,6 +216,7 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                         >
                             Save
                         </Button>
+                    </Flex>
                     </Flex>
                 </ModalBody>
             </ModalContent>

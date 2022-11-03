@@ -2,7 +2,7 @@ import { User } from '@game-watch/database';
 import { UpdateUserSettingsDto, UserDto } from '@game-watch/shared';
 import { EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Body, Controller, Get, HttpStatus, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Put, Query, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { Environment } from 'src/environment';
@@ -67,5 +67,20 @@ export class UserController {
             HttpStatus.SEE_OTHER,
             new URL('?unsubscribed=true', this.configService.get('PUBLIC_URL')).toString()
         );
+    }
+
+    @Delete()
+    @UseGuards(JwtAccessTokenGuard)
+    public async deleteAccount(
+        @CurrentUser() userId: string,
+        @Res() response: Response
+    ){
+        return await this.userService.deleteUserAccount(userId);
+
+        /*return response.redirect(
+            HttpStatus.SEE_OTHER,
+            new URL('/', this.configService.get('PUBLIC_URL')).toString()
+        );
+        */
     }
 }
