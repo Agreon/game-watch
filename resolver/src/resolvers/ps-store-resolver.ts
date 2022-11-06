@@ -17,7 +17,7 @@ export class PsStoreResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ source }: InfoResolverContext): Promise<PsStoreGameData> {
+    public async resolve({ source, logger }: InfoResolverContext): Promise<PsStoreGameData> {
 
         return await withBrowser(mapCountryCodeToAcceptLanguage(source.country), async browser => {
             await browser.goto(source.data.id);
@@ -35,20 +35,34 @@ export class PsStoreResolver implements InfoResolver {
                     ?.trim()
             );
             const originalPrice = await browser.evaluate(
-                () => document.querySelector('.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]')?.textContent?.trim()
+                () => document.querySelector(
+                    '.psw-t-title-s[data-qa="mfeCtaMain#offer0#originalPrice"]'
+                )?.textContent?.trim()
             );
-
-            // const discountDescription = await browser.evaluate(
-            //     () => document.querySelector('span[data-qa="mfeCtaMain#offer0#discountDescriptor"]')?.textContent?.trim()
-            // );
 
             const releaseDate = await browser.evaluate(
-                () => document.querySelector('dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]')?.textContent?.trim()
+                () => document.querySelector(
+                    'dd[data-qa="gameInfo#releaseInformation#releaseDate-value"]'
+                )?.textContent?.trim()
             );
 
-            const thumbnailUrl = await browser.evaluate(
-                () => document.querySelector('img[data-qa="gameBackgroundImage#heroImage#image"]')!.getAttribute('src')!
+            let thumbnailUrl = await browser.evaluate(
+                () => document.querySelector(
+                    'img[data-qa="gameBackgroundImage#heroImage#image"]'
+                )?.getAttribute('src')
             );
+            if (!thumbnailUrl) {
+                logger.warn('Could not resolve hero image URL. Trying tile image...');
+                thumbnailUrl = await browser.evaluate(
+                    () => document.querySelector(
+                        'img[data-qa="gameBackgroundImage#tileImage#image"]'
+                    )?.getAttribute('src')
+                );
+
+                if (!thumbnailUrl) {
+                    throw new Error('Could not retrieve thumbnail URL');
+                }
+            }
 
             return {
                 ...source.data,
