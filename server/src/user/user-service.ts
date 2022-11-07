@@ -64,8 +64,6 @@ export class UserService {
     }
 
     public async deleteUserAccount(userId: string){
-        const user = await this.userRepository.findOneOrFail(userId);
-
-        await this.userRepository.nativeDelete(user);
+        await this.userRepository.nativeDelete(userId);
     }
 }

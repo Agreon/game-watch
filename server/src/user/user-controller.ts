@@ -72,15 +72,8 @@ export class UserController {
     @Delete()
     @UseGuards(JwtAccessTokenGuard)
     public async deleteAccount(
-        @CurrentUser() userId: string,
-        @Res() response: Response
+        @CurrentUser() userId: string
     ){
         return await this.userService.deleteUserAccount(userId);
-
-        /*return response.redirect(
-            HttpStatus.SEE_OTHER,
-            new URL('/', this.configService.get('PUBLIC_URL')).toString()
-        );
-        */
     }
 }

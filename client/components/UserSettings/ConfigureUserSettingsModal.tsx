@@ -1,10 +1,10 @@
-import {ExternalLinkIcon} from '@chakra-ui/icons';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
     Box,
     Button,
@@ -22,6 +22,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Text,
+    useDisclosure,
 } from '@chakra-ui/react';
 import { Country, InfoSourceType, SupportedCountries, UserState } from '@game-watch/shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -30,18 +31,19 @@ import { INFO_SOURCE_PRIORITY } from '../../providers/GameProvider';
 import { useUserContext } from '../../providers/UserProvider';
 import { ModalProps } from '../../util/types';
 import { useAction } from '../../util/useAction';
-import { useHttp } from '../../util/useHttp';
 import { InfoSourceFilter } from '../InfoSourceFilter';
 import { CountrySelect } from './CountrySelect';
 
-
 export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose }) => {
     const initialRef = useRef(null);
-    const { user, updateUserSettings, logoutUser } = useUserContext();
+    const { user, updateUserSettings, logoutUser, deleteUser } = useUserContext();
     const {
         loading,
         execute: updateSettings
     } = useAction(updateUserSettings, { onSuccess: onClose });
+    const {
+        loading: loadingDelete
+    } = useAction(deleteUser, { onSuccess: onClose });
 
     const [
         enableEmailNotifications,
@@ -74,18 +76,20 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
         });
     }, [updateSettings, country, interestedInSources, enableEmailNotifications, email]);
 
-    const { withRequest, handleError } = useHttp();
+    const cancelAlertRef = useRef(null);
 
-    const deleteUser = useCallback(async () => {
-        await withRequest(async http => {
-            await (await http.delete(`/user`));
-        });
-    }, [withRequest]);
+    const {
+        isOpen: showAlert,
+        onOpen: openAlert,
+        onClose: closeAlert,
+    } = useDisclosure();
 
-    const cancelAlertRef = React.useRef(null);
-    const [showDialog, setShowDialog] = React.useState(false);
-    const closeAlert = () => setShowDialog(false);
-    const openAlert = () => setShowDialog(true);
+    const onAccountDelete = useCallback(async () => {
+            closeAlert();
+            onClose();
+            logoutUser();
+            deleteUser();
+    }, [closeAlert, onClose, logoutUser, deleteUser]);
 
     return (
         <Modal
@@ -159,14 +163,14 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                     <Flex
                     justify="space-between" width="100%" mt="2rem"
                     >
-                        <Button colorScheme='red' onClick={openAlert} size={"lg"}>
+                        <Button colorScheme='red' onClick={openAlert} size={'lg'}>
                         Delete Account
                         </Button>
 
                         <AlertDialog
-                        isOpen={showDialog}
+                        isOpen={showAlert}
                         leastDestructiveRef={cancelAlertRef}
-                        onClose={onClose}
+                        onClose={closeAlert}
                         >
                             <AlertDialogOverlay>
                                 <AlertDialogContent>
@@ -180,12 +184,13 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                                         <Button ref={cancelAlertRef} onClick={closeAlert}>
                                             Cancel
                                         </Button>
-                                        <Button colorScheme='red' onClick={()=> {
-                                            closeAlert();
-                                            onClose();
-                                            deleteUser();
-                                            logoutUser();
-                                        }} ml={3}>
+                                        <Button
+                                            colorScheme='red'
+                                            isLoading={loadingDelete}
+                                            disabled={loadingDelete}
+                                            onClick={onAccountDelete}
+                                            ml={3}
+                                        >
                                             Delete
                                         </Button>
                                     </AlertDialogFooter>
