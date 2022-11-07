@@ -73,7 +73,7 @@ export class UserController {
     @UseGuards(JwtAccessTokenGuard)
     public async deleteAccount(
         @CurrentUser() userId: string
-    ){
+    ) {
         return await this.userService.deleteUserAccount(userId);
     }
 }

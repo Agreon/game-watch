@@ -42,7 +42,8 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
         execute: updateSettings
     } = useAction(updateUserSettings, { onSuccess: onClose });
     const {
-        loading: loadingDelete
+        loading: loadingDelete,
+        execute: deleteAccount
     } = useAction(deleteUser, { onSuccess: onClose });
 
     const [
@@ -85,11 +86,9 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
     } = useDisclosure();
 
     const onAccountDelete = useCallback(async () => {
-            closeAlert();
-            onClose();
-            logoutUser();
-            deleteUser();
-    }, [closeAlert, onClose, logoutUser, deleteUser]);
+        await logoutUser();
+        await deleteAccount(user);
+    }, [logoutUser, deleteAccount, user]);
 
     return (
         <Modal
