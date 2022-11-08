@@ -13,6 +13,7 @@ export interface UserCtx {
     loginUser: (params: { username: string, password: string }) => Promise<void | Error>
     logoutUser: () => Promise<void>
     updateUserSettings: (params: UpdateUserSettingsDto) => Promise<void>
+    deleteUser: () => Promise<void>
 }
 
 export const UserContext = React.createContext<UserCtx | null>(null);
@@ -136,6 +137,12 @@ export const UserProvider: React.FC<{
         });
     }, [withRequest, user]);
 
+    const deleteUser = useCallback(async () => {
+        await withRequest(async http => {
+            await http.delete(`/user`);
+        });
+    }, [withRequest]);
+
     const contextValue = useMemo(() => ({
         // We show a loading screen while no user is available
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -143,8 +150,9 @@ export const UserProvider: React.FC<{
         registerUser,
         loginUser,
         logoutUser,
-        updateUserSettings
-    }), [user, registerUser, loginUser, logoutUser, updateUserSettings]);
+        updateUserSettings,
+        deleteUser
+    }), [user, registerUser, loginUser, logoutUser, updateUserSettings, deleteUser]);
 
     return (
         <UserContext.Provider value={contextValue}>
