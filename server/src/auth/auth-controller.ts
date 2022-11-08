@@ -145,7 +145,6 @@ export class AuthController {
     }
 
     @Post('/logout')
-    @UseGuards(JwtRefreshTokenGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     public async logoutUser(
         @Res() response: Response,

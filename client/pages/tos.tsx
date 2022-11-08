@@ -20,7 +20,7 @@ const ToS: NextPage = () => {
 
             <Text fontSize="2xl" id="cancellation-and-termination">Cancellation and Termination</Text>
             <ol>
-                <li>You are solely responsible for properly canceling your account. Within our Service, we provide a simple no-questions-asked cancellation link in the user settings.</li>
+                <li>You are solely responsible for properly canceling your account. Within our Service, we provide a simple no-questions-asked cancellation in the user settings.</li>
 
                 <li>All of your content will be inaccessible from the Services immediately upon account cancellation. Within 30 days, all content will be permanently deleted from active systems and logs. Within 60 days, all content will be permanently deleted from our backups. We cannot recover this information once it has been permanently deleted.</li>
                 <li>We have the right to suspend or terminate your account and refuse any and all current or future use of our Services for any reason at any time. Suspension means you and any other users on your account will not be able to access the account or any content in the account. Termination will furthermore result in the deletion of your account or your access to your account, and the forfeiture and relinquishment of all content in your account. We also reserve the right to refuse the use of the Services to anyone for any reason at any time. We have this clause because statistically speaking, out of the hundreds of thousands of accounts on our Services, there is at least one doing something nefarious. There are some things we staunchly stand against and this clause is how we exercise that stance.</li>

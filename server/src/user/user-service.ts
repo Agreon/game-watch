@@ -21,7 +21,7 @@ export class UserService {
         { country, interestedInSources, email, enableEmailNotifications }: UpdateUserSettingsDto
     ): Promise<User> {
         const user = await this.userRepository.findOneOrFail(userId);
-        
+
         if (user.email !== email) {
             user.emailConfirmed = false;
         }
@@ -59,11 +59,11 @@ export class UserService {
 
         user.emailConfirmed = false;
         user.enableEmailNotifications = false;
-        
+
         await this.userRepository.persistAndFlush(user);
     }
 
-    public async deleteUserAccount(userId: string){
+    public async deleteUserAccount(userId: string) {
         await this.userRepository.nativeDelete(userId);
     }
 }
