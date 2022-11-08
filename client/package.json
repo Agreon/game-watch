@@ -20,21 +20,21 @@
     "chakra-react-select": "^4.4.0",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.6",
-    "framer-motion": "^7.6.2",
-    "next": "^13.0.0",
+    "framer-motion": "^7.6.5",
+    "next": "^13.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.38.0",
+    "react-hook-form": "^7.39.1",
     "react-masonry-css": "^1.0.16",
-    "sharp": "^0.31.1",
+    "sharp": "^0.31.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.7",
-    "@types/react": "^18.0.24",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
     "@types/uuid": "^8.3.4",
-    "eslint": "^8.26.0",
-    "eslint-config-next": "^13.0.0",
+    "eslint": "^8.27.0",
+    "eslint-config-next": "^13.0.2",
     "typescript": "^4.8.4"
   }
 }
