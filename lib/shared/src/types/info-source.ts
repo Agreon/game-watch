@@ -80,8 +80,8 @@ export type AnyGameData =
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
-    [InfoSourceType.Switch]: Countries,
-    [InfoSourceType.PsStore]: Countries,
+    [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
+    [InfoSourceType.PsStore]: Countries.filter(country => country !== 'RU'),
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: [] as const,
 } as const;

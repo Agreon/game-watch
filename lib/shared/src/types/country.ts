@@ -1,2 +1,22 @@
-export const Countries = ['DE', 'US', 'AU', 'NZ'] as const;
+export const Countries = [
+    'AT',
+    'BE-FR',
+    'BE-NL',
+    'CH-DE',
+    'CH-FR',
+    'CH-IT',
+    'DE',
+    'ES',
+    'FR',
+    'GB',
+    'IE',
+    'IT',
+    'NL',
+    'PT',
+    'RU',
+    'ZA',
+    'US',
+    'AU',
+    'NZ',
+] as const;
 export type Country = typeof Countries[number];

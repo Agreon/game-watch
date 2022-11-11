@@ -1,7 +1,6 @@
 import { User } from '@game-watch/database';
 import {
     Countries,
-    Country,
     CreateUserDto,
     RegisterUserDto,
     UserDto,
@@ -87,10 +86,14 @@ export class AuthController {
             );
         }
 
-        const userCountry = request.headers['cf-ipcountry'] as Country;
+        const matchingCountry = Countries
+            // Cloudflare will only send ISO 3166-1 alpha-2 codes. So we'll get `CH` instead
+            // of our `CH-XX` for example.
+            .find(country => country.split('-')[0] === request.headers['cf-ipcountry']);
+
         const user = await this.authService.createUser({
             id,
-            country: Countries.includes(userCountry) ? userCountry : 'US'
+            country: matchingCountry ?? 'US'
         });
 
         return await this.setJwtCookiesForUser(user, response);

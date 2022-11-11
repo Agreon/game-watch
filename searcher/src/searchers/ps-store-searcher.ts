@@ -1,5 +1,4 @@
-import { mapCountryCodeToLanguage } from '@game-watch/service';
-import { InfoSourceType, mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
+import { Country, InfoSourceType, mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
@@ -17,6 +16,38 @@ interface SearchResponse {
     }
 }
 
+export const mapCountryCodeToLanguageCode = (country: Country): string => {
+    switch (country) {
+        case 'DE':
+        case 'CH-DE':
+        case 'AT':
+            return 'de';
+        case 'FR':
+        case 'CH-FR':
+        case 'BE-FR':
+            return 'fr';
+        case 'BE-NL':
+        case 'NL':
+            return 'nl';
+        case 'IT':
+        case 'CH-IT':
+            return 'it';
+        case 'ES':
+            return 'es';
+        case 'PT':
+            return 'pt';
+        case 'RU':
+            return 'ru';
+        case 'US':
+        case 'AU':
+        case 'NZ':
+        case 'GB':
+        case 'IE':
+        case 'ZA':
+            return 'en';
+    }
+};
+
 export class PsStoreSearcher implements InfoSearcher {
     public type = InfoSourceType.PsStore;
 
@@ -33,8 +64,8 @@ export class PsStoreSearcher implements InfoSearcher {
                 },
                 params: {
                     variables: {
-                        countryCode: userCountry,
-                        languageCode: mapCountryCodeToLanguage(userCountry),
+                        countryCode: userCountry.split('-')[0],
+                        languageCode: mapCountryCodeToLanguageCode(userCountry),
                         pageOffset: 0,
                         pageSize: 25,
                         searchTerm: search,
@@ -42,7 +73,8 @@ export class PsStoreSearcher implements InfoSearcher {
                     extensions: {
                         persistedQuery: {
                             version: 1,
-                            sha256Hash: 'd77d9a513595db8d75fc26019f01066d54c8d0de035a77a559bd687fa1010418',
+                            sha256Hash:
+                                'd77d9a513595db8d75fc26019f01066d54c8d0de035a77a559bd687fa1010418',
                         }
                     }
                 }
@@ -52,6 +84,7 @@ export class PsStoreSearcher implements InfoSearcher {
         // The ps store likes to order DLCs and cosmetics prior to the game.
         const result = results.find(result => result.storeDisplayClassification === 'FULL_GAME');
         if (!result) {
+            logger.debug('No search results found');
             return null;
         }
 
@@ -66,7 +99,8 @@ export class PsStoreSearcher implements InfoSearcher {
 
         logger.debug(`Found gameId '${gameId}'`);
 
-        const url = `https://store.playstation.com/${mapCountryCodeToAcceptLanguage(userCountry).toLowerCase()}/product/${gameId}`;
+        const acceptLanguage = mapCountryCodeToAcceptLanguage(userCountry).toLowerCase();
+        const url = `https://store.playstation.com/${acceptLanguage}/product/${gameId}`;
 
         return {
             id: url,

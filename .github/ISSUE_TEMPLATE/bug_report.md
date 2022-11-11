@@ -32,5 +32,8 @@ If applicable, add screenshots to help explain your problem.
  - OS: [e.g. iOS8.1]
  - Browser [e.g. stock browser, safari]
 
+**Language**
+The language you selected.
+
 **Additional context**
 Add any other context about the problem here.

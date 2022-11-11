@@ -3,7 +3,11 @@ export const parseCurrencyValue = (value?: string) => {
         return undefined;
     }
 
-    const parsedValue = parseFloat(value.replace(/€|\$/g, '').replace(',', '.'));
+    const parsedValue = parseFloat(
+        value.replace(/€|\$|CHF|pуб\.|£|R/g, '')
+            .replace(',', '.')
+            .trim()
+    );
     if (isNaN(parsedValue)) {
         return undefined;
     }

@@ -43,39 +43,62 @@ export class SwitchResolver implements InfoResolver {
             return await this.resolveUSA(context);
         }
 
-        const { data } = await this.axios.get<string>(source.data.url);
-        const $ = cheerio.load(data);
+        if ([
+            'AT',
+            'BE-FR',
+            'BE-NL',
+            'CH-DE',
+            'CH-FR',
+            'CH-IT',
+            'DE',
+            'ES',
+            'FR',
+            'GB',
+            'IE',
+            'IT',
+            'NL',
+            'PT',
+            'RU',
+            'ZA',
+        ].includes(source.country)) {
+            const { data } = await this.axios.get<string>(source.data.url);
+            const $ = cheerio.load(data);
 
-        const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
+            const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
 
-        const fullName = $('title').first().text().split('|')[0].trim();
+            const fullName = $('title').first().text().split('|')[0].trim();
+            if (!fullName) {
+                throw new Error('Could not find name of game');
+            }
 
-        const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
-        if (!priceId) {
-            logger.warn(`Could not get game id. Game might not have a price yet`);
+            const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
+            if (!priceId) {
+                logger.warn(`Could not get game id. Game might not have a price yet`);
 
-            const releaseDate = extract(data, /(?<=Erscheinungsdatum: )(.*[\d.]+)/);
+                const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
+
+                return {
+                    ...source.data,
+                    fullName,
+                    thumbnailUrl,
+                    releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
+                    originalReleaseDate: releaseDate
+                };
+            }
+
+            const price = await this.getPriceInformation(priceId, source.country);
+            const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
             return {
                 ...source.data,
                 fullName,
                 thumbnailUrl,
-                releaseDate: parseDate(releaseDate, ['DD.MM.YYYY']),
-                originalReleaseDate: releaseDate
+                releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
+                originalReleaseDate: releaseDate,
+                priceInformation: this.parsePriceInformation(price),
             };
         }
-
-        const price = await this.getPriceInformation(priceId, source.country);
-        const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
-
-        return {
-            ...source.data,
-            fullName,
-            thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
-            originalReleaseDate: releaseDate,
-            priceInformation: this.parsePriceInformation(price),
-        };
+        throw new Error(`Unsupported country '${source.country}' supplied.`);
     }
 
     private async resolveUSA({ source }: InfoResolverContext) {
@@ -181,7 +204,7 @@ export class SwitchResolver implements InfoResolver {
             `https://api.ec.nintendo.com/v1/price`,
             {
                 params: {
-                    country: userCountry,
+                    country: userCountry.split('-')[0],
                     lang: 'en',
                     ids: id
                 }

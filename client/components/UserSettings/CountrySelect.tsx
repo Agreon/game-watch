@@ -8,10 +8,25 @@ interface CountryOption {
 }
 
 const countryLabels: Record<Country, string> = {
-    'DE': 'Germany',
-    'US': 'USA',
+    'AT': 'Austria',
     'AU': 'Australia',
+    'BE-FR': 'Belgium (French)',
+    'BE-NL': 'Belgium (Dutch)',
+    'CH-DE': 'Switzerland (German)',
+    'CH-FR': 'Switzerland (French)',
+    'CH-IT': 'Switzerland (Italian)',
+    'DE': 'Germany',
+    'ES': 'Spain',
+    'FR': 'France',
+    'IE': 'Ireland',
+    'IT': 'Italy',
+    'NL': 'Netherlands',
     'NZ': 'New Zealand',
+    'PT': 'Portugal',
+    'RU': 'Russia',
+    'GB': 'United Kingdom',
+    'US': 'USA',
+    'ZA': 'South Africa',
 } as const;
 
 const countryOptions: CountryOption[] = Object.entries(countryLabels).map(
@@ -79,7 +94,7 @@ export const CountrySelect: React.FC<CountrySelectOptions> = ({ value, onChange 
             value={countryValue}
             onChange={onCountryChanges}
             options={countryOptions}
-            isSearchable={false}
+            isSearchable={true}
         />
     );
 };

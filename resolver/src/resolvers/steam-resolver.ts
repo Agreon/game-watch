@@ -1,4 +1,3 @@
-import { mapCountryCodeToLanguage } from '@game-watch/service';
 import {
     Country,
     InfoSourceType,
@@ -27,7 +26,7 @@ export class SteamResolver implements InfoResolver {
                 params: {
                     appids: source.data.id,
                     // Determines the returned currency.
-                    cc: mapCountryCodeToLanguage(source.country),
+                    cc: source.country.split('-')[0],
                 },
                 // Determines the returned language.
                 headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
@@ -68,19 +67,21 @@ export class SteamResolver implements InfoResolver {
     }
 
     private parseReleaseDate(releaseDate: string, userCountry: Country) {
-        const locale = mapCountryCodeToLanguage(userCountry);
+        // Transforms `CH-DE` to `de`
+        const locale = (userCountry.split('-')[1] ?? userCountry.split('-')[0]).toLowerCase();
 
-        const parsedReleaseDate = releaseDate
+        const cleanedReleaseDate = releaseDate
             // The dots create problems with dayjs parsing.
             .replace(/\.|\,/g, '')
+            // Portuguese release dates will come in the format: 1\/set.\/2011
+            .replace(/\\\//g, ' ')
             // For some reason "Okt" is leading to an invalid date. So we use the english one.
             .replace('Okt', 'Oct');
 
-        // Sometimes english, sometimes german..
-        // TODO: What's with other countries?
-        return parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
-            ?? parseDate(parsedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
-            ?? parseDate(parsedReleaseDate);
+        // Sometimes the locale does not match the return value. Then we try other formats.
+        return parseDate(cleanedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
+            ?? parseDate(cleanedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'])
+            ?? parseDate(cleanedReleaseDate);
     }
 
     private getPriceInformation(
@@ -90,6 +91,7 @@ export class SteamResolver implements InfoResolver {
             return undefined;
         }
 
+        // Those values are returned in cents. So we need to convert them.
         return {
             initial: initial / 100,
             final: final / 100,

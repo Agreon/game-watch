@@ -70,9 +70,12 @@ export class PsStoreResolver implements InfoResolver {
                 thumbnailUrl,
                 priceInformation:
                     this.getPriceInformation({ price, originalPrice }, source.country),
-                releaseDate: source.country === 'DE'
+                releaseDate: ['DE', 'AT', 'CH-DE'].includes(source.country)
                     ? parseDate(releaseDate, ['D.M.YYYY'])
-                    : parseDate(releaseDate, ['M/DD/YYYY']),
+                    : parseDate(releaseDate, ['M/DD/YYYY'])
+                    ?? parseDate(releaseDate, ['DD/MM/YYYY'])
+                    ?? parseDate(releaseDate, ['D/M/YYYY'])
+                    ?? parseDate(releaseDate),
                 originalReleaseDate: releaseDate
             };
         });

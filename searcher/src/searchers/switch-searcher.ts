@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { withBrowser } from '@game-watch/browser';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
@@ -34,8 +33,34 @@ export class SwitchSearcher implements InfoSearcher {
             return await this.searchInAUAndNZ(search, { logger, userCountry });
         }
 
-        if (userCountry === 'DE') {
-            const { numFound, docs: results } = await this.getSwitchSearchResponse(search);
+        if ([
+            'AT',
+            'BE-FR',
+            'BE-NL',
+            'CH-DE',
+            'CH-FR',
+            'CH-IT',
+            'DE',
+            'ES',
+            'FR',
+            'GB',
+            'IE',
+            'IT',
+            'NL',
+            'PT',
+            'RU',
+            'ZA',
+        ].includes(userCountry)) {
+            // eg. CH-DE => chde
+            let countryCode = userCountry.replace('-', '').toLowerCase();
+            if (['GB', 'IE'].includes(userCountry)) {
+                countryCode = 'en';
+            }
+
+            const { numFound, docs: results } = await this.getSwitchSearchResponse(
+                search,
+                countryCode
+            );
 
             if (!numFound) {
                 logger.debug('No search results found');
@@ -54,7 +79,16 @@ export class SwitchSearcher implements InfoSearcher {
                 return null;
             }
 
-            const url = `https://nintendo.de${gameData.url}`;
+            // eg. CH-DE => ch
+            let code = userCountry.toLowerCase().split('-')[0];
+            if (['GB', 'IE'].includes(userCountry)) {
+                code = 'co.uk';
+            }
+            if (userCountry === 'ZA') {
+                code = 'co.za';
+            }
+
+            const url = `https://www.nintendo.${code}${gameData.url}`;
             return {
                 id: url,
                 url,
@@ -62,7 +96,7 @@ export class SwitchSearcher implements InfoSearcher {
             };
         }
 
-        // TODO: Algolia search responded mit price?
+        // TODO: Algolia search responds with price?
         return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
             await page.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
 
@@ -127,8 +161,9 @@ export class SwitchSearcher implements InfoSearcher {
         const result = hits.find(
             ({ fullURL }: { fullURL: string }) => fullURL.includes('nintendo-switch')
         );
+        console.log(hits);
         if (!result) {
-            logger.debug('No results found');
+            console.debug('No results found');
 
             return null;
         }
@@ -152,9 +187,9 @@ export class SwitchSearcher implements InfoSearcher {
         };
     }
 
-    public async getSwitchSearchResponse(search: string) {
+    public async getSwitchSearchResponse(search: string, countryCode: string) {
         const { data: { response } } = await this.axios.get<SwitchSearchResponse>(
-            'https://searching.nintendo-europe.com/de/select',
+            `https://searching.nintendo-europe.com/${countryCode}/select`,
             {
                 params: {
                     q: search,
