@@ -48,8 +48,8 @@ export const mapCountryCodeToLanguageCode = (country: Country): string => {
     }
 };
 
-export class PsStoreSearcher implements InfoSearcher {
-    public type = InfoSourceType.PsStore;
+export class PlaystationSearcher implements InfoSearcher {
+    public type = InfoSourceType.Playstation;
 
     public constructor(private readonly axios: AxiosInstance) { }
 

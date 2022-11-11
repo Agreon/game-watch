@@ -2,8 +2,8 @@ import { InfoSourceType } from '@game-watch/shared';
 
 import { UrlMapper } from '../mapper-service';
 
-export class PsStoreMapper implements UrlMapper {
-    public type = InfoSourceType.PsStore;
+export class PlaystationMapper implements UrlMapper {
+    public type = InfoSourceType.Playstation;
 
     public async mapUrlToId(url: string): Promise<string> {
         const mapped = new URL(url);

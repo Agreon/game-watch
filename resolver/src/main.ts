@@ -27,7 +27,7 @@ import { EnvironmentStructure } from './environment';
 import { CriticalError, ResolveService } from './resolve-service';
 import { EpicResolver } from './resolvers/epic-resolver';
 import { MetacriticResolver } from './resolvers/metacritic-resolver';
-import { PsStoreResolver } from './resolvers/ps-store-resolver';
+import { PlaystationResolver } from './resolvers/playstation-resolver';
 import { SteamResolver } from './resolvers/steam-resolver';
 import { SwitchResolver } from './resolvers/switch-resolver';
 
@@ -63,7 +63,7 @@ const cacheService = CACHING_ENABLED
 const resolvers = [
     new SteamResolver(axiosInstance),
     new SwitchResolver(axiosInstance),
-    new PsStoreResolver(axiosInstance),
+    new PlaystationResolver(axiosInstance),
     new EpicResolver(axiosInstance),
     new MetacriticResolver(axiosInstance),
 ];

@@ -12,10 +12,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useHttp } from '../util/useHttp';
 
 export const INFO_SOURCE_PRIORITY = [
-    InfoSourceType.PsStore,
+    InfoSourceType.Playstation,
     InfoSourceType.Steam,
     InfoSourceType.Switch,
-    // InfoSourceType.Epic,
+    InfoSourceType.Epic,
     InfoSourceType.Metacritic,
 ];
 
@@ -27,14 +27,14 @@ const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string):
         const valueForKey = (infoSource.data as any)[key] as string | undefined;
 
         if (valueForKey) {
-            if (infoSource.type === 'psStore' && key === 'thumbnailUrl') {
+            if (infoSource.type === InfoSourceType.Playstation && key === 'thumbnailUrl') {
                 const url = new URL(valueForKey);
                 url.searchParams.delete('w');
                 url.searchParams.append('w', '460');
                 return url.toString();
             }
 
-            if (infoSource.type === 'epic' && key === 'thumbnailUrl') {
+            if (infoSource.type === InfoSourceType.Epic && key === 'thumbnailUrl') {
                 const url = new URL(valueForKey);
                 url.searchParams.delete('h');
                 url.searchParams.append('h', '215');

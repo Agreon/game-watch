@@ -3,20 +3,20 @@ import { Countries, Country } from './country';
 export enum InfoSourceType {
     Steam = 'steam',
     Switch = 'switch',
-    PsStore = 'psStore',
+    Playstation = 'playstation',
     Epic = 'epic',
     Metacritic = 'metacritic'
 }
 export type StoreInfoSource =
     | InfoSourceType.Steam
     | InfoSourceType.Switch
-    | InfoSourceType.PsStore
+    | InfoSourceType.Playstation
     | InfoSourceType.Epic;
 
 export const StoreInfoSources = [
     InfoSourceType.Steam,
     InfoSourceType.Switch,
-    InfoSourceType.PsStore,
+    InfoSourceType.Playstation,
     InfoSourceType.Epic,
 ];
 
@@ -53,7 +53,7 @@ export interface SteamGameData extends StoreGameData {
 
 export type SwitchGameData = StoreGameData;
 
-export type PsStoreGameData = StoreGameData;
+export type PlaystationGameData = StoreGameData;
 
 export type EpicGameData = StoreGameData;
 
@@ -66,14 +66,14 @@ export interface MetacriticData extends BaseGameData {
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
     [InfoSourceType.Switch]: SwitchGameData;
-    [InfoSourceType.PsStore]: PsStoreGameData;
+    [InfoSourceType.Playstation]: PlaystationGameData;
     [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
 export type AnyGameData =
     | SteamGameData
     | SwitchGameData
-    | PsStoreGameData
+    | PlaystationGameData
     | EpicGameData
     | MetacriticData;
 
@@ -81,7 +81,7 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
     [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
-    [InfoSourceType.PsStore]: Countries.filter(country => country !== 'RU'),
+    [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
     [InfoSourceType.Epic]: [] as const,
 } as const;

@@ -37,7 +37,7 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
             <Text fontWeight="bold" ml="0.25rem" mt="0.25rem">Switch</Text>
         </Flex>
     ),
-    [InfoSourceType.PsStore]: (
+    [InfoSourceType.Playstation]: (
         <Flex align="center" pl="0.25rem" pr="0.5rem">
             <Box position="relative" width={30} height={30}>
                 <Box position="absolute" width="35px" height="35px" top="-2.5px" left="-2.5px">
@@ -82,7 +82,7 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
             <Text fontWeight="bold" ml="0.5rem">Switch</Text>
         </Flex>
     ),
-    [InfoSourceType.PsStore]: (
+    [InfoSourceType.Playstation]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={psLogo} quality={100} height={30} width={30} />
             <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
@@ -113,7 +113,7 @@ export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
             <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height={20} width={20} />
         </Flex>
     ),
-    [InfoSourceType.PsStore]: (
+    [InfoSourceType.Playstation]: (
         <Flex align="start" mt="-0.2rem">
             <Image alt="source-icon" priority={true} src={psLogo} quality={100} height={22} width={22} />
         </Flex>

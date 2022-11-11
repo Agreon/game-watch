@@ -27,7 +27,7 @@ import { EnvironmentStructure } from './environment';
 import { CriticalError, SearchService } from './search-service';
 import { EpicSearcher } from './searchers/epic-searcher';
 import { MetacriticSearcher } from './searchers/metacritic-searcher';
-import { PsStoreSearcher } from './searchers/ps-store-searcher';
+import { PlaystationSearcher } from './searchers/playstation-searcher';
 import { SteamSearcher } from './searchers/steam-searcher';
 import { SwitchSearcher } from './searchers/switch-searcher';
 
@@ -58,7 +58,7 @@ const redis = new Redis({
 const searchers = [
     new EpicSearcher(axiosInstance),
     new MetacriticSearcher(axiosInstance),
-    new PsStoreSearcher(axiosInstance),
+    new PlaystationSearcher(axiosInstance),
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance)
 ];
