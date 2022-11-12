@@ -161,9 +161,8 @@ export class SwitchSearcher implements InfoSearcher {
         const result = hits.find(
             ({ fullURL }: { fullURL: string }) => fullURL.includes('nintendo-switch')
         );
-        console.log(hits);
         if (!result) {
-            console.debug('No results found');
+            logger.debug('No results found');
 
             return null;
         }
