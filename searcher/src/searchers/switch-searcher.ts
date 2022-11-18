@@ -1,6 +1,4 @@
-import { withBrowser } from '@game-watch/browser';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
-import { mapCountryCodeToAcceptLanguage } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
@@ -96,41 +94,70 @@ export class SwitchSearcher implements InfoSearcher {
             };
         }
 
-        // TODO: Algolia search responds with price?
-        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async page => {
-            await page.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
+        return await this.searchInAmericas(search, { logger, userCountry });
+    }
 
-            const raceResult = await Promise.race([
-                page.waitForXPath('//a[contains(@href,"nintendo.com/store/products/")]'),
-                (async () => {
-                    await page.waitForXPath('//h1[contains(text(),"return any results")]');
-                    return null;
-                })()
-            ]);
-            if (!raceResult) {
-                logger.debug('No results found');
-
-                return null;
-            }
-
-            const url = await (await raceResult.getProperty('href')).jsonValue() as string;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const fullName = await raceResult.$eval('h3', el => el.textContent!.trim());
-
-            if (!matchingName(fullName, search)) {
-                logger.debug(
-                    `Found name '${fullName}' does not include search '${search}'. Skipping`
-                );
-
-                return null;
-            }
-
-            return {
-                id: url,
-                url,
-                fullName
-            };
+    private async searchInAmericas(
+        search: string,
+        { logger }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
+        const urlParams = new URLSearchParams({
+            hitsPerPage: '5',
+            offset: '0',
         });
+        const { data: { results: [{ hits }] } } = await this.axios.post(
+            'https://u3b6gr4ua3-dsn.algolia.net/1/indexes/*/queries',
+            {
+                requests: [{
+                    indexName: 'store_all_products_en_us',
+                    query: search,
+                    params: urlParams.toString()
+                }],
+            },
+            {
+                headers: {
+                    'x-algolia-api-key': 'a29c6927638bfd8cee23993e51e721c9',
+                    'x-algolia-application-id': 'U3B6GR4UA3'
+                }
+            }
+        );
+
+        const result = hits.find(
+            (
+                { platformCode, topLevelCategoryCode, topLevelFilters }: {
+                    platformCode: string;
+                    topLevelCategoryCode: string;
+                    topLevelFilters: string[];
+                },
+            ) => (
+                platformCode === 'NINTENDO_SWITCH'
+                && topLevelCategoryCode === 'GAMES'
+                && topLevelFilters.includes('DLC') === false
+            )
+        );
+        if (!result) {
+            logger.debug('No results found');
+
+            return null;
+        }
+
+        const { title, url } = result;
+
+        if (!matchingName(title, search)) {
+            logger.debug(
+                `Found name '${title}' does not include search '${search}'. Skipping`
+            );
+
+            return null;
+        }
+
+        logger.debug(`Found gameId '${url}'`);
+
+        return {
+            id: url,
+            fullName: title,
+            url: `https://www.nintendo.com${url}`
+        };
     }
 
     private async searchInAUAndNZ(
