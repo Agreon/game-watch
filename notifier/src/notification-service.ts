@@ -54,12 +54,14 @@ export class NotificationService {
         const logger = this.sourceScopedLogger.child({ gameId: game.id, userId: user.id });
 
         if (resolvedGameData === null) {
-            return await this.createResolveErrorNotification({
-                game,
-                infoSource,
-                user,
-                logger
-            });
+            // We don't want to spam users with notifications they don't have power over.
+            // return await this.createResolveErrorNotification({
+            //     game,
+            //     infoSource,
+            //     user,
+            //     logger
+            // });
+            return;
         }
 
         const relevantNotificationCreators = this.notificationCreators.filter(
