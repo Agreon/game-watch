@@ -30,7 +30,7 @@
     "devDependencies": {
         "@mikro-orm/cli": "^5.5.3",
         "@types/node": "^18.11.9",
-        "@types/uuid": "^8.3.4",
+        "@types/uuid": "^9.0.0",
         "eslint": "^8.28.0",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.1.0",
