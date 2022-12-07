@@ -2,6 +2,7 @@ import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 export interface SwitchSearchResponse {
@@ -64,14 +65,17 @@ export class SwitchSearcher implements InfoSearcher {
                 logger.debug('No search results found');
 
                 return null;
-
             }
 
-            const gameData = results[0];
+            const bestMatch = findBestMatch<{ title: string, url: string }>(
+                search,
+                results,
+                'title',
+            );
 
-            if (!matchingName(gameData.title, search)) {
+            if (!matchingName(bestMatch.title, search)) {
                 logger.debug(
-                    `Found name '${gameData.title}' does not include search '${search}'. Skipping`
+                    `Found name '${bestMatch.title}' does not include search '${search}'. Skipping`
                 );
 
                 return null;
@@ -86,11 +90,11 @@ export class SwitchSearcher implements InfoSearcher {
                 code = 'co.za';
             }
 
-            const url = `https://www.nintendo.${code}${gameData.url}`;
+            const url = `https://www.nintendo.${code}${bestMatch.url}`;
             return {
                 id: url,
                 url,
-                fullName: gameData.title
+                fullName: bestMatch.title
             };
         }
 
@@ -122,7 +126,7 @@ export class SwitchSearcher implements InfoSearcher {
             }
         );
 
-        const result = hits.find(
+        const results = hits.filter(
             (
                 { platformCode, topLevelCategoryCode, topLevelFilters }: {
                     platformCode: string;
@@ -135,13 +139,16 @@ export class SwitchSearcher implements InfoSearcher {
                 && topLevelFilters.includes('DLC') === false
             )
         );
-        if (!result) {
+        if (!results.length) {
             logger.debug('No results found');
 
             return null;
         }
 
-        const { title, url } = result;
+        const {
+            title,
+            url,
+        } = findBestMatch<{ title: string, url: string }>(search, results, 'title');
 
         if (!matchingName(title, search)) {
             logger.debug(
@@ -222,7 +229,7 @@ export class SwitchSearcher implements InfoSearcher {
                     fq: `type:GAME AND sorting_title:* AND *:*`,
                     sort: 'score desc, date_from desc',
                     start: 0,
-                    rows: 1,
+                    rows: 10,
                     bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
                 }
             }

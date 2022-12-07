@@ -28,6 +28,7 @@
         "bullmq": "1.91.1",
         "cheerio": "1.0.0-rc.12",
         "dotenv": "^16.0.3",
+        "fast-levenshtein": "^3.0.0",
         "fp-ts": "^2.13.1",
         "io-ts": "^2.2.19",
         "io-ts-types": "^0.5.19",
@@ -37,6 +38,7 @@
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
+        "@types/fast-levenshtein": "^0.0.2",
         "@types/ioredis": "^4.28.10",
         "@types/node": "^18.11.9",
         "@typescript-eslint/eslint-plugin": "^5.43.0",

@@ -2,6 +2,7 @@ import { Country, InfoSourceType, mapCountryCodeToAcceptLanguage } from '@game-w
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 interface SearchResponse {
@@ -82,14 +83,13 @@ export class PlaystationSearcher implements InfoSearcher {
         );
 
         // The ps store likes to order DLCs and cosmetics prior to the game.
-        const result = results.find(result => result.storeDisplayClassification === 'FULL_GAME');
-        if (!result) {
+        const hits = results.filter(result => result.storeDisplayClassification === 'FULL_GAME');
+        if (!results.length) {
             logger.debug('No search results found');
             return null;
         }
 
-        const gameId = result.id;
-        const fullName = result.name;
+        const { id: gameId, name: fullName, } = findBestMatch(search, hits, 'name');
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);

@@ -4,6 +4,7 @@ const IGNORED_TOKENS = [
     'of'
 ];
 
+// TODO: May be too conservative?
 export const matchingName = (name: string, search: string) => {
     const nameTokens = name
         .replace(/:|™|®|-|\(|\)/g, '')
