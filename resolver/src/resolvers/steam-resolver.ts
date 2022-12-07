@@ -46,6 +46,8 @@ export class SteamResolver implements InfoResolver {
             // TODO: We need to open the site to get the price.
         }
 
+        console.log(json);
+
         return {
             id: source.data.id,
             fullName: source.data.fullName,
@@ -75,8 +77,10 @@ export class SteamResolver implements InfoResolver {
             .replace(/\.|\,/g, '')
             // Portuguese release dates will come in the format: 1\/set.\/2011
             .replace(/\\\//g, ' ')
-            // For some reason "Okt" is leading to an invalid date. So we use the english one.
-            .replace('Okt', 'Oct');
+            // For some reason "Okt" and "Dez" is leading to an invalid date.
+            // So we use the english one.
+            .replace('Okt', 'Oct')
+            .replace('Dez', 'Dec');
 
         // Sometimes the locale does not match the return value. Then we try other formats.
         return parseDate(cleanedReleaseDate, ['D MMM YYYY', 'D MMMM YYYY'], locale)
