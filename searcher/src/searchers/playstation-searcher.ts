@@ -89,7 +89,7 @@ export class PlaystationSearcher implements InfoSearcher {
             return null;
         }
 
-        const { id: gameId, name: fullName, } = findBestMatch(search, hits, 'name');
+        const { id: gameId, name: fullName } = findBestMatch(search, hits, 'name');
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);

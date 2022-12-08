@@ -7,7 +7,7 @@ export const findBestMatch = <T extends Record<string, unknown>>(
     nameKey: keyof T,
 ): T => {
     const best_hit: { distance: number; hit: T | null } = {
-        distance: 1000,
+        distance: Number.MAX_VALUE,
         hit: null,
     };
 
@@ -22,7 +22,5 @@ export const findBestMatch = <T extends Record<string, unknown>>(
         }
     }
 
-    assert(best_hit.hit !== null);
-
-    return best_hit.hit as T;
+    return (best_hit.hit ?? hits[0]) as T;
 };
