@@ -37,15 +37,15 @@ export class MailService {
 
         switch (notification.type) {
             case NotificationType.GameReduced:
-                return `${gameName} was reduced`;
+                return `${gameName} was reduced in the ${infoSource.type} store`;
             case NotificationType.ReleaseDateChanged:
                 return `The release date of ${gameName} changed`;
             case NotificationType.NewStoreEntry:
                 return `${gameName} was added to the ${infoSource.type} store`;
             case NotificationType.GameReleased:
-                return `${gameName} will be available today`;
+                return `${gameName} will be available today in the ${infoSource.type} store`;
             case NotificationType.NewMetacriticRating:
-                return `${gameName} received a rating`;
+                return `${gameName} received a metacritic rating`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved`;
         }
@@ -92,13 +92,13 @@ ${unsubscribeLink}
                     notification.data as NotificationData[NotificationType.ReleaseDateChanged]
                 );
 
-                return `${gameName} will be released on ${formattedDate}.`;
+                return `${gameName} will be released on ${formattedDate} in the ${infoSource.type} store.`;
             case NotificationType.NewStoreEntry:
                 return `${gameName} was added to the ${infoSource.type} store.`;
             case NotificationType.GameReleased:
-                return `${gameName} will be available today.`;
+                return `${gameName} will be available today in the ${infoSource.type} store.`;
             case NotificationType.NewMetacriticRating:
-                return `${gameName} received a rating.`;
+                return `${gameName} received a metacritic rating.`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved. Try to trigger it manually again.`
                     + " If that didn't help, there might be an issue with our implementation."
