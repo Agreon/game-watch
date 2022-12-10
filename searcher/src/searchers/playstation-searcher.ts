@@ -84,7 +84,7 @@ export class PlaystationSearcher implements InfoSearcher {
 
         // The ps store likes to order DLCs and cosmetics prior to the game.
         const hits = results.filter(result => result.storeDisplayClassification === 'FULL_GAME');
-        if (!results.length) {
+        if (!hits.length) {
             logger.debug('No search results found');
             return null;
         }
