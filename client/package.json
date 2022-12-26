@@ -20,7 +20,7 @@
     "chakra-react-select": "^4.4.2",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.7",
-    "framer-motion": "^7.6.19",
+    "framer-motion": "^8.0.2",
     "next": "^13.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
