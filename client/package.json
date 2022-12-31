@@ -10,31 +10,31 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.13",
-    "@chakra-ui/react": "2.4.3",
+    "@chakra-ui/icons": "^2.0.15",
+    "@chakra-ui/react": "^2.4.6",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@game-watch/shared": "0.0.1",
     "@hookform/resolvers": "^2.9.10",
     "axios": "^0.27.2",
-    "chakra-react-select": "^4.4.2",
+    "chakra-react-select": "^4.4.3",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.7",
-    "framer-motion": "^7.6.19",
-    "next": "^13.0.6",
+    "framer-motion": "^8.0.2",
+    "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.40.0",
+    "react-hook-form": "^7.41.3",
     "react-masonry-css": "^1.0.16",
-    "sharp": "^0.31.2",
+    "sharp": "^0.31.3",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@types/uuid": "^9.0.0",
-    "eslint": "^8.29.0",
-    "eslint-config-next": "^13.0.6",
-    "typescript": "^4.9.3"
+    "eslint": "^8.30.0",
+    "eslint-config-next": "^13.1.1",
+    "typescript": "^4.9.4"
   }
 }

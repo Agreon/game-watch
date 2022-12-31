@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.join(__dirname, '..', '..', '..', '.env') });
+dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
 
 import { initializeSentry, parseEnvironment } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
@@ -40,7 +40,11 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.use(compression());
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidUnknownValues: false
+    })
+  );
 
   await app.listen(SERVER_PORT);
 

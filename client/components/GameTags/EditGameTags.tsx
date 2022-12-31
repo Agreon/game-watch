@@ -38,7 +38,7 @@ export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel })
 
     return (
         <Flex align="center" position="relative">
-            <Box ml="-0.5rem" mt="-0.5rem">
+            <Box ml="-0.5rem" mt="-0.5rem" pr="2rem">
                 <ChakraTag
                     onClick={onNewTag}
                     colorScheme="teal"
@@ -54,10 +54,11 @@ export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel })
                         key={tag.id}
                         onClick={() => toggleTag(tag)}
                         variant={tag.toggled ? 'subtle' : 'outline'}
-                        colorScheme={tag.toggled ? tag.color : 'whiteAlpha'}
+                        colorScheme={tag.color}
                         cursor="pointer"
                         ml="0.5rem"
                         mt="0.5rem"
+                        pt="0.125rem"
                     >
                         {tag.name}
                     </ChakraTag>

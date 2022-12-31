@@ -35,7 +35,7 @@ import { User } from './models/user-model';
 import { parseEnvironment } from './parse-environment';
 
 // If used for cli command
-dotenv.config({ path: path.join(__dirname, '..', '..', '..', '.env') });
+dotenv.config({ path: path.join(process.cwd(), '..', '..', '.env') });
 
 const {
     DATABASE_USER,
