@@ -1,9 +1,9 @@
-import { withBrowser } from "@game-watch/browser";
-import { InfoSearcher, InfoSearcherContext, mapCountryCodeToAcceptLanguage, SearchResponse } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
+import { BaseGameData, InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 
-import { matchingName } from "../util/matching-name";
+import { findBestMatch } from '../util/find-best-match';
+import { matchingName } from '../util/matching-name';
 
 export interface SwitchSearchResponse {
     response: {
@@ -24,76 +24,212 @@ export class SwitchSearcher implements InfoSearcher {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
-        if (userCountry === "DE") {
-            const { numFound, docs: results } = await this.getSwitchSearchResponse(search);
+    public async search(
+        search: string,
+        { logger, userCountry }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
+        if (userCountry === 'NZ' || userCountry === 'AU') {
+            return await this.searchInAUAndNZ(search, { logger, userCountry });
+        }
+
+        if ([
+            'AT',
+            'BE-FR',
+            'BE-NL',
+            'CH-DE',
+            'CH-FR',
+            'CH-IT',
+            'DE',
+            'ES',
+            'FR',
+            'GB',
+            'IE',
+            'IT',
+            'NL',
+            'PT',
+            'RU',
+            'ZA',
+        ].includes(userCountry)) {
+            // eg. CH-DE => chde
+            let countryCode = userCountry.replace('-', '').toLowerCase();
+            if (['GB', 'IE'].includes(userCountry)) {
+                countryCode = 'en';
+            }
+
+            const { numFound, docs: results } = await this.getSwitchSearchResponse(
+                search,
+                countryCode
+            );
 
             if (!numFound) {
-                logger.debug("No search results found");
-
-                return null;
-
-            }
-
-            const gameData = results[0];
-
-            if (!matchingName(gameData.title, search)) {
-                logger.debug(`Found name '${gameData.title}' does not include search '${search}'. Skipping`);
+                logger.debug('No search results found');
 
                 return null;
             }
 
+            const bestMatch = findBestMatch<{ title: string, url: string }>(
+                search,
+                results,
+                'title',
+            );
+
+            if (!matchingName(bestMatch.title, search)) {
+                logger.debug(
+                    `Found name '${bestMatch.title}' does not include search '${search}'. Skipping`
+                );
+
+                return null;
+            }
+
+            // eg. CH-DE => ch
+            let code = userCountry.toLowerCase().split('-')[0];
+            if (['GB', 'IE'].includes(userCountry)) {
+                code = 'co.uk';
+            }
+            if (userCountry === 'ZA') {
+                code = 'co.za';
+            }
+
+            const url = `https://www.nintendo.${code}${bestMatch.url}`;
             return {
-                remoteGameId: `https://nintendo.de${gameData.url}`,
-                remoteGameName: gameData.title
+                id: url,
+                url,
+                fullName: bestMatch.title
             };
         }
 
-        return await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
-            await browser.goto(`https://www.nintendo.com/search/?q=${encodeURIComponent(search)}&p=1&cat=gme&sort=df&f=corePlatforms&corePlatforms=Nintendo+Switch`);
-
-            // TODO: No result count... "didn't return any results" .ResultsForstyles__StyledText-sc-17gvq2y-1 JubOL
-
-            await browser.waitForSelector(".result-count");
-
-            const resultCount = await browser.$eval(".result-count", el => el.innerHTML);
-            if (resultCount.includes("0 results")) {
-                logger.debug("No results found");
-
-                return null;
-            }
-
-            /**
-             * <div class="BasicTilestyles__TileUpper-sc-sh8sf3-1 fBdUCk"><div class="BasicTilestyles__Flag-sc-sh8sf3-6 cfRPNH">Pre-order now</div><div class="BasicTilestyles__ImageFrame-sc-sh8sf3-10 krmGJS"><div class="KeyArtstyles__StyledFrame-sc-1u4ptmi-0 biyUsE"><div class="Imagestyles__ImageWrapper-sc-1oi2gnz-0 hJIeuB"><img role="presentation" alt="" class="Imagestyles__CloudinaryImage-sc-1oi2gnz-1 hFNlYD" src="https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_auto/c_scale,w_300/v1/ncom/en_US/games/switch/m/mario-strikers-battle-league-switch/hero"></div></div></div></div><div class="BasicTilestyles__TileLower-sc-sh8sf3-2 kvtdMj"><div class="BasicTilestyles__Info-sc-sh8sf3-7 eTYVYV"><div class="BasicTilestyles__TitleWrapper-sc-sh8sf3-13 fhSNtP"><h3 class="BasicTilestyles__Title-sc-sh8sf3-11 ka-dMDt">Mario Strikers™: Battle League</h3></div><div><div class="ProductTilestyles__PriceWrapper-sc-n2s21r-3 hYQUDk"><div class="Pricestyles__Price-sc-afjfk5-0 ixmoXq"><div class="Pricestyles__PriceWrapper-sc-afjfk5-8 eieoUb"><span class="Pricestyles__MSRP-sc-afjfk5-10 ffFFNE"><span class="ScreenReaderOnlystyles__StyledReaderText-sc-jiymtq-0 jhBEVo">Regular Price:</span>$59.99</span></div></div></div><div class="BasicTilestyles__Row-sc-sh8sf3-12 dbOzbk"><div class="PlatformLabelstyles__StyledPlatform-sc-1cn94zq-0 gdPjDq"><span>Nintendo Switch</span></div></div></div></div></div>
-             */
-
-            const gameLink = await browser.$eval("game-tile", el => el.getAttribute("href"));
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const fullName = await browser.$eval("game-tile > h3", el => el.textContent!.trim());
-
-            if (!matchingName(fullName, search)) {
-                logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
-
-                return null;
-            }
-
-            return {
-                remoteGameId: `https://nintendo.com${gameLink}`,
-                remoteGameName: fullName
-            };
-        });
+        return await this.searchInAmericas(search, { logger, userCountry });
     }
 
-    public async getSwitchSearchResponse(search: string) {
+    private async searchInAmericas(
+        search: string,
+        { logger }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
+        const urlParams = new URLSearchParams({
+            hitsPerPage: '5',
+            offset: '0',
+        });
+        const { data: { results: [{ hits }] } } = await this.axios.post(
+            'https://u3b6gr4ua3-dsn.algolia.net/1/indexes/*/queries',
+            {
+                requests: [{
+                    indexName: 'store_all_products_en_us',
+                    query: search,
+                    params: urlParams.toString()
+                }],
+            },
+            {
+                headers: {
+                    'x-algolia-api-key': 'a29c6927638bfd8cee23993e51e721c9',
+                    'x-algolia-application-id': 'U3B6GR4UA3'
+                }
+            }
+        );
+
+        const results = hits.filter(
+            (
+                { platformCode, topLevelCategoryCode, topLevelFilters }: {
+                    platformCode: string;
+                    topLevelCategoryCode: string;
+                    topLevelFilters: string[];
+                },
+            ) => (
+                platformCode === 'NINTENDO_SWITCH'
+                && topLevelCategoryCode === 'GAMES'
+                && topLevelFilters.includes('DLC') === false
+            )
+        );
+        if (!results.length) {
+            logger.debug('No results found');
+
+            return null;
+        }
+
+        const {
+            title,
+            url,
+        } = findBestMatch<{ title: string, url: string }>(search, results, 'title');
+
+        if (!matchingName(title, search)) {
+            logger.debug(
+                `Found name '${title}' does not include search '${search}'. Skipping`
+            );
+
+            return null;
+        }
+
+        logger.debug(`Found gameId '${url}'`);
+
+        return {
+            id: url,
+            fullName: title,
+            url: `https://www.nintendo.com${url}`
+        };
+    }
+
+    private async searchInAUAndNZ(
+        search: string,
+        { logger }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
+        const urlParams = new URLSearchParams({
+            hitsPerPage: '5',
+            page: '0',
+            query: search
+        });
+        const { data: { results: [{ hits }] } } = await this.axios.post(
+            'https://fmw57f6erv-dsn.algolia.net/1/indexes/*/queries',
+            {
+                requests: [{
+                    indexName: 'prod_games',
+                    params: urlParams.toString()
+                }],
+            },
+            {
+                headers: {
+                    'x-algolia-api-key': '82705f954734e1cfb0e7285e2d5ca33f',
+                    'x-algolia-application-id': 'FMW57F6ERV'
+                }
+            }
+        );
+
+        const result = hits.find(
+            ({ fullURL }: { fullURL: string }) => fullURL.includes('nintendo-switch')
+        );
+        if (!result) {
+            logger.debug('No results found');
+
+            return null;
+        }
+
+        const { title, slug, fullURL } = result;
+
+        if (!matchingName(title, search)) {
+            logger.debug(
+                `Found name '${title}' does not include search '${search}'. Skipping`
+            );
+
+            return null;
+        }
+
+        logger.debug(`Found gameId '${slug}'`);
+
+        return {
+            id: slug,
+            fullName: title,
+            url: `https://www.nintendo.com.au${fullURL}`
+        };
+    }
+
+    public async getSwitchSearchResponse(search: string, countryCode: string) {
         const { data: { response } } = await this.axios.get<SwitchSearchResponse>(
-            'https://searching.nintendo-europe.com/de/select',
+            `https://searching.nintendo-europe.com/${countryCode}/select`,
             {
                 params: {
                     q: search,
                     fq: `type:GAME AND sorting_title:* AND *:*`,
-                    sort: "score desc, date_from desc",
+                    sort: 'score desc, date_from desc',
                     start: 0,
-                    rows: 1,
+                    rows: 10,
                     bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
                 }
             }

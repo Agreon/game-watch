@@ -1,6 +1,16 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length, ValidateIf } from "class-validator";
+import {
+    ArrayMinSize,
+    IsArray,
+    IsBoolean,
+    IsEmail,
+    IsEnum,
+    IsNotEmpty,
+    IsString,
+    Length,
+    ValidateIf,
+} from 'class-validator';
 
-import { Country, InfoSourceType, UserState } from "../types";
+import { Country, InfoSourceType, UserState } from '../types';
 
 export interface UserDto {
     id: string;
@@ -22,7 +32,6 @@ export class UpdateUserSettingsDto {
     public email?: string | null;
 
     @IsString()
-    @Length(2, 2)
     public country: Country;
 
     @IsArray()

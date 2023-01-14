@@ -1,9 +1,9 @@
-import { InfoSourceType, MetacriticData } from "@game-watch/shared";
-import React from "react";
+import { InfoSourceType, MetacriticData, StoreGameData } from '@game-watch/shared';
+import React from 'react';
 
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { MetacriticInfoSource } from "./MetacriticInfoSource";
-import { StoreInfoSource } from "./StoreInfoSource";
+import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
+import { MetacriticInfoSource } from './MetacriticInfoSource';
+import { StoreInfoSource } from './StoreInfoSource';
 
 export const InfoSource: React.FC = () => {
     const { source } = useInfoSourceContext();
@@ -11,9 +11,9 @@ export const InfoSource: React.FC = () => {
     switch (source.type) {
         case InfoSourceType.Steam:
         case InfoSourceType.Switch:
-        case InfoSourceType.PsStore:
+        case InfoSourceType.Playstation:
         case InfoSourceType.Epic:
-            return <StoreInfoSource data={source.data} />;
+            return <StoreInfoSource data={source.data as StoreGameData} country={source.country} />;
         case InfoSourceType.Metacritic:
             return <MetacriticInfoSource data={source.data as MetacriticData} />;
     }

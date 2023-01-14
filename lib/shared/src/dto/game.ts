@@ -1,7 +1,7 @@
-import { IsString, Length } from "class-validator";
+import { IsBoolean, IsString, Length } from 'class-validator';
 
-import { InfoSourceDto } from "./info-source";
-import { TagDto } from "./tag";
+import { InfoSourceDto } from './info-source';
+import { TagDto } from './tag';
 
 export interface GameDto {
     id: string
@@ -23,4 +23,13 @@ export class UpdateGameDto {
     @IsString()
     @Length(1, 255)
     public name: string;
+}
+
+export class SetupGameDto {
+    @IsString()
+    @Length(1, 255)
+    public name: string;
+
+    @IsBoolean()
+    public continueSearching: boolean;
 }

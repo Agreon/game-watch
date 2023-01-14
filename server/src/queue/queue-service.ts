@@ -1,20 +1,21 @@
-import { Game, InfoSource } from "@game-watch/database";
-import { QueueParams, QueueType } from "@game-watch/queue";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JobsOptions, Queue } from "bullmq";
-
-import { Environment } from "../environment";
+import { Game, InfoSource } from '@game-watch/database';
+import { QueueParams, QueueType } from '@game-watch/queue';
+import { getCronForNightlySync } from '@game-watch/service';
+import { Injectable } from '@nestjs/common';
+import { JobsOptions, Queue } from 'bullmq';
 
 @Injectable()
 export class QueueService {
     public constructor(
         private readonly queues: Record<QueueType, Queue>,
-        private readonly configService: ConfigService<Environment, true>,
     ) { }
 
-    public async addToQueue<T extends QueueType>(type: T, payload: QueueParams[T], opts?: JobsOptions) {
-        await this.queues[type].add(type, payload, opts);
+    public async addToQueue<T extends QueueType>(
+        type: T,
+        payload: QueueParams[T],
+        options: JobsOptions,
+    ) {
+        await this.queues[type].add(type, payload, options);
     }
 
     public async createRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
@@ -22,38 +23,34 @@ export class QueueService {
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
             {
-                repeat: {
-                    cron: this.configService.get("SYNC_SOURCES_AT")
-                },
+                repeat: { cron: getCronForNightlySync(infoSource.country) },
                 jobId: infoSource.id,
                 priority: 2
             }
         );
     }
 
-    public async removeRepeatableInfoSourceResolveJob(infoSource: InfoSource) {
+    public async removeRepeatableInfoSourceResolveJob({ id, country }: InfoSource) {
         await this.queues[QueueType.ResolveSource].removeRepeatableByKey(
-            `${QueueType.ResolveSource}:${infoSource.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
+            `${QueueType.ResolveSource}:${id}:::${getCronForNightlySync(country)}`
         );
     }
 
-    public async createRepeatableGameSearchJob(game: Game) {
+    public async createRepeatableGameSearchJob(game: Game, cron: string) {
         await this.queues[QueueType.SearchGame].add(
             QueueType.SearchGame,
             { gameId: game.id },
             {
-                repeat: {
-                    cron: this.configService.get("SYNC_SOURCES_AT")
-                },
+                repeat: { cron },
                 jobId: game.id,
                 priority: 2
             }
         );
     }
 
-    public async removeRepeatableGameSearchJob(game: Game) {
+    public async removeRepeatableGameSearchJob(game: Game, cron: string) {
         await this.queues[QueueType.SearchGame].removeRepeatableByKey(
-            `${QueueType.SearchGame}:${game.id}:::${this.configService.get("SYNC_SOURCES_AT")}`
+            `${QueueType.SearchGame}:${game.id}:::${cron}`
         );
     }
 }

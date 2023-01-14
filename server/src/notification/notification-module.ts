@@ -1,9 +1,9 @@
-import { Game, InfoSource, Notification } from "@game-watch/database";
-import { MikroOrmModule } from "@mikro-orm/nestjs";
-import { Module } from "@nestjs/common";
+import { Game, InfoSource, Notification } from '@game-watch/database';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { Module } from '@nestjs/common';
 
-import { NotificationController } from "./notification-controller";
-import { NotificationService } from "./notification-service";
+import { NotificationController } from './notification-controller';
+import { NotificationService } from './notification-service';
 
 @Module({
     imports: [

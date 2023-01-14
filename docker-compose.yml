@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:12
-    restart: always
-    environment:
-      - POSTGRES_DB=$DATABASE_NAME
-      - POSTGRES_USER=$DATABASE_USER
-      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
-    ports:
-      - $DATABASE_PORT:5432
 
   server:
     build:
@@ -40,6 +31,7 @@ services:
     depends_on:
       - db
       - redis
+
   resolver:
     build:
       context: .
@@ -77,6 +69,16 @@ services:
     ports:
       - $CLIENT_SERVER_PORT:3000
 
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_DB=$DATABASE_NAME
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+    ports:
+      - $DATABASE_PORT:5432
+
   redis:
     image: bitnami/redis:6.2.6
     environment:
@@ -85,13 +87,13 @@ services:
       - 6379:6379
 
   datadog-agent:
-    image:  gcr.io/datadoghq/agent:7
+    image: gcr.io/datadoghq/agent:7
     environment:
       - DD_API_KEY=$DD_API_KEY
       - DD_SITE=datadoghq.eu
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-      - DD_CONTAINER_INCLUDE=name:resolver name:searcher name:server
+      - DD_CONTAINER_INCLUDE=name:resolver name:searcher name:server name:notifier
       - DD_CONTAINER_EXCLUDE=name:datadog-agent name:db name:redis
       - DD_ENABLE_PAYLOADS_EVENTS=false
       - DD_ENABLE_PAYLOADS_SERIES=false

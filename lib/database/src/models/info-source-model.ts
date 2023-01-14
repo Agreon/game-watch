@@ -1,78 +1,94 @@
-import { GameData, InfoSourceType } from "@game-watch/shared";
-import { ArrayType, Collection, Entity, Enum, IdentifiedReference, ManyToOne, OneToMany, Property, Reference } from "@mikro-orm/core";
+import { Country, InfoSourceData, InfoSourceState, InfoSourceType } from '@game-watch/shared';
+import {
+    ArrayType,
+    Collection,
+    Entity,
+    Enum,
+    IdentifiedReference,
+    ManyToOne,
+    OneToMany,
+    Property,
+    Reference,
+    Unique,
+} from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { Game } from "./game-model";
-import { Notification } from "./notification-model";
-import { User } from "./user-model";
+import { BaseEntity } from '../base-entity';
+import { Game } from './game-model';
+import { Notification } from './notification-model';
+import { User } from './user-model';
+
+interface InfoSourceParams<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> {
+    type: T
+    state: S
+    user: IdentifiedReference<User>
+    data: InfoSourceData<T, S>
+    excludedRemoteGameIds?: string[]
+    game?: Game
+    country: Country
+}
 
 @Entity()
-export class InfoSource<T extends InfoSourceType = InfoSourceType> extends BaseEntity<InfoSource> {
+@Unique({ properties: ['type', 'game'] })
+export class InfoSource<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> extends BaseEntity<InfoSource> {
     @Enum(() => InfoSourceType)
     public type!: T;
 
-    @Property({ nullable: true })
-    public remoteGameId: string | null;
-
-    @Property({ nullable: true })
-    public remoteGameName: string | null;
+    @Enum(() => InfoSourceState)
+    public state!: S;
 
     @Property()
-    public syncing: boolean = true;
-
-    @Property()
-    public disabled: boolean = false;
+    public continueSearching: boolean = false;
 
     @Property({ type: ArrayType })
     public excludedRemoteGameIds: string[] = [];
 
-    @Property()
-    public resolveError: boolean = false;
+    @Property({ columnType: 'json', nullable: true })
+    public data: InfoSourceData<T, S>;
 
-    @Property({ columnType: "json", nullable: true })
-    public data: GameData[T] | null = null;
-
-    // This property is necessary because we reuse the info source model and the notification logic depends on this
-    // information.
+    // This property is necessary because we reuse the info source model and the notification logic
+    // depends on this information.
     @Property()
     public foundAt: Date = new Date();
 
-    @ManyToOne(() => Game, { wrappedReference: true, hidden: true })
+    @Property()
+    public country: Country;
+
+    @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
     public game!: IdentifiedReference<Game>;
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)
-    public notifications = new Collection<Notification, InfoSource<T>>(this);
+    public notifications = new Collection<Notification, InfoSource<T, S>>(this);
 
     public constructor(
-        { type, remoteGameId, remoteGameName, data, game, user }: {
-            type: T;
-            remoteGameId: string;
-            remoteGameName: string;
-            user: IdentifiedReference<User>;
-            data?: GameData[T];
-            game?: Game;
-        }
+        {
+            type,
+            state,
+            excludedRemoteGameIds,
+            data,
+            game,
+            user,
+            country,
+        }: InfoSourceParams<T, S>
     ) {
         super();
         this.type = type;
-        this.remoteGameId = remoteGameId;
-        this.remoteGameName = remoteGameName;
+        this.state = state;
+        this.excludedRemoteGameIds = excludedRemoteGameIds ?? [];
         this.user = user;
-        this.data = data ?? null;
+        this.data = data;
+        this.country = country;
         if (game) {
             this.game = Reference.create(game);
         }
-    }
-
-    public getRemoteGameIdOrFail() {
-        if (!this.remoteGameId) {
-            throw new Error("'remoteGameId' is not set");
-        }
-
-        return this.remoteGameId;
     }
 
     public getDataOrFail() {

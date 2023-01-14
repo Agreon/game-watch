@@ -33,6 +33,15 @@ module.exports = {
         "no-multi-spaces": "error",
         "space-in-parens": "error",
         "object-curly-spacing": ["error", "always"],
-        "no-multiple-empty-lines": ["error", { max: 1, maxBOF: 0 }]
+        "no-multiple-empty-lines": ["error", { max: 1, maxBOF: 0 }],
+        "max-len": ["warn", { code: 100 }],
+        "quotes": [
+            "error",
+            "single",
+            {
+                "avoidEscape": true,
+                "allowTemplateLiterals": true
+            }
+        ]
     },
 };

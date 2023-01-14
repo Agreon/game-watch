@@ -6,16 +6,17 @@
     "types": "dist/main.d.ts",
     "scripts": {
         "build": "tsc -b .",
+        "watch": "tsc -b -w .",
         "lint": "eslint \"src/**/*.ts\"",
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "@types/node": "^18.7.14",
-        "eslint": "^8.23.0",
-        "typescript": "^4.8.2"
+        "@types/node": "^18.11.18",
+        "eslint": "^8.30.0",
+        "typescript": "^4.9.4"
     },
     "dependencies": {
-        "class-validator": "^0.13.1",
-        "dayjs": "^1.11.5"
+        "class-validator": "^0.14.0",
+        "dayjs": "^1.11.7"
     }
 }

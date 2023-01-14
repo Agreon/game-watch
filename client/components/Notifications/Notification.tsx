@@ -1,20 +1,25 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import { Box, Flex, IconButton, Text, Tooltip } from "@chakra-ui/react";
-import { formatReleaseDate, NotificationDto, NotificationType } from "@game-watch/shared";
-import dayjs from "dayjs";
-import React, { useCallback, useMemo } from "react";
+import { CheckCircleIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Text, Tooltip } from '@chakra-ui/react';
+import {
+    formatPrice,
+    formatReleaseDate,
+    NotificationDto,
+    NotificationType
+} from '@game-watch/shared';
+import dayjs from 'dayjs';
+import React, { useCallback, useMemo } from 'react';
 
-import { useAction } from "../../util/useAction";
-import { SourceTypeLogoSmall } from "../InfoSource/SourceTypeLogo";
-import { LoadingSpinner } from "../LoadingSpinner";
+import { useAction } from '../../util/useAction';
+import { SourceTypeLogoSmall } from '../InfoSource/SourceTypeLogo';
+import { LoadingSpinner } from '../LoadingSpinner';
 
 const NotificationTypeNames: Record<NotificationType, string> = {
-    [NotificationType.NewStoreEntry]: "New store entry",
-    [NotificationType.ReleaseDateChanged]: "New release date",
-    [NotificationType.GameReleased]: "Game released",
-    [NotificationType.GameReduced]: "Game reduced",
-    [NotificationType.NewMetacriticRating]: "Game rated",
-    [NotificationType.ResolveError]: "Resolve error",
+    [NotificationType.NewStoreEntry]: 'New store entry',
+    [NotificationType.ReleaseDateChanged]: 'New release date',
+    [NotificationType.GameReleased]: 'Game released',
+    [NotificationType.GameReduced]: 'Game reduced',
+    [NotificationType.NewMetacriticRating]: 'Game rated',
+    [NotificationType.ResolveError]: 'Resolve error',
 };
 
 function isNotificationOfType<T extends NotificationType, TValue extends NotificationType>(
@@ -25,13 +30,15 @@ function isNotificationOfType<T extends NotificationType, TValue extends Notific
 }
 
 const getNotificationText = (notification: NotificationDto) => {
-    const { game } = notification;
+    const { game, infoSource } = notification;
 
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
 
     if (isNotificationOfType(notification, NotificationType.GameReduced)) {
         const { final, initial } = notification.data;
-        return <>{gameName} {`was reduced from ${initial}€ to ${final}€!`}</>;
+        const initialPrice = formatPrice({ price: initial, country: infoSource.country });
+        const finalPrice = formatPrice({ price: final, country: infoSource.country });
+        return <>{gameName} {`was reduced from ${initialPrice} to ${finalPrice}!`}</>;
     }
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
@@ -80,7 +87,10 @@ const NotificationComponent: React.FC<{
                     <Box mr="0.5rem">
                         {SourceTypeLogoSmall[notification.infoSource.type]}
                     </Box>
-                    <Tooltip label={dayjs(notification.createdAt).format("DD.MM. HH:mm")} placement="top">
+                    <Tooltip
+                        label={dayjs(notification.createdAt).format('DD.MM. HH:mm')}
+                        placement="top"
+                    >
                         <Text fontSize="lg" fontWeight="bold">
                             {NotificationTypeNames[notification.type]}
                         </Text>

@@ -1,16 +1,24 @@
-import { IsEnum, IsString, Length } from "class-validator";
+import { IsBoolean, IsEnum, IsString, Length } from 'class-validator';
 
-import { GameData, InfoSourceType } from "../types";
+import { BaseGameData, Country, GameData, InfoSourceState, InfoSourceType } from '../types';
 
-export interface InfoSourceDto<T extends InfoSourceType = InfoSourceType> {
+export type InfoSourceData<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> =
+    S extends InfoSourceState.Resolved ?
+    GameData[T]
+    : BaseGameData
+
+export interface InfoSourceDto<
+    T extends InfoSourceType = InfoSourceType,
+    S extends InfoSourceState = InfoSourceState
+> {
     id: string
     type: T
-    remoteGameId: string | null;
-    remoteGameName: string | null;
-    syncing: boolean
-    disabled: boolean
-    resolveError: boolean
-    data: GameData[T] | null
+    state: S
+    data: InfoSourceData<T, S>
+    country: Country
 }
 
 export class CreateInfoSourceDto {
@@ -23,4 +31,9 @@ export class CreateInfoSourceDto {
 
     @IsEnum(InfoSourceType)
     public type: InfoSourceType;
+}
+
+export class DisableInfoSourceDto {
+    @IsBoolean()
+    public continueSearching: boolean;
 }

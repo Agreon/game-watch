@@ -1,18 +1,19 @@
-import { Box } from "@chakra-ui/react";
-import { RegisterUserDto, UpdateUserSettingsDto, UserDto, UserState } from "@game-watch/shared";
-import axios from "axios";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { v4 as uuidV4 } from "uuid";
+import { Box } from '@chakra-ui/react';
+import { RegisterUserDto, UpdateUserSettingsDto, UserDto, UserState } from '@game-watch/shared';
+import axios from 'axios';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 
-import { LoadingSpinner } from "../components/LoadingSpinner";
-import { useHttp } from "../util/useHttp";
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { useHttp } from '../util/useHttp';
 
 export interface UserCtx {
     user: UserDto
-    registerUser: (params: Omit<RegisterUserDto, "id">) => Promise<void | Error>
+    registerUser: (params: Omit<RegisterUserDto, 'id'>) => Promise<void | Error>
     loginUser: (params: { username: string, password: string }) => Promise<void | Error>
     logoutUser: () => Promise<void>
     updateUserSettings: (params: UpdateUserSettingsDto) => Promise<void>
+    deleteUser: () => Promise<void>
 }
 
 export const UserContext = React.createContext<UserCtx | null>(null);
@@ -20,7 +21,7 @@ export const UserContext = React.createContext<UserCtx | null>(null);
 export function useUserContext() {
     const context = useContext(UserContext);
     if (!context) {
-        throw new Error("UserContext must be used inside UserProvider");
+        throw new Error('UserContext must be used inside UserProvider');
     }
 
     return context;
@@ -32,7 +33,7 @@ export interface LocalUserData {
 }
 
 export const getLocalStoredUser = (): LocalUserData | null => {
-    const localUserData = localStorage.getItem("user");
+    const localUserData = localStorage.getItem('user');
     if (!localUserData) {
         return null;
     }
@@ -42,9 +43,9 @@ export const getLocalStoredUser = (): LocalUserData | null => {
 
 export const setLocalStoredUser = (data: LocalUserData | null) => {
     if (data === null) {
-        localStorage.removeItem("user");
+        localStorage.removeItem('user');
     } else {
-        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify(data));
     }
 };
 
@@ -59,7 +60,7 @@ export const UserProvider: React.FC<{
         async function fetchUser() {
             await withRequestWithoutLogout(async http => {
                 try {
-                    const { data } = await http.get("/user");
+                    const { data } = await http.get('/user');
                     setLocalStoredUser(data);
                     setUser(data);
                 } catch (error) {
@@ -72,9 +73,13 @@ export const UserProvider: React.FC<{
 
                         // Just create a new trial user.
                         const { data } = await http.post<UserDto>(
-                            "/auth/create",
+                            '/auth/create',
                             // TODO: We shouldn't use the same route for two things
-                            { id: localUserData?.state === UserState.Trial ? localUserData?.id : uuidV4() }
+                            {
+                                id: localUserData?.state === UserState.Trial
+                                    ? localUserData?.id
+                                    : uuidV4()
+                            }
                         );
 
                         setLocalStoredUser(data);
@@ -90,9 +95,9 @@ export const UserProvider: React.FC<{
         fetchUser();
     }, [withRequestWithoutLogout]);
 
-    const registerUser = useCallback(async (params: Omit<RegisterUserDto, "id">) => {
+    const registerUser = useCallback(async (params: Omit<RegisterUserDto, 'id'>) => {
         return await withRequest(async http => {
-            const { data } = await http.post<UserDto>("/auth/register", {
+            const { data } = await http.post<UserDto>('/auth/register', {
                 id: user?.id,
                 ...params
             });
@@ -104,7 +109,7 @@ export const UserProvider: React.FC<{
 
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
         return await withRequest(async http => {
-            const { data } = await http.post<UserDto>("/auth/login", params);
+            const { data } = await http.post<UserDto>('/auth/login', params);
 
             setLocalStoredUser(data);
             setUser(data);
@@ -113,16 +118,16 @@ export const UserProvider: React.FC<{
 
     const logoutUser = useCallback(async () => {
         await withRequest(async http => {
-            await http.post("/auth/logout");
+            await http.post('/auth/logout');
 
             setLocalStoredUser(null);
-            location.href = "/?loggedOut=true";
+            location.href = '/?loggedOut=true';
         });
     }, [withRequest]);
 
     const updateUserSettings = useCallback(async (params: UpdateUserSettingsDto) => {
         await withRequest(async http => {
-            const { data } = await http.put<UserDto>("/user", {
+            const { data } = await http.put<UserDto>('/user', {
                 id: user?.id,
                 ...params
             });
@@ -132,14 +137,22 @@ export const UserProvider: React.FC<{
         });
     }, [withRequest, user]);
 
+    const deleteUser = useCallback(async () => {
+        await withRequest(async http => {
+            await http.delete(`/user`);
+        });
+    }, [withRequest]);
+
     const contextValue = useMemo(() => ({
         // We show a loading screen while no user is available
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         user: user!,
         registerUser,
         loginUser,
         logoutUser,
-        updateUserSettings
-    }), [user, registerUser, loginUser, logoutUser, updateUserSettings]);
+        updateUserSettings,
+        deleteUser
+    }), [user, registerUser, loginUser, logoutUser, updateUserSettings, deleteUser]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -150,5 +163,5 @@ export const UserProvider: React.FC<{
                 : children
             }
         </UserContext.Provider>
-        );
-    };
+    );
+};

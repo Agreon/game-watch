@@ -1,4 +1,4 @@
-export { Searcher } from "./searcher";
+export { Searcher } from './searcher';
 
 // TODO: Only include optionally?
-export { SourceTypeLogo } from "./SourceTypeLogo";
+export { SourceTypeLogo } from './SourceTypeLogo';

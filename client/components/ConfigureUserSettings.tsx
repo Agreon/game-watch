@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/react';
 import { Country, InfoSourceType, SupportedCountries } from '@game-watch/shared';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -32,16 +32,22 @@ export const ConfigureUserSettings: React.FC = () => {
 
     return (
         <Flex px="1rem" justify="center">
-            <Box mt={["0", "0", "1rem"]}>
+            <Box mt={['0', '0', '1rem']}>
                 <Text fontSize="4xl" textAlign="center">Welcome to GameWatch!</Text>
-                <Text fontSize={["2xl", "2xl", "3xl"]} mt="2rem">
-                    Before you start, please select the information sources that are relevant for you.
+                <Text fontSize={['2xl', '2xl', '3xl']} mt="2rem">
+                    Before you start, please select the information sources that are relevant for
+                    you.
                 </Text>
-                <Flex align={["start", "center"]} direction={["column", "row"]} mt={["1rem", "1rem", "2rem"]} mb="2rem">
-                    <Text fontSize={["xl", "xl", "2xl"]}>
+                <Flex
+                    align={['start', 'center']}
+                    direction={['column', 'row']}
+                    mt={['1rem', '1rem', '2rem']}
+                    mb="2rem"
+                >
+                    <Text fontSize={['xl', 'xl', '2xl']}>
                         These are the available sources for
                     </Text>
-                    <Box ml={[0, "1rem"]} mt={["1rem", 0]} minWidth="10rem">
+                    <Box ml={[0, '1rem']} mt={['1rem', 0]} minWidth="10rem">
                         <CountrySelect
                             value={country}
                             onChange={setUserCountry}
@@ -54,7 +60,7 @@ export const ConfigureUserSettings: React.FC = () => {
                     setFilterInfoSources={setInterestedInSources}
                 />
                 <Text mt="2rem">
-                    Missing a source? Let me know or contribute on
+                    Missing a source or a country? Let me know or contribute on
                     <Link href="https://github.com/agreon/game-watch" isExternal ml="0.5rem">
                         <Text as="u">GitHub<ExternalLinkIcon ml='0.2rem' mb="0.2rem" /></Text>
                     </Link>

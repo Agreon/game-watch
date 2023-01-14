@@ -1,10 +1,10 @@
-import { InfoSourceType } from "@game-watch/shared";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Country, InfoSourceType } from '@game-watch/shared';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 
 export interface UrlMapper {
     type: InfoSourceType;
-    mapUrlToId: (url: string) => Promise<string>;
+    mapUrlToId: (url: string, userCountry: Country) => Promise<string>;
 }
 
 export class UrlNotMappableError extends Error { }
@@ -14,15 +14,19 @@ export class MapperService {
     private readonly logger = new Logger(MapperService.name);
 
     public constructor(
-        @Inject("MAPPERS")
+        @Inject('MAPPERS')
         private readonly mappers: UrlMapper[]
     ) { }
 
-    public async mapUrlToResolverId(url: string, type: InfoSourceType): Promise<string> {
+    public async mapUrlToResolverId(
+        url: string,
+        type: InfoSourceType,
+        userCountry: Country,
+    ): Promise<string> {
         const mapperForType = this.getMapperForInfoSourceType(type);
 
         try {
-            return await mapperForType.mapUrlToId(url);
+            return await mapperForType.mapUrlToId(url, userCountry);
         } catch (error) {
             Sentry.captureException(error, {
                 contexts: {
@@ -30,7 +34,8 @@ export class MapperService {
                         url,
                         type
                     }
-                }
+                },
+                level: 'warning'
             });
             this.logger.warn(`[${type}]: ${error}`);
             throw new UrlNotMappableError();

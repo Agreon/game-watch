@@ -1,24 +1,24 @@
 const IGNORED_TOKENS = [
-    "a",
-    "the",
-    "of"
+    'a',
+    'the',
+    'of'
 ];
 
+// TODO: May be too conservative?
 export const matchingName = (name: string, search: string) => {
     const nameTokens = name
-        .replace(/:|™|®|-/g, "")
+        .replace(/:|™|®|-|\(|\)/g, '')
         .toLowerCase()
-        .split(" ")
+        .split(' ')
         .filter(value => !!value);
 
     const searchTokens = search
-        .replace(/\d/, "")
+        .replace(/\d/, '')
         .toLowerCase()
-        .split(" ")
-        .filter(value => !!value);
+        .split(' ')
+        .filter(value => !!value && !IGNORED_TOKENS.includes(value.trim()));
 
     return searchTokens.some(searchToken =>
-        !IGNORED_TOKENS.includes(searchToken.trim())
-        && nameTokens.some(nameToken => nameToken.includes(searchToken.trim()))
+        nameTokens.some(nameToken => nameToken.includes(searchToken.trim()))
     );
 };

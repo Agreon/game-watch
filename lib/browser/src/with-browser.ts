@@ -1,4 +1,4 @@
-import Puppeteer, { Page } from "puppeteer";
+import Puppeteer, { Page } from 'puppeteer';
 
 export const withBrowser = async <T>(
     acceptLanguage: string,
@@ -7,10 +7,10 @@ export const withBrowser = async <T>(
     const browser = await Puppeteer.launch({
         headless: true,
         args: [
-            "--disable-gpu",
-            "--disable-dev-shm-usage",
-            "--disable-setuid-sandbox",
-            "--no-sandbox",
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-sandbox',
             `--lang=${acceptLanguage}`
         ]
     });

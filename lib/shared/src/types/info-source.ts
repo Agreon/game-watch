@@ -1,15 +1,31 @@
-import { Country } from "./country";
+import { Countries, Country } from './country';
 
 export enum InfoSourceType {
-    Steam = "steam",
-    Switch = "switch",
-    PsStore = "psStore",
-    Epic = "epic",
-    Metacritic = "metacritic"
+    Steam = 'steam',
+    Switch = 'switch',
+    Playstation = 'playstation',
+    Epic = 'epic',
+    Metacritic = 'metacritic'
 }
-export type StoreInfoSource = InfoSourceType.Steam | InfoSourceType.Switch | InfoSourceType.PsStore | InfoSourceType.Epic;
+export type StoreInfoSource =
+    | InfoSourceType.Steam
+    | InfoSourceType.Switch
+    | InfoSourceType.Playstation
+    | InfoSourceType.Epic;
 
-export const StoreInfoSources = [InfoSourceType.Steam, InfoSourceType.Switch, InfoSourceType.PsStore, InfoSourceType.Epic];
+export const StoreInfoSources = [
+    InfoSourceType.Steam,
+    InfoSourceType.Switch,
+    InfoSourceType.Playstation,
+    InfoSourceType.Epic,
+];
+
+export enum InfoSourceState {
+    Found = 'Found',
+    Resolved = 'Resolved',
+    Error = 'Error',
+    Disabled = 'Disabled'
+}
 
 export interface BaseGameData {
     id: string;
@@ -23,7 +39,7 @@ export interface StorePriceInformation {
 }
 
 export interface StoreGameData extends BaseGameData {
-    thumbnailUrl?: string;
+    thumbnailUrl: string;
     releaseDate?: Date;
     originalReleaseDate?: string;
     priceInformation?: StorePriceInformation;
@@ -37,7 +53,7 @@ export interface SteamGameData extends StoreGameData {
 
 export type SwitchGameData = StoreGameData;
 
-export type PsStoreGameData = StoreGameData;
+export type PlaystationGameData = StoreGameData;
 
 export type EpicGameData = StoreGameData;
 
@@ -50,19 +66,33 @@ export interface MetacriticData extends BaseGameData {
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
     [InfoSourceType.Switch]: SwitchGameData;
-    [InfoSourceType.PsStore]: PsStoreGameData;
+    [InfoSourceType.Playstation]: PlaystationGameData;
     [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
 };
-export type GameDataU = SteamGameData | SwitchGameData | PsStoreGameData | EpicGameData | MetacriticData;
+export type AnyGameData =
+    | SteamGameData
+    | SwitchGameData
+    | PlaystationGameData
+    | EpicGameData
+    | MetacriticData;
 
 // Tja
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
-    [InfoSourceType.Steam]: ["DE", "US"] as const,
-    [InfoSourceType.PsStore]: ["DE", "US"] as const,
-    [InfoSourceType.Metacritic]: ["DE", "US"] as const,
+    [InfoSourceType.Steam]: Countries,
+    [InfoSourceType.Metacritic]: Countries,
+    [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
+    [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
-    [InfoSourceType.Epic]: ["DE"] as const,
-    // At least the US store is built completely different
-    [InfoSourceType.Switch]: ["DE"] as const,
+    [InfoSourceType.Epic]: [] as const,
 } as const;
+
+// TODO: Use everywhere
+export const InfoSourceTypeNames: Record<InfoSourceType, string> = {
+    [InfoSourceType.Steam]: 'Steam',
+    [InfoSourceType.Switch]: 'Switch',
+    [InfoSourceType.Playstation]: 'PS Store',
+    [InfoSourceType.Epic]: 'Epic',
+    [InfoSourceType.Metacritic]: 'Metacritic',
+    [InfoSourceType.Proton]: 'Proton DB',
+};

@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:16-slim
+FROM node:18-slim
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
@@ -44,10 +44,6 @@ RUN \
     pnpm --filter @game-watch/resolver build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
-RUN chmod -R o+rwx lib/browser/node_modules/puppeteer/.local-chromium
-
 ENV NODE_ENV production
-
-EXPOSE 3000
 
 CMD ["pnpm", "--filter", "@game-watch/resolver", "start:prod"]

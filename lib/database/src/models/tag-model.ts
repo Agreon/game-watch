@@ -1,8 +1,15 @@
-import { Collection, Entity, IdentifiedReference, ManyToMany, ManyToOne, Property } from "@mikro-orm/core";
+import {
+    Collection,
+    Entity,
+    IdentifiedReference,
+    ManyToMany,
+    ManyToOne,
+    Property,
+} from '@mikro-orm/core';
 
-import { BaseEntity } from "../base-entity";
-import { Game } from "./game-model";
-import { User } from "./user-model";
+import { BaseEntity } from '../base-entity';
+import { Game } from './game-model';
+import { User } from './user-model';
 
 @Entity()
 export class Tag extends BaseEntity<Tag> {
@@ -15,10 +22,12 @@ export class Tag extends BaseEntity<Tag> {
     @ManyToMany(() => Game, game => game.tags)
     public games = new Collection<Game>(this);
 
-    @ManyToOne(() => User, { wrappedReference: true })
+    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
     public user!: IdentifiedReference<User>;
 
-    public constructor({ name, color, user }: { name: string, color: string, user: IdentifiedReference<User> }) {
+    public constructor(
+        { name, color, user }: { name: string, color: string, user: IdentifiedReference<User> }) {
+
         super();
         this.name = name;
         this.color = color;

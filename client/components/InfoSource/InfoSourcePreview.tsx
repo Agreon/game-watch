@@ -1,34 +1,28 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
     Box,
     Flex,
     IconButton,
     Text,
     useColorModeValue
-} from "@chakra-ui/react";
-import { InfoSourceType } from "@game-watch/shared";
-import React, { useCallback } from "react";
+} from '@chakra-ui/react';
+import { InfoSourceState } from '@game-watch/shared';
+import React, { useCallback } from 'react';
 
-import { useInfoSourceContext } from "../../providers/InfoSourceProvider";
-import { LoadingSpinner } from "../LoadingSpinner";
-import { SourceTypeLogo } from "./SourceTypeLogo";
-
-const GAME_URL_MAPPING: Record<InfoSourceType, (id: string) => string> = {
-    [InfoSourceType.PsStore]: id => id,
-    [InfoSourceType.Metacritic]: id => id,
-    [InfoSourceType.Switch]: id => id,
-    [InfoSourceType.Epic]: id => id,
-    [InfoSourceType.Steam]: id => `https://store.steampowered.com/app/${id}`,
-};
+import { useGameContext } from '../../providers/GameProvider';
+import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
+import { ResolveError } from '../ResolveError';
+import { SourceTypeLogo } from './SourceTypeLogo';
 
 export const InfoSourcePreview: React.FC = () => {
-    const { source, excludeInfoSource } = useInfoSourceContext();
-    const onRemove = useCallback(() => excludeInfoSource(), [excludeInfoSource]);
+    const { game } = useGameContext();
+    const { source, disableInfoSource } = useInfoSourceContext();
+    const onRemove = useCallback(() => disableInfoSource(true), [disableInfoSource]);
 
     return (
         <Flex
-            direction={["column", "column", "row"]}
-            align={["start", "start", "center"]}
+            direction={['column', 'column', 'row']}
+            align={['start', 'start', 'center']}
             justify="space-between"
             p="1rem"
             pr="1.5rem"
@@ -43,30 +37,42 @@ export const InfoSourcePreview: React.FC = () => {
             }}
             transition="border-color 0.15s ease"
         >
-            <Box flex="0.5" mb={["0.7rem", "0.7rem", "0"]}>
-                <a href={source.data?.url} target="_blank" rel="noreferrer">
+            <Box flex="0.5" mb={['0.7rem', '0.7rem', '0']}>
+                <a href={source.data.url} target="_blank" rel="noreferrer">
                     {SourceTypeLogo[source.type]}
                 </a>
             </Box>
-            <Flex justify="space-between" flex="2" align="center" width="100%">
-                <Box width="100%" position="relative">
-                    {!source.syncing && source.resolveError && <Text flex="1" fontSize="lg" color="tomato">Resolve error</Text>}
-                    {!source.resolveError &&
-                    <>
-                        {!source.remoteGameName ? (
-                            <LoadingSpinner size="lg" />
-                            ) : (
-                                <a href={GAME_URL_MAPPING[source.type](source.remoteGameId ?? "")} target="_blank" rel="noreferrer">
-                                    <Text fontWeight="bold" fontSize="xl">
-                                        {source.remoteGameName}
-                                    </Text>
-                                </a>
-                        )}
-                    </>
-                }
+            <Flex
+                flex="2"
+                justify="space-between"
+                align="center"
+                width="100%"
+                overflow="hidden"
+            >
+                <Box maxWidth="85%">
+                    {source.state === InfoSourceState.Error
+                        && <Box flex="1"><ResolveError /></Box>}
+                    {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
+                        <a href={source.data.url} target="_blank" rel="noreferrer">
+                            <Text
+                                fontWeight="bold"
+                                fontSize="xl"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace={['normal', 'normal', 'nowrap']}
+                            >
+                                {source.data.fullName}
+                            </Text>
+                        </a>
+                    }
                 </Box>
                 <Box pl="0.5rem">
-                    <IconButton aria-label='Delete' onClick={onRemove} icon={<DeleteIcon />} />
+                    <IconButton
+                        aria-label='Delete'
+                        onClick={onRemove}
+                        icon={<DeleteIcon />}
+                        disabled={game.syncing}
+                    />
                 </Box>
             </Flex>
         </Flex>

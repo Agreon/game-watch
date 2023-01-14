@@ -1,7 +1,7 @@
-import { ColorModeScript } from "@chakra-ui/react";
-import NextDocument, { Head, Html, Main, NextScript } from "next/document";
+import { ColorModeScript } from '@chakra-ui/react';
+import NextDocument, { Head, Html, Main, NextScript } from 'next/document';
 
-import theme from "../theme";
+import theme from '../theme';
 
 export default class Document extends NextDocument {
   render() {
@@ -18,6 +18,11 @@ export default class Document extends NextDocument {
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <NextScript />
+          <script
+            defer
+            data-domain="game-watch.agreon.de"
+            src="https://plausible.agreon.de/js/script.local.outbound-links.js">
+          </script>
         </body>
       </Html>
     );

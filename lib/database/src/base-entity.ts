@@ -1,7 +1,7 @@
-import { BaseEntity as MikroOrmBaseEntity, PrimaryKey, Property } from "@mikro-orm/core";
-import { v4 } from "uuid";
+import { BaseEntity as MikroOrmBaseEntity, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from 'uuid';
 
-export abstract class BaseEntity<T extends { id: string }> extends MikroOrmBaseEntity<T, "id"> {
+export abstract class BaseEntity<T extends { id: string }> extends MikroOrmBaseEntity<T, 'id'> {
     @PrimaryKey()
     public id: string = v4();
 

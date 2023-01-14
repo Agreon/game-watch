@@ -1,36 +1,36 @@
-import { InfoSearcher, InfoSearcherContext } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
+import { InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { matchingName } from "../util/matching-name";
+import { matchingName } from '../util/matching-name';
 
 export class SteamSearcher implements InfoSearcher {
     public type = InfoSourceType.Steam;
 
-    public constructor(private readonly axios: AxiosInstance) {}
+    public constructor(private readonly axios: AxiosInstance) { }
 
     public async search(search: string, { logger }: InfoSearcherContext) {
         const { data } = await this.axios.get<string>(
             'https://store.steampowered.com/search',
-            { params: { term: search } }
+            { params: { term: search, ignore_preferences: 1 } }
         );
 
         const $ = cheerio.load(data);
 
-        const resultRow = $(".search_result_row");
+        const resultRow = $('.search_result_row');
         if (!resultRow.length) {
-            logger.debug("No search results found");
+            logger.debug('No search results found');
 
             return null;
         }
 
-        const gameId = resultRow.attr("data-ds-appid");
+        const gameId = resultRow.attr('data-ds-appid');
         if (!gameId) {
             return null;
         }
 
-        const fullName = ($(".search_result_row .title")[0].children[0] as any).data as string;
+        const fullName = ($('.search_result_row .title')[0].children[0] as any).data as string;
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
@@ -39,8 +39,9 @@ export class SteamSearcher implements InfoSearcher {
         }
 
         return {
-            remoteGameId: gameId,
-            remoteGameName: fullName
+            id: gameId,
+            fullName,
+            url: `https://store.steampowered.com/app/${gameId}`
         };
     }
 }

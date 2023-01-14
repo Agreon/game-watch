@@ -1,34 +1,33 @@
-import { InfoSearcher, InfoSearcherContext, SearchResponse } from "@game-watch/service";
-import { mapCountryCodeToAcceptLanguage } from "@game-watch/service";
-import { InfoSourceType } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
+import { BaseGameData, InfoSourceType } from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { matchingName } from "../util/matching-name";
+import { matchingName } from '../util/matching-name';
 
 export class MetacriticSearcher implements InfoSearcher {
     public type = InfoSourceType.Metacritic;
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async search(search: string, { logger, userCountry }: InfoSearcherContext): Promise<SearchResponse | null> {
+    public async search(
+        search: string,
+        { logger }: InfoSearcherContext
+    ): Promise<BaseGameData | null> {
         const { data } = await this.axios.get<string>(
             `https://www.metacritic.com/search/game/${search}/results`,
-            {
-                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(userCountry) }
-            }
         );
 
         const $ = cheerio.load(data);
 
-        const resultRow = $(".first_result a");
+        const resultRow = $('.first_result a');
         if (!resultRow.length) {
-            logger.debug("No results found");
+            logger.debug('No results found');
 
             return null;
         }
 
-        const gameLink = resultRow.attr("href");
+        const gameLink = resultRow.attr('href');
         if (!gameLink) {
             return null;
         }
@@ -40,16 +39,19 @@ export class MetacriticSearcher implements InfoSearcher {
             return null;
         }
 
-        const criticScore = $(".main_stats > .metascore_w").text().trim();
+        const criticScore = $('.main_stats > .metascore_w').text().trim();
         if (isNaN(parseInt(criticScore))) {
-            logger.debug(`Found score '${fullName}' is not a number. Skipping`);
+            logger.debug(`Found score '${criticScore}' is not a number. Skipping`);
 
             return null;
         }
 
+        const url = `https://www.metacritic.com${gameLink}`;
+
         return {
-            remoteGameId: `https://www.metacritic.com${gameLink}`,
-            remoteGameName: fullName,
+            id: url,
+            url,
+            fullName,
         };
 
     }

@@ -1,7 +1,7 @@
-import { Notification, User } from "@game-watch/database";
-import { EntityRepository, IdentifiedReference, QueryOrder } from "@mikro-orm/core";
-import { InjectRepository } from "@mikro-orm/nestjs";
-import { Injectable } from "@nestjs/common";
+import { Notification, User } from '@game-watch/database';
+import { EntityRepository, IdentifiedReference, QueryOrder } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class NotificationService {
@@ -14,7 +14,7 @@ export class NotificationService {
         return await this.notificationRepository.find(
             { read: false, user },
             {
-                populate: ["game", "infoSource"],
+                populate: ['game', 'infoSource'],
                 orderBy: { createdAt: QueryOrder.DESC, id: QueryOrder.DESC },
             }
         );
@@ -27,5 +27,14 @@ export class NotificationService {
         await this.notificationRepository.persistAndFlush(notification);
 
         return notification;
+    }
+
+    public async markAllNotificationsAsRead(user: IdentifiedReference<User>): Promise<void> {
+        const notifications = await this.notificationRepository.find({ read: false, user });
+
+        for (const notification of notifications) {
+            notification.read = true;
+        }
+        await this.notificationRepository.persistAndFlush(notifications);
     }
 }
