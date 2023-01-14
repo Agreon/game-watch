@@ -4,6 +4,7 @@ import {
     InfoSourceDto,
     InfoSourceState,
     InfoSourceType,
+    SetupGameDto,
     TagDto,
 } from '@game-watch/shared';
 import { AxiosResponse } from 'axios';
@@ -55,7 +56,7 @@ export interface GameCtx {
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
     thumbnailUrl: string | null
-    setupGame: (options: { name: string }) => Promise<void>
+    setupGame: (options: SetupGameDto) => Promise<void>
     syncGame: () => Promise<void>
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
@@ -138,9 +139,9 @@ export const GameProvider: React.FC<{
         );
     }, [withRequest, handleError, setGame, game]);
 
-    const setupGame = useCallback(async ({ name }: { name: string }) => {
+    const setupGame = useCallback(async (options: SetupGameDto) => {
         await withRequest(async http => {
-            const { data } = await http.post<GameDto>(`/game/${game.id}/setup`, { name });
+            const { data } = await http.post<GameDto>(`/game/${game.id}/setup`, options);
             setGame(data.id, data);
         });
     }, [withRequest, setGame, game.id]);

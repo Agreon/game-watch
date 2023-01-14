@@ -1,5 +1,5 @@
 import { Game, Tag, User } from '@game-watch/database';
-import { CreateGameDto, GameDto, UpdateGameDto } from '@game-watch/shared';
+import { CreateGameDto, GameDto, SetupGameDto, UpdateGameDto } from '@game-watch/shared';
 import { IdentifiedReference } from '@mikro-orm/core';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 
@@ -53,9 +53,9 @@ export class GameController {
     @Post('/:id/setup')
     public async setup(
         @Param('id', UserIsOwner) { id }: Game,
-        @Body() { name }: UpdateGameDto
+        @Body() { name, continueSearching }: SetupGameDto
     ): Promise<GameDto> {
-        await this.gameService.setupGame(id, name);
+        await this.gameService.setupGame(id, { name, continueSearching });
 
         return await this.gameService.getGame(id);
     }

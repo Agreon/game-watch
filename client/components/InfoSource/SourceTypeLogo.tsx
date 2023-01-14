@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { InfoSourceType } from '@game-watch/shared';
+import { InfoSourceType, InfoSourceTypeNames } from '@game-watch/shared';
 import Image from 'next/legacy/image';
 import React from 'react';
 
@@ -24,7 +24,9 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
                     />
                 </Box>
             </Box>
-            <Text fontWeight="bold" ml="0.25rem" mt="0.25rem">Steam</Text>
+            <Text fontWeight="bold" ml="0.25rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Steam]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Switch]: (
@@ -34,7 +36,9 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
                     <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height={25} width={25} />
                 </Box>
             </Box>
-            <Text fontWeight="bold" ml="0.25rem" mt="0.25rem">Switch</Text>
+            <Text fontWeight="bold" ml="0.25rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Switch]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Playstation]: (
@@ -44,7 +48,9 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
                     <Image alt="source-icon" priority={true} src={psLogo} quality={100} height={35} width={35} />
                 </Box>
             </Box>
-            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">PS Store</Text>
+            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Playstation]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Epic]: (
@@ -54,7 +60,9 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
                     <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height={25} width={25} />
                 </Box>
             </Box>
-            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">Epic</Text>
+            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Epic]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Metacritic]: (
@@ -64,7 +72,9 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
                     <Image alt="source-icon" priority={true} src={metacriticLogo} quality={100} height={27} width={27} />
                 </Box>
             </Box>
-            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">Metacritic</Text>
+            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Metacritic]}
+            </Text>
         </Flex>
     )
 };
@@ -73,31 +83,41 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={steamLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.5rem">Steam</Text>
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Steam]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Switch]: (
         <Flex align="center">
             <Image alt="source-icon" priority={true} src={switchLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.5rem">Switch</Text>
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Switch]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Playstation]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={psLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.5rem">PS Store</Text>
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Playstation]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Epic]: (
         <Flex align="center">
             <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.5rem">Epic</Text>
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Epic]}
+            </Text>
         </Flex>
     ),
     [InfoSourceType.Metacritic]: (
         <Flex align="center">
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.5rem">Metacritic</Text>
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Metacritic]}
+            </Text>
         </Flex>
     )
 };

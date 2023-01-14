@@ -1,7 +1,7 @@
 import { Game, InfoSource, Tag, User } from '@game-watch/database';
 import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { getCronForNightlySync } from '@game-watch/service';
-import { InfoSourceState } from '@game-watch/shared';
+import { InfoSourceState, SetupGameDto } from '@game-watch/shared';
 import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -70,17 +70,20 @@ export class GameService {
         return game;
     }
 
-    public async setupGame(id: string, name: string) {
+    public async setupGame(id: string, { name, continueSearching }: SetupGameDto) {
         const game = await this.gameRepository.findOneOrFail(id, { populate: ['user'] });
 
         game.setupCompleted = true;
+        game.continueSearching = continueSearching;
         game.name = name;
         await this.gameRepository.persistAndFlush(game);
 
-        await this.queueService.createRepeatableGameSearchJob(
-            game,
-            getCronForNightlySync(game.user.getEntity().country)
-        );
+        if (continueSearching) {
+            await this.queueService.createRepeatableGameSearchJob(
+                game,
+                getCronForNightlySync(game.user.getEntity().country)
+            );
+        }
 
         return game;
     }

@@ -12,6 +12,4 @@ export class Migration20220930064636 extends Migration {
     this.addSql('alter table "info_source" add constraint "info_source_game_id_foreign" foreign key ("game_id") references "game" ("id") on delete cascade;');
     this.addSql('alter table "tag" add constraint "tag_user_id_foreign" foreign key ("user_id") references "user" ("id") on delete cascade;');
   }
-
-  async down(): Promise<void> { }
 }

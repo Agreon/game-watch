@@ -20,7 +20,4 @@ export class Migration20220906064635 extends Migration {
 
     this.addSql('alter table "info_source" add constraint "info_source_type_unique" unique ("type", "game_id");');
   }
-
-  async down(): Promise<void> {
-  }
 }

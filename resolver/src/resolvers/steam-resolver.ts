@@ -46,8 +46,6 @@ export class SteamResolver implements InfoResolver {
             // TODO: We need to open the site to get the price.
         }
 
-        console.log(json);
-
         return {
             id: source.data.id,
             fullName: source.data.fullName,
