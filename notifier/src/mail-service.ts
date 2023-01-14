@@ -34,18 +34,23 @@ export class MailService {
         const infoSource = notification.infoSource.getEntity();
 
         const gameName = game.name || game.search;
+        // We rather display the resolved name so a user can see instantly if an unrelated
+        // game was added.
+        const infoSourceName = infoSource.data.fullName;
 
         switch (notification.type) {
+            case NotificationType.GameReleased:
+                return `${gameName} will be available today in the ${infoSource.type} store`;
             case NotificationType.GameReduced:
                 return `${gameName} was reduced in the ${infoSource.type} store`;
             case NotificationType.ReleaseDateChanged:
                 return `The release date of ${gameName} changed`;
             case NotificationType.NewStoreEntry:
-                return `${gameName} was added to the ${infoSource.type} store`;
-            case NotificationType.GameReleased:
-                return `${gameName} will be available today in the ${infoSource.type} store`;
+                return `${infoSourceName} was added to the ${infoSource.type} store`;
             case NotificationType.NewMetacriticRating:
-                return `${gameName} received a metacritic rating`;
+                return `${infoSourceName} received a Metacritic rating`;
+            case NotificationType.NewProtonDbRating:
+                return `${infoSourceName} received a Proton DB rating`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved`;
         }
@@ -79,6 +84,9 @@ ${unsubscribeLink}
         const infoSource = notification.infoSource.getEntity();
 
         const gameName = game.name || game.search;
+        // We rather display the resolved name so a user can see instantly if an unrelated
+        // game was added.
+        const infoSourceName = infoSource.data.fullName;
 
         switch (notification.type) {
             case NotificationType.GameReduced:
@@ -94,11 +102,13 @@ ${unsubscribeLink}
 
                 return `${gameName} will be released on ${formattedDate} in the ${infoSource.type} store.`;
             case NotificationType.NewStoreEntry:
-                return `${gameName} was added to the ${infoSource.type} store.`;
+                return `${infoSourceName} was added to the ${infoSource.type} store.`;
             case NotificationType.GameReleased:
                 return `${gameName} will be available today in the ${infoSource.type} store.`;
             case NotificationType.NewMetacriticRating:
-                return `${gameName} received a metacritic rating.`;
+                return `${infoSourceName} received a Metacritic rating.`;
+            case NotificationType.NewProtonDbRating:
+                return `${infoSourceName} received a Proton DB rating.`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved. Try to trigger it manually again.`
                     + " If that didn't help, there might be an issue with our implementation."

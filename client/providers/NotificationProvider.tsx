@@ -3,6 +3,7 @@ import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useHttp } from '../util/useHttp';
+import { usePolling } from '../util/usePolling';
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
@@ -26,19 +27,28 @@ export function useNotificationContext() {
 export const NotificationProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
-    const { withRequest, handleError } = useHttp();
+    const { withRequest, http } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
-    useEffect(() => {
-        const intervalId = setInterval(async () => {
-            await withRequest(async http => {
-                const { data } = await http.get<NotificationDto[]>(`/notification`);
-                setNotifications(data);
-            });
-        }, 5000);
+    // useEffect(() => {
+    //     const intervalId = setInterval(async () => {
+    //         await withRequest(async http => {
+    //             const { data } = await http.get<NotificationDto[]>(`/notification`);
+    //             setNotifications(data);
+    //         });
+    //     }, 60 * 60 * 1000);
 
-        return () => clearInterval(intervalId);
-    }, [setNotifications, handleError, withRequest]);
+    //     return () => clearInterval(intervalId);
+    // }, [setNotifications, withRequest]);
+
+    const pollNotifications = useCallback(async () => {
+        const { data } = await http.get<NotificationDto[]>(`/notification`);
+        setNotifications(data);
+
+        // Never stop
+        return false;
+    }, [http]);
+    usePolling(pollNotifications, 60 * 60 * 1000, []);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
         await withRequest(async http => {

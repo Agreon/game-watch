@@ -1,7 +1,9 @@
 import { InfoSourceDto, InfoSourceState } from '@game-watch/shared';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
+import { useErrorHandler } from '../util/useErrorHandler';
 import { useHttp } from '../util/useHttp';
+import { usePolling } from '../util/usePolling';
 
 export interface InfoSourceCtx {
     source: InfoSourceDto
@@ -23,26 +25,39 @@ export const InfoSourceProvider: React.FC<{
     setGameInfoSource: (infoSource: InfoSourceDto) => void
     removeGameInfoSource: (id: string) => void
 }> = ({ children, source, setGameInfoSource, removeGameInfoSource }) => {
-    const { withRequest, handleError } = useHttp();
+    const { withRequest, http } = useHttp();
+    const handleError = useErrorHandler();
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     if (source.state !== InfoSourceState.Found) {
+    //         return;
+    //     }
+
+    //     const intervalId = setInterval(async () => {
+    //         await withRequest(async http => {
+    //             const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
+    //             setGameInfoSource(data);
+    //             if (data.state !== InfoSourceState.Found) {
+    //                 clearInterval(intervalId);
+    //             }
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(intervalId);
+
+    // }, [source.id, source.state, handleError, setGameInfoSource, withRequest]);
+
+    const pollInfoSource = useCallback(async () => {
         if (source.state !== InfoSourceState.Found) {
-            return;
+            return true;
         }
 
-        const intervalId = setInterval(async () => {
-            await withRequest(async http => {
-                const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
-                setGameInfoSource(data);
-                if (data.state !== InfoSourceState.Found) {
-                    clearInterval(intervalId);
-                }
-            });
-        }, 1000);
+        const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
+        setGameInfoSource(data);
 
-        return () => clearInterval(intervalId);
-
-    }, [source.id, source.state, handleError, setGameInfoSource, withRequest]);
+        return data.state !== InfoSourceState.Found;
+    }, [http, setGameInfoSource, source.id, source.state]);
+    usePolling(pollInfoSource, 1000, [source.state]);
 
     const syncInfoSource = useCallback(async () => {
         const previousState = source.state;

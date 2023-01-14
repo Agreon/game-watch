@@ -8,9 +8,11 @@ import {
     TagDto,
 } from '@game-watch/shared';
 import { AxiosResponse } from 'axios';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { useErrorHandler } from '../util/useErrorHandler';
 import { useHttp } from '../util/useHttp';
+import { usePolling } from '../util/usePolling';
 
 export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Playstation,
@@ -18,6 +20,7 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Switch,
     InfoSourceType.Epic,
     InfoSourceType.Metacritic,
+    InfoSourceType.Proton
 ];
 
 const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string): string | null => {
@@ -84,7 +87,8 @@ export const GameProvider: React.FC<{
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
 }> = ({ children, game, setGame, removeGame }) => {
-    const { withRequest, handleError } = useHttp();
+    const { withRequest, http } = useHttp();
+    const handleError = useErrorHandler();
     const [loading, setLoading] = useState(false);
 
     const syncGame = useCallback(async () => {
@@ -96,23 +100,36 @@ export const GameProvider: React.FC<{
         setLoading(false);
     }, [withRequest, setGame, game.id]);
 
-    useEffect(() => {
+    // TODO: Extract polling util for 429-Handling
+    // useEffect(() => {
+    //     if (!game.syncing) {
+    //         return;
+    //     }
+
+    //     const intervalId = setInterval(async () => {
+    //         await withRequest(async http => {
+    //             const { data } = await http.get<GameDto>(`/game/${game.id}`);
+    //             setGame(data.id, data);
+    //             if (data.syncing === false) {
+    //                 clearInterval(intervalId);
+    //             }
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(intervalId);
+    // }, [game.id, game.syncing, handleError, setGame, withRequest]);
+
+    const pollGame = useCallback(async () => {
         if (!game.syncing) {
-            return;
+            return true;
         }
 
-        const intervalId = setInterval(async () => {
-            await withRequest(async http => {
-                const { data } = await http.get<GameDto>(`/game/${game.id}`);
-                setGame(data.id, data);
-                if (data.syncing === false) {
-                    clearInterval(intervalId);
-                }
-            });
-        }, 1000);
+        const { data } = await http.get<GameDto>(`/game/${game.id}`);
+        setGame(data.id, data);
 
-        return () => clearInterval(intervalId);
-    }, [game.id, game.syncing, handleError, setGame, withRequest]);
+        return data.syncing === false;
+    }, [game.syncing, game.id, http, setGame]);
+    usePolling(pollGame, 1000, [game.syncing]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update

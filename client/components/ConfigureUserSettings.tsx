@@ -35,8 +35,7 @@ export const ConfigureUserSettings: React.FC = () => {
             <Box mt={['0', '0', '1rem']}>
                 <Text fontSize="4xl" textAlign="center">Welcome to GameWatch!</Text>
                 <Text fontSize={['2xl', '2xl', '3xl']} mt="2rem">
-                    Before you start, please select the information sources that are relevant for
-                    you.
+                    Before you start, please select the sources that are relevant for you.
                 </Text>
                 <Flex
                     align={['start', 'center']}

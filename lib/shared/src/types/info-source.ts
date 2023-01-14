@@ -5,7 +5,8 @@ export enum InfoSourceType {
     Switch = 'switch',
     Playstation = 'playstation',
     Epic = 'epic',
-    Metacritic = 'metacritic'
+    Metacritic = 'metacritic',
+    Proton = 'proton'
 }
 export type StoreInfoSource =
     | InfoSourceType.Steam
@@ -62,6 +63,12 @@ export interface MetacriticData extends BaseGameData {
     userScore: string;
 }
 
+export type ProtonDbScore = 'native' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'borked';
+
+export interface ProtonGameData extends BaseGameData {
+    score: ProtonDbScore;
+}
+
 // TODO: What do these generics give us except for binding us to details?
 export type GameData = {
     [InfoSourceType.Steam]: SteamGameData;
@@ -69,17 +76,20 @@ export type GameData = {
     [InfoSourceType.Playstation]: PlaystationGameData;
     [InfoSourceType.Epic]: EpicGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
+    [InfoSourceType.Proton]: ProtonGameData;
 };
 export type AnyGameData =
     | SteamGameData
     | SwitchGameData
     | PlaystationGameData
     | EpicGameData
-    | MetacriticData;
+    | MetacriticData
+    | ProtonGameData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
+    [InfoSourceType.Proton]: Countries,
     [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
     [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
     // Currently, it is not clear how epic determines the user origin and therefore the currencies.
