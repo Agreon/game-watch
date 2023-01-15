@@ -43,8 +43,7 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
         return client;
     }, [logoutOnAuthFailure]);
 
-    // TODO: Rename: requestWithErrorHandling
-    const withRequest = useCallback(
+    const requestWithErrorHandling = useCallback(
         async <T>(
             request: (http: AxiosInstance) => Promise<T>,
             errorHandler?: (error: AxiosError) => void,
@@ -61,5 +60,5 @@ export function useHttp(logoutOnAuthFailure: boolean = true) {
             }
         }, [http, handleError]);
 
-    return { withRequest, http };
+    return { requestWithErrorHandling, http };
 }

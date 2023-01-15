@@ -27,7 +27,7 @@ export function useNotificationContext() {
 export const NotificationProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
-    const { withRequest, http } = useHttp();
+    const { requestWithErrorHandling: requestWithErrorHandling, http } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
     const pollNotifications = useCallback(async () => {
@@ -40,20 +40,20 @@ export const NotificationProvider: React.FC<{
     usePolling(pollNotifications, 60 * 60 * 1000, []);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.post(`/notification/${notificationId}/read`);
             setNotifications(currentNotifications => currentNotifications.filter(
                 ({ id }) => id !== notificationId
             ));
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const markAllNotificationsAsRead = useCallback(async () => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.post(`/notification/mark-all-as-read`);
             setNotifications(() => []);
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const {
         isOpen: showNotificationSidebar,

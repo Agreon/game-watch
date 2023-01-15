@@ -87,18 +87,18 @@ export const GameProvider: React.FC<{
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
 }> = ({ children, game, setGame, removeGame }) => {
-    const { withRequest, http } = useHttp();
+    const { requestWithErrorHandling, http } = useHttp();
     const handleError = useErrorHandler();
     const [loading, setLoading] = useState(false);
 
     const syncGame = useCallback(async () => {
         setLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.post<GameDto>(`/game/${game.id}/sync`);
             setGame(data.id, data);
         });
         setLoading(false);
-    }, [withRequest, setGame, game.id]);
+    }, [requestWithErrorHandling, setGame, game.id]);
 
     const pollGame = useCallback(async () => {
         if (!game.syncing) {
@@ -120,7 +120,7 @@ export const GameProvider: React.FC<{
             name
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.put<GameDto>(`/game/${game.id}`, {
                 ...game,
                 name
@@ -135,23 +135,23 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game]);
+    }, [requestWithErrorHandling, handleError, setGame, game]);
 
     const setupGame = useCallback(async (options: SetupGameDto) => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.post<GameDto>(`/game/${game.id}/setup`, options);
             setGame(data.id, data);
         });
-    }, [withRequest, setGame, game.id]);
+    }, [requestWithErrorHandling, setGame, game.id]);
 
     const deleteGame = useCallback(async () => {
         setLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.delete(`/game/${game.id}`);
             removeGame(game.id);
         });
         setLoading(false);
-    }, [withRequest, removeGame, game.id]);
+    }, [requestWithErrorHandling, removeGame, game.id]);
 
     const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
@@ -193,7 +193,7 @@ export const GameProvider: React.FC<{
             tags: [...curr.tags, tag]
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.post(`/game/${game.id}/tag/${tag.id}`),
             (error) => {
                 setGame(game.id, curr => ({
@@ -205,7 +205,7 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game.id, game.tags]);
+    }, [requestWithErrorHandling, handleError, setGame, game.id, game.tags]);
 
     const removeTagFromGame = useCallback(async (tag: TagDto) => {
         const oldGameTags = [...game.tags];
@@ -215,7 +215,7 @@ export const GameProvider: React.FC<{
             tags: curr.tags.filter(({ id }) => id !== tag.id)
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.delete(`/game/${game.id}/tag/${tag.id}`),
             error => {
                 setGame(game.id, curr => ({
@@ -227,10 +227,10 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game.id, game.tags]);
+    }, [requestWithErrorHandling, handleError, setGame, game.id, game.tags]);
 
     const addInfoSource = useCallback(async (params: { type: InfoSourceType, url: string }) => {
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data: infoSource } = await http.post<CreateInfoSourceDto, AxiosResponse<InfoSourceDto>>(`/info-source`, {
                 gameId: game.id,
                 type: params.type,
@@ -246,7 +246,7 @@ export const GameProvider: React.FC<{
             }
             handleError(error);
         });
-    }, [withRequest, setGameInfoSource, game.id, handleError]);
+    }, [requestWithErrorHandling, setGameInfoSource, game.id, handleError]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
 
