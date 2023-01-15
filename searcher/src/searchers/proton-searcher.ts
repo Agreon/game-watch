@@ -14,36 +14,24 @@ export class ProtonSearcher implements InfoSearcher {
         search: string,
         { logger }: InfoSearcherContext,
     ): Promise<BaseGameData | null> {
-        const { data: { results: [{ hits }] } } = await this.axios.post(
+
+        const { data: { hits } } = await this.axios.post(
             'https://94he6yatei-3.algolianet.com/1/indexes/steamdb/query',
-            // {
-            //     'query': search,
-            //     'attributesToHighlight': [],
-            //     'attributesToSnippet': [],
-            //     'facets': ['tags'],
-            //     'facetFilters': [['appType:Game']],
-            //     'hitsPerPage': 5,
-            //     'attributesToRetrieve': [
-            //         'name',
-            //         'objectID',
-            //     ],
-            //     'page': 0
-            // },
             {
                 'query': search,
-                'attributesToHighlight': [],
-                'attributesToSnippet': [],
-                'facets': ['tags'],
                 'facetFilters': [['appType:Game']],
-                'hitsPerPage': 50,
-                'attributesToRetrieve': ['lastUpdated', 'name', 'objectID', 'followers', 'oslist', 'releaseYear', 'tags', 'technologies', 'userScore'],
-                'page': 0,
-            }
-            , {
+                'hitsPerPage': 5,
+                'attributesToRetrieve': [
+                    'name',
+                    'objectID',
+                ],
+                'page': 0
+            },
+            {
                 headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
                     'x-algolia-api-key': '9ba0e69fb2974316cdaec8f5f257088f',
-                    'x-algolia-application-id': '94HE6YATEI'
+                    'x-algolia-application-id': '94HE6YATEI',
+                    'Origin': 'https://www.protondb.com'
                 }
             }
         );

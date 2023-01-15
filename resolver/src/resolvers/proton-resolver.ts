@@ -9,18 +9,16 @@ export class ProtonResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<ProtonGameData> {
-        const { data: { results: [{ hits }] } } = await this.axios.post(
+        const { data: { hits } } = await this.axios.post(
             'https://94he6yatei-3.algolianet.com/1/indexes/steamdb/query',
             {
                 'query': '',
-                'attributesToHighlight': [],
-                'attributesToSnippet': [],
-                'facets': ['tags'],
                 'facetFilters': [['appType:Game']],
                 'hitsPerPage': 1,
                 'attributesToRetrieve': [
                     'name',
                     'objectID',
+                    'userScore'
                 ],
                 'page': 0,
                 'filters': `(objectID:${source.data.id})`
@@ -28,7 +26,8 @@ export class ProtonResolver implements InfoResolver {
             {
                 headers: {
                     'x-algolia-api-key': '9ba0e69fb2974316cdaec8f5f257088f',
-                    'x-algolia-application-id': '94HE6YATEI'
+                    'x-algolia-application-id': '94HE6YATEI',
+                    'Origin': 'https://www.protondb.com'
                 }
             }
         );

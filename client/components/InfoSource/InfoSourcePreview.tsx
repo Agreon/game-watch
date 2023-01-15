@@ -37,7 +37,7 @@ export const InfoSourcePreview: React.FC = () => {
             }}
             transition="border-color 0.15s ease"
         >
-            <Box flex="0.5" mb={['0.7rem', '0.7rem', '0']}>
+            <Box flex="0.6" mb={['0.7rem', '0.7rem', '0']}>
                 <a href={source.data.url} target="_blank" rel="noreferrer">
                     {SourceTypeLogo[source.type]}
                 </a>
@@ -51,7 +51,7 @@ export const InfoSourcePreview: React.FC = () => {
             >
                 <Box maxWidth="85%">
                     {source.state === InfoSourceState.Error
-                        && <Box flex="1"><ResolveError /></Box>}
+                        && <Box flex="1" pt="0.25rem"><ResolveError /></Box>}
                     {[InfoSourceState.Found, InfoSourceState.Resolved].includes(source.state) &&
                         <a href={source.data.url} target="_blank" rel="noreferrer">
                             <Text
@@ -60,6 +60,7 @@ export const InfoSourcePreview: React.FC = () => {
                                 overflow="hidden"
                                 textOverflow="ellipsis"
                                 whiteSpace={['normal', 'normal', 'nowrap']}
+                                pt="0.25rem"
                             >
                                 {source.data.fullName}
                             </Text>

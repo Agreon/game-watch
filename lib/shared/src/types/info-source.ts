@@ -96,12 +96,11 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Epic]: [] as const,
 } as const;
 
-// TODO: Use everywhere
 export const InfoSourceTypeNames: Record<InfoSourceType, string> = {
     [InfoSourceType.Steam]: 'Steam',
     [InfoSourceType.Switch]: 'Switch',
     [InfoSourceType.Playstation]: 'PS Store',
     [InfoSourceType.Epic]: 'Epic',
     [InfoSourceType.Metacritic]: 'Metacritic',
-    [InfoSourceType.Proton]: 'Proton DB',
+    [InfoSourceType.Proton]: 'ProtonDB',
 };
