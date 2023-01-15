@@ -82,7 +82,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 key={tag.id}
                                 onClick={() => toggleTag(tag)}
                                 variant={tag.toggled ? 'subtle' : 'outline'}
-                                colorScheme={tag.toggled ? tag.color : 'whiteAlpha'}
+                                colorScheme={tag.toggled ? tag.color : 'white'}
                                 cursor="pointer"
                                 mx="0.5rem"
                                 my="0.25rem"

@@ -2,7 +2,6 @@ import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
-import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 export interface SwitchSearchResponse {
@@ -61,17 +60,12 @@ export class SwitchSearcher implements InfoSearcher {
                 countryCode
             );
 
-            if (!numFound) {
+            if (!numFound || !results.length) {
                 logger.debug('No search results found');
 
                 return null;
             }
-
-            const bestMatch = findBestMatch<{ title: string, url: string }>(
-                search,
-                results,
-                'title',
-            );
+            const bestMatch = results[0];
 
             if (!matchingName(bestMatch.title, search)) {
                 logger.debug(
@@ -144,11 +138,7 @@ export class SwitchSearcher implements InfoSearcher {
 
             return null;
         }
-
-        const {
-            title,
-            url,
-        } = findBestMatch<{ title: string, url: string }>(search, results, 'title');
+        const { title, url, } = results[0];
 
         if (!matchingName(title, search)) {
             logger.debug(

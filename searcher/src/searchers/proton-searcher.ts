@@ -2,7 +2,6 @@ import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
-import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 export class ProtonSearcher implements InfoSearcher {
@@ -47,11 +46,7 @@ export class ProtonSearcher implements InfoSearcher {
             name,
             objectID,
             userScore
-        } = findBestMatch<{ name: string, objectID: string, userScore: number | null }>(
-            search,
-            hits,
-            'name',
-        );
+        } = hits[0];
 
         if (!matchingName(name, search)) {
             logger.debug(

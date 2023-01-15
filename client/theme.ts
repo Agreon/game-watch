@@ -67,6 +67,19 @@ const theme = extendTheme({
         padding: '1rem',
       },
     }
+  },
+  colors: {
+    white: {
+      100: "white",
+      200: "white",
+      300: "white",
+      400: "white",
+      500: "white",
+      600: "white",
+      700: "white",
+      800: "white",
+      900: "white",
+    }
   }
 });
 
