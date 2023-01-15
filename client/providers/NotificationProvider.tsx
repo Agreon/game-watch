@@ -30,17 +30,6 @@ export const NotificationProvider: React.FC<{
     const { withRequest, http } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
-    // useEffect(() => {
-    //     const intervalId = setInterval(async () => {
-    //         await withRequest(async http => {
-    //             const { data } = await http.get<NotificationDto[]>(`/notification`);
-    //             setNotifications(data);
-    //         });
-    //     }, 60 * 60 * 1000);
-
-    //     return () => clearInterval(intervalId);
-    // }, [setNotifications, withRequest]);
-
     const pollNotifications = useCallback(async () => {
         const { data } = await http.get<NotificationDto[]>(`/notification`);
         setNotifications(data);

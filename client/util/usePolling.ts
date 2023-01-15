@@ -1,12 +1,17 @@
+import assert from 'assert';
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
 import { useErrorHandler } from './useErrorHandler';
 
+const THROTTLE_TTL = process.env.NEXT_PUBLIC_THROTTLE_TTL;
+assert(typeof THROTTLE_TTL === 'string');
+
 // We wait the throttle timeout + some buffer to be safe if some concurrent requests reset the ttl.
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const WAIT_MS_ON_THROTTLE = (parseInt(process.env.NEXT_PUBLIC_THROTTLE_TTL!) * 1000) + (5 * 1000);
+const WAIT_MS_ON_THROTTLE = (parseInt(THROTTLE_TTL, 10) * 1000) + (5 * 1000);
+assert(typeof WAIT_MS_ON_THROTTLE === 'number');
 
 /**
  * Takes away the hustle of dealing with possible rate limiting.

@@ -24,6 +24,7 @@ export class ProtonSearcher implements InfoSearcher {
                 'attributesToRetrieve': [
                     'name',
                     'objectID',
+                    'userScore'
                 ],
                 'page': 0
             },
@@ -45,12 +46,23 @@ export class ProtonSearcher implements InfoSearcher {
         const {
             name,
             objectID,
-        } = findBestMatch<{ name: string, objectID: string }>(search, hits, 'name');
+            userScore
+        } = findBestMatch<{ name: string, objectID: string, userScore: number | null }>(
+            search,
+            hits,
+            'name',
+        );
 
         if (!matchingName(name, search)) {
             logger.debug(
                 `Found name '${name}' does not include search '${search}'. Skipping`
             );
+
+            return null;
+        }
+
+        if (userScore === null) {
+            logger.debug(`Found '${name}' does not have a rating yet. Skipping`);
 
             return null;
         }

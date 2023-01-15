@@ -16,9 +16,8 @@ export class ProtonResolver implements InfoResolver {
                 'facetFilters': [['appType:Game']],
                 'hitsPerPage': 1,
                 'attributesToRetrieve': [
-                    'name',
-                    'objectID',
-                    'userScore'
+                    'userScore',
+                    'oslist'
                 ],
                 'page': 0,
                 'filters': `(objectID:${source.data.id})`
@@ -36,10 +35,20 @@ export class ProtonResolver implements InfoResolver {
             throw new Error('ProtonDB request did not return any results');
         }
 
+        if (hits[0].oslist.includes('Linux')) {
+            return {
+                ...source.data,
+                score: 'native'
+            };
+        }
+
+        const { data: { tier } } = await this.axios.get(
+            `https://www.protondb.com/api/v1/reports/summaries/${source.data.id}.json`
+        );
+
         return {
             ...source.data,
-            score: 'borked'
+            score: tier
         };
-
     }
 }

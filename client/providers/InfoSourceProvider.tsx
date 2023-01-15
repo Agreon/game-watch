@@ -28,25 +28,6 @@ export const InfoSourceProvider: React.FC<{
     const { withRequest, http } = useHttp();
     const handleError = useErrorHandler();
 
-    // useEffect(() => {
-    //     if (source.state !== InfoSourceState.Found) {
-    //         return;
-    //     }
-
-    //     const intervalId = setInterval(async () => {
-    //         await withRequest(async http => {
-    //             const { data } = await http.get<InfoSourceDto>(`/info-source/${source.id}`);
-    //             setGameInfoSource(data);
-    //             if (data.state !== InfoSourceState.Found) {
-    //                 clearInterval(intervalId);
-    //             }
-    //         });
-    //     }, 1000);
-
-    //     return () => clearInterval(intervalId);
-
-    // }, [source.id, source.state, handleError, setGameInfoSource, withRequest]);
-
     const pollInfoSource = useCallback(async () => {
         if (source.state !== InfoSourceState.Found) {
             return true;

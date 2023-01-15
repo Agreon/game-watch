@@ -100,25 +100,6 @@ export const GameProvider: React.FC<{
         setLoading(false);
     }, [withRequest, setGame, game.id]);
 
-    // TODO: Extract polling util for 429-Handling
-    // useEffect(() => {
-    //     if (!game.syncing) {
-    //         return;
-    //     }
-
-    //     const intervalId = setInterval(async () => {
-    //         await withRequest(async http => {
-    //             const { data } = await http.get<GameDto>(`/game/${game.id}`);
-    //             setGame(data.id, data);
-    //             if (data.syncing === false) {
-    //                 clearInterval(intervalId);
-    //             }
-    //         });
-    //     }, 1000);
-
-    //     return () => clearInterval(intervalId);
-    // }, [game.id, game.syncing, handleError, setGame, withRequest]);
-
     const pollGame = useCallback(async () => {
         if (!game.syncing) {
             return true;
