@@ -20,6 +20,10 @@ const main = async () => {
 
         console.log('Removed old cron for', game.id);
 
+        if (!game.continueSearching) {
+            continue;
+        }
+
         await queue.add(
             QueueType.SearchGame,
             { gameId: game.id },

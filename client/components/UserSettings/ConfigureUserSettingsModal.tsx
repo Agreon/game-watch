@@ -143,7 +143,9 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                         mb={['2rem', '0']}
                         direction={['column', 'row']}
                     >
-                        <DeleteAccount />
+                        <Flex mb={['2rem', '0']} justifyContent="end">
+                            <DeleteAccount />
+                        </Flex>
 
                         <Flex justify="flex-end">
                             <Button size="lg" onClick={onClose}>
