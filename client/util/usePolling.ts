@@ -28,7 +28,6 @@ export const usePolling = (
     const handleError = useErrorHandler();
 
     useEffect(() => {
-        // TODO: Maybe needed outside of hook
         let skip_requests_before = dayjs();
 
         const intervalId = setInterval(async () => {

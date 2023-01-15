@@ -4,8 +4,6 @@ import {
     Checkbox,
     Fade,
     Flex,
-    FormControl,
-    FormLabel,
     Input,
     Modal,
     ModalBody,
@@ -180,13 +178,15 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <Text fontSize="lg" mb="0.5rem" fontWeight="bold">
                         Options
                     </Text>
-                    <FormControl variant="alwaysFloating" mt="1rem">
-                        <FormLabel>Displayed Name</FormLabel>
-                        <Input
-                            value={name}
-                            onChange={event => setName(event.target.value)}
-                        />
-                    </FormControl>
+                    <Flex direction={['column', 'row']} mt="1rem" align={['start', 'center']}>
+                        <Text mr="1rem" mb={['0.25rem', 0]}>Displayed Name</Text>
+                        <Box flex="1" mr="1rem">
+                            <Input
+                                value={name}
+                                onChange={event => setName(event.target.value)}
+                            />
+                        </Box>
+                    </Flex>
                     {
                         activeInfoSources.length > 0 && (
                             <Checkbox
@@ -194,7 +194,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 isChecked={continueSearching}
                                 onChange={event => setContinueSearching(event.target.checked)}
                             >
-                                <Text fontSize="lg" mt="0.25rem">
+                                <Text fontSize={['md', 'lg']} mt="0.25rem">
                                     Continue searching for the game in the other sources you are interested in
                                 </Text>
                             </Checkbox>

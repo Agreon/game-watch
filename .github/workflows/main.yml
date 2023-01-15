@@ -26,7 +26,10 @@ jobs:
         run: pnpm lint
 
       - name: Build
-        run: pnpm turbo run build
+        run: |
+          cp .env.dist .env
+          cp .env client/.env.local
+          pnpm build
 
 
   build-docker:
@@ -39,4 +42,4 @@ jobs:
         run: |
           cp .env.dist .env
           cp .env client/.env.local
-          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
+          pnpm build:docker
