@@ -47,16 +47,16 @@ export const TagProvider: React.FC<{
     const { user } = useUserContext();
     const [tagsLoading, setTagsLoading] = useState(false);
     const [tags, setTags] = useState<TagDto[]>([]);
-    const { withRequest } = useHttp();
+    const { requestWithErrorHandling: requestWithErrorHandling } = useHttp();
 
     const fetchTags = useCallback(async () => {
         setTagsLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.get('/tag');
             setTags(data);
         });
         setTagsLoading(false);
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const getAvailableRandomTagColor = useCallback(() => {
         const usedColors = tags.map(tag => tag.color);
@@ -71,7 +71,7 @@ export const TagProvider: React.FC<{
     const addTag = useCallback(async (name: string) => {
         const color = getAvailableRandomTagColor();
 
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data } = await http.post<CreateTagDto, AxiosResponse<TagDto>>(
                 '/tag',
                 { name, color }
@@ -84,7 +84,7 @@ export const TagProvider: React.FC<{
 
             return data;
         });
-    }, [withRequest, getAvailableRandomTagColor]);
+    }, [requestWithErrorHandling, getAvailableRandomTagColor]);
 
     useEffect(() => { fetchTags(); }, [fetchTags, user.id]);
 

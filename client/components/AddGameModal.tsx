@@ -4,8 +4,6 @@ import {
     Checkbox,
     Fade,
     Flex,
-    FormControl,
-    FormLabel,
     Input,
     Modal,
     ModalBody,
@@ -20,6 +18,7 @@ import React, { useState } from 'react';
 
 import { useGameContext } from '../providers/GameProvider';
 import { InfoSourceProvider } from '../providers/InfoSourceProvider';
+import { useUserContext } from '../providers/UserProvider';
 import { ModalProps } from '../util/types';
 import { useAction } from '../util/useAction';
 import { AddInfoSource } from './InfoSource/AddInfoSource';
@@ -31,7 +30,6 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
 
     return (
         <Modal
-            isCentered
             onClose={onClose}
             isOpen={show}
             motionPreset='none'
@@ -118,6 +116,7 @@ const AddGameLoadingScreen: React.FC<{ onClose: () => void }> = ({ onClose }) =>
 };
 
 const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const { user: { interestedInSources } } = useUserContext();
     const {
         game,
         setupGame,
@@ -125,6 +124,10 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         setGameInfoSource,
         removeGameInfoSource,
     } = useGameContext();
+
+    const availableInfoSources = interestedInSources.filter(
+        type => activeInfoSources.find(source => source.type === type) === undefined
+    );
 
     const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
 
@@ -148,7 +151,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </Flex>
                 }
             </Flex>
-            <Flex direction="column" my="1rem" width="100%">
+            <Flex direction="column" mt="1rem" width="100%">
                 {activeInfoSources.map(source =>
                     <InfoSourceProvider
                         key={source.id}
@@ -162,36 +165,39 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </InfoSourceProvider>
                 )}
                 <Box position="relative" my="2rem">
-                    <Flex direction="column">
-                        <Box mb="1rem">
-                            <Text fontSize="lg" fontWeight="bold">Add sources manually</Text>
-                        </Box>
+                    {availableInfoSources.length > 0 &&
+                        <Flex direction="column" mb="2rem">
+                            <Box mb="1rem">
+                                <Text fontSize="lg" fontWeight="bold">Add sources manually</Text>
+                            </Box>
 
-                        <AddInfoSource scheme='secondary' />
-                    </Flex>
+                            <AddInfoSource scheme='secondary' />
+                        </Flex>
+                    }
 
-                    <Text fontSize="lg" mt="2rem" mb="0.5rem" fontWeight="bold">
+                    <Text fontSize="lg" mb="0.5rem" fontWeight="bold">
                         Options
                     </Text>
-                    <FormControl variant="floating" mt="1rem">
-                        <FormLabel>Displayed Name</FormLabel>
-                        <Input
-                            value={name}
-                            onChange={event => setName(event.target.value)}
-                        />
-                    </FormControl>
+                    <Flex direction={['column', 'row']} mt="1rem" align={['start', 'center']}>
+                        <Text mr="1rem" mb={['0.25rem', 0]}>Displayed Name</Text>
+                        <Box flex="1" mr="1rem">
+                            <Input
+                                value={name}
+                                onChange={event => setName(event.target.value)}
+                            />
+                        </Box>
+                    </Flex>
                     {
                         activeInfoSources.length > 0 && (
-                            <FormControl mt="1rem">
-                                <Checkbox
-                                    isChecked={continueSearching}
-                                    onChange={event => setContinueSearching(event.target.checked)}
-                                >
-                                    <Text fontSize="lg" mt="0.25rem">
-                                        Continue searching for the game in the other sources you are interested in?
-                                    </Text>
-                                </Checkbox>
-                            </FormControl>
+                            <Checkbox
+                                mt="1rem"
+                                isChecked={continueSearching}
+                                onChange={event => setContinueSearching(event.target.checked)}
+                            >
+                                <Text fontSize={['md', 'lg']} mt="0.25rem">
+                                    Continue searching for the game in the other sources you are interested in
+                                </Text>
+                            </Checkbox>
                         )
                     }
                 </Box>
