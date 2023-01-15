@@ -4,12 +4,15 @@ import {
     InfoSourceDto,
     InfoSourceState,
     InfoSourceType,
+    SetupGameDto,
     TagDto,
 } from '@game-watch/shared';
 import { AxiosResponse } from 'axios';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { useErrorHandler } from '../util/useErrorHandler';
 import { useHttp } from '../util/useHttp';
+import { usePolling } from '../util/usePolling';
 
 export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Playstation,
@@ -17,6 +20,7 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Switch,
     InfoSourceType.Epic,
     InfoSourceType.Metacritic,
+    InfoSourceType.Proton
 ];
 
 const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string): string | null => {
@@ -55,7 +59,7 @@ export interface GameCtx {
     allInfoSources: InfoSourceDto[]
     activeInfoSources: InfoSourceDto[]
     thumbnailUrl: string | null
-    setupGame: (options: { name: string }) => Promise<void>
+    setupGame: (options: SetupGameDto) => Promise<void>
     syncGame: () => Promise<void>
     changeGameName: (name: string) => Promise<void>
     deleteGame: () => Promise<void>
@@ -83,35 +87,30 @@ export const GameProvider: React.FC<{
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
 }> = ({ children, game, setGame, removeGame }) => {
-    const { withRequest, handleError } = useHttp();
+    const { requestWithErrorHandling, http } = useHttp();
+    const handleError = useErrorHandler();
     const [loading, setLoading] = useState(false);
 
     const syncGame = useCallback(async () => {
         setLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.post<GameDto>(`/game/${game.id}/sync`);
             setGame(data.id, data);
         });
         setLoading(false);
-    }, [withRequest, setGame, game.id]);
+    }, [requestWithErrorHandling, setGame, game.id]);
 
-    useEffect(() => {
+    const pollGame = useCallback(async () => {
         if (!game.syncing) {
-            return;
+            return true;
         }
 
-        const intervalId = setInterval(async () => {
-            await withRequest(async http => {
-                const { data } = await http.get<GameDto>(`/game/${game.id}`);
-                setGame(data.id, data);
-                if (data.syncing === false) {
-                    clearInterval(intervalId);
-                }
-            });
-        }, 1000);
+        const { data } = await http.get<GameDto>(`/game/${game.id}`);
+        setGame(data.id, data);
 
-        return () => clearInterval(intervalId);
-    }, [game.id, game.syncing, handleError, setGame, withRequest]);
+        return data.syncing === false;
+    }, [game.syncing, game.id, http, setGame]);
+    usePolling(pollGame, 1000, [game.syncing]);
 
     const changeGameName = useCallback(async (name: string) => {
         // Optimistic update
@@ -121,7 +120,7 @@ export const GameProvider: React.FC<{
             name
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.put<GameDto>(`/game/${game.id}`, {
                 ...game,
                 name
@@ -136,23 +135,23 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game]);
+    }, [requestWithErrorHandling, handleError, setGame, game]);
 
-    const setupGame = useCallback(async ({ name }: { name: string }) => {
-        await withRequest(async http => {
-            const { data } = await http.post<GameDto>(`/game/${game.id}/setup`, { name });
+    const setupGame = useCallback(async (options: SetupGameDto) => {
+        await requestWithErrorHandling(async http => {
+            const { data } = await http.post<GameDto>(`/game/${game.id}/setup`, options);
             setGame(data.id, data);
         });
-    }, [withRequest, setGame, game.id]);
+    }, [requestWithErrorHandling, setGame, game.id]);
 
     const deleteGame = useCallback(async () => {
         setLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.delete(`/game/${game.id}`);
             removeGame(game.id);
         });
         setLoading(false);
-    }, [withRequest, removeGame, game.id]);
+    }, [requestWithErrorHandling, removeGame, game.id]);
 
     const setGameInfoSource = useCallback((newInfoSource: InfoSourceDto) => {
         setGame(game.id, curr => {
@@ -194,7 +193,7 @@ export const GameProvider: React.FC<{
             tags: [...curr.tags, tag]
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.post(`/game/${game.id}/tag/${tag.id}`),
             (error) => {
                 setGame(game.id, curr => ({
@@ -206,7 +205,7 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game.id, game.tags]);
+    }, [requestWithErrorHandling, handleError, setGame, game.id, game.tags]);
 
     const removeTagFromGame = useCallback(async (tag: TagDto) => {
         const oldGameTags = [...game.tags];
@@ -216,7 +215,7 @@ export const GameProvider: React.FC<{
             tags: curr.tags.filter(({ id }) => id !== tag.id)
         }));
 
-        await withRequest(
+        await requestWithErrorHandling(
             async http => await http.delete(`/game/${game.id}/tag/${tag.id}`),
             error => {
                 setGame(game.id, curr => ({
@@ -228,10 +227,10 @@ export const GameProvider: React.FC<{
                 });
             }
         );
-    }, [withRequest, handleError, setGame, game.id, game.tags]);
+    }, [requestWithErrorHandling, handleError, setGame, game.id, game.tags]);
 
     const addInfoSource = useCallback(async (params: { type: InfoSourceType, url: string }) => {
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data: infoSource } = await http.post<CreateInfoSourceDto, AxiosResponse<InfoSourceDto>>(`/info-source`, {
                 gameId: game.id,
                 type: params.type,
@@ -247,7 +246,7 @@ export const GameProvider: React.FC<{
             }
             handleError(error);
         });
-    }, [withRequest, setGameInfoSource, game.id, handleError]);
+    }, [requestWithErrorHandling, setGameInfoSource, game.id, handleError]);
 
     const tags = useMemo(() => game.tags, [game.tags]);
 

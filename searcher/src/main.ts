@@ -28,6 +28,7 @@ import { CriticalError, SearchService } from './search-service';
 import { EpicSearcher } from './searchers/epic-searcher';
 import { MetacriticSearcher } from './searchers/metacritic-searcher';
 import { PlaystationSearcher } from './searchers/playstation-searcher';
+import { ProtonSearcher } from './searchers/proton-searcher';
 import { SteamSearcher } from './searchers/steam-searcher';
 import { SwitchSearcher } from './searchers/switch-searcher';
 
@@ -60,7 +61,8 @@ const searchers = [
     new MetacriticSearcher(axiosInstance),
     new PlaystationSearcher(axiosInstance),
     new SteamSearcher(axiosInstance),
-    new SwitchSearcher(axiosInstance)
+    new SwitchSearcher(axiosInstance),
+    new ProtonSearcher(axiosInstance),
 ];
 
 const cacheService = CACHING_ENABLED

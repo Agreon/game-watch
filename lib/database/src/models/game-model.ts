@@ -29,6 +29,9 @@ export class Game extends BaseEntity<Game> {
     public setupCompleted: boolean = false;
 
     @Property()
+    public continueSearching: boolean = true;
+
+    @Property()
     public description: string = '';
 
     @OneToMany(() => InfoSource, infoSource => infoSource.game)

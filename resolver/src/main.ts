@@ -28,6 +28,7 @@ import { CriticalError, ResolveService } from './resolve-service';
 import { EpicResolver } from './resolvers/epic-resolver';
 import { MetacriticResolver } from './resolvers/metacritic-resolver';
 import { PlaystationResolver } from './resolvers/playstation-resolver';
+import { ProtonResolver } from './resolvers/proton-resolver';
 import { SteamResolver } from './resolvers/steam-resolver';
 import { SwitchResolver } from './resolvers/switch-resolver';
 
@@ -66,6 +67,7 @@ const resolvers = [
     new PlaystationResolver(axiosInstance),
     new EpicResolver(axiosInstance),
     new MetacriticResolver(axiosInstance),
+    new ProtonResolver(axiosInstance),
 ];
 
 const main = async () => {

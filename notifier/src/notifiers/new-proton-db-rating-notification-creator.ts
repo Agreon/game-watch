@@ -2,18 +2,18 @@ import { InfoSourceType, NotificationType } from '@game-watch/shared';
 
 import { NotificationCreator, NotificationCreatorContext } from '../notification-service';
 
-export class NewMetaCriticRatingNotificationCreator
-    implements NotificationCreator<NotificationType.NewMetacriticRating>
+export class NewProtonDbRatingNotificationCreator
+    implements NotificationCreator<NotificationType.NewProtonDbRating>
 {
-    public readonly forNotificationType = NotificationType.NewMetacriticRating;
-    public readonly supportsInfoSourceTypes: InfoSourceType[] = [InfoSourceType.Metacritic];
+    public readonly forNotificationType = NotificationType.NewProtonDbRating;
+    public readonly supportsInfoSourceTypes: InfoSourceType[] = [InfoSourceType.Proton];
 
     public async createNotification(
         {
             existingGameData,
-            resolvedGameData,
+            resolvedGameData: { score },
             logger,
-        }: NotificationCreatorContext<InfoSourceType.Metacritic>
+        }: NotificationCreatorContext<InfoSourceType.Proton>
     ) {
         const hasExistingData = !!existingGameData;
         if (hasExistingData) {
@@ -23,6 +23,6 @@ export class NewMetaCriticRatingNotificationCreator
 
         logger.debug({ context: { hasExistingData } }, 'Adding notification because');
 
-        return resolvedGameData;
+        return { score };
     }
 }

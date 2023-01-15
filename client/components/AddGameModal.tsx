@@ -1,9 +1,9 @@
 import {
     Box,
     Button,
+    Checkbox,
     Fade,
     Flex,
-    FormControl,
     Input,
     Modal,
     ModalBody,
@@ -11,120 +11,25 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Select,
     Text,
     useBreakpointValue
 } from '@chakra-ui/react';
-import { InfoSourceType } from '@game-watch/shared';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useGameContext } from '../providers/GameProvider';
 import { InfoSourceProvider } from '../providers/InfoSourceProvider';
 import { useUserContext } from '../providers/UserProvider';
-import { SourceUrlPlaceholder } from '../util/source-url-placeholder';
 import { ModalProps } from '../util/types';
 import { useAction } from '../util/useAction';
+import { AddInfoSource } from './InfoSource/AddInfoSource';
 import { InfoSourcePreview } from './InfoSource/InfoSourcePreview';
 import { LoadingSpinner } from './LoadingSpinner';
 
-const AddSource: React.FC = () => {
-    const { user: { interestedInSources, country: userCountry } } = useUserContext();
-    const { addInfoSource, activeInfoSources } = useGameContext();
-
-    const availableInfoSources = interestedInSources.filter(
-        type => activeInfoSources.find(source => source.type === type) === undefined
-    );
-
-    const [type, setType] = useState(availableInfoSources[0] ?? '');
-    const [url, setUrl] = useState('');
-
-    const { loading, execute: onAdd } = useAction(addInfoSource, {
-        onSuccess: () => {
-            setUrl('');
-        }
-    });
-
-    if (!availableInfoSources.length) {
-        return null;
-    }
-
-    return (
-        <Flex direction="column">
-            <Box mb="1rem">
-                <Text fontSize="xl">Add further information sources:</Text>
-            </Box>
-            <Flex direction={['column', 'row']}>
-                <FormControl flex="0.3" mr="1rem" mb={['0.5rem', 0]}>
-                    <Select onChange={event => setType(event.target.value as InfoSourceType)}>
-                        {availableInfoSources.map(type => (
-                            <option key={type} value={type}>{type}</option>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl flex="1" mr="1rem" mb={['0.5rem', 0]}>
-                    <Input
-                        value={url}
-                        disabled={loading}
-                        placeholder={SourceUrlPlaceholder(type, userCountry)}
-                        onChange={event => setUrl(event.target.value)}
-                    />
-                </FormControl>
-                <FormControl
-                    display="flex"
-                    flex="0"
-                    mb={['0.5rem', 0]}
-                    justifyContent={['end', 'unset']}
-                >
-                    <Button
-                        onClick={() => onAdd({ type, url })}
-                        disabled={loading || !url.length}
-                        isLoading={loading}
-                    >
-                        Add
-                    </Button>
-                </FormControl>
-            </Flex>
-        </Flex>
-    );
-};
-
-const EditName: React.FC<{ onChange: (name: string) => void }> = ({ onChange }) => {
-    const { activeInfoSources, game } = useGameContext();
-    const [name, setName] = useState<string | null>(null);
-    const activeSourceName = activeInfoSources[0]?.data.fullName;
-
-    useEffect(
-        () => onChange(name || activeSourceName || game.search),
-        [onChange, name, activeSourceName, game.search]
-    );
-
-    return (
-        <Flex direction={['column', 'row']} mt="3rem" align={['start', 'center']}>
-            <Text fontSize="xl" mb={['0.5rem', 0]}>Suggested Name</Text>
-            <FormControl flex="1" ml={[0, '1rem']}>
-                <Input
-                    value={name || activeSourceName || game.search}
-                    onChange={event => setName(event.target.value)}
-                />
-            </FormControl>
-        </Flex>
-    );
-};
-
 export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
-    const {
-        game,
-        activeInfoSources,
-        setGameInfoSource,
-        removeGameInfoSource,
-        setupGame,
-    } = useGameContext();
-    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
-    const [name, setName] = useState(game.search);
+    const { game, } = useGameContext();
 
     return (
         <Modal
-            isCentered
             onClose={onClose}
             isOpen={show}
             motionPreset='none'
@@ -132,9 +37,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
             scrollBehavior={useBreakpointValue(['inside', 'inside', 'outside'])}
         >
             <ModalOverlay />
-            <ModalContent
-                maxWidth="48rem"
-            >
+            <ModalContent maxWidth="48rem">
                 <ModalHeader>
                     Add Game
                 </ModalHeader>
@@ -150,71 +53,170 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                         pr={['0', '0', '2rem']}
                         pb="2rem"
                     >
-                        <Flex my="1rem">
-                            {
-                                game.syncing &&
-                                <Text fontSize="2xl">
-                                    We are searching for the game. Just a moment...
-                                </Text>
-                            }
-                            {
-                                !game.syncing && (
-                                    activeInfoSources.length > 0
-                                        ? <Text fontSize="2xl">Here is what we found: </Text>
-                                        : <Flex direction="column" align="center">
-                                            <Text fontSize="2xl">
-                                                {`We couldn't find any sources for '${game.search}' :/`}
-                                            </Text>
-                                            <Text fontSize="xl" mt="2rem">
-                                                {`You can still save the game and we'll add the entries as soon as the game is added to a store.`}
-                                            </Text>
-                                        </Flex>
-                                )
-                            }
-                        </Flex>
-                        <Flex direction="column" my="1rem" width="100%">
-                            {activeInfoSources.map(source =>
-                                <InfoSourceProvider
-                                    key={source.id}
-                                    source={source}
-                                    setGameInfoSource={setGameInfoSource}
-                                    removeGameInfoSource={removeGameInfoSource}
-                                >
-                                    <Fade in={true}>
-                                        <Box mb="1rem">
-                                            <InfoSourcePreview />
-                                        </Box>
-                                    </Fade>
-                                </InfoSourceProvider>
-                            )}
-                            <Box position="relative" my="2rem">
-                                {game.syncing
-                                    ? <LoadingSpinner size="xl" />
-                                    : <>
-                                        <AddSource />
-                                        <EditName onChange={setName} />
-                                    </>
-                                }
-                            </Box>
-                        </Flex>
-                        <Flex justify="flex-end" width="100%">
-                            <Button size="lg" onClick={onClose}>
-                                Cancel
-                            </Button>
-                            <Button
-                                ml="1rem"
-                                size="lg"
-                                colorScheme="teal"
-                                isLoading={loading}
-                                disabled={loading || game.syncing}
-                                onClick={() => onAdd({ name })}
-                            >
-                                Save
-                            </Button>
-                        </Flex>
+                        {
+                            game.syncing
+                                ? <AddGameLoadingScreen onClose={onClose} />
+                                : <SetupGameForm onClose={onClose} />
+                        }
                     </Flex>
                 </ModalBody>
             </ModalContent>
         </Modal>
+    );
+};
+
+const AddGameLoadingScreen: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const {
+        activeInfoSources,
+        setGameInfoSource,
+        removeGameInfoSource,
+    } = useGameContext();
+
+    return (
+        <>
+            <Flex my="1rem">
+                <Text fontSize="2xl">
+                    We are searching for the game. Just a moment...
+                </Text>
+            </Flex>
+            <Flex direction="column" my="1rem" width="100%">
+                {activeInfoSources.map(source =>
+                    <InfoSourceProvider
+                        key={source.id}
+                        source={source}
+                        setGameInfoSource={setGameInfoSource}
+                        removeGameInfoSource={removeGameInfoSource}
+                    >
+                        <Fade in={true}>
+                            <Box mb="1rem">
+                                <InfoSourcePreview />
+                            </Box>
+                        </Fade>
+                    </InfoSourceProvider>
+                )}
+                <Box position="relative" my="2rem">
+                    <LoadingSpinner size="xl" />
+                </Box>
+            </Flex>
+            <Flex justify="flex-end" width="100%">
+                <Button size="lg" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button
+                    ml="1rem"
+                    size="lg"
+                    colorScheme="teal"
+                    disabled={true}
+                >
+                    Save
+                </Button>
+            </Flex>
+        </>
+    );
+};
+
+const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const { user: { interestedInSources } } = useUserContext();
+    const {
+        game,
+        setupGame,
+        activeInfoSources,
+        setGameInfoSource,
+        removeGameInfoSource,
+    } = useGameContext();
+
+    const availableInfoSources = interestedInSources.filter(
+        type => activeInfoSources.find(source => source.type === type) === undefined
+    );
+
+    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
+
+    const activeSourceName = activeInfoSources[0]?.data.fullName;
+    const [name, setName] = useState(activeSourceName || game.search);
+    const [continueSearching, setContinueSearching] = useState(true);
+
+    return (
+        <>
+            <Flex my="1rem">
+                {
+                    activeInfoSources.length > 0
+                        ? <Text fontSize="2xl">Here is what we found: </Text>
+                        : <Flex direction="column" align="center">
+                            <Text fontSize="2xl">
+                                {`We couldn't find any sources for '${game.search}'`}
+                            </Text>
+                            <Text fontSize="xl" mt="2rem">
+                                {`You can still save the game and we'll add the entries as soon as the game is added to a source you are interested in.`}
+                            </Text>
+                        </Flex>
+                }
+            </Flex>
+            <Flex direction="column" mt="1rem" width="100%">
+                {activeInfoSources.map(source =>
+                    <InfoSourceProvider
+                        key={source.id}
+                        source={source}
+                        setGameInfoSource={setGameInfoSource}
+                        removeGameInfoSource={removeGameInfoSource}
+                    >
+                        <Box mb="1rem">
+                            <InfoSourcePreview />
+                        </Box>
+                    </InfoSourceProvider>
+                )}
+                <Box position="relative" my="2rem">
+                    {availableInfoSources.length > 0 &&
+                        <Flex direction="column" mb="2rem">
+                            <Box mb="1rem">
+                                <Text fontSize="lg" fontWeight="bold">Add sources manually</Text>
+                            </Box>
+
+                            <AddInfoSource scheme='secondary' />
+                        </Flex>
+                    }
+
+                    <Text fontSize="lg" mb="0.5rem" fontWeight="bold">
+                        Options
+                    </Text>
+                    <Flex direction={['column', 'row']} mt="1rem" align={['start', 'center']}>
+                        <Text mr="1rem" mb={['0.25rem', 0]}>Displayed Name</Text>
+                        <Box flex="1" mr="1rem">
+                            <Input
+                                value={name}
+                                onChange={event => setName(event.target.value)}
+                            />
+                        </Box>
+                    </Flex>
+                    {
+                        activeInfoSources.length > 0 && (
+                            <Checkbox
+                                mt="1rem"
+                                isChecked={continueSearching}
+                                onChange={event => setContinueSearching(event.target.checked)}
+                            >
+                                <Text fontSize={['md', 'lg']} mt="0.25rem">
+                                    Continue searching for the game in the other sources you are interested in
+                                </Text>
+                            </Checkbox>
+                        )
+                    }
+                </Box>
+            </Flex>
+            <Flex justify="flex-end" width="100%">
+                <Button size="lg" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button
+                    ml="1rem"
+                    size="lg"
+                    colorScheme="teal"
+                    isLoading={loading}
+                    disabled={loading || game.syncing}
+                    onClick={() => onAdd({ name, continueSearching })}
+                >
+                    Save
+                </Button>
+            </Flex>
+        </>
     );
 };

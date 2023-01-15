@@ -19,6 +19,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.GameReleased]: 'Game released',
     [NotificationType.GameReduced]: 'Game reduced',
     [NotificationType.NewMetacriticRating]: 'Game rated',
+    [NotificationType.NewProtonDbRating]: 'Game rated',
     [NotificationType.ResolveError]: 'Resolve error',
 };
 
@@ -33,6 +34,9 @@ const getNotificationText = (notification: NotificationDto) => {
     const { game, infoSource } = notification;
 
     const gameName = <Text fontWeight="bold" display="inline">{game.name || game.search}</Text>;
+    // We rather display the resolved name so a user can see instantly if an unrelated
+    // game was added.
+    const infoSourceName = infoSource.data.fullName;
 
     if (isNotificationOfType(notification, NotificationType.GameReduced)) {
         const { final, initial } = notification.data;
@@ -47,12 +51,14 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 
     switch (notification.type) {
-        case NotificationType.NewStoreEntry:
-            return <>{gameName} was added to the store!</>;
         case NotificationType.GameReleased:
             return <>{gameName} will be available today!</>;
+        case NotificationType.NewStoreEntry:
+            return <>{infoSourceName} was added to the store!</>;
         case NotificationType.NewMetacriticRating:
-            return <>{gameName} received a rating!</>;
+            return <>{infoSourceName} received a rating!</>;
+        case NotificationType.NewProtonDbRating:
+            return <>{infoSourceName} received a rating!</>;
         case NotificationType.ResolveError:
             return <>{gameName} could not be resolved!</>;
     }

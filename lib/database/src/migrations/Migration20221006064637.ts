@@ -7,6 +7,4 @@ export class Migration20221006064637 extends Migration {
     this.addSql('update "info_source" set "type" = \'playstation\' where "type" = \'psStore\';');
     this.addSql('alter table "info_source" add constraint "info_source_type_check" check ("type" in (\'steam\', \'switch\', \'playstation\', \'epic\', \'metacritic\'));');
   }
-
-  async down(): Promise<void> { }
 }
