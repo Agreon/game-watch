@@ -37,6 +37,9 @@ export const NotificationProvider: React.FC<{
         // Never stop
         return false;
     }, [http]);
+    useEffect(() => {
+        (async () => await pollNotifications())();
+    }, []);
     usePolling(pollNotifications, 60 * 60 * 1000, []);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
