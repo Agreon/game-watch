@@ -32,6 +32,7 @@ importers:
       eslint-config-next: ^13.1.2
       framer-motion: ^8.4.3
       next: ^13.1.2
+      pnpm: ^7.25.0
       react: ^18.2.0
       react-dom: ^18.2.0
       react-hook-form: ^7.42.1
@@ -64,17 +65,20 @@ importers:
       '@types/uuid': 9.0.0
       eslint: 8.32.0
       eslint-config-next: 13.1.2_7uibuqfxkfaozanbtbziikiqje
+      pnpm: 7.25.0
       typescript: 4.9.4
 
   lib/browser:
     specifiers:
       eslint: ^8.32.0
+      pnpm: ^7.25.0
       puppeteer: ^19.5.2
       typescript: ^4.9.4
     dependencies:
       puppeteer: 19.5.2
     devDependencies:
       eslint: 8.32.0
+      pnpm: 7.25.0
       typescript: 4.9.4
 
   lib/database:
@@ -96,6 +100,7 @@ importers:
       io-ts-types: ^0.5.19
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
+      pnpm: ^7.25.0
       ts-node: ^10.9.1
       tsconfig-paths: ^4.1.2
       typescript: ^4.9.4
@@ -120,6 +125,7 @@ importers:
       '@types/node': 18.11.18
       '@types/uuid': 9.0.0
       eslint: 8.32.0
+      pnpm: 7.25.0
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
       tsconfig-paths: 4.1.2
       typescript: 4.9.4
@@ -135,6 +141,7 @@ importers:
       io-ts-types: ^0.5.19
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
+      pnpm: ^7.25.0
       typescript: ^4.9.4
     dependencies:
       '@game-watch/shared': link:../shared
@@ -147,6 +154,7 @@ importers:
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
     devDependencies:
       eslint: 8.32.0
+      pnpm: 7.25.0
       typescript: 4.9.4
 
   lib/service:
@@ -164,6 +172,7 @@ importers:
       newtype-ts: ^0.3.5
       pino: ^8.8.0
       pino-pretty: ^9.1.1
+      pnpm: ^7.25.0
       typescript: ^4.9.4
     dependencies:
       '@game-watch/shared': link:../shared
@@ -180,6 +189,7 @@ importers:
     devDependencies:
       '@types/ioredis': 4.28.10
       eslint: 8.32.0
+      pnpm: 7.25.0
       typescript: 4.9.4
 
   lib/shared:
@@ -188,6 +198,7 @@ importers:
       class-validator: ^0.14.0
       dayjs: ^1.11.7
       eslint: ^8.32.0
+      pnpm: ^7.25.0
       typescript: ^4.9.4
     dependencies:
       class-validator: 0.14.0
@@ -195,6 +206,7 @@ importers:
     devDependencies:
       '@types/node': 18.11.18
       eslint: 8.32.0
+      pnpm: 7.25.0
       typescript: 4.9.4
 
   notifier:
@@ -227,6 +239,7 @@ importers:
       ioredis: ^5.2.5
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
+      pnpm: ^7.25.0
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.2
@@ -262,6 +275,7 @@ importers:
       '@typescript-eslint/parser': 5.48.1_7uibuqfxkfaozanbtbziikiqje
       eslint: 8.32.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.32.0
+      pnpm: 7.25.0
       ts-node-dev: 2.0.0_awa2wsr5thmg3i7jqycphctjfq
       tsconfig-paths: 4.1.2
       typescript: 4.9.4
@@ -296,6 +310,7 @@ importers:
       ioredis: ^5.2.5
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
+      pnpm: ^7.25.0
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.2
@@ -331,6 +346,7 @@ importers:
       '@typescript-eslint/parser': 5.48.1_7uibuqfxkfaozanbtbziikiqje
       eslint: 8.32.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.32.0
+      pnpm: 7.25.0
       ts-node-dev: 2.0.0_awa2wsr5thmg3i7jqycphctjfq
       tsconfig-paths: 4.1.2
       typescript: 4.9.4
@@ -366,6 +382,7 @@ importers:
       ioredis: ^5.2.5
       monocle-ts: ^2.3.13
       newtype-ts: ^0.3.5
+      pnpm: ^7.25.0
       reflect-metadata: ^0.1.13
       ts-node-dev: ^2.0.0
       tsconfig-paths: ^4.1.2
@@ -402,6 +419,7 @@ importers:
       '@typescript-eslint/parser': 5.48.1_7uibuqfxkfaozanbtbziikiqje
       eslint: 8.32.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.32.0
+      pnpm: 7.25.0
       ts-node-dev: 2.0.0_awa2wsr5thmg3i7jqycphctjfq
       tsconfig-paths: 4.1.2
       typescript: 4.9.4
@@ -460,6 +478,7 @@ importers:
       passport-local: ^1.0.0
       pino-http: ^8.3.1
       pino-pretty: ^9.1.1
+      pnpm: ^7.25.0
       reflect-metadata: ^0.1.13
       rimraf: ^4.0.7
       rxjs: ^7.8.0
@@ -529,6 +548,7 @@ importers:
       '@typescript-eslint/parser': 5.48.1_7uibuqfxkfaozanbtbziikiqje
       eslint: 8.32.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.32.0
+      pnpm: 7.25.0
       source-map-support: 0.5.21
       ts-loader: 9.4.2_3fkjkrd3audxnith3e7fo4fnxi
       ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq

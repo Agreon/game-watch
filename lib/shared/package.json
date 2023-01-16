@@ -13,7 +13,8 @@
     "devDependencies": {
         "@types/node": "^18.11.18",
         "eslint": "^8.32.0",
-        "typescript": "^4.9.4"
+        "typescript": "^4.9.4",
+        "pnpm": "^7.25.0"
     },
     "dependencies": {
         "class-validator": "^0.14.0",

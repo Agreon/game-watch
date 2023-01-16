@@ -37,8 +37,10 @@ export const NotificationProvider: React.FC<{
         // Never stop
         return false;
     }, [http]);
+    // Retrieve notifications once at the start to not wait an hour.
     useEffect(() => {
         (async () => await pollNotifications())();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     usePolling(pollNotifications, 60 * 60 * 1000, []);
 
