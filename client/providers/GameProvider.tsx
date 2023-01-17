@@ -86,7 +86,8 @@ export const GameProvider: React.FC<{
     game: GameDto,
     setGame: (id: string, cb: ((current: GameDto) => GameDto) | GameDto) => void
     removeGame: (id: string) => void
-}> = ({ children, game, setGame, removeGame }) => {
+    removeNotificationsForInfoSource: (sourceId: string) => void
+}> = ({ children, game, setGame, removeGame, removeNotificationsForInfoSource }) => {
     const { requestWithErrorHandling, http } = useHttp();
     const handleError = useErrorHandler();
     const [loading, setLoading] = useState(false);
@@ -183,7 +184,8 @@ export const GameProvider: React.FC<{
             curr.infoSources = [...curr.infoSources.filter((infoSource) => infoSource.id !== id)];
             return curr;
         });
-    }, [setGame, game.id]);
+        removeNotificationsForInfoSource(id);
+    }, [setGame, game.id, removeNotificationsForInfoSource]);
 
     const addTagToGame = useCallback(async (tag: TagDto) => {
         const oldGameTags = [...game.tags];

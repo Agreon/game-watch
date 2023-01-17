@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useHttp } from '../util/useHttp';
+import { useNotificationContext } from './NotificationProvider';
 import { useUserContext } from './UserProvider';
 
 export interface GamesFilter {
@@ -34,6 +35,7 @@ export const GamesProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
     const { user } = useUserContext();
+    const { removeNotificationsForGame } = useNotificationContext();
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<GameDto[]>([]);
     const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
@@ -63,7 +65,8 @@ export const GamesProvider: React.FC<{
 
     const removeGame = useCallback((gameId: string) => {
         setGames(currentGames => currentGames.filter(({ id }) => id !== gameId));
-    }, []);
+        removeNotificationsForGame(gameId);
+    }, [removeNotificationsForGame]);
 
     const addGame = useCallback(async (search: string) => {
         return await requestWithErrorHandling(async http => {

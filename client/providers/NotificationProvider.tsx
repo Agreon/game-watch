@@ -9,6 +9,8 @@ export interface NotificationCtx {
     notifications: NotificationDto[]
     markNotificationAsRead: (id: string) => Promise<void>
     markAllNotificationsAsRead: () => Promise<void>
+    removeNotificationsForGame: (gameId: string) => void
+    removeNotificationsForInfoSource: (sourceId: string) => void
     showNotificationSidebar: boolean
     notificationSidebarRef: React.MutableRefObject<HTMLDivElement | null>
     notificationSidebarIconRef: React.MutableRefObject<HTMLButtonElement | null>
@@ -60,6 +62,18 @@ export const NotificationProvider: React.FC<{
         });
     }, [requestWithErrorHandling]);
 
+    const removeNotificationsForGame = useCallback((gameId: string) => {
+        setNotifications(currentNotifications =>
+            currentNotifications.filter(notification => notification.game.id !== gameId)
+        );
+    }, []);
+
+    const removeNotificationsForInfoSource = useCallback((sourceId: string) => {
+        setNotifications(currentNotifications =>
+            currentNotifications.filter(notification => notification.infoSource.id !== sourceId)
+        );
+    }, []);
+
     const {
         isOpen: showNotificationSidebar,
         onClose: closeNotificationSidebar,
@@ -99,6 +113,8 @@ export const NotificationProvider: React.FC<{
         notifications,
         markNotificationAsRead,
         markAllNotificationsAsRead,
+        removeNotificationsForGame,
+        removeNotificationsForInfoSource,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,
@@ -108,6 +124,8 @@ export const NotificationProvider: React.FC<{
         notifications,
         markNotificationAsRead,
         markAllNotificationsAsRead,
+        removeNotificationsForGame,
+        removeNotificationsForInfoSource,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,
