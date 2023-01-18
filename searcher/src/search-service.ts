@@ -224,7 +224,7 @@ export class SearchService {
                     &&
                     (
                         error.response?.status === undefined
-                        || [400, 401, 403].includes(error.response.status) === false
+                        || [400, 401, 403, 429].includes(error.response.status) === false
                     )
                 )
                 // This error occurs if Puppeteer timeouts.
