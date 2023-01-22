@@ -1,6 +1,17 @@
 name: "CI"
 
-on: push
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
 
 jobs:
   build:
@@ -36,7 +47,12 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies') == false
         run: pnpm install
+
+      - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+        run: pnpm install --no-frozen-lockfile
 
       - name: Lint
         run: pnpm lint
