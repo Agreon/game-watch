@@ -1,5 +1,13 @@
 FROM node:18-slim
 
+# Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
+# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
+# installs, work.
+RUN apt-get update \
+    && apt-get install -y git chromium fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN npm i -g pnpm@7.25.0
 
 WORKDIR /app
@@ -29,7 +37,7 @@ COPY resolver resolver
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm --filter @game-watch/resolver build && \
-    pnpm install --frozen-lockfile --prod --prefer-offline
+    pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 ENV NODE_ENV production
 
