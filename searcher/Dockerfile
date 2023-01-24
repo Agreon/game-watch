@@ -1,11 +1,6 @@
 FROM node:18-slim
 
-RUN apt-get update \
-    && apt-get install -y git chromium fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN npm i -g pnpm@7.25.0
+RUN npm i -g pnpm@7.25.1
 
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
@@ -35,6 +30,8 @@ RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm --filter @game-watch/searcher build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
+
+RUN node lib/browser/node_modules/puppeteer/install.js
 
 ENV NODE_ENV production
 
