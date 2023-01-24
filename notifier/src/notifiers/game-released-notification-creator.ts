@@ -1,11 +1,11 @@
 import { Notification } from '@game-watch/database';
 import {
     InfoSourceType,
+    isNonSpecificDate,
     NotificationType,
     StoreInfoSource,
-    StoreInfoSources,
+    StoreInfoSources
 } from '@game-watch/shared';
-import { isNonSpecificDate } from '@game-watch/shared/src/util/is-non-specific-date';
 import dayjs from 'dayjs';
 
 import { NotificationCreator, NotificationCreatorContext } from '../notification-service';
