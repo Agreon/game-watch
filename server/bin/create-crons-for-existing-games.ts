@@ -1,3 +1,7 @@
+import * as dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
+
 import { Game, mikroOrmConfig } from '@game-watch/database';
 import { createQueueHandle, NIGHTLY_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { getCronForNightlySync } from '@game-watch/service';
@@ -45,7 +49,10 @@ const main = async () => {
     await queue.close();
 };
 
-main().catch(error => {
-    console.error(error);
-    process.exit(1);
-});
+main()
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+    }).then(
+        () => process.exit(0)
+    );
