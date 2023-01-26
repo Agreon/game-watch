@@ -67,6 +67,7 @@ export type ProtonDbScore = 'native' | 'platinum' | 'gold' | 'silver' | 'bronze'
 
 export interface ProtonGameData extends BaseGameData {
     score: ProtonDbScore;
+    thumbnailUrl: string;
 }
 
 // TODO: What do these generics give us except for binding us to details?

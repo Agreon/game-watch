@@ -19,6 +19,8 @@ RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm install --frozen-lockfile --prefer-offline
 
+RUN node lib/browser/node_modules/puppeteer/install.js
+
 COPY lib/shared lib/shared
 COPY lib/database lib/database
 COPY lib/service lib/service
@@ -35,8 +37,6 @@ RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm --filter @game-watch/searcher build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
-
-RUN node lib/browser/node_modules/puppeteer/install.js
 
 ENV NODE_ENV production
 

@@ -1,4 +1,4 @@
-import { InfoSourceType, ProtonGameData } from '@game-watch/shared';
+import { InfoSourceType, mapCountryCodeToAcceptLanguage, ProtonGameData } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -9,35 +9,32 @@ export class ProtonResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<ProtonGameData> {
-        const { data: { hits } } = await this.axios.post(
-            'https://94he6yatei-3.algolianet.com/1/indexes/steamdb/query',
+        // The steam API will give us the details if linux is natively supported.
+        const { data } = await this.axios.get<any>(
+            `https://store.steampowered.com/api/appdetails`,
             {
-                'query': '',
-                'facetFilters': [['appType:Game']],
-                'hitsPerPage': 1,
-                'attributesToRetrieve': [
-                    'userScore',
-                    'oslist'
-                ],
-                'page': 0,
-                'filters': `(objectID:${source.data.id})`
-            },
-            {
-                headers: {
-                    'x-algolia-api-key': '9ba0e69fb2974316cdaec8f5f257088f',
-                    'x-algolia-application-id': '94HE6YATEI',
-                    'Origin': 'https://www.protondb.com'
-                }
+                params: {
+                    appids: source.data.id,
+                    // Determines the returned currency.
+                    cc: source.country.split('-')[0],
+                },
+                // Determines the returned language.
+                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
             }
         );
 
-        if (!hits.length) {
-            throw new Error('ProtonDB request did not return any results');
+        const gameData = data[source.data.id];
+
+        const { success } = gameData;
+        if (!success) {
+            throw new Error('Steam API request unsuccessful');
         }
 
-        if (hits[0].oslist.includes('Linux')) {
+        const json = gameData.data as Record<string, any>;
+        if (json.platforms.linux) {
             return {
                 ...source.data,
+                thumbnailUrl: json.header_image,
                 score: 'native'
             };
         }
@@ -48,6 +45,7 @@ export class ProtonResolver implements InfoResolver {
 
         return {
             ...source.data,
+            thumbnailUrl: json.header_image,
             score: tier
         };
     }

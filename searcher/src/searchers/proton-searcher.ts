@@ -1,5 +1,6 @@
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
@@ -13,61 +14,49 @@ export class ProtonSearcher implements InfoSearcher {
         search: string,
         { logger }: InfoSearcherContext,
     ): Promise<BaseGameData | null> {
-
-        const { data: { hits } } = await this.axios.post(
-            'https://94he6yatei-3.algolianet.com/1/indexes/steamdb/query',
-            {
-                'query': search,
-                'facetFilters': [['appType:Game']],
-                'hitsPerPage': 5,
-                'attributesToRetrieve': [
-                    'name',
-                    'objectID',
-                    'userScore'
-                ],
-                'page': 0
-            },
-            {
-                headers: {
-                    'x-algolia-api-key': '9ba0e69fb2974316cdaec8f5f257088f',
-                    'x-algolia-application-id': '94HE6YATEI',
-                    'Origin': 'https://www.protondb.com'
-                }
-            }
+        // We have to search in the steam store because the algolia endpoint has rate limiting.
+        const { data } = await this.axios.get<string>(
+            'https://store.steampowered.com/search',
+            { params: { term: search, ignore_preferences: 1 } }
         );
 
-        if (!hits.length) {
-            logger.debug('No results found');
+        const $ = cheerio.load(data);
+
+        const resultRow = $('.search_result_row');
+        if (!resultRow.length) {
+            logger.debug('No search results found');
 
             return null;
         }
 
-        const {
-            name,
-            objectID,
-            userScore
-        } = hits[0];
+        const gameId = resultRow.attr('data-ds-appid');
+        if (!gameId) {
+            return null;
+        }
 
-        if (!matchingName(name, search)) {
-            logger.debug(
-                `Found name '${name}' does not include search '${search}'. Skipping`
-            );
+        const fullName = ($('.search_result_row .title')[0].children[0] as any).data as string;
+        if (!matchingName(fullName, search)) {
+            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
 
             return null;
         }
 
-        if (userScore === null) {
-            logger.debug(`Found '${name}' does not have a rating yet. Skipping`);
+        const { data: { tier } } = await this.axios.get(
+            `https://www.protondb.com/api/v1/reports/summaries/${gameId}.json`
+        );
+
+        if (tier === 'pending') {
+            logger.debug(`Found '${fullName}' does not have a rating yet. Skipping`);
 
             return null;
         }
 
-        logger.debug(`Found gameId '${objectID}'`);
+        logger.debug(`Found gameId '${gameId}'`);
 
         return {
-            id: objectID,
-            fullName: name,
-            url: `https://www.protondb.com/app/${objectID}`,
+            id: gameId,
+            fullName,
+            url: `https://www.protondb.com/app/${gameId}`,
         };
     }
 }
