@@ -15,13 +15,13 @@ export class NewProtonDbRatingNotificationCreator
             logger,
         }: NotificationCreatorContext<InfoSourceType.Proton>
     ) {
-        const hasExistingData = !!existingGameData;
-        if (hasExistingData) {
-            logger.debug({ context: { hasExistingData } }, 'Not adding notification because');
+        const hasExistingScore = !!existingGameData?.score;
+        if (hasExistingScore) {
+            logger.debug({ context: { hasExistingScore } }, 'Not adding notification because');
             return null;
         }
 
-        logger.debug({ context: { hasExistingData } }, 'Adding notification because');
+        logger.debug({ context: { hasExistingScore } }, 'Adding notification because');
 
         return { score };
     }

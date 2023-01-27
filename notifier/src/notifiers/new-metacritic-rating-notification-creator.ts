@@ -15,13 +15,13 @@ export class NewMetacriticRatingNotificationCreator
             logger,
         }: NotificationCreatorContext<InfoSourceType.Metacritic>
     ) {
-        const hasExistingData = !!existingGameData;
-        if (hasExistingData) {
-            logger.debug({ context: { hasExistingData } }, 'Not adding notification because');
+        const hasExistingScore = !!existingGameData?.criticScore;
+        if (hasExistingScore) {
+            logger.debug({ context: { hasExistingScore } }, 'Not adding notification because');
             return null;
         }
 
-        logger.debug({ context: { hasExistingData } }, 'Adding notification because');
+        logger.debug({ context: { hasExistingScore } }, 'Adding notification because');
 
         return { criticScore, userScore };
     }
