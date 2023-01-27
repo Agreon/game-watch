@@ -10,7 +10,7 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "@chakra-ui/icons": "2.0.16",
+    "@chakra-ui/icons": "2.0.17",
     "@chakra-ui/react": "2.4.7",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
