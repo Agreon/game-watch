@@ -221,6 +221,11 @@ export class SwitchResolver implements InfoResolver {
 
         const { regular_price, discount_price } = data.prices[0];
 
+        // Occurs for demos.
+        if (!regular_price.raw_value) {
+            return undefined;
+        }
+
         const initial = parseCurrencyValue(regular_price.raw_value);
         const final = parseCurrencyValue((discount_price || regular_price).raw_value);
 
