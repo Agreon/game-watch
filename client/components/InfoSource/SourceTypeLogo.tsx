@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { InfoSourceType, InfoSourceTypeNames } from '@game-watch/shared';
+// import glob from "glob";
 import Image from 'next/legacy/image';
+import path from 'path';
+// import path from 'path';
 import React from 'react';
 
 import epicLogo from '../../assets/epic';
@@ -9,6 +13,12 @@ import psLogo from '../../assets/playstation.svg';
 import protonLogo from '../../assets/protondb.svg';
 import steamLogo from '../../assets/steam.svg';
 import switchLogo from '../../assets/switch.png';
+
+// TODO: Copy the assets at compile time
+// => Maybe include them with some next.js config/script
+const { SourceTypeLogo: SteamSourceTypeLogo } = require(path.join(process.cwd(), '..', 'sources', 'src', 'steam', 'main.ts'));
+
+console.log(SteamSourceTypeLogo);
 
 export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (

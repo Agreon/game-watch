@@ -12,25 +12,17 @@ import {
 } from '@game-watch/queue';
 import {
     createLogger,
+    InfoSearcher,
     initializeSentry,
     NonCachingService,
     parseEnvironment,
     RedisCacheService,
 } from '@game-watch/service';
-import { MikroORM, NotFoundError } from '@mikro-orm/core';
+import { Constructor, MikroORM, NotFoundError } from '@mikro-orm/core';
 import * as Sentry from '@sentry/node';
 import axios from 'axios';
 import { Worker } from 'bullmq';
 import Redis from 'ioredis';
-
-import { EnvironmentStructure } from './environment';
-import { CriticalError, SearchService } from './search-service';
-import { EpicSearcher } from './searchers/epic-searcher';
-import { MetacriticSearcher } from './searchers/metacritic-searcher';
-import { PlaystationSearcher } from './searchers/playstation-searcher';
-import { ProtonSearcher } from './searchers/proton-searcher';
-import { SteamSearcher } from './searchers/steam-searcher';
-import { SwitchSearcher } from './searchers/switch-searcher';
 
 const {
     SEARCH_GAME_CONCURRENCY,
@@ -56,21 +48,37 @@ const redis = new Redis({
     port: REDIS_PORT
 });
 
-const searchers = [
-    new EpicSearcher(axiosInstance),
-    new MetacriticSearcher(axiosInstance),
-    new PlaystationSearcher(axiosInstance),
-    new SteamSearcher(axiosInstance),
-    new SwitchSearcher(axiosInstance),
-    new ProtonSearcher(axiosInstance),
-];
-
 const cacheService = CACHING_ENABLED
     ? new RedisCacheService(
         redis,
         CACHE_TIME_IN_SECONDS
     )
     : new NonCachingService();
+
+// TODO: Extract somehow?
+import glob from 'glob';
+
+import { EnvironmentStructure } from './environment';
+import { CriticalError, SearchService } from './search-service';
+
+const searchers: Record<string, Constructor<InfoSearcher>> = {};
+
+const sourcesPath = path.join(process.cwd(), '..', 'sources', '**', '*searcher.ts');
+
+// TODO: Harden
+glob.sync(sourcesPath).forEach(file => {
+    const pathParts = file.split('/');
+    const sourceName = pathParts[pathParts.length - 2];
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { Searcher } = require(file);
+
+    searchers[sourceName] = Searcher;
+});
+
+const loadedSearchers = Object.values(searchers).map(
+    searcher => new searcher(axiosInstance)
+);
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);
@@ -88,7 +96,7 @@ const main = async () => {
             const gameScopedLogger = logger.child({ gameId, attemptsMade, isLastAttempt });
 
             const searchService = new SearchService(
-                searchers,
+                loadedSearchers,
                 cacheService,
                 resolveSourceQueue,
                 orm.em.fork(),

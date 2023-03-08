@@ -1,8 +1,8 @@
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
 import { InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
 
 export class SteamSearcher implements InfoSearcher {
@@ -45,3 +45,5 @@ export class SteamSearcher implements InfoSearcher {
         };
     }
 }
+
+export const Searcher = SteamSearcher;

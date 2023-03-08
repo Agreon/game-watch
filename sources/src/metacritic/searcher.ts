@@ -1,8 +1,8 @@
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
-import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
 
 export class MetacriticSearcher implements InfoSearcher {
@@ -56,3 +56,5 @@ export class MetacriticSearcher implements InfoSearcher {
 
     }
 }
+
+export const Searcher = MetacriticSearcher;

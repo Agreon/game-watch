@@ -1,6 +1,7 @@
 import assert from 'assert';
 import levenshtein from 'fast-levenshtein';
 
+// TODO: Or move to service?
 export const findBestMatch = <T extends Record<string, unknown>>(
     search: string,
     hits: T[],

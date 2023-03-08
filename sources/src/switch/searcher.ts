@@ -1,7 +1,7 @@
+import { InfoSearcher, InfoSearcherContext } from '@game-watch/service';
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
-import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
 
 export interface SwitchSearchResponse {
@@ -228,3 +228,5 @@ export class SwitchSearcher implements InfoSearcher {
         return response;
     }
 }
+
+export const Searcher = SwitchSearcher;

@@ -5,21 +5,11 @@ import {
     QueueParams,
     QueueType,
 } from '@game-watch/queue';
-import { CacheService, getCronForNightlySync, Logger } from '@game-watch/service';
+import { CacheService, getCronForNightlySync, InfoSearcher, InfoSearcherContext, Logger } from '@game-watch/service';
 import { BaseGameData, Country, InfoSourceState, InfoSourceType } from '@game-watch/shared';
 import { EntityManager } from '@mikro-orm/core';
 import axios from 'axios';
 import { Queue } from 'bullmq';
-
-export interface InfoSearcherContext {
-    logger: Logger
-    userCountry: Country
-}
-
-export interface InfoSearcher {
-    type: InfoSourceType
-    search(name: string, context: InfoSearcherContext): Promise<BaseGameData | null>
-}
 
 export class GameNotFoundError extends Error {
     public constructor(public sourceType: InfoSourceType) { super(); }

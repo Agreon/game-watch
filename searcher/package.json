@@ -30,6 +30,7 @@
         "dotenv": "^16.0.3",
         "fast-levenshtein": "^3.0.0",
         "fp-ts": "^2.13.1",
+        "glob": "^8.0.3",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.1",
@@ -38,6 +39,7 @@
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
+        "@types/glob": "^8.0.0",
         "@types/fast-levenshtein": "^0.0.2",
         "@types/ioredis": "^4.28.10",
         "@types/node": "^18.14.2",

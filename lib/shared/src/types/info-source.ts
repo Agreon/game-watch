@@ -87,6 +87,7 @@ export type AnyGameData =
     | MetacriticData
     | ProtonGameData;
 
+// Tja
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
