@@ -1,6 +1,6 @@
 FROM node:alpine AS deps
 RUN apk add --no-cache libc6-compat
-RUN npm i -g pnpm@7.5.2
+RUN npm i -g pnpm@7.25.1
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared/package.json lib/shared/package.json
@@ -11,7 +11,7 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM node:alpine AS builder
-RUN npm i -g pnpm@7.5.2
+RUN npm i -g pnpm@7.25.1
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared lib/shared
@@ -42,7 +42,7 @@ RUN \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 FROM node:alpine AS runner
-RUN npm i -g pnpm@7.5.2
+RUN npm i -g pnpm@7.25.1
 WORKDIR /app
 
 ENV NODE_ENV production

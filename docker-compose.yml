@@ -23,6 +23,7 @@ services:
       context: .
       dockerfile: ./searcher/Dockerfile
     env_file: .env
+    init: true
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -37,6 +38,7 @@ services:
       context: .
       dockerfile: ./resolver/Dockerfile
     env_file: .env
+    init: true
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -83,6 +85,8 @@ services:
     image: bitnami/redis:6.2.6
     environment:
       - REDIS_PASSWORD=$REDIS_PASSWORD
+    volumes:
+      - redis_data:/data
     ports:
       - 6379:6379
 
@@ -106,3 +110,7 @@ services:
       - /proc/:/host/proc/:ro
       - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+
+volumes:
+  redis_data:
+    external: false

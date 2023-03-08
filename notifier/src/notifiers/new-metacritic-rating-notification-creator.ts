@@ -2,7 +2,7 @@ import { InfoSourceType, NotificationType } from '@game-watch/shared';
 
 import { NotificationCreator, NotificationCreatorContext } from '../notification-service';
 
-export class NewMetaCriticRatingNotificationCreator
+export class NewMetacriticRatingNotificationCreator
     implements NotificationCreator<NotificationType.NewMetacriticRating>
 {
     public readonly forNotificationType = NotificationType.NewMetacriticRating;
@@ -11,18 +11,18 @@ export class NewMetaCriticRatingNotificationCreator
     public async createNotification(
         {
             existingGameData,
-            resolvedGameData,
+            resolvedGameData: { criticScore, userScore },
             logger,
         }: NotificationCreatorContext<InfoSourceType.Metacritic>
     ) {
-        const hasExistingData = !!existingGameData;
-        if (hasExistingData) {
-            logger.debug({ context: { hasExistingData } }, 'Not adding notification because');
+        const hasExistingScore = !!existingGameData?.criticScore;
+        if (hasExistingScore) {
+            logger.debug({ context: { hasExistingScore } }, 'Not adding notification because');
             return null;
         }
 
-        logger.debug({ context: { hasExistingData } }, 'Adding notification because');
+        logger.debug({ context: { hasExistingScore } }, 'Adding notification because');
 
-        return resolvedGameData;
+        return { criticScore, userScore };
     }
 }

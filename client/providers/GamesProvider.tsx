@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useHttp } from '../util/useHttp';
+import { useNotificationContext } from './NotificationProvider';
 import { useUserContext } from './UserProvider';
 
 export interface GamesFilter {
@@ -34,14 +35,15 @@ export const GamesProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
     const { user } = useUserContext();
+    const { removeNotificationsForGame } = useNotificationContext();
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<GameDto[]>([]);
     const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
-    const { withRequest } = useHttp();
+    const { requestWithErrorHandling: requestWithErrorHandling } = useHttp();
 
     const fetchGames = useCallback(async () => {
         setGamesLoading(true);
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.get<GameDto[]>('/game', {
                 params: {
                     withTags: filter.tags.map(tag => tag.id),
@@ -51,7 +53,7 @@ export const GamesProvider: React.FC<{
             setGames(data);
         });
         setGamesLoading(false);
-    }, [withRequest, filter]);
+    }, [requestWithErrorHandling, filter]);
 
     const setGame = useCallback((id: string, cb: ((current: GameDto) => GameDto) | GameDto) => {
         setGames(currentGames => {
@@ -63,10 +65,11 @@ export const GamesProvider: React.FC<{
 
     const removeGame = useCallback((gameId: string) => {
         setGames(currentGames => currentGames.filter(({ id }) => id !== gameId));
-    }, []);
+        removeNotificationsForGame(gameId);
+    }, [removeNotificationsForGame]);
 
     const addGame = useCallback(async (search: string) => {
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data } = await http.post<CreateGameDto, AxiosResponse<GameDto>>(
                 '/game',
                 { search }
@@ -78,7 +81,7 @@ export const GamesProvider: React.FC<{
 
             return data;
         }, () => { });
-    }, [withRequest, setGames]);
+    }, [requestWithErrorHandling, setGames]);
 
     useEffect(() => { fetchGames(); }, [fetchGames, user.id]);
 

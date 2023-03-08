@@ -106,7 +106,7 @@ export class ResolveService {
                     !axios.isAxiosError(error)
                     || (
                         error.response?.status !== undefined
-                        && [403, 401, 400].includes(error.response.status)
+                        && [400, 401, 403, 429].includes(error.response.status)
                     )
                 )
             ) {

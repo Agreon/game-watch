@@ -37,6 +37,22 @@ const theme = extendTheme({
             },
           },
         },
+        alwaysFloating: {
+          container: {
+            label: {
+              top: 0,
+              left: 0,
+              zIndex: 2,
+              position: 'absolute',
+              backgroundColor: 'gray.700',
+              pointerEvents: 'none',
+              mx: 3,
+              px: 1,
+              my: 2,
+              ...activeLabelStyles
+            },
+          },
+        },
       },
     },
   },
@@ -50,6 +66,19 @@ const theme = extendTheme({
         margin: '1rem',
         padding: '1rem',
       },
+    }
+  },
+  colors: {
+    white: {
+      100: "white",
+      200: "white",
+      300: "white",
+      400: "white",
+      500: "white",
+      600: "white",
+      700: "white",
+      800: "white",
+      900: "white",
     }
   }
 });

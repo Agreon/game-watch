@@ -1,9 +1,10 @@
 import { Notification } from '@game-watch/database';
 import {
     InfoSourceType,
+    isNonSpecificDate,
     NotificationType,
     StoreInfoSource,
-    StoreInfoSources,
+    StoreInfoSources
 } from '@game-watch/shared';
 import dayjs from 'dayjs';
 
@@ -35,6 +36,18 @@ export class GameReleasedNotificationCreator
 
         if (!resolvedGameData.releaseDate) {
             logger.debug('Not adding notification because no new release data was found');
+            return null;
+        }
+
+        if (
+            resolvedGameData.originalReleaseDate
+            && isNonSpecificDate(resolvedGameData.originalReleaseDate)
+        ) {
+            logger.debug({
+                context: {
+                    originalReleaseDate: resolvedGameData.originalReleaseDate
+                }
+            }, 'Not adding notification because original release date is not specific');
             return null;
         }
 

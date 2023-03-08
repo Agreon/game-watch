@@ -61,7 +61,7 @@ export class SwitchResolver implements InfoResolver {
             'RU',
             'ZA',
         ].includes(source.country)) {
-            const { data } = await this.axios.get<string>(source.data.url);
+            const { data } = await this.axios.get<string>(source.data.url, { timeout: 15000 });
             const $ = cheerio.load(data);
 
             const thumbnailUrl = $("meta[property='og:image']").first().attr('content')!;
@@ -220,6 +220,11 @@ export class SwitchResolver implements InfoResolver {
         }
 
         const { regular_price, discount_price } = data.prices[0];
+
+        // Occurs for demos.
+        if (!regular_price) {
+            return undefined;
+        }
 
         const initial = parseCurrencyValue(regular_price.raw_value);
         const final = parseCurrencyValue((discount_price || regular_price).raw_value);

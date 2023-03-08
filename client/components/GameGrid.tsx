@@ -3,13 +3,12 @@ import Masonry from 'react-masonry-css';
 
 import { GameProvider } from '../providers/GameProvider';
 import { useGamesContext } from '../providers/GamesProvider';
+import { useNotificationContext } from '../providers/NotificationProvider';
 import { GameTile } from './GameTile/GameTile';
 import { LoadingSpinner } from './LoadingSpinner';
 
-/**
- * TODO: Set custom breakpoints as default to use everywhere!
- */
 export const GameGrid: React.FC = () => {
+    const { removeNotificationsForInfoSource } = useNotificationContext();
     const { games, setGame, removeGame, gamesLoading } = useGamesContext();
 
     if (gamesLoading) {
@@ -30,11 +29,17 @@ export const GameGrid: React.FC = () => {
                 1460: 2,
                 1000: 1
             }}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
+            className="game-grid"
+            columnClassName="game-grid_column"
         >
             {setupGames.map(game =>
-                <GameProvider key={game.id} game={game} setGame={setGame} removeGame={removeGame}>
+                <GameProvider
+                    key={game.id}
+                    game={game}
+                    setGame={setGame}
+                    removeGame={removeGame}
+                    removeNotificationsForInfoSource={removeNotificationsForInfoSource}
+                >
                     <GameTile />
                 </GameProvider>
             )}

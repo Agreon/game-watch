@@ -3,11 +3,14 @@ import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useHttp } from '../util/useHttp';
+import { usePolling } from '../util/usePolling';
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
     markNotificationAsRead: (id: string) => Promise<void>
     markAllNotificationsAsRead: () => Promise<void>
+    removeNotificationsForGame: (gameId: string) => void
+    removeNotificationsForInfoSource: (sourceId: string) => void
     showNotificationSidebar: boolean
     notificationSidebarRef: React.MutableRefObject<HTMLDivElement | null>
     notificationSidebarIconRef: React.MutableRefObject<HTMLButtonElement | null>
@@ -26,35 +29,50 @@ export function useNotificationContext() {
 export const NotificationProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
-    const { withRequest, handleError } = useHttp();
+    const { requestWithErrorHandling: requestWithErrorHandling, http } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
-    useEffect(() => {
-        const intervalId = setInterval(async () => {
-            await withRequest(async http => {
-                const { data } = await http.get<NotificationDto[]>(`/notification`);
-                setNotifications(data);
-            });
-        }, 5000);
+    const pollNotifications = useCallback(async () => {
+        const { data } = await http.get<NotificationDto[]>(`/notification`);
+        setNotifications(data);
 
-        return () => clearInterval(intervalId);
-    }, [setNotifications, handleError, withRequest]);
+        // Never stop
+        return false;
+    }, [http]);
+    // Retrieve notifications once at the start to not wait an hour.
+    useEffect(() => {
+        (async () => await pollNotifications())();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    usePolling(pollNotifications, 60 * 60 * 1000, []);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.post(`/notification/${notificationId}/read`);
             setNotifications(currentNotifications => currentNotifications.filter(
                 ({ id }) => id !== notificationId
             ));
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const markAllNotificationsAsRead = useCallback(async () => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.post(`/notification/mark-all-as-read`);
             setNotifications(() => []);
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
+
+    const removeNotificationsForGame = useCallback((gameId: string) => {
+        setNotifications(currentNotifications =>
+            currentNotifications.filter(notification => notification.game.id !== gameId)
+        );
+    }, []);
+
+    const removeNotificationsForInfoSource = useCallback((sourceId: string) => {
+        setNotifications(currentNotifications =>
+            currentNotifications.filter(notification => notification.infoSource.id !== sourceId)
+        );
+    }, []);
 
     const {
         isOpen: showNotificationSidebar,
@@ -95,6 +113,8 @@ export const NotificationProvider: React.FC<{
         notifications,
         markNotificationAsRead,
         markAllNotificationsAsRead,
+        removeNotificationsForGame,
+        removeNotificationsForInfoSource,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,
@@ -104,6 +124,8 @@ export const NotificationProvider: React.FC<{
         notifications,
         markNotificationAsRead,
         markAllNotificationsAsRead,
+        removeNotificationsForGame,
+        removeNotificationsForInfoSource,
         showNotificationSidebar,
         closeNotificationSidebar,
         toggleNotificationSidebar,

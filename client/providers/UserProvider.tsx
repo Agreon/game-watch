@@ -52,13 +52,13 @@ export const setLocalStoredUser = (data: LocalUserData | null) => {
 export const UserProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
-    const { withRequest } = useHttp();
-    const { withRequest: withRequestWithoutLogout } = useHttp(false);
+    const { requestWithErrorHandling: requestWithErrorHandling } = useHttp();
+    const { requestWithErrorHandling: requestWithErrorHandlingWithoutLogout } = useHttp(false);
     const [user, setUser] = useState<UserDto | null>(null);
 
     useEffect(() => {
         async function fetchUser() {
-            await withRequestWithoutLogout(async http => {
+            await requestWithErrorHandlingWithoutLogout(async http => {
                 try {
                     const { data } = await http.get('/user');
                     setLocalStoredUser(data);
@@ -93,10 +93,10 @@ export const UserProvider: React.FC<{
             });
         }
         fetchUser();
-    }, [withRequestWithoutLogout]);
+    }, [requestWithErrorHandlingWithoutLogout]);
 
     const registerUser = useCallback(async (params: Omit<RegisterUserDto, 'id'>) => {
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data } = await http.post<UserDto>('/auth/register', {
                 id: user?.id,
                 ...params
@@ -105,28 +105,28 @@ export const UserProvider: React.FC<{
             setLocalStoredUser(data);
             setUser(data);
         }, () => { });
-    }, [withRequest, user]);
+    }, [requestWithErrorHandling, user]);
 
     const loginUser = useCallback(async (params: { username: string, password: string }) => {
-        return await withRequest(async http => {
+        return await requestWithErrorHandling(async http => {
             const { data } = await http.post<UserDto>('/auth/login', params);
 
             setLocalStoredUser(data);
             setUser(data);
         }, () => { });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const logoutUser = useCallback(async () => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.post('/auth/logout');
 
             setLocalStoredUser(null);
             location.href = '/?loggedOut=true';
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const updateUserSettings = useCallback(async (params: UpdateUserSettingsDto) => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             const { data } = await http.put<UserDto>('/user', {
                 id: user?.id,
                 ...params
@@ -135,13 +135,13 @@ export const UserProvider: React.FC<{
             setLocalStoredUser(data);
             setUser(data);
         });
-    }, [withRequest, user]);
+    }, [requestWithErrorHandling, user]);
 
     const deleteUser = useCallback(async () => {
-        await withRequest(async http => {
+        await requestWithErrorHandling(async http => {
             await http.delete(`/user`);
         });
-    }, [withRequest]);
+    }, [requestWithErrorHandling]);
 
     const contextValue = useMemo(() => ({
         // We show a loading screen while no user is available

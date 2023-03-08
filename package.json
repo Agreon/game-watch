@@ -26,8 +26,8 @@
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "pnpm": "^7.21.0",
-        "turbo": "^1.6.3"
+        "pnpm": "^7.28.0",
+        "turbo": "^1.8.3"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"

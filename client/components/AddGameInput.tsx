@@ -1,16 +1,15 @@
 import { Button, Flex, Input, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
-import React, { KeyboardEvent,useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { GameProvider } from '../providers/GameProvider';
 import { useGamesContext } from '../providers/GamesProvider';
+import { useNotificationContext } from '../providers/NotificationProvider';
 import { useAction } from '../util/useAction';
 import { AddGameModal } from './AddGameModal';
 
-/**
-// width={["100%", "100%", "80%", "60%", "50%", "35%"]}
- */
 export const AddGameInput: React.FC = () => {
+    const { removeNotificationsForInfoSource } = useNotificationContext();
     const { addGame, setGame, removeGame, games } = useGamesContext();
     const [name, setName] = useState('');
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,7 +69,12 @@ export const AddGameInput: React.FC = () => {
                 </Button>
             </Flex>
             {currentGame &&
-                <GameProvider game={currentGame} setGame={setGame} removeGame={removeGame} >
+                <GameProvider
+                    game={currentGame}
+                    setGame={setGame}
+                    removeGame={removeGame}
+                    removeNotificationsForInfoSource={removeNotificationsForInfoSource}
+                >
                     <AddGameModal show={isOpen} onClose={onCloseModal} />
                 </GameProvider>
             }

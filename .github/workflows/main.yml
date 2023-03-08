@@ -1,39 +1,108 @@
 name: "CI"
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7
+      - uses: actions/checkout@v3
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'pnpm'
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies') == false
         run: pnpm install
+
+      - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+        run: pnpm install --no-frozen-lockfile
 
       - name: Lint
         run: pnpm lint
 
       - name: Build
-        run: pnpm turbo run build
+        run: |
+          cp .env.dist .env
+          cp .env client/.env.local
+          pnpm build
 
 
   build-docker:
     name: Build Docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies') == false
+        run: pnpm install
+
+      - name: Install dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
         run: |

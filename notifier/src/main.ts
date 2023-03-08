@@ -16,8 +16,11 @@ import { NotificationService } from './notification-service';
 import { GameReducedNotificationCreator } from './notifiers/game-reduced-notification-creator';
 import { GameReleasedNotificationCreator } from './notifiers/game-released-notification-creator';
 import {
-    NewMetaCriticRatingNotificationCreator
-} from './notifiers/new-meta-critic-rating-notification-creator';
+    NewMetacriticRatingNotificationCreator
+} from './notifiers/new-metacritic-rating-notification-creator';
+import {
+    NewProtonDbRatingNotificationCreator
+} from './notifiers/new-proton-db-rating-notification-creator';
 import { NewStoreEntryNotificationCreator } from './notifiers/new-store-entry-notification-creator';
 import {
     ReleaseDateChangedNotificationCreator
@@ -39,7 +42,8 @@ SendgridMailClient.setApiKey(SENDGRID_API_KEY);
 const notificationCreators = [
     new GameReducedNotificationCreator(),
     new GameReleasedNotificationCreator(),
-    new NewMetaCriticRatingNotificationCreator(),
+    new NewMetacriticRatingNotificationCreator(),
+    new NewProtonDbRatingNotificationCreator(),
     new NewStoreEntryNotificationCreator(),
     new ReleaseDateChangedNotificationCreator()
 ];

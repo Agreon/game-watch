@@ -54,7 +54,7 @@ export const EditGameTags: React.FC<EditGameTagProps> = ({ onNewTag, onCancel })
                         key={tag.id}
                         onClick={() => toggleTag(tag)}
                         variant={tag.toggled ? 'subtle' : 'outline'}
-                        colorScheme={tag.color}
+                        colorScheme={tag.toggled ? tag.color : 'white'}
                         cursor="pointer"
                         ml="0.5rem"
                         mt="0.5rem"
