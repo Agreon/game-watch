@@ -213,6 +213,7 @@ export class GameService {
                 .count('info_source.id')
                 .from('info_source')
                 .where({ 'game_id': knex.ref('game.id'), })
+                .andWhereNot('state', InfoSourceState.Disabled)
                 .andWhereRaw("date(data ->> 'releaseDate') < NOW()");
 
             query

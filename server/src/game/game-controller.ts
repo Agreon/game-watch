@@ -1,7 +1,18 @@
 import { Game, Tag, User } from '@game-watch/database';
 import { CreateGameDto, GameDto, SetupGameDto, UpdateGameDto } from '@game-watch/shared';
 import { IdentifiedReference } from '@mikro-orm/core';
-import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseBoolPipe,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 
 import { CurrentUser } from '../auth/current-user-decorator';
 import { JwtAccessTokenGuard } from '../auth/jwt-access-token-guard';
