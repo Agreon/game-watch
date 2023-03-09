@@ -163,9 +163,10 @@ export class GameService {
     }
 
     public async getGames(
-        { withTags, withInfoSources, user }: {
+        { withTags, withInfoSources, onlyAlreadyReleased, user }: {
             withTags?: string[];
             withInfoSources?: string[];
+            onlyAlreadyReleased?: boolean;
             user: IdentifiedReference<User>;
         },
     ) {
@@ -186,9 +187,7 @@ export class GameService {
             const matchingTagsQuery = knex
                 .count('tag_id')
                 .from('game_tags')
-                .andWhere({
-                    'game_id': knex.ref('game.id'),
-                })
+                .andWhere({ 'game_id': knex.ref('game.id'), })
                 .andWhere('tag_id', 'IN', withTags);
 
             query
@@ -200,15 +199,25 @@ export class GameService {
             const matchingInfoSourcesSubQuery = knex
                 .count('info_source.id')
                 .from('info_source')
-                .andWhere({
-                    'game_id': knex.ref('game.id'),
-                })
+                .andWhere({ 'game_id': knex.ref('game.id'), })
                 .andWhereNot('state', InfoSourceState.Disabled)
                 .andWhere('type', 'in', withInfoSources);
 
             query
                 .withSubQuery(matchingInfoSourcesSubQuery, 'game.matchingInfoSources')
                 .andWhere({ 'game.matchingInfoSources': { $gt: 0 } });
+        }
+
+        if (onlyAlreadyReleased) {
+            const releasedSourcesQuery = knex
+                .count('info_source.id')
+                .from('info_source')
+                .where({ 'game_id': knex.ref('game.id'), })
+                .andWhereRaw("date(data ->> 'releaseDate') < NOW()");
+
+            query
+                .withSubQuery(releasedSourcesQuery, 'game.releasedInSources')
+                .andWhere({ 'game.releasedInSources': { $gt: 0 } });
         }
 
         return await query.getResult() as Array<Game & { infoSources: InfoSource[], tags: Tag[] }>;

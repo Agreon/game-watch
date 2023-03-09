@@ -1,7 +1,7 @@
 import { Game, Tag, User } from '@game-watch/database';
 import { CreateGameDto, GameDto, SetupGameDto, UpdateGameDto } from '@game-watch/shared';
 import { IdentifiedReference } from '@mikro-orm/core';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 
 import { CurrentUser } from '../auth/current-user-decorator';
 import { JwtAccessTokenGuard } from '../auth/jwt-access-token-guard';
@@ -30,8 +30,14 @@ export class GameController {
         @CurrentUser() user: IdentifiedReference<User>,
         @Query('withTags') withTags?: string[],
         @Query('withInfoSources') withInfoSources?: string[],
+        @Query('onlyAlreadyReleased', ParseBoolPipe) onlyAlreadyReleased?: boolean,
     ): Promise<GameDto[]> {
-        return await this.gameService.getGames({ withTags, withInfoSources, user });
+        return await this.gameService.getGames({
+            withTags,
+            withInfoSources,
+            onlyAlreadyReleased,
+            user,
+        });
     }
 
     @Get('/:id')

@@ -3,12 +3,15 @@ import {
     Box,
     Button,
     Flex,
+    FormControl,
+    FormLabel,
     Modal,
     ModalBody,
     ModalCloseButton,
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Switch,
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
@@ -32,6 +35,9 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         setFilterInfoSources
     ] = useState<InfoSourceType[]>(filter.infoSources);
     const [filterTags, setFilterTags] = useState<TagDto[]>(filter.tags);
+    const [showOnlyAlreadyReleased, setShowOnlyAlreadyReleased] = useState(
+        filter.showOnlyAlreadyReleased
+    );
 
     const availableInfoSources = useMemo(
         () => INFO_SOURCE_PRIORITY.filter(
@@ -58,10 +64,11 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const applyFilter = useCallback(() => {
         setFilter({
             infoSources: filterInfoSources,
-            tags: filterTags
+            tags: filterTags,
+            showOnlyAlreadyReleased
         });
         onClose();
-    }, [onClose, filterTags, filterInfoSources, setFilter]);
+    }, [onClose, filterTags, filterInfoSources, showOnlyAlreadyReleased, setFilter]);
 
     return (
         <Box>
@@ -92,6 +99,24 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         ))}
                     </Flex>
                 </Box>
+                <Box mt="2rem">
+                    <FormControl display='flex' alignItems='center'>
+                        <Switch
+                            id='show-only-released-games-switch'
+                            checked={showOnlyAlreadyReleased}
+                            defaultChecked={filter.showOnlyAlreadyReleased}
+                            onChange={e => setShowOnlyAlreadyReleased(e.target.checked)}
+                        />
+                        <FormLabel
+                            htmlFor='show-only-released-games-switch'
+                            mt="0.75rem"
+                            ml="1rem"
+                            cursor="pointer"
+                        >
+                            Show only released games
+                        </FormLabel>
+                    </FormControl>
+                </Box>
                 <Flex justify="end">
                     <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
                     <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>
@@ -105,14 +130,18 @@ export const Filter: React.FC = () => {
     const { filter } = useGamesContext();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const filterActive = filter.infoSources.length || filter.tags.length;
+    const filterIsActive = (
+        filter.infoSources.length
+        || filter.tags.length
+        || filter.showOnlyAlreadyReleased
+    );
 
     return (
         <Flex align="center" height="100%">
             <Button
                 leftIcon={<EditIcon />}
-                colorScheme={filterActive ? 'teal' : undefined}
-                variant={filterActive ? 'outline' : 'ghost'}
+                colorScheme={filterIsActive ? 'teal' : undefined}
+                variant={filterIsActive ? 'outline' : 'ghost'}
                 onClick={onOpen}
             >
                 <Text display={['none', 'none', 'block']}>Filter</Text>

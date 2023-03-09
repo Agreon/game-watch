@@ -9,6 +9,7 @@ import { useUserContext } from './UserProvider';
 export interface GamesFilter {
     tags: TagDto[]
     infoSources: InfoSourceType[]
+    showOnlyAlreadyReleased: boolean
 }
 
 export interface GamesCtx {
@@ -38,7 +39,11 @@ export const GamesProvider: React.FC<{
     const { removeNotificationsForGame } = useNotificationContext();
     const [gamesLoading, setGamesLoading] = useState(false);
     const [games, setGames] = useState<GameDto[]>([]);
-    const [filter, setFilter] = useState<GamesFilter>({ tags: [], infoSources: [] });
+    const [filter, setFilter] = useState<GamesFilter>({
+        tags: [],
+        infoSources: [],
+        showOnlyAlreadyReleased: false,
+    });
     const { requestWithErrorHandling: requestWithErrorHandling } = useHttp();
 
     const fetchGames = useCallback(async () => {
@@ -47,7 +52,8 @@ export const GamesProvider: React.FC<{
             const { data } = await http.get<GameDto[]>('/game', {
                 params: {
                     withTags: filter.tags.map(tag => tag.id),
-                    withInfoSources: filter.infoSources
+                    withInfoSources: filter.infoSources,
+                    onlyAlreadyReleased: filter.showOnlyAlreadyReleased,
                 }
             });
             setGames(data);
