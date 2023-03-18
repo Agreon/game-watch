@@ -22,7 +22,7 @@ const SteamApiResponseStructure = t.record(
                     date: t.string
                 }),
                 is_free: t.boolean,
-                genres: t.record(t.number, t.type({
+                genres: t.array(t.type({
                     id: t.string,
                 })),
             }),
@@ -49,7 +49,7 @@ export class SteamResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<SteamGameData> {
-        const { data } = await this.axios.get<SteamApiResponse>(
+        const { data: unknownData } = await this.axios.get<SteamApiResponse>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {
@@ -62,9 +62,9 @@ export class SteamResolver implements InfoResolver {
             }
         );
 
-        const gameData = parseStructure(SteamApiResponseStructure, data);
+        const gameData = parseStructure(SteamApiResponseStructure, unknownData);
 
-        const { success, data: json } = gameData[source.data.id];
+        const { success, data } = gameData[source.data.id];
         if (!success) {
             throw new Error('Steam API request was unsuccessful');
         }
@@ -73,13 +73,13 @@ export class SteamResolver implements InfoResolver {
             id: source.data.id,
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
-            thumbnailUrl: json.header_image,
-            releaseDate: this.parseReleaseDate(json.release_date.date, source.country),
-            originalReleaseDate: json.release_date.date,
-            priceInformation: json.is_free
+            thumbnailUrl: data.header_image,
+            releaseDate: this.parseReleaseDate(data.release_date.date, source.country),
+            originalReleaseDate: data.release_date.date,
+            priceInformation: data.is_free
                 ? { final: 0 }
-                : this.getPriceInformation(json.price_overview ?? {}),
-            isEarlyAccess: Object.values(json.genres).some(genre => genre.id === '70')
+                : this.getPriceInformation(data.price_overview ?? {}),
+            isEarlyAccess: data.genres.some(genre => genre.id === '70')
         };
     }
 

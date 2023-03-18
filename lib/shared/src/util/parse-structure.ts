@@ -6,7 +6,7 @@ export class ParseError extends Error {
     public constructor(
         public message: string,
         public structure: string,
-        public validation: t.Validation<unknown>,
+        public validation: t.Errors,
     ) {
         super();
     }
@@ -24,7 +24,7 @@ export const parseStructure = <T extends t.Any>(
                 (report) => `\t${report}\n`,
             ).join()}`,
             definition.name,
-            validation
+            validation.left
         );
     }
 
