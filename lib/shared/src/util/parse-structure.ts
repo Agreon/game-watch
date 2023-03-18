@@ -1,4 +1,4 @@
-import { isLeft } from 'fp-ts/es6/Either';
+import { isLeft } from 'fp-ts/lib/Either';
 import * as t from 'io-ts';
 import reporter from 'io-ts-reporters';
 
