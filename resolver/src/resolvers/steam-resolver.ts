@@ -2,13 +2,42 @@ import {
     Country,
     InfoSourceType,
     mapCountryCodeToAcceptLanguage,
+    parseStructure,
     SteamGameData,
     StorePriceInformation,
 } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as t from 'io-ts';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
 import { parseDate } from '../util/parse-date';
+
+const SteamApiResponseStructure = t.record(
+    t.string,
+    t.type({
+        data: t.intersection([
+            t.type({
+                header_image: t.string,
+                release_date: t.type({
+                    date: t.string
+                }),
+                is_free: t.boolean,
+                genres: t.record(t.number, t.type({
+                    id: t.string,
+                })),
+            }),
+            t.partial({
+                price_overview: t.partial({
+                    initial: t.number,
+                    final: t.number
+                }),
+            })
+        ]),
+        success: t.boolean
+    })
+);
+
+export type SteamApiResponse = t.TypeOf<typeof SteamApiResponseStructure>;
 
 /**
  * TODO:
@@ -20,7 +49,7 @@ export class SteamResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<SteamGameData> {
-        const { data } = await this.axios.get<any>(
+        const { data } = await this.axios.get<SteamApiResponse>(
             `https://store.steampowered.com/api/appdetails`,
             {
                 params: {
@@ -33,17 +62,11 @@ export class SteamResolver implements InfoResolver {
             }
         );
 
-        const gameData = data[source.data.id];
+        const gameData = parseStructure(SteamApiResponseStructure, data);
 
-        const { success } = gameData;
+        const { success, data: json } = gameData[source.data.id];
         if (!success) {
-            throw new Error('Steam API request unsuccessful');
-        }
-
-        const json = gameData.data as Record<string, any>;
-
-        if (!json.price_overview && !json.is_free) {
-            // TODO: We need to open the site to get the price.
+            throw new Error('Steam API request was unsuccessful');
         }
 
         return {
@@ -56,13 +79,7 @@ export class SteamResolver implements InfoResolver {
             priceInformation: json.is_free
                 ? { final: 0 }
                 : this.getPriceInformation(json.price_overview ?? {}),
-            controllerSupport: json.controller_support,
-            categories: json.categories
-                ? Object.values(json.categories).map(({ description }) => description)
-                : undefined,
-            genres: json.genres
-                ? Object.values(json.genres).map(({ description }) => description)
-                : undefined,
+            isEarlyAccess: Object.values(json.genres).some(genre => genre.id === '70')
         };
     }
 

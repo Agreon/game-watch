@@ -4,7 +4,8 @@ dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
 
 import { mikroOrmConfig } from '@game-watch/database';
 import { createWorkerForQueue, QueueType } from '@game-watch/queue';
-import { createLogger, initializeSentry, parseEnvironment } from '@game-watch/service';
+import { createLogger, initializeSentry } from '@game-watch/service';
+import { parseStructure } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
 import SendgridMailClient from '@sendgrid/mail';
 import * as Sentry from '@sentry/node';
@@ -29,7 +30,7 @@ import {
 const {
     CREATE_NOTIFICATIONS_CONCURRENCY,
     SENDGRID_API_KEY
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 initializeSentry('Notifier');
 

@@ -1,3 +1,4 @@
+import { parseStructure } from '@game-watch/shared';
 import { Configuration, LoadStrategy } from '@mikro-orm/core';
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
@@ -34,7 +35,6 @@ import { InfoSource } from './models/info-source-model';
 import { Notification } from './models/notification-model';
 import { Tag } from './models/tag-model';
 import { User } from './models/user-model';
-import { parseEnvironment } from './parse-environment';
 
 // If used for cli command
 dotenv.config({ path: path.join(process.cwd(), '..', '..', '.env') });
@@ -46,7 +46,7 @@ const {
     DATABASE_PASSWORD,
     DATABASE_PORT,
     ENABLE_MIKRO_ORM_DEBUGGING,
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 const config: MikroOrmModuleSyncOptions = {
     entities: [Game, InfoSource, Tag, Notification, User],

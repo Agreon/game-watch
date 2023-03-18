@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
 
 import { InfoSourceWrapper } from './InfoSourceWrapper';
 
-const ReleaseDate: React.FC<{
+export const ReleaseDate: React.FC<{
     releaseDate?: Date;
     originalDate?: string
 }> = ({ releaseDate, originalDate }) => {
@@ -27,7 +27,7 @@ const ReleaseDate: React.FC<{
     );
 };
 
-const Price: React.FC<{
+export const Price: React.FC<{
     price?: number,
     initial?: number,
     country: Country

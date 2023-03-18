@@ -1,6 +1,7 @@
 import { mikroOrmConfig } from '@game-watch/database';
 import { DEFAULT_JOB_OPTIONS, QUEUE_CONNECTION_OPTIONS } from '@game-watch/queue';
-import { createLogger, parseEnvironment } from '@game-watch/service';
+import { createLogger } from '@game-watch/service';
+import { parseStructure } from '@game-watch/shared';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
@@ -23,7 +24,7 @@ import { UserModule } from './user/user-module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validate: () => parseEnvironment(EnvironmentStructure, process.env),
+      validate: () => parseStructure(EnvironmentStructure, process.env),
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],

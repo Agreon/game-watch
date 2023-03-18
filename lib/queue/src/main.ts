@@ -1,4 +1,4 @@
-import { AnyGameData } from '@game-watch/shared';
+import { AnyGameData, parseStructure } from '@game-watch/shared';
 import {
     JobsOptions,
     Processor,
@@ -11,7 +11,6 @@ import {
 } from 'bullmq';
 
 import { EnvironmentStructure } from './environment';
-import { parseEnvironment } from './parse-environment';
 
 export enum QueueType {
     SearchGame = 'search-game',
@@ -43,7 +42,7 @@ const {
     REDIS_HOST,
     REDIS_PASSWORD,
     REDIS_PORT,
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 export const QUEUE_CONNECTION_OPTIONS = {
     host: REDIS_HOST,

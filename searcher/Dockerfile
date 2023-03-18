@@ -7,19 +7,24 @@ RUN apt-get update \
 
 RUN npm i -g pnpm@7.25.1
 
+# This block is shared with the resolver for optimal caching
 WORKDIR /app
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY lib/database/package.json lib/database/package.json
 COPY lib/service/package.json lib/service/package.json
 COPY lib/browser/package.json lib/browser/package.json
 COPY lib/queue/package.json lib/queue/package.json
-COPY searcher/package.json searcher/package.json
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm install --frozen-lockfile --prefer-offline
-
 RUN node lib/browser/node_modules/puppeteer/install.js
+
+COPY searcher/package.json searcher/package.json
+
+RUN \
+    --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --prefer-offline
 
 COPY lib/shared lib/shared
 COPY lib/database lib/database

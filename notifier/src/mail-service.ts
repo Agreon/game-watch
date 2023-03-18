@@ -1,10 +1,10 @@
 import { Notification, User } from '@game-watch/database';
-import { parseEnvironment } from '@game-watch/service';
 import {
     formatPrice,
     formatReleaseDate,
     NotificationData,
     NotificationType,
+    parseStructure,
 } from '@game-watch/shared';
 import { MailService as SendgridMailClient } from '@sendgrid/mail';
 
@@ -13,7 +13,7 @@ import { EnvironmentStructure } from './environment';
 const {
     API_URL,
     PUBLIC_URL,
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 export class MailService {
     public constructor(

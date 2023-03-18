@@ -13,7 +13,7 @@ RUN \
 FROM node:alpine AS builder
 RUN npm i -g pnpm@7.25.1
 WORKDIR /app
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY lib/shared lib/shared
 COPY client/assets client/assets
 COPY client/components client/components

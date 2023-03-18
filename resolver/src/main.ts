@@ -14,9 +14,9 @@ import {
     createLogger,
     initializeSentry,
     NonCachingService,
-    parseEnvironment,
     RedisCacheService,
 } from '@game-watch/service';
+import { ParseError, parseStructure } from '@game-watch/shared';
 import { MikroORM, NotFoundError } from '@mikro-orm/core';
 import * as Sentry from '@sentry/node';
 import axios from 'axios';
@@ -39,7 +39,7 @@ const {
     REDIS_PORT,
     CACHING_ENABLED,
     CACHE_TIME_IN_SECONDS
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 initializeSentry('Resolver');
 
@@ -110,9 +110,19 @@ const main = async () => {
                 if (error instanceof CriticalError) {
                     // We need to wrap this because otherwise the error is swallowed by the worker.
                     sourceScopedLogger.error(error.originalError);
+
+                    const contexts: Record<string, any> = {
+                        resolveParameters: { type: error.sourceType },
+                    };
+
+                    if (error.originalError instanceof ParseError) {
+                        contexts.structure = error.originalError.structure;
+                        contexts.validation = error.originalError.validation;
+                    }
+
                     Sentry.captureException(error.originalError, {
                         tags: { sourceId },
-                        contexts: { resolveParameters: { type: error.sourceType } }
+                        contexts
                     });
 
                     // Abort immediately. Don't retry.

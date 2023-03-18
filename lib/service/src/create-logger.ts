@@ -1,11 +1,11 @@
+import { parseStructure } from '@game-watch/shared';
 import { default as pino } from 'pino';
 
 import { EnvironmentStructure } from './environment';
-import { parseEnvironment } from './parse-environment';
 
 export type Logger = pino.Logger;
 
-const { PRETTY_LOGGING } = parseEnvironment(EnvironmentStructure, process.env);
+const { PRETTY_LOGGING } = parseStructure(EnvironmentStructure, process.env);
 
 export const createLogger = (name: string) =>
     pino({

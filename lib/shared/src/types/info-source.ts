@@ -47,9 +47,7 @@ export interface StoreGameData extends BaseGameData {
 }
 
 export interface SteamGameData extends StoreGameData {
-    categories?: string[];
-    genres?: string[];
-    controllerSupport?: string;
+    isEarlyAccess: boolean;
 }
 
 export type SwitchGameData = StoreGameData;

@@ -2,7 +2,8 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
 
-import { initializeSentry, parseEnvironment } from '@game-watch/service';
+import { initializeSentry } from '@game-watch/service';
+import { parseStructure } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -16,7 +17,7 @@ import { EnvironmentStructure } from './environment';
 const {
   CORS_ORIGIN,
   SERVER_PORT,
-} = parseEnvironment(EnvironmentStructure, process.env);
+} = parseStructure(EnvironmentStructure, process.env);
 
 initializeSentry('Server');
 

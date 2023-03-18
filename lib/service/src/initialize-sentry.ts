@@ -1,9 +1,9 @@
+import { parseStructure } from '@game-watch/shared';
 import * as Sentry from '@sentry/node';
 
 import { EnvironmentStructure } from './environment';
-import { parseEnvironment } from './parse-environment';
 
-const { SENTRY_DSN, SENTRY_ENVIRONMENT } = parseEnvironment(EnvironmentStructure, process.env);
+const { SENTRY_DSN, SENTRY_ENVIRONMENT } = parseStructure(EnvironmentStructure, process.env);
 
 export const initializeSentry = (service: string) => {
     Sentry.init({

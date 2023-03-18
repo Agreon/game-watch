@@ -6,7 +6,7 @@ RUN apt-get update && \
 RUN npm i -g pnpm@7.25.1
 
 WORKDIR /app
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY lib/shared/package.json lib/shared/package.json
 COPY lib/database/package.json lib/database/package.json
 COPY lib/service/package.json lib/service/package.json
