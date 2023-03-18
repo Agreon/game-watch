@@ -14,6 +14,9 @@ import { Worker } from 'bullmq';
 import { EnvironmentStructure } from './environment';
 import { MailService } from './mail-service';
 import { NotificationService } from './notification-service';
+import {
+    GameLeftEarlyAccessNotificationCreator
+} from './notifiers/game-left-early-access-notification-creator';
 import { GameReducedNotificationCreator } from './notifiers/game-reduced-notification-creator';
 import { GameReleasedNotificationCreator } from './notifiers/game-released-notification-creator';
 import {
@@ -46,7 +49,8 @@ const notificationCreators = [
     new NewMetacriticRatingNotificationCreator(),
     new NewProtonDbRatingNotificationCreator(),
     new NewStoreEntryNotificationCreator(),
-    new ReleaseDateChangedNotificationCreator()
+    new ReleaseDateChangedNotificationCreator(),
+    new GameLeftEarlyAccessNotificationCreator()
 ];
 
 const mailService = new MailService(SendgridMailClient);

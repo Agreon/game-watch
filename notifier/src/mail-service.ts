@@ -51,6 +51,8 @@ export class MailService {
                 return `${infoSourceName} received a Metacritic rating`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating`;
+            case NotificationType.LeftEarlyAccess:
+                return `${infoSourceName} left Early Access`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved`;
         }
@@ -109,6 +111,8 @@ ${unsubscribeLink}
                 return `${infoSourceName} received a Metacritic rating.`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating.`;
+            case NotificationType.LeftEarlyAccess:
+                return `${infoSourceName} left Early Access`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved. Try to trigger it manually again.`
                     + " If that didn't help, there might be an issue with our implementation."

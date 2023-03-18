@@ -20,6 +20,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.GameReduced]: 'Game reduced',
     [NotificationType.NewMetacriticRating]: 'Game rated',
     [NotificationType.NewProtonDbRating]: 'Game rated',
+    [NotificationType.LeftEarlyAccess]: 'Game left Early Access',
     [NotificationType.ResolveError]: 'Resolve error',
 };
 
@@ -59,6 +60,8 @@ const getNotificationText = (notification: NotificationDto) => {
             return <>{infoSourceName} received a rating!</>;
         case NotificationType.NewProtonDbRating:
             return <>{infoSourceName} received a rating!</>;
+        case NotificationType.LeftEarlyAccess:
+            return <>{infoSourceName} left Early Access!</>;
         case NotificationType.ResolveError:
             return <>{gameName} could not be resolved!</>;
     }
