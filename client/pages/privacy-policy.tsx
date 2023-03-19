@@ -258,4 +258,10 @@ const PrivacyPolicy: NextPage = () => {
     );
 };
 
+export async function getStaticProps() {
+    return {
+        props: {},
+    };
+}
+
 export default PrivacyPolicy;
