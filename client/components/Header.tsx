@@ -6,7 +6,6 @@ import {
     IconButton,
     Text,
     useBreakpointValue,
-    useColorMode,
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
@@ -27,7 +26,6 @@ export default function Header() {
         toggleNotificationSidebar,
         notificationSidebarIconRef
     } = useNotificationContext();
-    const { colorMode } = useColorMode();
 
     const {
         isOpen: showAuthModal,
