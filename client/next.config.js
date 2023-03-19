@@ -10,6 +10,7 @@ const withBundleAnalyzer = (options) => {
 /** @type {import('next').NextConfig} */
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
+  compress: false,
   images: {
     domains: [
       'fs-prod-cdn.nintendo-europe.com',
