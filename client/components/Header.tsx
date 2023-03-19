@@ -11,11 +11,9 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { UserState } from '@game-watch/shared';
-import Image from 'next/legacy/image';
 import Link from 'next/link';
 import React from 'react';
 
-import githubIconDark from '../assets/github-icon-dark.png';
 import githubIconLight from '../assets/github-icon-light.png';
 import { useNotificationContext } from '../providers/NotificationProvider';
 import { useUserContext } from '../providers/UserProvider';
@@ -140,18 +138,17 @@ export default function Header() {
                         </Box>
                     }
                 </Box>
-                <Box mt="0.25rem">
+                <Box mb="0.25rem">
                     <a
                         href="https://github.com/Agreon/game-watch"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        <Image
-                            src={colorMode === 'light' ? githubIconDark : githubIconLight}
+                        <img
+                            src={githubIconLight.src}
                             alt="Github"
-                            width={32}
-                            height={32}
-                            quality={100}
+                            width={28}
+                            height={28}
                         />
                     </a>
                 </Box>

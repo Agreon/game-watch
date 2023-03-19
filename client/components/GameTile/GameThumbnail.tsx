@@ -1,8 +1,12 @@
 import { Box, Flex, Skeleton, useColorModeValue } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import Image, { ImageLoaderProps } from 'next/image'
 
 import { useGameContext } from '../../providers/GameProvider';
 import { LoadingSpinner } from '../LoadingSpinner';
+
+// Just use the original cdn servers and not ours in between.
+const loader = ({ src }: ImageLoaderProps) => src
 
 export const GameThumbnail: React.FC = () => {
     const { loading, game, thumbnailUrl } = useGameContext();
@@ -10,13 +14,18 @@ export const GameThumbnail: React.FC = () => {
     const [imageLoading, setImageLoading] = useState(false);
     useEffect(() => { setImageLoading(true); }, []);
 
+
+    if (!loading && !game.syncing && !thumbnailUrl) {
+        return null;
+    }
+
+
+    const showLoadingSpinner = (loading || game.syncing || (thumbnailUrl !== null && imageLoading));
+
     return (
         <Box position="relative">
-            {
-                (loading || game.syncing || (thumbnailUrl !== null && imageLoading))
-                && <LoadingSpinner size="xl" />
-            }
-            <Skeleton isLoaded={thumbnailUrl !== null ? !imageLoading : true}>
+            {showLoadingSpinner && <LoadingSpinner size="xl" />}
+            <Skeleton isLoaded={!showLoadingSpinner} >
                 <Flex
                     position="relative"
                     justify="center"
@@ -24,11 +33,12 @@ export const GameThumbnail: React.FC = () => {
                     bg={useColorModeValue('white', 'gray.900')}
                 >
                     {thumbnailUrl &&
-                        <img
-                            width="460"
-                            style={{ objectFit: 'cover' }}
-                            alt=""
+                        <Image
                             src={thumbnailUrl}
+                            unoptimized={true}
+                            fill={true}
+                            alt={game.name ?? ""}
+                            loader={loader}
                             onError={() => setImageLoading(false)}
                             onLoad={() => setImageLoading(false)}
                         />
