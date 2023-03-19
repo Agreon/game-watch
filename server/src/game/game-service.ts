@@ -174,9 +174,27 @@ export class GameService {
 
         const query = this.gameRepository.createQueryBuilder('game')
             .select('*')
-            .where({ setupCompleted: true, user })
             .leftJoinAndSelect('game.tags', 'tags')
-            .leftJoinAndSelect('game.infoSources', 'infoSources')
+            .leftJoinAndSelect(
+                'game.infoSources',
+                'infoSources',
+            )
+            .where({
+                $and: [
+                    { user },
+                    {
+                        $or: [
+                            {
+                                infoSources: {
+                                    state: { $ne: InfoSourceState.Disabled },
+                                }
+                            },
+                            {
+                                setupCompleted: false
+                            }
+                        ]
+                    }]
+            })
             .orderBy({
                 createdAt: QueryOrder.DESC,
                 infoSources: { createdAt: QueryOrder.DESC },
