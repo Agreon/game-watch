@@ -17,6 +17,12 @@ export default function Layout({ children }: PropsWithChildren<unknown>) {
             <Head>
                 <title>GameWatch</title>
                 <meta
+                    key="title"
+                    name="title"
+                    content='GameWatch'
+                />
+                <meta name="author" content="Daniel Huth"></meta>
+                <meta
                     key="description"
                     name="description"
                     content="Overview of game release dates, prices and news"
