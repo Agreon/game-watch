@@ -32,7 +32,7 @@
     "@nestjs/core": "9.3.9",
     "@nestjs/jwt": "^10.0.2",
     "@nestjs/passport": "^9.0.3",
-    "@nestjs/platform-express": "9.3.9",
+    "@nestjs/platform-express": "9.3.10",
     "@nestjs/throttler": "^4.0.0",
     "@sendgrid/mail": "^7.7.0",
     "@sentry/node": "^7.43.0",
