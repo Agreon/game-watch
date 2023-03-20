@@ -22,7 +22,7 @@ export class GameLeftEarlyAccessNotificationCreator
         }
 
         const existingSteamGameData = existingGameData as SteamGameData;
-        if (!existingSteamGameData.isEarlyAccess) {
+        if (existingSteamGameData.isEarlyAccess === false) {
             logger.debug('Not adding notification because game was not in early access before');
             return null;
         }

@@ -18,7 +18,7 @@ import { User } from './user-model';
 export class Notification<T extends NotificationType = NotificationType>
     extends BaseEntity<Notification<T>>
 {
-    @Enum(() => NotificationType)
+    @Enum({ items: () => NotificationType, type: "string" })
     public type!: T;
 
     @Property()

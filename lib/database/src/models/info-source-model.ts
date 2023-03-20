@@ -36,10 +36,10 @@ export class InfoSource<
     T extends InfoSourceType = InfoSourceType,
     S extends InfoSourceState = InfoSourceState
 > extends BaseEntity<InfoSource> {
-    @Enum(() => InfoSourceType)
+    @Enum({ items: () => InfoSourceType, type: "string" })
     public type!: T;
 
-    @Enum(() => InfoSourceState)
+    @Enum({ items: () => InfoSourceState, type: "string" })
     public state!: S;
 
     @Property()
