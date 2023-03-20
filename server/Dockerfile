@@ -23,7 +23,9 @@ COPY lib/queue lib/queue
 COPY tsconfig.json tsconfig.json
 COPY turbo.json turbo.json
 
-RUN pnpm turbo run build --filter="./lib/*"
+RUN \
+    --mount=type=cache,target=./node_modules/.cache/turbo \
+    pnpm turbo run build --filter="./lib/*"
 
 COPY server server
 

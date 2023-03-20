@@ -6,7 +6,8 @@
                 "^build"
             ],
             "outputs": [
-                ".next/**"
+                ".next/**",
+                "./dist/**"
             ]
         },
         "watch": {

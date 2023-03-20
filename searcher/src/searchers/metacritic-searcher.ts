@@ -15,7 +15,7 @@ export class MetacriticSearcher implements InfoSearcher {
         { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
         const { data } = await this.axios.get<string>(
-            `https://www.metacritic.com/search/game/${search}/results`,
+            `https://www.metacritic.com/search/game/${encodeURIComponent(search)}/results`,
         );
 
         const $ = cheerio.load(data);

@@ -14,6 +14,7 @@ COPY lib/queue/package.json lib/queue/package.json
 COPY notifier/package.json notifier/package.json
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
+    --mount=type=cache,target=./node_modules/.cache/turbo \
     pnpm install --frozen-lockfile --prefer-offline
 
 COPY lib/shared lib/shared

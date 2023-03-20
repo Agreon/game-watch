@@ -21,6 +21,7 @@ COPY lib/queue/package.json lib/queue/package.json
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm install --frozen-lockfile --prefer-offline
+
 RUN node lib/browser/node_modules/puppeteer/install.js
 
 COPY lib/shared lib/shared
@@ -31,7 +32,9 @@ COPY lib/queue lib/queue
 COPY tsconfig.json tsconfig.json
 COPY turbo.json turbo.json
 
-RUN pnpm turbo run build --filter="./lib/*"
+RUN \
+    --mount=type=cache,target=./node_modules/.cache/turbo \
+    pnpm turbo run build --filter="./lib/*"
 
 COPY resolver resolver
 

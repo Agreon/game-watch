@@ -14,7 +14,7 @@ import {
     Text,
     useBreakpointValue
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useGameContext } from '../providers/GameProvider';
 import { InfoSourceProvider } from '../providers/InfoSourceProvider';
@@ -133,6 +133,20 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const activeSourceName = activeInfoSources[0]?.data.fullName;
     const [name, setName] = useState(activeSourceName || game.search);
+    const [nameTouched, setNameTouched] = useState(false);
+
+    const onNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+        setNameTouched(true);
+    }, []);
+
+    useEffect(() => {
+        if (!nameTouched) {
+            setName(activeInfoSources[0]?.data.fullName ?? game.search);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeInfoSources]);
+
     const [continueSearching, setContinueSearching] = useState(true);
 
     return (
@@ -183,7 +197,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <Box flex="1" mr="1rem">
                             <Input
                                 value={name}
-                                onChange={event => setName(event.target.value)}
+                                onChange={onNameChange}
                             />
                         </Box>
                     </Flex>
