@@ -205,6 +205,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         activeInfoSources.length > 0 && (
                             <Checkbox
                                 mt="1rem"
+                                colorScheme="teal"
                                 isChecked={continueSearching}
                                 onChange={event => setContinueSearching(event.target.checked)}
                             >

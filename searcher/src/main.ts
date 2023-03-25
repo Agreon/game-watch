@@ -118,18 +118,18 @@ const main = async () => {
                     // We need to wrap this because otherwise the error is swallowed by the worker.
                     gameScopedLogger.error(error.originalError);
 
-                    const contexts: Record<string, any> = {
+                    const extra: Record<string, unknown> = {
                         searchParameters: { type: error.sourceType },
                     };
 
                     if (error.originalError instanceof ParseError) {
-                        contexts.structure = error.originalError.structure;
-                        contexts.validation = error.originalError.validation;
+                        extra.structure = error.originalError.structure;
+                        extra.validation = error.originalError.validation;
                     }
 
                     Sentry.captureException(error.originalError, {
-                        tags: { gameId },
-                        contexts
+                        tags: { gameId, attemptsMade },
+                        extra
                     });
 
                     // We don't abort here because other sources might hat a non critical error and
@@ -153,7 +153,7 @@ const main = async () => {
 
                 if (isLastAttempt) {
                     gameScopedLogger.error(error);
-                    Sentry.captureException(error, { tags: { gameId }, });
+                    Sentry.captureException(error, { tags: { gameId, isLastAttempt }, });
                 }
                 else {
                     gameScopedLogger.warn(

@@ -1,4 +1,4 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react';
+import { baseTheme, extendTheme, ThemeConfig } from '@chakra-ui/react';
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',
@@ -55,6 +55,34 @@ const theme = extendTheme({
         },
       },
     },
+    Button: {
+      baseStyle: {
+        paddingTop: "2px"
+      },
+      variants: {
+        solid: ({ colorScheme }: { colorScheme: string }) => {
+          if (colorScheme === "red") {
+            return {
+              color: "white",
+              bg: "red.500",
+              _hover: {
+                bg: "red.400",
+              },
+            };
+          }
+
+          if (colorScheme === "teal") {
+            return {
+              color: "white",
+              bg: "teal.500",
+              _hover: {
+                bg: 'teal.400'
+              }
+            }
+          }
+        }
+      }
+    }
   },
   styles: {
     global: {

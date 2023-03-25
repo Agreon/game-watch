@@ -111,18 +111,18 @@ const main = async () => {
                     // We need to wrap this because otherwise the error is swallowed by the worker.
                     sourceScopedLogger.error(error.originalError);
 
-                    const contexts: Record<string, any> = {
+                    const extra: Record<string, unknown> = {
                         resolveParameters: { type: error.sourceType },
                     };
 
                     if (error.originalError instanceof ParseError) {
-                        contexts.structure = error.originalError.structure;
-                        contexts.validation = error.originalError.validation;
+                        extra.structure = error.originalError.structure;
+                        extra.validation = error.originalError.validation;
                     }
 
                     Sentry.captureException(error.originalError, {
-                        tags: { sourceId },
-                        contexts
+                        tags: { sourceId, attemptsMade },
+                        extra
                     });
 
                     // Abort immediately. Don't retry.
@@ -132,7 +132,7 @@ const main = async () => {
                 if (isLastAttempt) {
                     // Need to wrap this because otherwise the error is swallowed by the worker.
                     sourceScopedLogger.error(error);
-                    Sentry.captureException(error, { tags: { sourceId }, });
+                    Sentry.captureException(error, { tags: { sourceId, isLastAttempt }, });
                 } else {
                     sourceScopedLogger.warn(
                         error,

@@ -104,6 +104,7 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <Switch
                             id='show-only-released-games-switch'
                             checked={showOnlyAlreadyReleased}
+                            colorScheme="teal"
                             defaultChecked={filter.showOnlyAlreadyReleased}
                             onChange={e => setShowOnlyAlreadyReleased(e.target.checked)}
                         />

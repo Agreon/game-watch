@@ -29,7 +29,7 @@ export class MapperService {
             return await mapperForType.mapUrlToId(url, userCountry);
         } catch (error) {
             Sentry.captureException(error, {
-                contexts: {
+                extra: {
                     mapParameters: {
                         url,
                         type
