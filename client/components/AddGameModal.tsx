@@ -209,7 +209,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 isChecked={continueSearching}
                                 onChange={event => setContinueSearching(event.target.checked)}
                             >
-                                <Text fontSize={['md', 'lg']} mt="0.25rem">
+                                <Text fontSize={['md', 'lg']} mt="0.35rem">
                                     Continue searching for the game in the other sources you are interested in
                                 </Text>
                             </Checkbox>

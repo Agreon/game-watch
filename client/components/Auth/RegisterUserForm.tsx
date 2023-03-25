@@ -60,7 +60,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
 
             <Form mt="1rem" onSubmit={handleSubmit(onRegister)} >
                 <FormControl variant="floating" isInvalid={!!errors.username}>
-                    <Input id="username" placeholder="" {...register('username')} />
+                    <Input id="username" placeholder="" {...register('username', { required: true })} />
                     <FormLabel htmlFor="username">Username</FormLabel>
                     {errors.username?.type === 'isLength'
                         && <FormErrorMessage>A username is required</FormErrorMessage>}
@@ -69,7 +69,7 @@ export const RegisterUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel 
                 </FormControl>
 
                 <FormControl variant="floating" mt="1rem" isInvalid={!!errors.password}>
-                    <Input id="password" type="password" placeholder="" {...register('password')} />
+                    <Input id="password" type="password" placeholder="" {...register('password', { required: true })} />
                     <FormLabel>Password</FormLabel>
                     {errors.password
                         && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}

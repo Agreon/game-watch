@@ -88,7 +88,9 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                                     isChecked={enableEmailNotifications}
                                     onChange={e => setEnableEmailNotifications(e.target.checked)}
                                 >
-                                    Enable E-Mail Notifications
+                                    <Text mt="0.35rem">
+                                        Enable E-Mail Notifications
+                                    </Text>
                                 </Checkbox>
                             </FormControl>
                             {
@@ -97,6 +99,7 @@ export const ConfigureUserSettingsModal: React.FC<ModalProps> = ({ show, onClose
                                     <Input
                                         type="email"
                                         value={email}
+                                        placeholder=""
                                         onChange={e => setEmail(e.target.value)}
                                     />
                                     <FormLabel>Email</FormLabel>

@@ -52,6 +52,7 @@ export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) 
                 <FormControl variant="floating" isInvalid={!!errors.username}>
                     <Input
                         id="username"
+                        placeholder=""
                         {...register('username', { required: true })}
                     />
                     <FormLabel htmlFor="username">Username</FormLabel>
@@ -62,6 +63,7 @@ export const LoginUserForm: React.FC<{ onCancel: () => void }> = ({ onCancel }) 
                     <Input
                         id="password"
                         type="password"
+                        placeholder=""
                         {...register('password', { required: true })}
                     />
                     <FormLabel>Password</FormLabel>

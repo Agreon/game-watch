@@ -37,22 +37,6 @@ const theme = extendTheme({
             },
           },
         },
-        alwaysFloating: {
-          container: {
-            label: {
-              top: 0,
-              left: 0,
-              zIndex: 2,
-              position: 'absolute',
-              backgroundColor: 'gray.700',
-              pointerEvents: 'none',
-              mx: 3,
-              px: 1,
-              my: 2,
-              ...activeLabelStyles
-            },
-          },
-        },
       },
     },
     Button: {

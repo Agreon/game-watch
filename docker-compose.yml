@@ -13,8 +13,10 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - $SERVER_PORT:$SERVER_PORT
 
@@ -30,8 +32,10 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   resolver:
     build:
@@ -45,8 +49,10 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   notifier:
     build:
@@ -59,8 +65,10 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   client:
     build:
@@ -80,6 +88,11 @@ services:
       - POSTGRES_PASSWORD=$DATABASE_PASSWORD
     ports:
       - $DATABASE_PORT:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: bitnami/redis:6.2.6
@@ -89,6 +102,11 @@ services:
       - redis_data:/data
     ports:
       - 6379:6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 
   datadog-agent:
     image: gcr.io/datadoghq/agent:7
