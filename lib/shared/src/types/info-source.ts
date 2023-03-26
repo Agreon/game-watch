@@ -63,8 +63,11 @@ export interface MetacriticData extends BaseGameData {
 
 export type ProtonDbScore = 'native' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'borked';
 
+export type DeckVerified = "verified" | "playable" | "unsupported"
+
 export interface ProtonGameData extends BaseGameData {
     score: ProtonDbScore;
+    deckVerified: DeckVerified;
     thumbnailUrl: string;
 }
 

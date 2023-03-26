@@ -1,7 +1,28 @@
-import { InfoSourceType, mapCountryCodeToAcceptLanguage, ProtonGameData } from '@game-watch/shared';
+import { InfoSource } from '@game-watch/database';
+import { DeckVerified, InfoSourceType, InfoSourceState, parseStructure, ProtonGameData, ProtonDbScore } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as t from 'io-ts';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
+import { getSteamApiData } from '../util/get-steam-api-data';
+
+export const ProtonApiInfoResponseStructure = t.type({
+    tier: t.union([
+        t.literal("native"),
+        t.literal("platinum"),
+        t.literal("gold"),
+        t.literal("silver"),
+        t.literal("bronze"),
+        t.literal("borked"),
+    ])
+})
+
+export const ProtonApiDeckInfoResponseStructure = t.type({
+    success: t.number,
+    results: t.type({
+        resolved_category: t.number
+    })
+})
 
 export class ProtonResolver implements InfoResolver {
     public type = InfoSourceType.Proton;
@@ -9,44 +30,68 @@ export class ProtonResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<ProtonGameData> {
-        // The steam API will give us the details if linux is natively supported.
-        const { data } = await this.axios.get<any>(
-            `https://store.steampowered.com/api/appdetails`,
-            {
-                params: {
-                    appids: source.data.id,
-                    // Determines the returned currency.
-                    cc: source.country.split('-')[0],
-                },
-                // Determines the returned language.
-                headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
-            }
-        );
+        // The steam API will give us the details whether linux is natively supported.
+        const data = await getSteamApiData({ axios: this.axios, source });
 
-        const gameData = data[source.data.id];
+        if (data.platforms.linux) {
+            const deckVerified = await this.getProtonDbDeckVerifiedStatus(source);
 
-        const { success } = gameData;
-        if (!success) {
-            throw new Error('Steam API request unsuccessful');
-        }
-
-        const json = gameData.data as Record<string, any>;
-        if (json.platforms.linux) {
             return {
                 ...source.data,
-                thumbnailUrl: json.header_image,
-                score: 'native'
+                score: 'native',
+                deckVerified,
+                thumbnailUrl: data.header_image,
             };
         }
 
-        const { data: { tier } } = await this.axios.get(
-            `https://www.protondb.com/api/v1/reports/summaries/${source.data.id}.json`
-        );
+        const [
+            score,
+            deckVerified
+        ] = await Promise.all([
+            this.getProtonScore(source),
+            this.getProtonDbDeckVerifiedStatus(source)
+        ]);
 
         return {
             ...source.data,
-            thumbnailUrl: json.header_image,
-            score: tier
+            score,
+            deckVerified,
+            thumbnailUrl: data.header_image,
         };
+    }
+
+    private async getProtonScore(
+        source: InfoSource<InfoSourceType, InfoSourceState.Found>
+    ): Promise<ProtonDbScore> {
+        const { data: unknownData } = await this.axios.get(
+            `https://www.protondb.com/api/v1/reports/summaries/${source.data.id}.json`
+        );
+
+        const { tier } = parseStructure(ProtonApiInfoResponseStructure, unknownData);
+
+        return tier;
+    }
+
+    private async getProtonDbDeckVerifiedStatus(
+        source: InfoSource<InfoSourceType, InfoSourceState.Found>
+    ): Promise<DeckVerified> {
+        const { data: unknownData } = await this.axios.get(
+            `https://www.protondb.com/proxy/steam/deck-verified?nAppID=${source.data.id}`
+        );
+
+        const { success, results } = parseStructure(ProtonApiDeckInfoResponseStructure, unknownData);
+
+        if (success !== 1) {
+            throw new Error('Proton API request was unsuccessful');
+        }
+
+        switch (results.resolved_category) {
+            case 2:
+                return "playable";
+            case 3:
+                return "verified";
+            default:
+                return "unsupported"
+        }
     }
 }

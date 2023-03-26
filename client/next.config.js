@@ -15,6 +15,7 @@ module.exports = withBundleAnalyzer({
     domains: [
       'fs-prod-cdn.nintendo-europe.com',
       'cdn.akamai.steamstatic.com',
+      "steamcdn-a.akamaihd.net",
       'image.api.playstation.com',
       'cdn1.epicgames.com',
       "cdn2.unrealengine.com"

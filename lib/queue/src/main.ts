@@ -1,5 +1,6 @@
 import { AnyGameData, parseStructure } from '@game-watch/shared';
 import {
+    ConnectionOptions,
     JobsOptions,
     Processor,
     Queue,
@@ -44,10 +45,10 @@ const {
     REDIS_PORT,
 } = parseStructure(EnvironmentStructure, process.env);
 
-export const QUEUE_CONNECTION_OPTIONS = {
+export const QUEUE_CONNECTION_OPTIONS: ConnectionOptions = {
     host: REDIS_HOST,
     port: REDIS_PORT,
-    password: REDIS_PASSWORD
+    password: REDIS_PASSWORD,
 };
 
 export const DEFAULT_JOB_OPTIONS: JobsOptions = {

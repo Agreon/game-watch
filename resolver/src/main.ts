@@ -55,7 +55,7 @@ const cacheService = CACHING_ENABLED
         new Redis({
             host: REDIS_HOST,
             password: REDIS_PASSWORD,
-            port: REDIS_PORT
+            port: REDIS_PORT,
         }),
         CACHE_TIME_IN_SECONDS
     )

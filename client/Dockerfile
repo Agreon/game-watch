@@ -35,7 +35,6 @@ COPY --from=deps /app/lib/shared/node_modules ./lib/shared/node_modules
 
 RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
-    --mount=type=cache,target=./client/.next \
     pnpm --filter @game-watch/shared build && \
     pnpm --filter @game-watch/client build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
