@@ -9,40 +9,39 @@ import { InfoSourceState } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
 
 const main = async () => {
+    const purgeOldCrons = process.argv.slice(2)[0] === "--purge";
+
     const queue = createQueueHandle(QueueType.ResolveSource);
 
     const orm = await MikroORM.init({ ...mikroOrmConfig, allowGlobalContext: true });
     const infoSources = await orm.em.find(InfoSource, {});
 
     for (const infoSource of infoSources) {
-        console.log('Adding cron for', infoSource.id);
-
         const cron = getCronForNightlySync(infoSource.country);
 
-        await queue.removeRepeatableByKey(
-            `${QueueType.ResolveSource}:${infoSource.id}:::${cron}`
-        );
-
-        console.log('Removed old cron for', infoSource.id);
-
-        if (infoSource.state === InfoSourceState.Disabled) {
-            continue;
+        if (purgeOldCrons || infoSource.state === InfoSourceState.Disabled) {
+            await queue.removeRepeatableByKey(
+                `${QueueType.ResolveSource}:${infoSource.id}:::${cron}`
+            );
+            console.log('Removed old cron for', infoSource.id);
         }
 
-        await queue.add(
-            QueueType.ResolveSource,
-            { sourceId: infoSource.id },
-            {
-                repeat: {
-                    cron
-                },
-                jobId: infoSource.id,
-                priority: 2,
-                ...NIGHTLY_JOB_OPTIONS
-            }
-        );
+        if (infoSource.state !== InfoSourceState.Disabled) {
+            await queue.add(
+                QueueType.ResolveSource,
+                { sourceId: infoSource.id },
+                {
+                    repeat: {
+                        cron
+                    },
+                    jobId: infoSource.id,
+                    priority: 2,
+                    ...NIGHTLY_JOB_OPTIONS
+                }
+            );
 
-        console.log('Added cron for', infoSource.id);
+            console.log('Added cron for', infoSource.id);
+        }
     }
 
     console.log('Added crons for', infoSources.length, 'sources');
