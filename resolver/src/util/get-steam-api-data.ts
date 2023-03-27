@@ -1,6 +1,11 @@
-import { InfoSource } from "@game-watch/database";
-import { InfoSourceState, InfoSourceType, mapCountryCodeToAcceptLanguage, parseStructure } from "@game-watch/shared";
-import { AxiosInstance } from "axios";
+import { InfoSource } from '@game-watch/database';
+import {
+    InfoSourceState,
+    InfoSourceType,
+    mapCountryCodeToAcceptLanguage,
+    parseStructure,
+} from '@game-watch/shared';
+import { AxiosInstance } from 'axios';
 import * as t from 'io-ts';
 
 const SteamApiResponseDataStructure = t.intersection([
@@ -23,7 +28,7 @@ const SteamApiResponseDataStructure = t.intersection([
             final: t.number
         }),
     })
-])
+]);
 
 const SteamApiResponseStructure = t.record(
     t.string,
@@ -32,7 +37,6 @@ const SteamApiResponseStructure = t.record(
         success: t.boolean
     })
 );
-
 
 export type SteamApiResponse = t.TypeOf<typeof SteamApiResponseDataStructure>;
 
@@ -63,4 +67,4 @@ export const getSteamApiData = async (
     }
 
     return data;
-}
+};

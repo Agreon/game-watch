@@ -7,8 +7,8 @@ import {
 import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
-import { parseDate } from '../util/parse-date';
 import { getSteamApiData } from '../util/get-steam-api-data';
+import { parseDate } from '../util/parse-date';
 
 /**
  * TODO:

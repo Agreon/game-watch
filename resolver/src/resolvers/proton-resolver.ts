@@ -1,5 +1,12 @@
 import { InfoSource } from '@game-watch/database';
-import { DeckVerified, InfoSourceType, InfoSourceState, parseStructure, ProtonGameData, ProtonDbScore } from '@game-watch/shared';
+import {
+    DeckVerified,
+    InfoSourceState,
+    InfoSourceType,
+    parseStructure,
+    ProtonDbScore,
+    ProtonGameData,
+} from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as t from 'io-ts';
 
@@ -8,21 +15,21 @@ import { getSteamApiData } from '../util/get-steam-api-data';
 
 export const ProtonApiInfoResponseStructure = t.type({
     tier: t.union([
-        t.literal("native"),
-        t.literal("platinum"),
-        t.literal("gold"),
-        t.literal("silver"),
-        t.literal("bronze"),
-        t.literal("borked"),
+        t.literal('native'),
+        t.literal('platinum'),
+        t.literal('gold'),
+        t.literal('silver'),
+        t.literal('bronze'),
+        t.literal('borked'),
     ])
-})
+});
 
 export const ProtonApiDeckInfoResponseStructure = t.type({
     success: t.number,
     results: t.type({
         resolved_category: t.number
     })
-})
+});
 
 export class ProtonResolver implements InfoResolver {
     public type = InfoSourceType.Proton;
@@ -79,7 +86,10 @@ export class ProtonResolver implements InfoResolver {
             `https://www.protondb.com/proxy/steam/deck-verified?nAppID=${source.data.id}`
         );
 
-        const { success, results } = parseStructure(ProtonApiDeckInfoResponseStructure, unknownData);
+        const {
+            success,
+            results,
+        } = parseStructure(ProtonApiDeckInfoResponseStructure, unknownData);
 
         if (success !== 1) {
             throw new Error('Proton API request was unsuccessful');
@@ -87,11 +97,11 @@ export class ProtonResolver implements InfoResolver {
 
         switch (results.resolved_category) {
             case 2:
-                return "playable";
+                return 'playable';
             case 3:
-                return "verified";
+                return 'verified';
             default:
-                return "unsupported"
+                return 'unsupported';
         }
     }
 }
