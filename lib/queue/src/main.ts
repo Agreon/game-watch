@@ -5,8 +5,6 @@ import {
     Processor,
     Queue,
     QueueOptions,
-    QueueScheduler,
-    QueueSchedulerOptions,
     Worker,
     WorkerOptions,
 } from 'bullmq';
@@ -89,17 +87,6 @@ export const createWorkerForQueue = <T extends QueueType>(
         lockDuration: 60 * 60 * 1000,
         ...options,
     },
-);
-
-export const createSchedulerForQueue = <T extends QueueType>(
-    type: T,
-    options?: QueueSchedulerOptions
-) => new QueueScheduler(
-    type,
-    {
-        connection: QUEUE_CONNECTION_OPTIONS,
-        ...options
-    }
 );
 
 export const createQueueHandle = (type: QueueType, options?: QueueOptions) =>

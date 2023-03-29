@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useErrorHandler } from './useErrorHandler';
 
 const THROTTLE_TTL = process.env.NEXT_PUBLIC_THROTTLE_TTL;
-assert(typeof THROTTLE_TTL === 'string', "NEXT_PUBLIC_THROTTLE_TTL is missing");
+assert(typeof THROTTLE_TTL === 'string', 'NEXT_PUBLIC_THROTTLE_TTL is missing');
 
 // We wait the throttle timeout + some buffer to be safe if some concurrent requests reset the ttl.
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

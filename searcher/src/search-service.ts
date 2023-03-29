@@ -268,7 +268,7 @@ export class SearchService {
             { sourceId },
             {
                 repeat: {
-                    cron: getCronForNightlySync(userCountry)
+                    pattern: getCronForNightlySync(userCountry)
                 },
                 jobId: sourceId,
                 priority: 2,

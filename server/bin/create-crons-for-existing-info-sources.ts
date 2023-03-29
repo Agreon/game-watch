@@ -9,7 +9,7 @@ import { InfoSourceState } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
 
 const main = async () => {
-    const purgeOldCrons = process.argv.slice(2)[0] === "--purge";
+    const purgeOldCrons = process.argv.slice(2)[0] === '--purge';
 
     const queue = createQueueHandle(QueueType.ResolveSource);
 
@@ -32,7 +32,7 @@ const main = async () => {
                 { sourceId: infoSource.id },
                 {
                     repeat: {
-                        cron
+                        pattern: cron
                     },
                     jobId: infoSource.id,
                     priority: 2,

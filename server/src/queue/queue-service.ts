@@ -23,7 +23,7 @@ export class QueueService {
             QueueType.ResolveSource,
             { sourceId: infoSource.id },
             {
-                repeat: { cron: getCronForNightlySync(infoSource.country) },
+                repeat: { pattern: getCronForNightlySync(infoSource.country) },
                 jobId: infoSource.id,
                 priority: 2
             }
@@ -36,21 +36,21 @@ export class QueueService {
         );
     }
 
-    public async createRepeatableGameSearchJob(game: Game, cron: string) {
+    public async createRepeatableGameSearchJob(game: Game, pattern: string) {
         await this.queues[QueueType.SearchGame].add(
             QueueType.SearchGame,
             { gameId: game.id },
             {
-                repeat: { cron },
+                repeat: { pattern },
                 jobId: game.id,
                 priority: 2
             }
         );
     }
 
-    public async removeRepeatableGameSearchJob(game: Game, cron: string) {
+    public async removeRepeatableGameSearchJob(game: Game, pattern: string) {
         await this.queues[QueueType.SearchGame].removeRepeatableByKey(
-            `${QueueType.SearchGame}:${game.id}:::${cron}`
+            `${QueueType.SearchGame}:${game.id}:::${pattern}`
         );
     }
 }

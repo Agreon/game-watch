@@ -8,7 +8,7 @@ import { getCronForNightlySync } from '@game-watch/service';
 import { MikroORM } from '@mikro-orm/core';
 
 const main = async () => {
-    const purgeOldCrons = process.argv.slice(2)[0] === "--purge";
+    const purgeOldCrons = process.argv.slice(2)[0] === '--purge';
 
     const queue = createQueueHandle(QueueType.SearchGame);
 
@@ -31,7 +31,7 @@ const main = async () => {
                 { gameId: game.id },
                 {
                     repeat: {
-                        cron
+                        pattern: cron
                     },
                     jobId: game.id,
                     priority: 2,
