@@ -23,7 +23,7 @@
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.1",
         "pino": "^8.11.0",
-        "pino-pretty": "^9.4.0"
+        "pino-pretty": "^10.0.0"
     },
     "peerDependencies": {
         "fp-ts": "^2.13.1",
