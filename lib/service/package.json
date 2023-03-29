@@ -12,13 +12,13 @@
     },
     "devDependencies": {
         "@types/ioredis": "^4.28.10",
-        "eslint": "^8.36.0",
-        "pnpm": "^7.29.3",
+        "eslint": "^8.37.0",
+        "pnpm": "^8.0.0",
         "typescript": "^4.9.5"
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "@sentry/node": "^7.43.0",
+        "@sentry/node": "^7.45.0",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.1",

@@ -8,7 +8,7 @@ import { NotificationProvider } from '../providers/NotificationProvider';
 import { UserProvider } from '../providers/UserProvider';
 import theme from '../theme';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <UserProvider>
@@ -21,4 +21,5 @@ function MyApp({ Component, pageProps }: AppProps) {
     </ChakraProvider>
   );
 }
-export default MyApp;
+
+export default App;

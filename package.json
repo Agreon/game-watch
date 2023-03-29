@@ -25,12 +25,12 @@
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.55.0",
-        "@typescript-eslint/parser": "^5.55.0",
-        "eslint": "^8.36.0",
+        "@typescript-eslint/eslint-plugin": "^5.57.0",
+        "@typescript-eslint/parser": "^5.57.0",
+        "eslint": "^8.37.0",
         "eslint-plugin-simple-import-sort": "^10.0.0",
-        "pnpm": "^7.29.3",
-        "turbo": "^1.8.3",
+        "pnpm": "^8.0.0",
+        "turbo": "^1.8.6",
         "typescript": "^4.9.5"
     },
     "resolutions": {

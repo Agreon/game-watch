@@ -91,10 +91,4 @@ const ToS: NextPage = () => {
     );
 };
 
-export async function getStaticProps() {
-    return {
-        props: {},
-    };
-}
-
 export default ToS;
