@@ -1,11 +1,11 @@
 const withBundleAnalyzer = (options) => {
   if (process.env.ANALYZE === 'true') {
-    return require('@next/bundle-analyzer')()(options)
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require('@next/bundle-analyzer')()(options);
   } else {
     return options;
   }
-}
-
+};
 
 /** @type {import('next').NextConfig} */
 module.exports = withBundleAnalyzer({
@@ -15,12 +15,12 @@ module.exports = withBundleAnalyzer({
     domains: [
       'fs-prod-cdn.nintendo-europe.com',
       'cdn.akamai.steamstatic.com',
-      "steamcdn-a.akamaihd.net",
+      'steamcdn-a.akamaihd.net',
       'image.api.playstation.com',
       'cdn1.epicgames.com',
-      "cdn2.unrealengine.com"
+      'cdn2.unrealengine.com'
     ],
     // 365 days
     minimumCacheTTL: 31536000,
   }
-})
+});

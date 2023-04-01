@@ -163,10 +163,12 @@ export class GameService {
     }
 
     public async getGames(
-        { withTags, withInfoSources, onlyAlreadyReleased, user }: {
+        { withTags, withInfoSources, onlyAlreadyReleased, user, offset, limit }: {
             withTags?: string[];
             withInfoSources?: string[];
             onlyAlreadyReleased?: boolean;
+            offset?: number,
+            limit?: number,
             user: IdentifiedReference<User>;
         },
     ) {
@@ -237,6 +239,10 @@ export class GameService {
             query
                 .withSubQuery(releasedSourcesQuery, 'game.releasedInSources')
                 .andWhere({ 'game.releasedInSources': { $gt: 0 } });
+        }
+
+        if (limit) {
+            query.limit(limit, offset);
         }
 
         return await query.getResult() as Array<Game & { infoSources: InfoSource[], tags: Tag[] }>;

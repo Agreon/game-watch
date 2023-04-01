@@ -69,8 +69,9 @@ const getNotificationText = (notification: NotificationDto) => {
 
 const NotificationComponent: React.FC<{
     notification: NotificationDto,
-    markNotificationAsRead: (id: string) => Promise<void>
-}> = ({ notification, markNotificationAsRead }) => {
+    markNotificationAsRead: (id: string) => Promise<void>,
+    showLoadingSpinner: boolean
+}> = ({ notification, markNotificationAsRead, showLoadingSpinner }) => {
     const { loading, execute: markAsRead } = useAction(markNotificationAsRead);
 
     const notificationText = useMemo(() => getNotificationText(notification), [notification]);
@@ -118,7 +119,7 @@ const NotificationComponent: React.FC<{
                     aria-label='Delete'
                 />
             </Box>
-            {loading && <LoadingSpinner size="md" />}
+            {(loading || showLoadingSpinner) && <LoadingSpinner size="md" />}
         </Box>
     );
 };

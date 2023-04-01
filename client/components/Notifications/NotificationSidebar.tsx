@@ -3,6 +3,7 @@ import { Box, Button, Flex, Kbd, Slide, Text } from '@chakra-ui/react';
 import { NotificationDto } from '@game-watch/shared';
 import React, { useCallback } from 'react';
 
+import { useGamesContext } from '../../providers/GamesProvider';
 import { useNotificationContext } from '../../providers/NotificationProvider';
 import { useAction } from '../../util/useAction';
 import { Notification } from './Notification';
@@ -17,9 +18,20 @@ export const NotificationSidebar = () => {
         markAllNotificationsAsRead,
     } = useNotificationContext();
 
-    const { loading, execute: markAllAsRead } = useAction(markAllNotificationsAsRead);
+    const { fetchGames } = useGamesContext();
 
-    const onClick = useCallback((notification: NotificationDto) => {
+    const { loading, execute: markAllAsRead } = useAction(markAllNotificationsAsRead);
+    const { loading: fetchGamesLoading, execute: fetchAllGames, } = useAction(fetchGames);
+
+    const onClick = useCallback(async (notification: NotificationDto) => {
+        if (fetchGamesLoading) {
+            return;
+        }
+
+        await fetchAllGames(true);
+        // Otherwise the game tile is not mounted below :/.
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         const scrollContainer = document.getElementById('scrollContainer');
         const gameTile = document.getElementById(notification.game.id);
         if (!scrollContainer || !gameTile) {
@@ -31,7 +43,7 @@ export const NotificationSidebar = () => {
             top: gameTile.offsetTop - scrollContainer.offsetTop - 50,
             behavior: 'smooth'
         });
-    }, [closeNotificationSidebar]);
+    }, [closeNotificationSidebar, fetchAllGames, fetchGamesLoading]);
 
     return (
         <Slide
@@ -75,7 +87,7 @@ export const NotificationSidebar = () => {
                             colorScheme='teal'
                             variant='outline'
                             rightIcon={<CheckCircleIcon />}
-                            isLoading={loading}
+                            isLoading={loading || fetchGamesLoading}
                         >
                             Mark all as read
                         </Button>
@@ -92,6 +104,7 @@ export const NotificationSidebar = () => {
                                 <Notification
                                     notification={notification}
                                     markNotificationAsRead={markNotificationAsRead}
+                                    showLoadingSpinner={fetchGamesLoading}
                                 />
                             </Box>
 

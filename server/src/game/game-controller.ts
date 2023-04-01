@@ -42,12 +42,16 @@ export class GameController {
         @Query('withTags') withTags?: string[],
         @Query('withInfoSources') withInfoSources?: string[],
         @Query('onlyAlreadyReleased', ParseBoolPipe) onlyAlreadyReleased?: boolean,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number,
     ): Promise<GameDto[]> {
         return await this.gameService.getGames({
             withTags,
             withInfoSources,
             onlyAlreadyReleased,
             user,
+            offset,
+            limit
         });
     }
 
