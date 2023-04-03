@@ -4,18 +4,18 @@ import { useCallback, useState } from 'react';
 import { DEFAULT_TOAST_OPTIONS } from './default-toast-options';
 
 interface UseActionOptions<R> {
-    onSuccess?: (result: R) => void
+    onSuccess?: (result: Exclude<R, Error>) => void
     onError?: (error: Error) => void | string
 }
 
-export const useAction = <T extends (...args: any[]) => Promise<Error | R>, R>(
-    action: T,
+export const useAction = <T extends any[], R>(
+    action: (...args: T) => Promise<R>,
     options?: UseActionOptions<R>
 ) => {
     const toast = useToast(DEFAULT_TOAST_OPTIONS);
     const [loading, setLoading] = useState(false);
 
-    const execute = useCallback(async (...params: Parameters<T>) => {
+    const execute = useCallback(async (...params: T) => {
         setLoading(true);
         try {
             const result = await action(...params);
@@ -31,7 +31,7 @@ export const useAction = <T extends (...args: any[]) => Promise<Error | R>, R>(
                 return;
             }
 
-            options?.onSuccess && options.onSuccess(result);
+            options?.onSuccess && options.onSuccess(result as Exclude<R, Error>);
         }
         finally {
             setLoading(false);

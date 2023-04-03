@@ -29,7 +29,7 @@ export const DeleteAccount: React.FC = () => {
     } = useAction(deleteUser);
 
     const onAccountDelete = useCallback(async () => {
-        await deleteAccount({});
+        await deleteAccount();
         await logoutUser();
     }, [logoutUser, deleteAccount]);
 
