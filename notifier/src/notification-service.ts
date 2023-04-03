@@ -51,7 +51,12 @@ export class NotificationService {
         const game = infoSource.game.getEntity();
         const user = infoSource.user.getEntity();
 
-        const logger = this.sourceScopedLogger.child({ gameId: game.id, userId: user.id });
+        const logger = this.sourceScopedLogger.child({
+            gameId: game.id,
+            userId: user.id,
+            existingGameData,
+            resolvedGameData
+        });
 
         if (resolvedGameData === null) {
             // We don't want to spam users with notifications they don't have power over.

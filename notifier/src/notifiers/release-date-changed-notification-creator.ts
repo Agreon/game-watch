@@ -18,7 +18,7 @@ export class ReleaseDateChangedNotificationCreator
         { existingGameData, resolvedGameData, logger }: NotificationCreatorContext<StoreInfoSource>
     ) {
         // We don't want duplicate notifications if a game was just added to a store.
-        if (!existingGameData?.releaseDate) {
+        if (!existingGameData) {
             logger.debug('Not adding notification because no existing data was found');
             return null;
         }
