@@ -9,7 +9,7 @@ const withBundleAnalyzer = (options) => {
 
 /** @type {import('next').NextConfig} */
 module.exports = withBundleAnalyzer({
-  reactStrictMode: true,
+  reactStrictMode: false,
   compress: false,
   images: {
     domains: [

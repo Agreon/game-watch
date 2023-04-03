@@ -132,7 +132,13 @@ export default function Header() {
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <Text fontWeight="bold" fontSize="xs">{notifications.length}</Text>
+                            <Text
+                                fontWeight="bold"
+                                fontSize="xs"
+                                mt="0.1rem"
+                            >
+                                {notifications.length}
+                            </Text>
                         </Box>
                     }
                 </Box>

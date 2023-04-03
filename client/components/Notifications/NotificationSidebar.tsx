@@ -28,7 +28,7 @@ export const NotificationSidebar = () => {
             return;
         }
 
-        await fetchAllGames(true);
+        await fetchAllGames(0, true);
         // Otherwise the game tile is not mounted below :/.
         await new Promise((resolve) => setTimeout(resolve, 100));
 

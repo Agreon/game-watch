@@ -8,17 +8,17 @@ interface UseActionOptions<R> {
     onError?: (error: Error) => void | string
 }
 
-export const useAction = <T, R>(
-    action: (params: T) => Promise<Error | R>,
+export const useAction = <T extends (...args: any[]) => Promise<Error | R>, R>(
+    action: T,
     options?: UseActionOptions<R>
 ) => {
     const toast = useToast(DEFAULT_TOAST_OPTIONS);
     const [loading, setLoading] = useState(false);
 
-    const execute = useCallback(async (params: T) => {
+    const execute = useCallback(async (...params: Parameters<T>) => {
         setLoading(true);
         try {
-            const result = await action(params);
+            const result = await action(...params);
             if (result instanceof Error) {
                 const errorText = options?.onError && options.onError(result);
                 if (errorText) {
