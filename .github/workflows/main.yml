@@ -57,6 +57,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Lint
+        run: pnpm test
+
       - name: Build
         run: |
           cp .env.dist .env

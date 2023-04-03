@@ -21,6 +21,7 @@
         "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.development.yml",
         "lint": "pnpm turbo run lint",
         "lint:fix": "pnpm turbo run lint:fix",
+        "test": "pnpm turbo run test",
         "clean": "rm -rf ./**/node_modules && rm -rf ./node_modules",
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
