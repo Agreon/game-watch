@@ -8,7 +8,7 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@7.25.1
+RUN npm i -g pnpm@8.1.0
 
 # This block is shared with the searcher for optimal caching
 WORKDIR /app
@@ -34,7 +34,7 @@ COPY turbo.json turbo.json
 
 RUN \
     --mount=type=cache,target=./node_modules/.cache/turbo \
-    pnpm turbo run build --filter="./lib/*"
+    pnpm build --filter="./lib/*"
 
 COPY resolver resolver
 

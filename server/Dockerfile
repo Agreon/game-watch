@@ -3,7 +3,7 @@ RUN apt-get update && \
     apt-get install -y git --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@7.25.1
+RUN npm i -g pnpm@8.1.0
 
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
@@ -25,7 +25,7 @@ COPY turbo.json turbo.json
 
 RUN \
     --mount=type=cache,target=./node_modules/.cache/turbo \
-    pnpm turbo run build --filter="./lib/*"
+    pnpm build --filter="./lib/*"
 
 COPY server server
 

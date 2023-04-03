@@ -9,7 +9,7 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@7.25.1 turbo@1.7.0
+RUN npm i -g pnpm@8.1.0 turbo@1.7.0
 
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
