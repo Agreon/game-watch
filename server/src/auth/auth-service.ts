@@ -34,7 +34,7 @@ export class AuthService {
     ): Promise<User> {
         const userToRegister = await this.userRepository.findOneOrFail(id);
 
-        userToRegister.username = username;
+        userToRegister.username = username.toLocaleLowerCase();
         userToRegister.state = UserState.Registered;
         userToRegister.email = email ?? null;
         userToRegister.enableEmailNotifications = enableEmailNotifications;
@@ -48,7 +48,10 @@ export class AuthService {
     }
 
     public async validateUser(username: string, password: string): Promise<User | null> {
-        const user = await this.userRepository.findOne({ username }, { populate: ['password'] });
+        const user = await this.userRepository.findOne(
+            { username: username.toLocaleLowerCase(), },
+            { populate: ['password'] }
+        );
 
         if (!user?.password || await bcrypt.compare(password, user.password) === false) {
             return null;

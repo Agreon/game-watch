@@ -26,7 +26,7 @@ export class GameReleasedNotificationCreator
             logger,
         }: NotificationCreatorContext<StoreInfoSource>
     ) {
-        const hasExistingData = !!existingGameData;
+        const hasExistingData = !!existingGameData.thumbnailUrl;
 
         // We don't want duplicate notifications if a game was just added to a store.
         if (!hasExistingData) {
