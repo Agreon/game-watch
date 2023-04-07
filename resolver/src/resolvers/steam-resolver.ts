@@ -10,10 +10,6 @@ import { InfoResolver, InfoResolverContext } from '../resolve-service';
 import { getSteamApiData } from '../util/get-steam-api-data';
 import { parseDate } from '../util/parse-date';
 
-/**
- * TODO:
- * - Add offer end date => We need to make a second api call
- */
 export class SteamResolver implements InfoResolver {
     public type = InfoSourceType.Steam;
 

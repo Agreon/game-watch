@@ -36,7 +36,6 @@
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
-        "@types/ioredis": "^4.28.10",
         "@types/jest": "^29.5.0",
         "@types/node": "^18.15.11",
         "@typescript-eslint/eslint-plugin": "^5.57.1",
