@@ -1,4 +1,4 @@
-import { Box, Stat, StatLabel, StatNumber } from '@chakra-ui/react';
+import { Box, Stat, StatLabel, StatNumber, Text, Tooltip } from '@chakra-ui/react';
 import { Country, formatReleaseDate, isNonSpecificDate, SteamGameData } from '@game-watch/shared';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -24,7 +24,12 @@ export const SteamReleaseDate: React.FC<{
             }
 
             if (dayjs(releaseDate).isAfter(new Date())) {
-                return `${formattedDate} (EA)`;
+                return <Box position="relative" width="fit-content">
+                    {formattedDate}
+                    <Tooltip placement='top' label="Early Access">
+                        <Text position="absolute" fontSize="0.6rem" top="0" right="-1.3rem">(EA)</Text>
+                    </Tooltip>
+                </Box>;
             }
             return 'In Early Access';
         },
