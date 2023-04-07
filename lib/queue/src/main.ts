@@ -32,7 +32,7 @@ export type QueueParams = {
     },
     [QueueType.CreateNotifications]: {
         sourceId: string
-        existingGameData: AnyGameData | null
+        existingGameData: AnyGameData
         resolvedGameData: AnyGameData | null
     },
 };

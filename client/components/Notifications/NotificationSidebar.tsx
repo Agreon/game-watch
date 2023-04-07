@@ -28,12 +28,15 @@ export const NotificationSidebar = () => {
             return;
         }
 
-        await fetchAllGames(0, true);
-        // Otherwise the game tile is not mounted below :/.
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        let gameTile = document.getElementById(notification.game.id);
+        if (!gameTile) {
+            await fetchAllGames(0, true);
+            // Otherwise the game tile is not mounted below :/.
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
 
+        gameTile = document.getElementById(notification.game.id);
         const scrollContainer = document.getElementById('scrollContainer');
-        const gameTile = document.getElementById(notification.game.id);
         if (!scrollContainer || !gameTile) {
             return;
         }

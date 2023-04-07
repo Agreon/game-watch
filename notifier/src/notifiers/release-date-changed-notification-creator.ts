@@ -17,8 +17,9 @@ export class ReleaseDateChangedNotificationCreator
     public async createNotification(
         { existingGameData, resolvedGameData, logger }: NotificationCreatorContext<StoreInfoSource>
     ) {
-        // We don't want duplicate notifications if a game was just added to a store.
-        if (!existingGameData) {
+        // We don't want to trigger a notification if a game was just added to a store because this
+        // would result in two notifications.
+        if (!existingGameData.thumbnailUrl) {
             logger.debug('Not adding notification because no existing data was found');
             return null;
         }

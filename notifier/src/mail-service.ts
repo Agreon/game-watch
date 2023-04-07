@@ -51,6 +51,8 @@ export class MailService {
                 return `${infoSourceName} received a Metacritic rating`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating`;
+            case NotificationType.ProtonDbRatingIncreased:
+                return `Proton DB rating of ${infoSourceName} increased`;
             case NotificationType.LeftEarlyAccess:
                 return `${infoSourceName} left Early Access`;
             case NotificationType.ResolveError:
@@ -111,6 +113,8 @@ ${unsubscribeLink}
                 return `${infoSourceName} received a Metacritic rating.`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating.`;
+            case NotificationType.ProtonDbRatingIncreased:
+                return `Proton DB rating of ${infoSourceName} increased`;
             case NotificationType.LeftEarlyAccess:
                 return `${infoSourceName} left Early Access`;
             case NotificationType.ResolveError:

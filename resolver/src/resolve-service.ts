@@ -181,7 +181,7 @@ export class ResolveService {
     private async addToNotificationQueue(
         { sourceId, existingGameData, resolvedGameData }: {
             sourceId: string
-            existingGameData: AnyGameData | null
+            existingGameData: AnyGameData
             resolvedGameData: AnyGameData | null
         }
     ) {

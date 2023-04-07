@@ -7,6 +7,7 @@ export enum NotificationType {
     GameReduced = 'game-reduced',
     NewMetacriticRating = 'new-metacritic-rating',
     NewProtonDbRating = 'new-proton-db-rating',
+    ProtonDbRatingIncreased = 'proton-db-rating-increased',
     LeftEarlyAccess = 'left-early-access',
     ResolveError = 'resolve-error'
 }
@@ -25,6 +26,7 @@ export type NotificationData = {
     [NotificationType.GameReduced]: StorePriceInformation,
     [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },
     [NotificationType.NewProtonDbRating]: { score: string },
+    [NotificationType.ProtonDbRatingIncreased]: { score: string },
     [NotificationType.LeftEarlyAccess]: unknown,
     [NotificationType.ResolveError]: unknown,
 };

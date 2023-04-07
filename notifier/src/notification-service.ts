@@ -14,7 +14,7 @@ import { MailService } from './mail-service';
 export interface NotificationCreatorContext<T extends InfoSourceType = InfoSourceType> {
     game: Game
     infoSource: InfoSource
-    existingGameData: GameData[T] | null
+    existingGameData: GameData[T]
     resolvedGameData: GameData[T]
     em: EntityManager
     logger: Logger
@@ -39,7 +39,7 @@ export class NotificationService {
     public async createNotifications(
         { sourceId, existingGameData, resolvedGameData }: {
             sourceId: string
-            existingGameData: AnyGameData | null
+            existingGameData: AnyGameData
             resolvedGameData: AnyGameData | null
         }
     ) {
@@ -101,7 +101,9 @@ export class NotificationService {
             type: NotificationType.ResolveError
         });
         if (existingNotification) {
-            logger.debug('Not adding notification because there is already another ResolveError notification for that game');
+            logger.debug(
+                'Not adding notification because there is already another ResolveError notification for that game'
+            );
             return;
         }
 
@@ -126,13 +128,13 @@ export class NotificationService {
         resolvedGameData,
         logger,
     }: {
-        creator: NotificationCreator<NotificationType>,
-        game: Game
-        infoSource: InfoSource
-        user: User
-        existingGameData: AnyGameData | null
-        resolvedGameData: AnyGameData
-        logger: Logger
+            creator: NotificationCreator<NotificationType>,
+            game: Game,
+            infoSource: InfoSource,
+            user: User,
+            existingGameData: AnyGameData,
+            resolvedGameData: AnyGameData,
+            logger: Logger,
     }) {
         const notificationData = await creator.createNotification({
             logger: logger.child({

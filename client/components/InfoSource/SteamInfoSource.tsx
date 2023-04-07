@@ -1,5 +1,6 @@
 import { Box, Stat, StatLabel, StatNumber } from '@chakra-ui/react';
-import { Country, formatReleaseDate, SteamGameData } from '@game-watch/shared';
+import { Country, formatReleaseDate, isNonSpecificDate, SteamGameData } from '@game-watch/shared';
+import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
 import { InfoSourceWrapper } from './InfoSourceWrapper';
@@ -7,16 +8,25 @@ import { Price } from './StoreInfoSource';
 
 export const SteamReleaseDate: React.FC<{
     releaseDate?: Date;
-    isEarlyAccess: boolean;
     originalDate?: string
+    isEarlyAccess: boolean;
 }> = ({ releaseDate, originalDate, isEarlyAccess }) => {
     const formattedDate = useMemo(
         () => {
             const formattedDate = formatReleaseDate({ releaseDate, originalDate });
-            if (isEarlyAccess && formattedDate !== 'TBD') {
-                return 'In Early Access';
+            if (
+                !isEarlyAccess
+                // If we have no comparable date information, just return that
+                || !releaseDate
+                || (originalDate && isNonSpecificDate(originalDate))
+            ) {
+                return formattedDate;
             }
-            return formattedDate;
+
+            if (dayjs(releaseDate).isAfter(new Date())) {
+                return `${formattedDate} (EA)`;
+            }
+            return 'In Early Access';
         },
         [releaseDate, originalDate, isEarlyAccess]
     );

@@ -1,7 +1,7 @@
 import { StoreInfoSource } from '@game-watch/shared';
 import dayjs from 'dayjs';
 
-import { DEFAULT_STEAM_DATA, TEST_LOGGER } from '../defaults.testutil';
+import { DEFAULT_BASE_GAME_DATA, DEFAULT_STEAM_DATA, TEST_LOGGER } from '../defaults.testutil';
 import { NotificationCreatorContext } from '../notification-service';
 import { ReleaseDateChangedNotificationCreator } from './release-date-changed-notification-creator';
 
@@ -30,10 +30,16 @@ describe('ReleaseDateChangedNotificationCreator', () => {
         });
     });
 
-    it("won't create a notification if no data was available before", async () => {
+    it("won't create a notification if no resolved data was available before", async () => {
+        const newReleaseDate = dayjs().add(1, 'day').toDate();
+
         const result = await creator.createNotification({
-            existingGameData: null,
-            resolvedGameData: DEFAULT_STEAM_DATA,
+            existingGameData: DEFAULT_BASE_GAME_DATA,
+            resolvedGameData: {
+                ...DEFAULT_STEAM_DATA,
+                releaseDate: newReleaseDate,
+                originalReleaseDate: '12th March 2023'
+            },
             logger: TEST_LOGGER,
         } as NotificationCreatorContext<StoreInfoSource>);
 
@@ -42,7 +48,7 @@ describe('ReleaseDateChangedNotificationCreator', () => {
 
     it("won't create a notification if no new release information is available", async () => {
         const result = await creator.createNotification({
-            existingGameData: null,
+            existingGameData: DEFAULT_STEAM_DATA,
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
                 releaseDate: undefined,
