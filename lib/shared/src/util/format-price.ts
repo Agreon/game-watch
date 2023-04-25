@@ -1,25 +1,25 @@
 import { Country } from '../types/country';
 
 const countryUnitMap: Record<Country, string> = {
-    'AT': '€',
-    'BE-FR': '€',
-    'BE-NL': '€',
+    'AT': 'EUR',
+    'BE-FR': 'EUR',
+    'BE-NL': 'EUR',
     'CH-DE': 'CHF',
     'CH-FR': 'CHF',
     'CH-IT': 'CHF',
-    'DE': '€',
-    'ES': '€',
-    'FR': '€',
-    'GB': '£',
-    'IE': '€',
-    'IT': '€',
-    'NL': '€',
-    'PT': '€',
-    'RU': 'pуб.',
-    'ZA': 'R',
-    'US': '$',
-    'AU': '$',
-    'NZ': '$',
+    'DE': 'EUR',
+    'ES': 'EUR',
+    'FR': 'EUR',
+    'GB': 'GBP',
+    'IE': 'EUR',
+    'IT': 'EUR',
+    'NL': 'EUR',
+    'PT': 'EUR',
+    'RU': 'RUB',
+    'ZA': 'ZAR',
+    'US': 'USD',
+    'AU': 'AUD',
+    'NZ': 'NZD',
 };
 
 export const formatPrice = ({ price, country }: { price?: number, country: Country }) => {
@@ -31,14 +31,8 @@ export const formatPrice = ({ price, country }: { price?: number, country: Count
         return 'Free';
     }
 
-    if ([
-        '$',
-        'CHF',
-        'R',
-        '£'
-    ].includes(countryUnitMap[country])) {
-        return `${countryUnitMap[country]}${price}`;
-    }
-
-    return `${price}${countryUnitMap[country]}`;
+    return Intl.NumberFormat(country, {
+        style: 'currency',
+        currency: countryUnitMap[country]
+    }).format(price);
 };

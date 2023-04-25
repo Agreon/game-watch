@@ -64,7 +64,7 @@ const cacheService = CACHING_ENABLED
 const resolvers = [
     new SteamResolver(axiosInstance),
     new SwitchResolver(axiosInstance),
-    new PlaystationResolver(axiosInstance),
+    new PlaystationResolver(),
     new EpicResolver(axiosInstance),
     new MetacriticResolver(axiosInstance),
     new ProtonResolver(axiosInstance),

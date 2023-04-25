@@ -46,7 +46,9 @@ export const Price: React.FC<{
         <Stat>
             <StatLabel>Price</StatLabel>
             <StatNumber fontSize="1rem">
-                {hasDiscount ? <Text as="s">{parsedInitial}</Text> : null} {parsedPrice}
+                <>
+                    {hasDiscount ? <Text as="s">{parsedInitial}</Text> : null} {parsedPrice}
+                </>
             </StatNumber>
         </Stat>
     );

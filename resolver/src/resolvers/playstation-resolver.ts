@@ -6,7 +6,6 @@ import {
     PlaystationGameData,
     StorePriceInformation,
 } from '@game-watch/shared';
-import { AxiosInstance } from 'axios';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
 import { parseCurrencyValue } from '../util/parse-currency-value';
@@ -14,8 +13,6 @@ import { parseDate } from '../util/parse-date';
 
 export class PlaystationResolver implements InfoResolver {
     public type = InfoSourceType.Playstation;
-
-    public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source, logger }: InfoResolverContext): Promise<PlaystationGameData> {
 
