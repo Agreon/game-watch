@@ -99,7 +99,7 @@ services:
     environment:
       - REDIS_PASSWORD=$REDIS_PASSWORD
     volumes:
-      - redis_data:/data
+      - redis_data:/bitnami/redis/data
     ports:
       - 6379:6379
     healthcheck:
