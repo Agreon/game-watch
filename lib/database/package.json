@@ -13,10 +13,10 @@
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "@mikro-orm/core": "^5.7.0",
-        "@mikro-orm/migrations": "^5.7.0",
+        "@mikro-orm/core": "^5.7.3",
+        "@mikro-orm/migrations": "^5.7.3",
         "@mikro-orm/nestjs": "^5.1.8",
-        "@mikro-orm/postgresql": "^5.7.0",
+        "@mikro-orm/postgresql": "^5.7.3",
         "@mikro-orm/sql-highlighter": "^1.0.1",
         "dotenv": "^16.0.3",
         "io-ts": "^2.2.20",
@@ -26,8 +26,8 @@
         "uuid": "^9.0.0"
     },
     "devDependencies": {
-        "@mikro-orm/cli": "^5.7.0",
-        "@types/node": "^18.16.0",
+        "@mikro-orm/cli": "^5.7.3",
+        "@types/node": "^18.16.3",
         "@types/uuid": "^9.0.1",
         "eslint": "^8.39.0",
         "pnpm": "^8.3.1",

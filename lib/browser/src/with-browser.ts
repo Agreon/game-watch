@@ -5,7 +5,7 @@ export const withBrowser = async <T>(
     method: (page: Page) => Promise<T>,
 ) => {
     const browser = await Puppeteer.launch({
-        headless: true,
+        headless: 'new',
         args: [
             '--disable-gpu',
             '--disable-dev-shm-usage',
