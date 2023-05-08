@@ -16,6 +16,6 @@
         "typescript": "^5.0.4"
     },
     "dependencies": {
-        "puppeteer": "19.11.1"
+        "puppeteer": "20.1.1"
     }
 }
