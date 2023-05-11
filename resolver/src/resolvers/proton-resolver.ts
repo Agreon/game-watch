@@ -8,6 +8,7 @@ import {
     ProtonGameData,
 } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as cheerio from 'cheerio';
 import * as t from 'io-ts';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -24,11 +25,8 @@ export const ProtonApiInfoResponseStructure = t.type({
     ])
 });
 
-export const ProtonApiDeckInfoResponseStructure = t.type({
-    success: t.number,
-    results: t.type({
-        resolved_category: t.number
-    })
+export const DeckInfoStructure = t.type({
+    resolved_category: t.number
 });
 
 export class ProtonResolver implements InfoResolver {
@@ -82,20 +80,18 @@ export class ProtonResolver implements InfoResolver {
     private async getProtonDbDeckVerifiedStatus(
         source: InfoSource<InfoSourceType, InfoSourceState.Found>
     ): Promise<DeckVerified> {
-        const { data: unknownData } = await this.axios.get(
-            `https://www.protondb.com/proxy/steam/deck-verified?nAppID=${source.data.id}`
-        );
+        const { data } = await this.axios.get(`https://store.steampowered.com/app/${source.data.id}`);
 
-        const {
-            success,
-            results,
-        } = parseStructure(ProtonApiDeckInfoResponseStructure, unknownData);
+        const $ = cheerio.load(data);
 
-        if (success !== 1) {
-            throw new Error('Proton API request was unsuccessful');
+        const config = $('#application_config').attr('data-deckcompatibility');
+        if (!config) {
+            throw new Error('No config found');
         }
 
-        switch (results.resolved_category) {
+        const { resolved_category, } = parseStructure(DeckInfoStructure, JSON.parse(config));
+
+        switch (resolved_category) {
             case 2:
                 return 'playable';
             case 3:

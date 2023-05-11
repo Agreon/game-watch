@@ -11,15 +11,15 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "@types/node": "^20.1.0",
+        "@types/node": "^20.1.2",
         "eslint": "^8.40.0",
-        "pnpm": "^8.4.0",
+        "pnpm": "^8.5.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
         "class-validator": "^0.14.0",
         "dayjs": "^1.11.7",
-        "fp-ts": "^2.14.0",
+        "fp-ts": "^2.15.0",
         "io-ts": "^2.2.20",
         "io-ts-reporters": "^2.0.1",
         "monocle-ts": "^2.3.13",
