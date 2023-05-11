@@ -11,7 +11,7 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "@types/node": "^18.16.3",
+        "@types/node": "^20.1.2",
         "eslint": "^8.39.0",
         "pnpm": "^8.3.1",
         "typescript": "^5.0.4"
