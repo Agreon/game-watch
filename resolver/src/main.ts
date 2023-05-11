@@ -65,7 +65,7 @@ const resolvers = [
     new SteamResolver(axiosInstance),
     new SwitchResolver(axiosInstance),
     new PlaystationResolver(),
-    new EpicResolver(axiosInstance),
+    new EpicResolver(),
     new MetacriticResolver(axiosInstance),
     new ProtonResolver(axiosInstance),
 ];

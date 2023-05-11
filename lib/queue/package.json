@@ -11,13 +11,13 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.39.0",
-        "pnpm": "^8.3.1",
+        "eslint": "^8.40.0",
+        "pnpm": "^8.4.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "bullmq": "^3.12.0",
+        "bullmq": "^3.13.0",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19"
     },

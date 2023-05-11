@@ -39,10 +39,19 @@ export interface StorePriceInformation {
     final: number;
 }
 
+export type StoreReleaseDateInformation =
+    {
+        isExact: true,
+        date: Date
+    }
+    | {
+        isExact: false,
+        date: string
+    }
+
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl: string;
-    releaseDate?: Date;
-    originalReleaseDate?: string;
+    releaseDate?: StoreReleaseDateInformation;
     priceInformation?: StorePriceInformation;
 }
 
@@ -94,8 +103,7 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Proton]: Countries,
     [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
     [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
-    // Currently, it is not clear how epic determines the user origin and therefore the currencies.
-    [InfoSourceType.Epic]: [] as const,
+    [InfoSourceType.Epic]: Countries,
 } as const;
 
 export const InfoSourceTypeNames: Record<InfoSourceType, string> = {

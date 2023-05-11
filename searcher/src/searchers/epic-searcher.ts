@@ -1,63 +1,121 @@
-import { BaseGameData, Country, InfoSourceType } from '@game-watch/shared';
-import { AxiosInstance } from 'axios';
-import * as cheerio from 'cheerio';
+import { retrieveEpicGameData, withBrowser } from '@game-watch/browser';
+import {
+    BaseGameData,
+    Country,
+    InfoSourceType,
+    mapCountryCodeToAcceptLanguage,
+    parseStructure,
+} from '@game-watch/shared';
+import * as t from 'io-ts';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
 
+const EpicSearchQueryResponseStructure = t.type({
+    data: t.type({
+        Catalog: t.type({
+            searchStore: t.type({
+                elements: t.array(t.type({
+                    offerId: t.string,
+                    sandboxId: t.string,
+                }))
+            })
+        })
+    })
+});
+
 export class EpicSearcher implements InfoSearcher {
     public type = InfoSourceType.Epic;
-
-    public constructor(private readonly axios: AxiosInstance) { }
-
-    private mapCountryCode(country: Country) {
-        switch (country) {
-            case 'DE':
-                // Don't ask me why this is inconsistent.
-                return 'de';
-            case 'US':
-                return 'en-US';
-        }
-    }
 
     public async search(
         search: string,
         { logger, userCountry }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
-        const { data } = await this.axios.get<string>(
-            `https://www.epicgames.com/store/${this.mapCountryCode(userCountry)}/browse`,
-            {
-                params: {
-                    q: search,
-                    sortBy: 'relevancy',
+        const searchResult = await withBrowser(mapCountryCodeToAcceptLanguage(userCountry), async browser => {
+            const searchParams = new URLSearchParams({
+                operationName: 'primarySearchAutocomplete',
+                variables: JSON.stringify({
+                    category: 'games/edition/base|bundles/games|editors|software/edition/base|addons/launchable',
+                    count: 1,
+                    keywords: search,
+                    country: userCountry.split('-')[0],
+                    locale: 'en-US',
                     sortDir: 'DESC',
-                    count: 1
-                }
-            }
-        );
+                }),
+                extensions: JSON.stringify({
+                    persistedQuery: {
+                        version: 1,
+                        sha256Hash: '531ca97218358754b2a3dade40dbbfc62e280d0173dcaf53305b3b3f3c393580',
+                    },
+                })
+            });
 
-        const $ = cheerio.load(data);
+            await browser.goto(`https://store.epicgames.com/graphql?${searchParams.toString()}`);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const unknownData = await browser.$eval('body', (el) => JSON.parse(el.textContent!));
+            const validatedData = parseStructure(EpicSearchQueryResponseStructure, unknownData);
 
-        const gameLink = $('div[data-component=DiscoverCardLayout] > a')
-            .first().attr('href')?.trim();
-        if (!gameLink) {
+            return validatedData.data.Catalog.searchStore.elements[0];
+        });
+
+        if (!searchResult) {
             logger.debug('No results found');
 
             return null;
         }
 
-        const fullName = $('div[data-component=DirectionAuto]').first().text().trim();
+        const gameData = await retrieveEpicGameData(
+            searchResult.offerId,
+            searchResult.sandboxId,
+            userCountry.split('-')[0]
+        );
+
+        const fullName = gameData.title;
         if (!matchingName(fullName, search)) {
-            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
+            logger.debug(`Found name '${fullName}' does not match search '${search}'. Skipping`);
 
             return null;
         }
 
-        const url = `https://www.epicgames.com${gameLink}`;
+        const url = `https://www.epicgames.com/p/${gameData.offerMappings[0].pageSlug}`;
+
         return {
-            id: url,
-            url,
+            id: `${searchResult.offerId},${searchResult.sandboxId}`,
             fullName,
+            url,
         };
+    }
+
+    // TODO: Whats with currency?
+    // => Is not applied
+    private mapCountryCode(country: Country): string {
+        switch (country) {
+            case 'AT':
+            case 'DE':
+            case 'CH-DE':
+                return 'de';
+            case 'FR':
+            case 'BE-FR':
+            case 'CH-FR':
+                return 'fr';
+            case 'IT':
+            case 'CH-IT':
+                return 'it';
+            case 'ES':
+                return 'es-ES';
+            case 'PT':
+                return 'pt-BR';
+            case 'RU':
+                return 'ru';
+            case 'AU':
+            case 'NZ':
+            case 'NL':
+            case 'BE-NL':
+            case 'US':
+            case 'GB':
+            case 'IE':
+            case 'ZA':
+                return 'en-US';
+        }
     }
 }

@@ -18,16 +18,12 @@ describe('ReleaseDateChangedNotificationCreator', () => {
             },
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate: newReleaseDate,
-                originalReleaseDate: '12th March 2023'
+                releaseDate: { date: newReleaseDate, isExact: true },
             },
             logger: TEST_LOGGER,
         } as NotificationCreatorContext<StoreInfoSource>);
 
-        expect(result).toStrictEqual({
-            releaseDate: newReleaseDate,
-            originalDate: '12th March 2023'
-        });
+        expect(result).toStrictEqual({ date: newReleaseDate, isExact: true });
     });
 
     it("won't create a notification if no resolved data was available before", async () => {
@@ -37,8 +33,7 @@ describe('ReleaseDateChangedNotificationCreator', () => {
             existingGameData: DEFAULT_BASE_GAME_DATA,
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate: newReleaseDate,
-                originalReleaseDate: '12th March 2023'
+                releaseDate: { date: newReleaseDate, isExact: true },
             },
             logger: TEST_LOGGER,
         } as NotificationCreatorContext<StoreInfoSource>);
@@ -65,11 +60,11 @@ describe('ReleaseDateChangedNotificationCreator', () => {
         const result = await creator.createNotification({
             existingGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate,
+                releaseDate: { date: releaseDate, isExact: true },
             },
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate,
+                releaseDate: { date: releaseDate, isExact: true },
             },
             logger: TEST_LOGGER,
         } as NotificationCreatorContext<StoreInfoSource>);
@@ -83,11 +78,11 @@ describe('ReleaseDateChangedNotificationCreator', () => {
         const result = await creator.createNotification({
             existingGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate: undefined,
+                releaseDate: { date: dayjs().toDate(), isExact: true },
             },
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
-                releaseDate: newReleaseDate,
+                releaseDate: { date: newReleaseDate, isExact: true },
             },
             logger: TEST_LOGGER,
         } as NotificationCreatorContext<StoreInfoSource>);

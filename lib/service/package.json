@@ -11,17 +11,17 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.39.0",
-        "pnpm": "^8.3.1",
+        "eslint": "^8.40.0",
+        "pnpm": "^8.4.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
-        "@game-watch/shared": "0.0.1",
-        "@sentry/node": "^7.50.0",
+        "@game-watch/shared": "workspace:0.0.1",
+        "@sentry/node": "^7.51.0",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.2",
-        "pino": "^8.11.0",
+        "pino": "^8.12.1",
         "pino-pretty": "^10.0.0"
     },
     "peerDependencies": {

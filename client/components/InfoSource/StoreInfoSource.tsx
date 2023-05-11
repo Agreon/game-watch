@@ -5,18 +5,23 @@ import {
     StatNumber,
     Text,
 } from '@chakra-ui/react';
-import { Country, formatPrice, formatReleaseDate, StoreGameData } from '@game-watch/shared';
+import {
+    Country,
+    formatPrice,
+    formatReleaseDate,
+    StoreGameData,
+    StoreReleaseDateInformation,
+} from '@game-watch/shared';
 import React, { useMemo } from 'react';
 
 import { InfoSourceWrapper } from './InfoSourceWrapper';
 
 export const ReleaseDate: React.FC<{
-    releaseDate?: Date;
-    originalDate?: string
-}> = ({ releaseDate, originalDate }) => {
+    releaseDate?: StoreReleaseDateInformation;
+}> = ({ releaseDate }) => {
     const formattedDate = useMemo(
-        () => formatReleaseDate({ releaseDate, originalDate }),
-        [releaseDate, originalDate]
+        () => formatReleaseDate(releaseDate),
+        [releaseDate]
     );
 
     return (
@@ -60,10 +65,7 @@ export const StoreInfoSource: React.FC<{
 }> = ({ data, country }) => (
     <InfoSourceWrapper>
         <Box flex="1">
-            <ReleaseDate
-                releaseDate={data.releaseDate}
-                originalDate={data.originalReleaseDate}
-            />
+            <ReleaseDate releaseDate={data.releaseDate} />
         </Box>
         <Box flex="1">
             <Price

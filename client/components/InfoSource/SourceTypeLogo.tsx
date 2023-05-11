@@ -70,7 +70,14 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
         <Flex align="center" pl="0.25rem" pr="0.5rem">
             <Box position="relative" width={30} height={30}>
                 <Box position="absolute" width="27px" height="27px" top="1.25px" left="1.25px">
-                    <Image alt="source-icon" priority={true} src={metacriticLogo} quality={100} height={27} width={27} />
+                    <Image
+                        alt="source-icon"
+                        priority={true}
+                        src={metacriticLogo}
+                        quality={100}
+                        height={27}
+                        width={27}
+                    />
                 </Box>
             </Box>
             <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">

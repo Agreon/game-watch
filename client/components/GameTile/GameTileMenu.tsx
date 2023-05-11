@@ -26,7 +26,6 @@ export interface GameTileMenuProps {
 }
 
 /**
- * - TODO: Submit btn color
  * TODO: animated entry of button
  */
 const GameTileMenuComponent: React.FC<GameTileMenuProps> = ({

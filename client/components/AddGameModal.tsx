@@ -160,7 +160,8 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 {`We couldn't find any sources for '${game.search}'`}
                             </Text>
                             <Text fontSize="xl" mt="2rem">
-                                {`You can still save the game and we'll add the entries as soon as the game is added to a source you are interested in.`}
+                                You can still save the game and we will add the entries as soon as the game is added
+                                to a source you are interested in.
                             </Text>
                         </Flex>
                 }

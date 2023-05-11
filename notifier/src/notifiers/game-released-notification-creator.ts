@@ -1,7 +1,6 @@
 import { Notification } from '@game-watch/database';
 import {
     InfoSourceType,
-    isNonSpecificDate,
     NotificationType,
     StoreInfoSource,
     StoreInfoSources
@@ -20,7 +19,7 @@ export class GameReleasedNotificationCreator
         {
             infoSource,
             existingGameData,
-            resolvedGameData,
+            resolvedGameData: { releaseDate: resolvedReleaseDate },
             em,
             game,
             logger,
@@ -34,29 +33,25 @@ export class GameReleasedNotificationCreator
             return null;
         }
 
-        if (!resolvedGameData.releaseDate) {
+        if (!resolvedReleaseDate) {
             logger.debug('Not adding notification because no new release data was found');
             return null;
         }
 
-        if (
-            resolvedGameData.originalReleaseDate
-            && isNonSpecificDate(resolvedGameData.originalReleaseDate)
-        ) {
-            logger.debug({
-                context: {
-                    originalReleaseDate: resolvedGameData.originalReleaseDate
-                }
-            }, 'Not adding notification because original release date is not specific');
+        if (!resolvedReleaseDate.isExact) {
+            logger.debug(
+                { context: { resolvedReleaseDate } },
+                'Not adding notification because resolved release date is not specific'
+            );
             return null;
         }
 
-        if (dayjs(game.createdAt).isAfter(resolvedGameData.releaseDate)) {
+        if (dayjs(game.createdAt).isAfter(resolvedReleaseDate.date)) {
             logger.debug(
                 {
                     context: {
                         gameCreatedAt: game.createdAt,
-                        releaseDate: resolvedGameData.releaseDate
+                        resolvedReleaseDate
                     }
                 },
                 "Not adding notification because the game entity was created after it's release date"
@@ -64,12 +59,12 @@ export class GameReleasedNotificationCreator
             return null;
         }
 
-        if (dayjs(infoSource.foundAt).isAfter(resolvedGameData.releaseDate)) {
+        if (dayjs(infoSource.foundAt).isAfter(resolvedReleaseDate.date)) {
             logger.debug(
                 {
                     context: {
                         sourceFoundAt: infoSource.foundAt,
-                        releaseDate: resolvedGameData.releaseDate
+                        resolvedReleaseDate
                     }
                 },
                 "Not adding notification because the source was found after it's release date"
@@ -77,9 +72,9 @@ export class GameReleasedNotificationCreator
             return null;
         }
 
-        if (dayjs(resolvedGameData.releaseDate).isAfter(dayjs())) {
+        if (dayjs(resolvedReleaseDate.date).isAfter(dayjs())) {
             logger.debug(
-                { context: { releaseDate: resolvedGameData.releaseDate } },
+                { context: { resolvedReleaseDate } },
                 'Not adding notification because game is not released yet'
             );
             return null;
@@ -90,7 +85,9 @@ export class GameReleasedNotificationCreator
             type: NotificationType.GameReleased
         });
         if (existingNotification) {
-            logger.debug('Not adding notification because there is already another GameReleased notification for that game');
+            logger.debug(
+                'Not adding notification because there is already another GameReleased notification for that game'
+            );
             return null;
         }
 
@@ -98,7 +95,7 @@ export class GameReleasedNotificationCreator
             {
                 context: {
                     gameCreatedAt: game.createdAt,
-                    releaseDate: resolvedGameData.releaseDate,
+                    resolvedReleaseDate,
                     existingNotification
                 }
             },

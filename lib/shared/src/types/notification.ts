@@ -1,4 +1,4 @@
-import { StoreGameData, StorePriceInformation } from './info-source';
+import { StoreGameData, StorePriceInformation, StoreReleaseDateInformation } from './info-source';
 
 export enum NotificationType {
     NewStoreEntry = 'new-store-entry',
@@ -21,7 +21,7 @@ export const StoreNotifications = [
 
 export type NotificationData = {
     [NotificationType.NewStoreEntry]: StoreGameData,
-    [NotificationType.ReleaseDateChanged]: { releaseDate: Date, originalDate: string },
+    [NotificationType.ReleaseDateChanged]: StoreReleaseDateInformation,
     [NotificationType.GameReleased]: unknown,
     [NotificationType.GameReduced]: StorePriceInformation,
     [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },

@@ -1,21 +1,19 @@
 import dayjs from 'dayjs';
 
-import { isNonSpecificDate } from './is-non-specific-date';
+import { StoreReleaseDateInformation } from '../types/info-source';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
 
-export const formatReleaseDate = (
-    { releaseDate, originalDate }: { releaseDate?: Date; originalDate?: string }
-) => {
-    if (originalDate && isNonSpecificDate(originalDate)) {
-        return originalDate;
+export const formatReleaseDate = (releaseDate?: StoreReleaseDateInformation): string => {
+    if (!releaseDate) {
+        return 'TBD';
     }
 
-    if (releaseDate) {
-        return dayjs(releaseDate).format('DD MMM. YYYY');
+    if (!releaseDate.isExact) {
+        return releaseDate.date;
+    } else {
+        return dayjs(releaseDate.date).format('DD MMM. YYYY');
     }
-
-    return 'TBD';
 };

@@ -101,6 +101,7 @@ export class ResolveService {
             if (
                 // This error occurs if Puppeteer timeouts.
                 error.name !== 'TimeoutError'
+                && error.message.includes('ERR_NETWORK_CHANGED') === false
                 // We only want to retry on network errors that are not signaling us to stop.
                 && (
                     !axios.isAxiosError(error)

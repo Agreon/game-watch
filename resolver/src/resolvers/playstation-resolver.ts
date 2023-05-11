@@ -5,6 +5,7 @@ import {
     mapCountryCodeToAcceptLanguage,
     PlaystationGameData,
     StorePriceInformation,
+    StoreReleaseDateInformation,
 } from '@game-watch/shared';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -67,15 +68,40 @@ export class PlaystationResolver implements InfoResolver {
                 thumbnailUrl,
                 priceInformation:
                     this.getPriceInformation({ price, originalPrice }, source.country),
-                releaseDate: ['DE', 'AT', 'CH-DE'].includes(source.country)
-                    ? parseDate(releaseDate, ['D.M.YYYY'])
-                    : parseDate(releaseDate, ['M/DD/YYYY'])
-                    ?? parseDate(releaseDate, ['DD/MM/YYYY'])
-                    ?? parseDate(releaseDate, ['D/M/YYYY'])
-                    ?? parseDate(releaseDate),
+                releaseDate: this.getReleaseDateInformation(source.country, releaseDate),
                 originalReleaseDate: releaseDate
             };
         });
+    }
+
+    private getReleaseDateInformation(
+        userCountry: Country,
+        date?: string,
+    ): StoreReleaseDateInformation | undefined {
+        if (!date) {
+            return undefined;
+        }
+        const parsedDate = this.parseReleaseDate(date, userCountry);
+        if (!parsedDate) {
+            return {
+                isExact: false,
+                date
+            };
+        } else {
+            return {
+                isExact: true,
+                date: parsedDate
+            };
+        }
+    }
+
+    private parseReleaseDate(releaseDate: string, userCountry: Country) {
+        return ['DE', 'AT', 'CH-DE'].includes(userCountry)
+            ? parseDate(releaseDate, ['D.M.YYYY'])
+            : parseDate(releaseDate, ['M/DD/YYYY'])
+            ?? parseDate(releaseDate, ['DD/MM/YYYY'])
+            ?? parseDate(releaseDate, ['D/M/YYYY'])
+            ?? parseDate(releaseDate);
     }
 
     private getPriceInformation(

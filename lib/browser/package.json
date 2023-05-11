@@ -11,11 +11,19 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.39.0",
-        "pnpm": "^8.3.1",
+        "eslint": "^8.40.0",
+        "pnpm": "^8.4.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
-        "puppeteer": "19.11.1"
+        "@game-watch/shared": "0.0.1",
+        "io-ts": "^2.2.20",
+        "io-ts-types": "^0.5.19",
+        "puppeteer": "20.1.1"
+    },
+    "peerDependencies": {
+        "fp-ts": "^2.13.1",
+        "monocle-ts": "^2.3.13",
+        "newtype-ts": "^0.3.5"
     }
 }

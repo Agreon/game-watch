@@ -12,7 +12,7 @@ require('dayjs/locale/ru');
 dayjs.extend(customParseFormat);
 
 export const parseDate = (
-    dateString: string | undefined,
+    dateString: string | undefined | null,
     expectedFormats?: string[],
     locale?: string
 ) => {

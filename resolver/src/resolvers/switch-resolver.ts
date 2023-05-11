@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { extract } from '@game-watch/service';
-import { Country, InfoSourceType, StorePriceInformation, SwitchGameData } from '@game-watch/shared';
+import {
+    Country,
+    InfoSourceType,
+    StorePriceInformation,
+    StoreReleaseDateInformation,
+    SwitchGameData,
+} from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
@@ -25,6 +31,7 @@ interface SwitchUsGraphqlResponse {
         publicId: string;
     }
     releaseDate: string;
+    releaseDateDisplay: string;
 }
 
 export class SwitchResolver implements InfoResolver {
@@ -71,30 +78,35 @@ export class SwitchResolver implements InfoResolver {
                 throw new Error('Could not find name of game');
             }
 
+            const releaseDateText = $('.gamepage-header-meta').first().next().text().split(':')[1]?.trim();
+            if (!releaseDateText) {
+                throw new Error('Could not extract release date');
+            }
+
+            const parsedDate = parseDate(releaseDateText, ['DD/MM/YYYY']);
+            const releaseDate: StoreReleaseDateInformation = !parsedDate
+                ? { isExact: false, date: releaseDateText }
+                : { isExact: true, date: parsedDate };
+
             const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
             if (!priceId) {
                 logger.warn(`Could not get game id. Game might not have a price yet`);
-
-                const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
                 return {
                     ...source.data,
                     fullName,
                     thumbnailUrl,
-                    releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
-                    originalReleaseDate: releaseDate
+                    releaseDate,
                 };
             }
 
             const price = await this.getPriceInformation(priceId, source.country);
-            const releaseDate = extract(data, new RegExp(`(?<="${priceId}": \\[").{10}`));
 
             return {
                 ...source.data,
                 fullName,
                 thumbnailUrl,
-                releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
-                originalReleaseDate: releaseDate,
+                releaseDate,
                 priceInformation: this.parsePriceInformation(price),
             };
         }
@@ -139,10 +151,30 @@ export class SwitchResolver implements InfoResolver {
             fullName: product.name,
             thumbnailUrl: 'https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad'
                 + `/b_white/f_auto/q_auto/dpr_1.2/c_scale,w_400/${product.productImage.publicId}`,
-            releaseDate: parseDate(product.releaseDate),
-            originalReleaseDate: product.releaseDate,
+            releaseDate: this.getReleaseDateInformationForUsStore(product),
             priceInformation: this.getPriceInformationForUsStore(product.prices),
         };
+    }
+
+    private getReleaseDateInformationForUsStore(
+        { releaseDate, releaseDateDisplay }: SwitchUsGraphqlResponse
+    ): StoreReleaseDateInformation | undefined {
+        if (releaseDateDisplay) {
+            return {
+                isExact: false,
+                date: releaseDateDisplay,
+            };
+        }
+
+        const parsedDate = parseDate(releaseDate);
+        if (parsedDate) {
+            return {
+                isExact: true,
+                date: parsedDate
+            };
+        }
+
+        return undefined;
     }
 
     private getPriceInformationForUsStore(
@@ -190,9 +222,29 @@ export class SwitchResolver implements InfoResolver {
             ...source.data,
             fullName,
             thumbnailUrl,
-            releaseDate: parseDate(releaseDate, ['DD/MM/YYYY']),
-            originalReleaseDate: releaseDate,
+            releaseDate: this.getReleaseDateInformationForAuAndNz(releaseDate),
             priceInformation
+        };
+    }
+
+    private getReleaseDateInformationForAuAndNz(
+        releaseDate?: string
+    ): StoreReleaseDateInformation | undefined {
+        if (!releaseDate) {
+            return undefined;
+        }
+
+        const parsedDate = parseDate(releaseDate, ['DD/MM/YYYY']);
+        if (parsedDate) {
+            return {
+                isExact: true,
+                date: parsedDate
+            };
+        }
+
+        return {
+            isExact: false,
+            date: releaseDate
         };
     }
 

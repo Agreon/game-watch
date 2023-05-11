@@ -3,6 +3,7 @@ import {
     InfoSourceType,
     SteamGameData,
     StorePriceInformation,
+    StoreReleaseDateInformation,
 } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 
@@ -23,13 +24,34 @@ export class SteamResolver implements InfoResolver {
             fullName: source.data.fullName,
             url: `https://store.steampowered.com/app/${source.data.id}`,
             thumbnailUrl: data.header_image,
-            releaseDate: this.parseReleaseDate(data.release_date.date, source.country),
-            originalReleaseDate: data.release_date.date,
+            releaseDate: this.getReleaseDateInformation(data.release_date.date, source.country),
             priceInformation: data.is_free
                 ? { final: 0 }
                 : this.getPriceInformation(data.price_overview ?? {}),
             isEarlyAccess: data.genres.some(genre => genre.id === '70')
         };
+    }
+
+    private getReleaseDateInformation(
+        date: string,
+        userCountry: Country
+    ): StoreReleaseDateInformation | undefined {
+        if (date === 'Coming soon') {
+            return undefined;
+        }
+
+        const parsedDate = this.parseReleaseDate(date, userCountry);
+        if (!parsedDate) {
+            return {
+                isExact: false,
+                date
+            };
+        } else {
+            return {
+                isExact: true,
+                date: parsedDate
+            };
+        }
     }
 
     private parseReleaseDate(releaseDate: string, userCountry: Country) {

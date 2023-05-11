@@ -57,7 +57,7 @@ const redis = new Redis({
 });
 
 const searchers = [
-    new EpicSearcher(axiosInstance),
+    new EpicSearcher(),
     new MetacriticSearcher(axiosInstance),
     new PlaystationSearcher(axiosInstance),
     new SteamSearcher(axiosInstance),
