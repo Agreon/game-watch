@@ -1,3 +1,4 @@
+import { withBrowser } from '@game-watch/browser';
 import { InfoSource } from '@game-watch/database';
 import {
     DeckVerified,
@@ -8,7 +9,6 @@ import {
     ProtonGameData,
 } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
-import * as cheerio from 'cheerio';
 import * as t from 'io-ts';
 
 import { InfoResolver, InfoResolverContext } from '../resolve-service';
@@ -80,24 +80,34 @@ export class ProtonResolver implements InfoResolver {
     private async getProtonDbDeckVerifiedStatus(
         source: InfoSource<InfoSourceType, InfoSourceState.Found>
     ): Promise<DeckVerified> {
-        const { data } = await this.axios.get(`https://store.steampowered.com/app/${source.data.id}`);
+        return await withBrowser(source.country, async browser => {
+            await browser.goto(`https://store.steampowered.com/app/${source.data.id}`);
 
-        const $ = cheerio.load(data);
+            const ageGateButton = await browser.evaluate(() => document.querySelector('#view_product_page_btn'));
+            if (ageGateButton) {
+                await browser.select('select#ageYear', '1996');
+                await browser.click('#view_product_page_btn');
+                await browser.waitForSelector('#application_config');
+            }
 
-        const config = $('#application_config').attr('data-deckcompatibility');
-        if (!config) {
-            throw new Error('No config found');
-        }
+            const config = await browser.$eval(
+                '#application_config', el => el.getAttribute('data-deckcompatibility')
+            );
 
-        const { resolved_category, } = parseStructure(DeckInfoStructure, JSON.parse(config));
+            if (!config) {
+                return 'unknown';
+            }
 
-        switch (resolved_category) {
-            case 2:
-                return 'playable';
-            case 3:
-                return 'verified';
-            default:
-                return 'unsupported';
-        }
+            const { resolved_category, } = parseStructure(DeckInfoStructure, JSON.parse(config));
+
+            switch (resolved_category) {
+                case 2:
+                    return 'playable';
+                case 3:
+                    return 'verified';
+                default:
+                    return 'unsupported';
+            }
+        });
     }
 }

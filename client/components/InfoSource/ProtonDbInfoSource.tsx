@@ -18,7 +18,8 @@ const scoreColorMap: Record<ProtonDbScore, string> = {
 const verifierStatusIconMap: Record<DeckVerified, string> = {
     unsupported: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/unsupported_50.png',
     playable: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/playable_50_1.png',
-    verified: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/verified_50.png'
+    verified: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/verified_50.png',
+    unknown: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/unknown_50_1.png',
 };
 /* eslint-enable max-len */
 

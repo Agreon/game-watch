@@ -17,7 +17,7 @@ export class ProtonSearcher implements InfoSearcher {
         // We have to search in the steam store because the algolia endpoint has rate limiting.
         const { data } = await this.axios.get<string>(
             'https://store.steampowered.com/search',
-            { params: { term: encodeURIComponent(search), ignore_preferences: 1 } }
+            { params: { term: search, ignore_preferences: 1 } }
         );
 
         const $ = cheerio.load(data);
