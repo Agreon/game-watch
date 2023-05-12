@@ -127,9 +127,7 @@ const main = async () => {
 
                     // Abort immediately. Don't retry.
                     throw new UnrecoverableError();
-                }
-
-                if (isLastAttempt) {
+                } else if (isLastAttempt) {
                     // Need to wrap this because otherwise the error is swallowed by the worker.
                     sourceScopedLogger.error(error);
                     Sentry.captureException(error, { tags: { sourceId, isLastAttempt }, });

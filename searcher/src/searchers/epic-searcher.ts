@@ -1,7 +1,6 @@
 import { retrieveEpicGameData, withBrowser } from '@game-watch/browser';
 import {
     BaseGameData,
-    Country,
     InfoSourceType,
     mapCountryCodeToAcceptLanguage,
     parseStructure,
@@ -77,45 +76,13 @@ export class EpicSearcher implements InfoSearcher {
             return null;
         }
 
-        const url = `https://www.epicgames.com/p/${gameData.offerMappings[0].pageSlug}`;
+        const slug = gameData.offerMappings[0]?.pageSlug ?? gameData.urlSlug;
+        const url = `https://www.epicgames.com/p/${slug}`;
 
         return {
             id: `${searchResult.offerId},${searchResult.sandboxId}`,
             fullName,
             url,
         };
-    }
-
-    // TODO: Whats with currency?
-    // => Is not applied
-    private mapCountryCode(country: Country): string {
-        switch (country) {
-            case 'AT':
-            case 'DE':
-            case 'CH-DE':
-                return 'de';
-            case 'FR':
-            case 'BE-FR':
-            case 'CH-FR':
-                return 'fr';
-            case 'IT':
-            case 'CH-IT':
-                return 'it';
-            case 'ES':
-                return 'es-ES';
-            case 'PT':
-                return 'pt-BR';
-            case 'RU':
-                return 'ru';
-            case 'AU':
-            case 'NZ':
-            case 'NL':
-            case 'BE-NL':
-            case 'US':
-            case 'GB':
-            case 'IE':
-            case 'ZA':
-                return 'en-US';
-        }
     }
 }

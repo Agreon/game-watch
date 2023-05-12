@@ -149,9 +149,7 @@ const main = async () => {
                         // 1 hour.
                         60 * 60
                     );
-                }
-
-                if (isLastAttempt) {
+                } else if (isLastAttempt) {
                     gameScopedLogger.error(error);
                     Sentry.captureException(error, { tags: { gameId, isLastAttempt }, });
                 }

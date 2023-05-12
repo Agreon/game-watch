@@ -1,6 +1,5 @@
 import { parseStructure } from '@game-watch/shared';
 import * as t from 'io-ts';
-import { nonEmptyArray } from 'io-ts-types';
 
 import { withBrowser } from './with-browser';
 
@@ -44,7 +43,8 @@ const EpicGameDataStructure = t.type({
     keyImages: t.array(t.type({ type: t.string, url: t.string })),
     price: PriceStructure,
     approximateReleasePlan: t.union([t.null, ApproximateReleasePlanStructure]),
-    offerMappings: nonEmptyArray(t.type({ pageSlug: t.string }))
+    urlSlug: t.string,
+    offerMappings: t.array(t.type({ pageSlug: t.string }))
 });
 
 export type EpicGameDataResponse = t.TypeOf<typeof EpicGameDataStructure>;
