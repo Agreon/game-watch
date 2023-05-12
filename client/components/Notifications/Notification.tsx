@@ -48,8 +48,9 @@ const getNotificationText = (notification: NotificationDto) => {
     }
 
     if (isNotificationOfType(notification, NotificationType.ReleaseDateChanged)) {
-        const formattedDate = formatReleaseDate(notification.data);
-        return <>{gameName} {`will be released on ${formattedDate}!`}</>;
+        const releaseDate = notification.data;
+        const formattedDate = formatReleaseDate(releaseDate);
+        return <>{gameName} {`will be released ${releaseDate.isExact ? 'on' : 'in'} ${formattedDate}!`}</>;
     }
 
     switch (notification.type) {

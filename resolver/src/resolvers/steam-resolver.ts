@@ -1,6 +1,7 @@
 import {
     Country,
     InfoSourceType,
+    isNonSpecificDate,
     SteamGameData,
     StorePriceInformation,
     StoreReleaseDateInformation,
@@ -38,6 +39,13 @@ export class SteamResolver implements InfoResolver {
     ): StoreReleaseDateInformation | undefined {
         if (date === 'Coming soon') {
             return undefined;
+        }
+
+        if (isNonSpecificDate(date)) {
+            return {
+                isExact: false,
+                date,
+            };
         }
 
         const parsedDate = this.parseReleaseDate(date, userCountry);
