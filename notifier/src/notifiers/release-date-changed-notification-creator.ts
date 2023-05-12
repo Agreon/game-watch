@@ -41,7 +41,7 @@ export class ReleaseDateChangedNotificationCreator
             return resolvedReleaseDate;
         }
 
-        if (!('isExact' in existingReleaseDate)) {
+        if (existingReleaseDate.isExact === undefined) {
             logger.debug('Not adding notification because we cannot compare with old data');
             return null;
         }

@@ -140,7 +140,7 @@ export class SearchService {
             country: userCountry,
         });
 
-        await this.em.nativeInsert(newSource);
+        await this.em.insert(newSource);
 
         await this.addSourceToResolveQueues(newSource.id, userCountry);
     }

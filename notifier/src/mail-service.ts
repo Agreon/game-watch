@@ -100,11 +100,11 @@ ${unsubscribeLink}
 
                 return `${gameName} was reduced from ${initial} to ${final}.`;
             case NotificationType.ReleaseDateChanged:
-                const formattedDate = formatReleaseDate(
-                    notification.data as NotificationData[NotificationType.ReleaseDateChanged]
-                );
+                const releaseDate = notification.data as NotificationData[NotificationType.ReleaseDateChanged];
+                const formattedDate = formatReleaseDate(releaseDate);
 
-                return `${gameName} will be released on ${formattedDate} in the ${infoSource.type} store.`;
+                return `${gameName} will be released ${releaseDate.isExact ? 'on' : 'in'} ${formattedDate} in `
+                    + `the ${infoSource.type} store.`;
             case NotificationType.NewStoreEntry:
                 return `${infoSourceName} was added to the ${infoSource.type} store.`;
             case NotificationType.GameReleased:

@@ -60,12 +60,6 @@ export class NotificationService {
 
         if (resolvedGameData === null) {
             // We don't want to spam users with notifications they don't have power over.
-            // return await this.createResolveErrorNotification({
-            //     game,
-            //     infoSource,
-            //     user,
-            //     logger
-            // });
             return;
         }
 
@@ -90,35 +84,6 @@ export class NotificationService {
         );
     }
 
-    private async createResolveErrorNotification({ game, infoSource, user, logger }: {
-        game: Game
-        infoSource: InfoSource
-        user: User
-        logger: Logger
-    }) {
-        const existingNotification = await this.em.findOne(Notification, {
-            infoSource,
-            type: NotificationType.ResolveError
-        });
-        if (existingNotification) {
-            logger.debug(
-                'Not adding notification because there is already another ResolveError notification for that game'
-            );
-            return;
-        }
-
-        return await this.persistNotification({
-            notification: new Notification<NotificationType>({
-                game,
-                infoSource,
-                type: NotificationType.ResolveError,
-                data: {}
-            }),
-            user,
-            logger
-        });
-    }
-
     private async createNotification({
         creator,
         game,
@@ -128,13 +93,13 @@ export class NotificationService {
         resolvedGameData,
         logger,
     }: {
-            creator: NotificationCreator<NotificationType>,
-            game: Game,
-            infoSource: InfoSource,
-            user: User,
-            existingGameData: AnyGameData,
-            resolvedGameData: AnyGameData,
-            logger: Logger,
+        creator: NotificationCreator<NotificationType>,
+        game: Game,
+        infoSource: InfoSource,
+        user: User,
+        existingGameData: AnyGameData,
+        resolvedGameData: AnyGameData,
+        logger: Logger,
     }) {
         const notificationData = await creator.createNotification({
             logger: logger.child({
@@ -169,10 +134,10 @@ export class NotificationService {
         logger.info(`Creating Notification of type '${notification.type}'`);
 
         await this.em.transactional(async transactionEm => {
-            await transactionEm.nativeInsert(notification);
+            await transactionEm.insert(notification);
 
             if (user.enableEmailNotifications && user.emailConfirmed) {
-                logger.info(`Sending notifications to ${user.email}`);
+                logger.info(`Sending notification of type ${notification.type} to ${user.email}`);
 
                 await this.mailService.sendNotificationMail(user, notification);
             }
