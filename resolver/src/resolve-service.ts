@@ -97,31 +97,29 @@ export class ResolveService {
         } catch (error) {
             logger.warn(`Source ${source.type} could not be resolved`);
 
-            // Critical error
+            // Allow retry in these cases
             if (
                 // This error occurs if Puppeteer timeouts.
-                error.name !== 'TimeoutError'
-                && error.message.includes('ERR_NETWORK_CHANGED') === false
-                // We only want to retry on network errors that are not signaling us to stop.
-                && (
-                    !axios.isAxiosError(error)
-                    || (
-                        error.response?.status !== undefined
-                        && [400, 401, 403, 429].includes(error.response.status)
-                    )
+                error.name === 'TimeoutError'
+                || error.message.includes('ERR_NETWORK_CHANGED')
+                || (
+                    axios.isAxiosError(error)
+                    && error.response?.status !== undefined
+                    // We only want to retry on network errors that are not signaling us to stop.
+                    && [400, 401, 403, 429].includes(error.response.status) === false
                 )
             ) {
-                await this.setResolveError({ source, triggeredManually });
+                if (isLastAttempt) {
+                    await this.setResolveError({ source, triggeredManually });
+                }
 
-                logger.warn("Retrying likely won't help. Aborting immediately");
-                throw new CriticalError(source.type, error);
+                throw error;
             }
 
-            if (isLastAttempt) {
-                await this.setResolveError({ source, triggeredManually });
-            }
+            logger.warn("Retrying likely won't help. Aborting immediately");
 
-            throw error;
+            await this.setResolveError({ source, triggeredManually });
+            throw new CriticalError(source.type, error);
         }
     }
 

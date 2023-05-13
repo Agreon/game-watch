@@ -19,7 +19,6 @@ export class PlaystationResolver implements InfoResolver {
 
         return await withBrowser(mapCountryCodeToAcceptLanguage(source.country), async browser => {
             await browser.goto(source.data.id);
-            // TODO: Maybe find oud earlier that this won't work
             await browser.waitForSelector('.psw-t-title-m');
 
             const fullName = await browser.$eval(
