@@ -18,6 +18,7 @@
     "create-crons-for-info-sources": "ts-node ./bin/create-crons-for-existing-info-sources"
   },
   "dependencies": {
+    "@game-watch/browser": "0.0.1",
     "@game-watch/database": "0.0.1",
     "@game-watch/queue": "0.0.1",
     "@game-watch/service": "0.0.1",

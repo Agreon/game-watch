@@ -53,7 +53,7 @@ export const SourceUrlPlaceholder = (sourceType: InfoSourceType, userCountry: Co
             return getSwitchPlaceholder(userCountry);
         case InfoSourceType.Epic:
             const epicAcceptLang = mapCountryCodeToAcceptLanguage(userCountry);
-            return `https://www.epicgames.com/store/${epicAcceptLang}/p/...`;
+            return `https://store.epicgames.com/${epicAcceptLang}/p/...`;
         case InfoSourceType.Playstation:
             const acceptLang = mapCountryCodeToAcceptLanguage(userCountry);
             return `https://store.playstation.com/${acceptLang}/product/...`;
