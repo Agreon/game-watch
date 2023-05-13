@@ -76,8 +76,10 @@ export class EpicSearcher implements InfoSearcher {
             return null;
         }
 
-        const slug = gameData.offerMappings[0]?.pageSlug ?? gameData.urlSlug;
-        const url = `https://www.epicgames.com/p/${slug}`;
+        // Epic returns the correct slugs in different fields for some reason.
+        const slug = gameData.productSlug ?? gameData.offerMappings[0]?.pageSlug ?? gameData.urlSlug;
+        // Sometimes `/home``is appended to the productSlug, that will lead to an error.
+        const url = `https://www.epicgames.com/p/${slug.replace('/home', '')}`;
 
         return {
             id: `${searchResult.offerId},${searchResult.sandboxId}`,

@@ -4,8 +4,8 @@ import {
     retrieveEpicGameData,
 } from '@game-watch/browser';
 import {
-    EpicGameData,
     InfoSourceType,
+    StoreGameData,
     StorePriceInformation,
     StoreReleaseDateInformation,
 } from '@game-watch/shared';
@@ -16,13 +16,15 @@ import { InfoResolver, InfoResolverContext } from '../resolve-service';
 export class EpicResolver implements InfoResolver {
     public type = InfoSourceType.Epic;
 
-    public async resolve({ source }: InfoResolverContext): Promise<EpicGameData> {
+    public async resolve({ source }: InfoResolverContext): Promise<StoreGameData> {
         const [offerId, sandboxId] = source.data.id.split(',');
         const {
             releaseDate,
             price,
             keyImages,
             approximateReleasePlan,
+            title,
+            tags
         } = await retrieveEpicGameData(offerId, sandboxId, source.country.split('-')[0]);
 
         const thumbnailUrl = keyImages.find(({ type }) => type === 'OfferImageWide');
@@ -30,9 +32,12 @@ export class EpicResolver implements InfoResolver {
             throw new Error('Could not find OfferImageWide keyImage');
         }
 
-        // TODO: EarlyAccess
+        const isEarlyAccess = tags.find(({ id }) => id === '1310') !== undefined;
+
         return {
             ...source.data,
+            isEarlyAccess,
+            fullName: title,
             thumbnailUrl: thumbnailUrl.url,
             // Price information is not reliable at this point in time. Epic always has a price set.
             priceInformation: approximateReleasePlan && approximateReleasePlan.releaseDateType !== 'BY_DATE'

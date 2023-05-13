@@ -51,19 +51,10 @@ export type StoreReleaseDateInformation =
 
 export interface StoreGameData extends BaseGameData {
     thumbnailUrl: string;
+    isEarlyAccess?: boolean;
     releaseDate?: StoreReleaseDateInformation;
     priceInformation?: StorePriceInformation;
 }
-
-export interface SteamGameData extends StoreGameData {
-    isEarlyAccess: boolean;
-}
-
-export type SwitchGameData = StoreGameData;
-
-export type PlaystationGameData = StoreGameData;
-
-export type EpicGameData = StoreGameData;
 
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
@@ -80,20 +71,16 @@ export interface ProtonGameData extends BaseGameData {
     thumbnailUrl: string;
 }
 
-// TODO: What do these generics give us except for binding us to details?
 export type GameData = {
-    [InfoSourceType.Steam]: SteamGameData;
-    [InfoSourceType.Switch]: SwitchGameData;
-    [InfoSourceType.Playstation]: PlaystationGameData;
-    [InfoSourceType.Epic]: EpicGameData;
+    [InfoSourceType.Steam]: StoreGameData;
+    [InfoSourceType.Switch]: StoreGameData;
+    [InfoSourceType.Playstation]: StoreGameData;
+    [InfoSourceType.Epic]: StoreGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
     [InfoSourceType.Proton]: ProtonGameData;
 };
 export type AnyGameData =
-    | SteamGameData
-    | SwitchGameData
-    | PlaystationGameData
-    | EpicGameData
+    | StoreGameData
     | MetacriticData
     | ProtonGameData;
 

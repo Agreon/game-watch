@@ -11,6 +11,7 @@ import * as t from 'io-ts';
 const SteamApiResponseDataStructure = t.intersection([
     t.type({
         header_image: t.string,
+        name: t.string,
         release_date: t.type({
             date: t.string
         }),

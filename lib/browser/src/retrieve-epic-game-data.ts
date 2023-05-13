@@ -47,7 +47,9 @@ const EpicGameDataStructure = t.type({
     price: PriceStructure,
     approximateReleasePlan: t.union([t.null, ApproximateReleasePlanStructure]),
     urlSlug: t.string,
-    offerMappings: t.array(t.type({ pageSlug: t.string }))
+    productSlug: t.union([t.string, t.null]),
+    offerMappings: t.array(t.type({ pageSlug: t.string })),
+    tags: t.array(t.type({ id: t.string, name: t.string }))
 });
 
 export type EpicGameDataResponse = t.TypeOf<typeof EpicGameDataStructure>;

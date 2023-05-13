@@ -1,4 +1,4 @@
-import { InfoSourceType, NotificationType, SteamGameData } from '@game-watch/shared';
+import { InfoSourceType, NotificationType, StoreGameData } from '@game-watch/shared';
 
 import { NotificationCreator, NotificationCreatorContext } from '../notification-service';
 
@@ -21,13 +21,13 @@ export class GameLeftEarlyAccessNotificationCreator
             return null;
         }
 
-        const existingSteamGameData = existingGameData as SteamGameData;
-        if (existingSteamGameData.isEarlyAccess === false) {
+        const existingSteamGameData = existingGameData as StoreGameData;
+        if (!existingSteamGameData.isEarlyAccess) {
             logger.debug('Not adding notification because game was not in early access before');
             return null;
         }
 
-        const steamGameData = resolvedGameData as SteamGameData;
+        const steamGameData = resolvedGameData as StoreGameData;
 
         if (steamGameData.isEarlyAccess) {
             logger.debug('Not adding notification because game did not leave early access');

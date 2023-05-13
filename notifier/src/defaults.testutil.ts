@@ -1,5 +1,5 @@
 import { Logger } from '@game-watch/service';
-import { BaseGameData, ProtonGameData, SteamGameData } from '@game-watch/shared';
+import { BaseGameData, ProtonGameData, StoreGameData } from '@game-watch/shared';
 
 export const DEFAULT_BASE_GAME_DATA: BaseGameData = {
     id: '1811990',
@@ -7,7 +7,7 @@ export const DEFAULT_BASE_GAME_DATA: BaseGameData = {
     url: 'https://store.steampowered.com/app/1811990'
 };
 
-export const DEFAULT_STEAM_DATA: SteamGameData = {
+export const DEFAULT_STEAM_DATA: StoreGameData = {
     id: '1811990',
     fullName: 'Wildfrost',
     isEarlyAccess: false,

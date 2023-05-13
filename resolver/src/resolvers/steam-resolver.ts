@@ -2,7 +2,7 @@ import {
     Country,
     InfoSourceType,
     isNonSpecificDate,
-    SteamGameData,
+    StoreGameData,
     StorePriceInformation,
     StoreReleaseDateInformation,
 } from '@game-watch/shared';
@@ -17,13 +17,12 @@ export class SteamResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve({ source }: InfoResolverContext): Promise<SteamGameData> {
+    public async resolve({ source }: InfoResolverContext): Promise<StoreGameData> {
         const data = await getSteamApiData({ axios: this.axios, source });
 
         return {
-            id: source.data.id,
-            fullName: source.data.fullName,
-            url: `https://store.steampowered.com/app/${source.data.id}`,
+            ...source.data,
+            fullName: data.name,
             thumbnailUrl: data.header_image,
             releaseDate: this.getReleaseDateInformation(data.release_date.date, source.country),
             priceInformation: data.is_free

@@ -146,8 +146,7 @@ export class SwitchResolver implements InfoResolver {
         }
 
         return {
-            id: source.data.id,
-            url: source.data.url,
+            ...source.data,
             fullName: product.name,
             thumbnailUrl: 'https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad'
                 + `/b_white/f_auto/q_auto/dpr_1.2/c_scale,w_400/${product.productImage.publicId}`,

@@ -43,6 +43,7 @@ export class ProtonResolver implements InfoResolver {
 
             return {
                 ...source.data,
+                fullName: data.name,
                 score: 'native',
                 deckVerified,
                 thumbnailUrl: data.header_image,
@@ -59,6 +60,7 @@ export class ProtonResolver implements InfoResolver {
 
         return {
             ...source.data,
+            fullName: data.name,
             score,
             deckVerified,
             thumbnailUrl: data.header_image,
