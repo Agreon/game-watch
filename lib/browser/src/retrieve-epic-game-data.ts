@@ -34,6 +34,9 @@ const ApproximateReleasePlanStructure = t.union([
     t.type({
         releaseDateType: t.literal('BY_DATE')
     }),
+    t.type({
+        releaseDateType: t.literal('UNKNOWN'),
+    })
 ]);
 export type EpicApproximateReleasePlan = t.TypeOf<typeof ApproximateReleasePlanStructure>;
 
@@ -48,14 +51,6 @@ const EpicGameDataStructure = t.type({
 });
 
 export type EpicGameDataResponse = t.TypeOf<typeof EpicGameDataStructure>;
-
-const EpicQueryResponseStructure = t.type({
-    data: t.type({
-        Catalog: t.type({
-            catalogOffer: EpicGameDataStructure
-        })
-    })
-});
 
 // We need to use a browser for Epic store api requests because cloudflare would block axios requests.
 export const retrieveEpicGameData = async (
@@ -84,9 +79,11 @@ export const retrieveEpicGameData = async (
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const unknownData = await browser.$eval('body', (el) => JSON.parse(el.textContent!));
+        const catalogData = unknownData?.data?.Catalog?.catalogOffer;
+        if (!catalogData) {
+            throw new Error(`No catalogData found in ${unknownData}`);
+        }
 
-        const validatedData = parseStructure(EpicQueryResponseStructure, unknownData);
-
-        return validatedData.data.Catalog.catalogOffer;
+        return parseStructure(EpicGameDataStructure, catalogData);
     });
 };

@@ -49,6 +49,10 @@ export class EpicResolver implements InfoResolver {
         },
     ): StoreReleaseDateInformation | undefined {
         if (approximateReleasePlan && approximateReleasePlan.releaseDateType !== 'BY_DATE') {
+            if (approximateReleasePlan.releaseDateType === 'UNKNOWN') {
+                return undefined;
+            }
+
             return {
                 isExact: false,
                 date: this.transformApproximateReleasePlanToDate(approximateReleasePlan)
@@ -80,6 +84,7 @@ export class EpicResolver implements InfoResolver {
             case 'BY_QUARTER':
                 return `${approximateReleasePlan.quarter.toUpperCase()} ${approximateReleasePlan.year}`;
             case 'BY_DATE':
+            case 'UNKNOWN':
                 throw new Error('Unexpected match. Should extract date from releaseDate');
         }
     }
