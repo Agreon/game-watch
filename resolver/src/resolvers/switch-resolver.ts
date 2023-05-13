@@ -3,9 +3,9 @@ import { extract } from '@game-watch/service';
 import {
     Country,
     InfoSourceType,
+    StoreGameData,
     StorePriceInformation,
-    StoreReleaseDateInformation,
-    SwitchGameData,
+    StoreReleaseDateInformation
 } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
@@ -39,7 +39,7 @@ export class SwitchResolver implements InfoResolver {
 
     public constructor(private readonly axios: AxiosInstance) { }
 
-    public async resolve(context: InfoResolverContext): Promise<SwitchGameData> {
+    public async resolve(context: InfoResolverContext): Promise<StoreGameData> {
         const { source, logger } = context;
 
         if (source.country === 'NZ' || source.country === 'AU') {

@@ -3,7 +3,7 @@ import {
     Country,
     InfoSourceType,
     mapCountryCodeToAcceptLanguage,
-    PlaystationGameData,
+    StoreGameData,
     StorePriceInformation,
     StoreReleaseDateInformation,
 } from '@game-watch/shared';
@@ -15,10 +15,11 @@ import { parseDate } from '../util/parse-date';
 export class PlaystationResolver implements InfoResolver {
     public type = InfoSourceType.Playstation;
 
-    public async resolve({ source, logger }: InfoResolverContext): Promise<PlaystationGameData> {
+    public async resolve({ source, logger }: InfoResolverContext): Promise<StoreGameData> {
 
         return await withBrowser(mapCountryCodeToAcceptLanguage(source.country), async browser => {
             await browser.goto(source.data.id);
+            // TODO: Maybe find oud earlier that this won't work
             await browser.waitForSelector('.psw-t-title-m');
 
             const fullName = await browser.$eval(
