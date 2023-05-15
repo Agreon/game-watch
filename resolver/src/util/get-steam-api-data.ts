@@ -1,7 +1,5 @@
-import { InfoSource } from '@game-watch/database';
 import {
-    InfoSourceState,
-    InfoSourceType,
+    Country,
     mapCountryCodeToAcceptLanguage,
     parseStructure,
 } from '@game-watch/shared';
@@ -42,27 +40,28 @@ const SteamApiResponseStructure = t.record(
 export type SteamApiResponse = t.TypeOf<typeof SteamApiResponseDataStructure>;
 
 export const getSteamApiData = async (
-    { axios, source }: {
+    { axios, appId, country }: {
         axios: AxiosInstance,
-        source: InfoSource<InfoSourceType, InfoSourceState.Found>
+        appId: string,
+        country: Country,
     }
 ): Promise<SteamApiResponse> => {
     const { data: unknownData } = await axios.get(
         `https://store.steampowered.com/api/appdetails`,
         {
             params: {
-                appids: source.data.id,
+                appids: appId,
                 // Determines the returned currency.
-                cc: source.country.split('-')[0],
+                cc: country.split('-')[0],
             },
             // Determines the returned language.
-            headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(source.country) }
+            headers: { 'Accept-Language': mapCountryCodeToAcceptLanguage(country) }
         }
     );
 
     const gameData = parseStructure(SteamApiResponseStructure, unknownData);
 
-    const { success, data } = gameData[source.data.id];
+    const { success, data } = gameData[appId];
     if (!success) {
         throw new Error('Steam API request was unsuccessful');
     }

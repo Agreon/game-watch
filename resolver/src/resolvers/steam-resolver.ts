@@ -18,13 +18,30 @@ export class SteamResolver implements InfoResolver {
     public constructor(private readonly axios: AxiosInstance) { }
 
     public async resolve({ source }: InfoResolverContext): Promise<StoreGameData> {
-        const data = await getSteamApiData({ axios: this.axios, source });
+        // We have to make a second request here because the steam api will return a localized
+        // 'Coming soon' and we don't want to make an `if``case for every possible language.
+        // Checking for this value is the only way of telling whether a game release
+        // is still TBD.
+        const [data, { release_date: { date: enLocalizedDate } }] = await Promise.all([
+            getSteamApiData({
+                axios: this.axios,
+                appId: source.data.id,
+                country: source.country
+            }),
+            getSteamApiData({
+                axios: this.axios,
+                appId: source.data.id,
+                country: 'US'
+            })
+        ]);
 
         return {
             ...source.data,
             fullName: data.name,
             thumbnailUrl: data.header_image,
-            releaseDate: this.getReleaseDateInformation(data.release_date.date, source.country),
+            releaseDate: enLocalizedDate === 'Coming soon'
+                ? undefined
+                : this.getReleaseDateInformation(data.release_date.date, source.country),
             priceInformation: data.is_free
                 ? { final: 0 }
                 : this.getPriceInformation(data.price_overview ?? {}),
@@ -36,10 +53,6 @@ export class SteamResolver implements InfoResolver {
         date: string,
         userCountry: Country
     ): StoreReleaseDateInformation | undefined {
-        if (date === 'Coming soon') {
-            return undefined;
-        }
-
         if (isNonSpecificDate(date)) {
             return {
                 isExact: false,

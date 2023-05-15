@@ -36,7 +36,11 @@ export class ProtonResolver implements InfoResolver {
 
     public async resolve({ source }: InfoResolverContext): Promise<ProtonGameData> {
         // The steam API will give us the details whether linux is natively supported.
-        const data = await getSteamApiData({ axios: this.axios, source });
+        const data = await getSteamApiData({
+            axios: this.axios,
+            appId: source.data.id,
+            country: source.country,
+        });
 
         if (data.platforms.linux) {
             const deckVerified = await this.getProtonDbDeckVerifiedStatus(source);
