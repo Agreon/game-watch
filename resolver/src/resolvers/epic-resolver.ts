@@ -74,7 +74,7 @@ export class EpicResolver implements InfoResolver {
 
         return {
             isExact: true,
-            date: parsedDate.toDate()
+            date: parsedDate.set('hour', 0).toDate()
         };
     }
 
