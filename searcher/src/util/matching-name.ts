@@ -1,3 +1,5 @@
+import { cleanupGameName } from './cleanup-game-name';
+
 const IGNORED_TOKENS = [
     'a',
     'the',
@@ -6,9 +8,7 @@ const IGNORED_TOKENS = [
 
 // TODO: May be too conservative?
 export const matchingName = (name: string, search: string) => {
-    const nameTokens = name
-        .replace(/:|™|®|-|\(|\)/g, '')
-        .toLowerCase()
+    const nameTokens = cleanupGameName(name)
         .split(' ')
         .filter(value => !!value);
 

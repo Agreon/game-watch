@@ -1,6 +1,8 @@
 import assert from 'assert';
 import levenshtein from 'fast-levenshtein';
 
+import { cleanupGameName } from './cleanup-game-name';
+
 export const findBestMatch = <T extends Record<string, unknown>>(
     search: string,
     hits: T[],
@@ -15,7 +17,11 @@ export const findBestMatch = <T extends Record<string, unknown>>(
         const name = hit[nameKey] ?? '';
         assert(typeof name === 'string');
 
-        const distance = levenshtein.get(search, name, { useCollator: true });
+        const distance = levenshtein.get(
+            search.toLocaleLowerCase(),
+            cleanupGameName(name),
+            { useCollator: true }
+        );
         if (distance < best_hit.distance) {
             best_hit.distance = distance;
             best_hit.hit = hit;
