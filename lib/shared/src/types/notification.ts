@@ -22,11 +22,11 @@ export const StoreNotifications = [
 export type NotificationData = {
     [NotificationType.NewStoreEntry]: StoreGameData,
     [NotificationType.ReleaseDateChanged]: StoreReleaseDateInformation,
-    [NotificationType.GameReleased]: unknown,
+    [NotificationType.GameReleased]: Record<string, never>,
     [NotificationType.GameReduced]: StorePriceInformation,
     [NotificationType.NewMetacriticRating]: { criticScore: string, userScore: string },
     [NotificationType.NewProtonDbRating]: { score: string },
     [NotificationType.ProtonDbRatingIncreased]: { score: string },
-    [NotificationType.LeftEarlyAccess]: unknown,
-    [NotificationType.ResolveError]: unknown,
+    [NotificationType.LeftEarlyAccess]: Record<string, never>,
+    [NotificationType.ResolveError]: Record<string, never>,
 };

@@ -1,4 +1,4 @@
-import { StoreInfoSource } from '@game-watch/shared';
+import { StoreInfoSource, StoreReleaseDateInformation } from '@game-watch/shared';
 import dayjs from 'dayjs';
 
 import { DEFAULT_BASE_GAME_DATA, DEFAULT_STEAM_DATA, TEST_LOGGER } from '../defaults.testutil';
@@ -31,6 +31,24 @@ describe('ReleaseDateChangedNotificationCreator', () => {
 
         const result = await creator.createNotification({
             existingGameData: DEFAULT_BASE_GAME_DATA,
+            resolvedGameData: {
+                ...DEFAULT_STEAM_DATA,
+                releaseDate: { date: newReleaseDate, isExact: true },
+            },
+            logger: TEST_LOGGER,
+        } as NotificationCreatorContext<StoreInfoSource>);
+
+        expect(result).toStrictEqual(null);
+    });
+
+    it("won't create a notification if resolved data was in old format", async () => {
+        const newReleaseDate = dayjs().add(1, 'day').toDate();
+
+        const result = await creator.createNotification({
+            existingGameData: {
+                ...DEFAULT_BASE_GAME_DATA,
+                releaseDate: new Date() as unknown as StoreReleaseDateInformation
+            },
             resolvedGameData: {
                 ...DEFAULT_STEAM_DATA,
                 releaseDate: { date: newReleaseDate, isExact: true },
