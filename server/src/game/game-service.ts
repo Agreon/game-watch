@@ -235,10 +235,12 @@ export class GameService {
                 .from('info_source')
                 .where({ 'game_id': knex.ref('game.id'), })
                 .andWhereNot('state', InfoSourceState.Disabled)
-                // TODO: Might not be necessary after migration of old sources
-                .andWhereRaw('"data" IS NOT NULL')
                 .andWhereRaw("data -> 'releaseDate' @> '{\"isExact\": true}'")
                 .andWhereRaw("date(data -> 'releaseDate' ->> 'date') < NOW()");
+
+            if (withInfoSources) {
+                releasedSourcesQuery.andWhere('type', 'in', withInfoSources);
+            }
 
             if (!includeEarlyAccessGames) {
                 releasedSourcesQuery.andWhereRaw("data @> '{\"isEarlyAccess\": true}' = false");

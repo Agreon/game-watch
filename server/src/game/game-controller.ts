@@ -1,6 +1,6 @@
 import { Game, Tag, User } from '@game-watch/database';
 import { CreateGameDto, GameDto, SetupGameDto, UpdateGameDto } from '@game-watch/shared';
-import { IdentifiedReference } from '@mikro-orm/core';
+import { Ref } from '@mikro-orm/core';
 import {
     Body,
     Controller,
@@ -29,7 +29,7 @@ export class GameController {
     @Post()
     public async create(
         @Body() { search }: CreateGameDto,
-        @CurrentUser() user: IdentifiedReference<User>
+        @CurrentUser() user: Ref<User>
     ): Promise<GameDto> {
         const createdGame = await this.gameService.createGame(search, user);
 
@@ -38,7 +38,7 @@ export class GameController {
 
     @Get()
     public async getAllGames(
-        @CurrentUser() user: IdentifiedReference<User>,
+        @CurrentUser() user: Ref<User>,
         @Query('withTags') withTags?: string[],
         @Query('withInfoSources') withInfoSources?: string[],
         @Query('onlyAlreadyReleased', ParseBoolPipe) onlyAlreadyReleased?: boolean,
