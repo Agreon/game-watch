@@ -8,12 +8,22 @@ Receive updates of game release dates, prices and news
 
 - Nightly update of Game data
 - Custom Tags
+- Sources:
+    - Steam
+    - Epic Store
+    - PS Store
+    - Nintendo Store
+    - ProtonDB
+    - Metacritic
 - (E-Mail) Notifications for
     - Price reduction
     - Release date change
     - Release of game
+    - Game left Early Access
     - Addition to a store
     - Addition of Metacritic rating
+    - Addition of ProtonDB rating
+    - Improvement of ProtonDB rating
 
 ## FAQ
 
