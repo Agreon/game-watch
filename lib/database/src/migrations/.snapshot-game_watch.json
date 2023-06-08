@@ -474,7 +474,7 @@
         },
         "data": {
           "name": "data",
-          "type": "json",
+          "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -617,6 +617,7 @@
             "game-reduced",
             "new-metacritic-rating",
             "new-proton-db-rating",
+            "proton-db-rating-increased",
             "left-early-access",
             "resolve-error"
           ],
@@ -651,7 +652,7 @@
         },
         "data": {
           "name": "data",
-          "type": "json",
+          "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,

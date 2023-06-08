@@ -1,6 +1,6 @@
 import { InfoSource, User } from '@game-watch/database';
 import { CreateInfoSourceDto, DisableInfoSourceDto, InfoSourceDto } from '@game-watch/shared';
-import { IdentifiedReference } from '@mikro-orm/core';
+import { Ref } from '@mikro-orm/core';
 import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { CurrentUser } from '../auth/current-user-decorator';
@@ -19,7 +19,7 @@ export class InfoSourceController {
     @Post()
     public async create(
         @Body() { url, type, gameId }: CreateInfoSourceDto,
-        @CurrentUser() user: IdentifiedReference<User>
+        @CurrentUser() user: Ref<User>
     ): Promise<InfoSourceDto> {
         try {
             return await this.infoSourceService.addInfoSource({ gameId, type, url, user });

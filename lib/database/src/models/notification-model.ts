@@ -2,10 +2,10 @@ import { NotificationData, NotificationType } from '@game-watch/shared';
 import {
     Entity,
     Enum,
-    IdentifiedReference,
     Index,
     ManyToOne,
     Property,
+    Ref,
     Reference,
 } from '@mikro-orm/core';
 
@@ -26,16 +26,16 @@ export class Notification<T extends NotificationType = NotificationType>
     public read: boolean = false;
 
     @ManyToOne(() => Game, { wrappedReference: true, onDelete: 'cascade' })
-    public game!: IdentifiedReference<Game>;
+    public game!: Ref<Game>;
 
     @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: 'cascade' })
-    public infoSource!: IdentifiedReference<InfoSource>;
+    public infoSource!: Ref<InfoSource>;
 
-    @Property({ columnType: 'json' })
+    @Property({ columnType: 'jsonb' })
     public data!: NotificationData[T];
 
     @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
-    public user!: IdentifiedReference<User>;
+    public user!: Ref<User>;
 
     public constructor(
         { type, data, game, infoSource }: {

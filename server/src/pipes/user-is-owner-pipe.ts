@@ -1,5 +1,5 @@
 import { Game, User } from '@game-watch/database';
-import { EntityManager, IdentifiedReference } from '@mikro-orm/core';
+import { EntityManager, Ref } from '@mikro-orm/core';
 import {
     ArgumentMetadata,
     ForbiddenException,
@@ -24,7 +24,7 @@ export class UserIsOwner {
         if (!metatype) {
             throw new Error('No metatype found',);
         }
-        const user = this.request.user as IdentifiedReference<User>;
+        const user = this.request.user as Ref<User>;
         if (!user) {
             throw new UnauthorizedException();
         }

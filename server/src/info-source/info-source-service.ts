@@ -1,7 +1,7 @@
 import { Game, InfoSource, Notification, User } from '@game-watch/database';
 import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { CreateInfoSourceDto, InfoSourceState, InfoSourceType } from '@game-watch/shared';
-import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
+import { EntityRepository, Ref } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 
@@ -27,7 +27,7 @@ export class InfoSourceService {
             type,
             url,
             user: userRef,
-        }: CreateInfoSourceDto & { user: IdentifiedReference<User> }
+        }: CreateInfoSourceDto & { user: Ref<User> }
     ) {
         const user = await userRef.load();
         const game = await this.gameRepository.findOneOrFail(gameId);

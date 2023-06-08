@@ -1,5 +1,5 @@
 import { Tag, User } from '@game-watch/database';
-import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
+import { Ref, QueryOrder } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/knex';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { ConflictException, Injectable } from '@nestjs/common';
@@ -11,7 +11,7 @@ export class TagService {
     private readonly tagRepository: EntityRepository<Tag>
   ) { }
 
-  public async create(name: string, color: string, user: IdentifiedReference<User>) {
+  public async create(name: string, color: string, user: Ref<User>) {
     let tag = await this.tagRepository.findOne({ name, user });
     if (tag !== null) {
       throw new ConflictException();
@@ -23,7 +23,7 @@ export class TagService {
     return tag;
   }
 
-  public async getAll(user: IdentifiedReference<User>) {
+  public async getAll(user: Ref<User>) {
     return await this.tagRepository.createQueryBuilder('tag')
       .select('*')
       .where({ user })

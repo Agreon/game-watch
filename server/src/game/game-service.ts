@@ -2,7 +2,7 @@ import { Game, InfoSource, Tag, User } from '@game-watch/database';
 import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { getCronForNightlySync } from '@game-watch/service';
 import { InfoSourceState, SetupGameDto } from '@game-watch/shared';
-import { IdentifiedReference, QueryOrder } from '@mikro-orm/core';
+import { QueryOrder, Ref } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class GameService {
         private readonly infoSourceRepository: EntityRepository<InfoSource>,
     ) { }
 
-    public async createGame(search: string, user: IdentifiedReference<User>) {
+    public async createGame(search: string, user: Ref<User>) {
         const game = new Game({ search, user });
 
         await this.gameRepository.persistAndFlush(game);
@@ -170,7 +170,7 @@ export class GameService {
             includeEarlyAccessGames?: boolean;
             offset?: number,
             limit?: number,
-            user: IdentifiedReference<User>;
+            user: Ref<User>;
         },
     ) {
         const knex = this.infoSourceRepository.getKnex();
@@ -237,17 +237,11 @@ export class GameService {
                 .andWhereNot('state', InfoSourceState.Disabled)
                 // TODO: Might not be necessary after migration of old sources
                 .andWhereRaw('"data" IS NOT NULL')
-                // `releaseDate` might be undefined for games that are 'TBD'
-                // This coalesce is necessary as knex has a bug that won't let me include the json operator '?'.
-                // See https://github.com/knex/knex/issues/5189
-                .andWhereRaw("coalesce(data ->> 'releaseDate', '') != ''")
-                .andWhereRaw("(data -> 'releaseDate' ->> 'isExact')::boolean")
+                .andWhereRaw("data -> 'releaseDate' @> '{\"isExact\": true}'")
                 .andWhereRaw("date(data -> 'releaseDate' ->> 'date') < NOW()");
 
             if (!includeEarlyAccessGames) {
-                releasedSourcesQuery
-                    // Again, shitty cast because of the knex bug.
-                    .andWhereRaw("coalesce(data ->> 'isEarlyAccess', 'false')::boolean = false");
+                releasedSourcesQuery.andWhereRaw("data @> '{\"isEarlyAccess\": true}' = false");
             }
 
             query

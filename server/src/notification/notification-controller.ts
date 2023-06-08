@@ -1,5 +1,5 @@
 import { Notification, User } from '@game-watch/database';
-import { IdentifiedReference } from '@mikro-orm/core';
+import { Ref } from '@mikro-orm/core';
 import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { CurrentUser } from '../auth/current-user-decorator';
@@ -16,7 +16,7 @@ export class NotificationController {
 
     @Get()
     public async getAll(
-        @CurrentUser() user: IdentifiedReference<User>,
+        @CurrentUser() user: Ref<User>,
     ): Promise<Notification[]> {
         return await this.notificationService.getNotifications(user);
     }
@@ -30,7 +30,7 @@ export class NotificationController {
 
     @Post('/mark-all-as-read')
     public async markAllNotificationsAsRead(
-        @CurrentUser() user: IdentifiedReference<User>,
+        @CurrentUser() user: Ref<User>,
     ): Promise<void> {
         await this.notificationService.markAllNotificationsAsRead(user);
     }

@@ -1,7 +1,7 @@
 import {
     Collection,
     Entity,
-    IdentifiedReference,
+    Ref,
     ManyToMany,
     ManyToOne,
     Property,
@@ -23,10 +23,10 @@ export class Tag extends BaseEntity<Tag> {
     public games = new Collection<Game>(this);
 
     @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
-    public user!: IdentifiedReference<User>;
+    public user!: Ref<User>;
 
     public constructor(
-        { name, color, user }: { name: string, color: string, user: IdentifiedReference<User> }) {
+        { name, color, user }: { name: string, color: string, user: Ref<User> }) {
 
         super();
         this.name = name;

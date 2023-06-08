@@ -1,5 +1,5 @@
 import { User } from '@game-watch/database';
-import { EntityRepository, IdentifiedReference } from '@mikro-orm/core';
+import { EntityRepository, Ref } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -30,7 +30,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    public validate({ sub }: Record<string, unknown>): IdentifiedReference<User> {
+    public validate({ sub }: Record<string, unknown>): Ref<User> {
         if (typeof sub !== 'string') {
             throw new UnauthorizedException();
         }

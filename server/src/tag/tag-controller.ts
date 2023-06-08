@@ -1,6 +1,6 @@
 import { User } from '@game-watch/database';
 import { CreateTagDto, TagDto } from '@game-watch/shared';
-import { IdentifiedReference } from '@mikro-orm/core';
+import { Ref } from '@mikro-orm/core';
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 
 import { CurrentUser } from '../auth/current-user-decorator';
@@ -17,14 +17,14 @@ export class TagController {
   @Post()
   public async create(
     @Body() { name, color }: CreateTagDto,
-    @CurrentUser() user: IdentifiedReference<User>
+    @CurrentUser() user: Ref<User>
   ): Promise<TagDto> {
     return await this.tagService.create(name, color, user);
   }
 
   @Get()
   public async getAll(
-    @CurrentUser() user: IdentifiedReference<User>,
+    @CurrentUser() user: Ref<User>,
   ): Promise<TagDto[]> {
     return await this.tagService.getAll(user);
   }

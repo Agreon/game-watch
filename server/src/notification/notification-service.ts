@@ -1,5 +1,5 @@
 import { Notification, User } from '@game-watch/database';
-import { EntityRepository, IdentifiedReference, QueryOrder } from '@mikro-orm/core';
+import { EntityRepository, Ref, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 
@@ -10,7 +10,7 @@ export class NotificationService {
         private readonly notificationRepository: EntityRepository<Notification>,
     ) { }
 
-    public async getNotifications(user: IdentifiedReference<User>): Promise<Notification[]> {
+    public async getNotifications(user: Ref<User>): Promise<Notification[]> {
         return await this.notificationRepository.find(
             { read: false, user },
             {
@@ -29,7 +29,7 @@ export class NotificationService {
         return notification;
     }
 
-    public async markAllNotificationsAsRead(user: IdentifiedReference<User>): Promise<void> {
+    public async markAllNotificationsAsRead(user: Ref<User>): Promise<void> {
         const notifications = await this.notificationRepository.find({ read: false, user });
 
         for (const notification of notifications) {

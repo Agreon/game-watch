@@ -4,7 +4,7 @@ import {
     Collection,
     Entity,
     Enum,
-    IdentifiedReference,
+    Ref,
     ManyToOne,
     OneToMany,
     Property,
@@ -23,7 +23,7 @@ interface InfoSourceParams<
 > {
     type: T
     state: S
-    user: IdentifiedReference<User>
+    user: Ref<User>
     data: InfoSourceData<T, S>
     excludedRemoteGameIds?: string[]
     game?: Game
@@ -48,7 +48,7 @@ export class InfoSource<
     @Property({ type: ArrayType })
     public excludedRemoteGameIds: string[] = [];
 
-    @Property({ columnType: 'json', nullable: true })
+    @Property({ columnType: 'jsonb', nullable: true })
     public data: InfoSourceData<T, S>;
 
     // This property is necessary because we reuse the info source model and the notification logic
@@ -60,10 +60,10 @@ export class InfoSource<
     public country: Country;
 
     @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
-    public game!: IdentifiedReference<Game>;
+    public game!: Ref<Game>;
 
     @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
-    public user!: IdentifiedReference<User>;
+    public user!: Ref<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)
     public notifications = new Collection<Notification, InfoSource<T, S>>(this);
