@@ -48,7 +48,7 @@ export class ResolveService {
         const startTime = new Date().getTime();
 
         const source = await this.em
-            .findOneOrFail<InfoSource<InfoSourceType, InfoSourceState.Found>, 'user'>(
+            .findOneOrFail(
                 InfoSource,
                 {
                     id: sourceId,

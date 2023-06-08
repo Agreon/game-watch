@@ -12,12 +12,12 @@
     },
     "devDependencies": {
         "eslint": "^8.41.0",
-        "pnpm": "^8.5.1",
+        "pnpm": "^8.6.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
         "@game-watch/shared": "workspace:0.0.1",
-        "@sentry/node": "^7.52.1",
+        "@sentry/node": "^7.53.1",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.2",

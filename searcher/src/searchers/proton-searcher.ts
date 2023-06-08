@@ -1,5 +1,5 @@
 import { BaseGameData, InfoSourceType } from '@game-watch/shared';
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
@@ -41,14 +41,23 @@ export class ProtonSearcher implements InfoSearcher {
             return null;
         }
 
-        const { data: { tier } } = await this.axios.get(
-            `https://www.protondb.com/api/v1/reports/summaries/${gameId}.json`
-        );
+        try {
+            const { data: { tier } } = await this.axios.get(
+                `https://www.protondb.com/api/v1/reports/summaries/${gameId}.json`
+            );
 
-        if (tier === 'pending') {
-            logger.debug(`Found '${fullName}' does not have a rating yet. Skipping`);
+            if (tier === 'pending') {
+                logger.debug(`Found '${fullName}' does not have a rating yet. Skipping`);
 
-            return null;
+                return null;
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                logger.debug(`${search} was not found at proton. It does not have a rating yet`);
+
+                return null;
+            }
+            throw error;
         }
 
         logger.debug(`Found gameId '${gameId}'`);

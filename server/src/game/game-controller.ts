@@ -42,6 +42,7 @@ export class GameController {
         @Query('withTags') withTags?: string[],
         @Query('withInfoSources') withInfoSources?: string[],
         @Query('onlyAlreadyReleased', ParseBoolPipe) onlyAlreadyReleased?: boolean,
+        @Query('includeEarlyAccessGames', ParseBoolPipe) includeEarlyAccessGames?: boolean,
         @Query('offset') offset?: number,
         @Query('limit') limit?: number,
     ): Promise<GameDto[]> {
@@ -49,6 +50,7 @@ export class GameController {
             withTags,
             withInfoSources,
             onlyAlreadyReleased,
+            includeEarlyAccessGames,
             user,
             offset,
             limit

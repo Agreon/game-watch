@@ -10,6 +10,7 @@ export interface GamesFilter {
     tags: TagDto[]
     infoSources: InfoSourceType[]
     showOnlyAlreadyReleased: boolean
+    showEarlyAccessGames: boolean
 }
 
 export interface GamesCtx {

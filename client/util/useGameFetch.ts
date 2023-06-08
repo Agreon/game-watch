@@ -25,6 +25,7 @@ export function useGameFetch() {
         tags: [],
         infoSources: [],
         showOnlyAlreadyReleased: false,
+        showEarlyAccessGames: true,
     });
 
     const fetchGames = useCallback(async (offset: number, loadAll?: boolean) => {
@@ -35,6 +36,7 @@ export function useGameFetch() {
                     withTags: filter.tags.map(tag => tag.id),
                     withInfoSources: filter.infoSources,
                     onlyAlreadyReleased: filter.showOnlyAlreadyReleased,
+                    includeEarlyAccessGames: filter.showEarlyAccessGames,
                     offset: loadAll ? undefined : offset,
                     limit: loadAll ? undefined : PAGINATION_STEP_SIZE
                 }

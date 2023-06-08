@@ -43,7 +43,7 @@ export class NotificationService {
             resolvedGameData: AnyGameData | null
         }
     ) {
-        const infoSource = await this.em.findOneOrFail<InfoSource, 'game' | 'user'>(
+        const infoSource = await this.em.findOneOrFail(
             InfoSource,
             sourceId,
             { populate: ['game', 'user'] }

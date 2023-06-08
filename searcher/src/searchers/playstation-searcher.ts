@@ -2,7 +2,6 @@ import { Country, InfoSourceType, mapCountryCodeToAcceptLanguage } from '@game-w
 import { AxiosInstance } from 'axios';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
-import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 interface SearchResponse {
@@ -68,7 +67,7 @@ export class PlaystationSearcher implements InfoSearcher {
                         countryCode: userCountry.split('-')[0],
                         languageCode: mapCountryCodeToLanguageCode(userCountry),
                         pageOffset: 0,
-                        pageSize: 25,
+                        pageSize: 15,
                         searchTerm: search,
                     },
                     extensions: {
@@ -83,13 +82,12 @@ export class PlaystationSearcher implements InfoSearcher {
         );
 
         // The ps store likes to order DLCs and cosmetics prior to the game.
-        const hits = results.filter(result => result.storeDisplayClassification === 'FULL_GAME');
+        const hits = results.filter(result => ['FULL_GAME', 'GAME_BUNDLE'].includes(result.storeDisplayClassification));
         if (!hits.length) {
             logger.debug('No search results found');
             return null;
         }
-
-        const { id: gameId, name: fullName } = findBestMatch(search, hits, 'name');
+        const { id: gameId, name: fullName } = hits[0];
 
         if (!matchingName(fullName, search)) {
             logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);

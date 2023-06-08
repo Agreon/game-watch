@@ -163,10 +163,11 @@ export class GameService {
     }
 
     public async getGames(
-        { withTags, withInfoSources, onlyAlreadyReleased, user, offset, limit }: {
+        { withTags, withInfoSources, onlyAlreadyReleased, includeEarlyAccessGames, user, offset, limit }: {
             withTags?: string[];
             withInfoSources?: string[];
             onlyAlreadyReleased?: boolean;
+            includeEarlyAccessGames?: boolean;
             offset?: number,
             limit?: number,
             user: IdentifiedReference<User>;
@@ -234,7 +235,20 @@ export class GameService {
                 .from('info_source')
                 .where({ 'game_id': knex.ref('game.id'), })
                 .andWhereNot('state', InfoSourceState.Disabled)
-                .andWhereRaw("date(data ->> 'releaseDate') < NOW()");
+                // TODO: Might not be necessary after migration of old sources
+                .andWhereRaw('"data" IS NOT NULL')
+                // `releaseDate` might be undefined for games that are 'TBD'
+                // This coalesce is necessary as knex has a bug that won't let me include the json operator '?'.
+                // See https://github.com/knex/knex/issues/5189
+                .andWhereRaw("coalesce(data ->> 'releaseDate', '') != ''")
+                .andWhereRaw("(data -> 'releaseDate' ->> 'isExact')::boolean")
+                .andWhereRaw("date(data -> 'releaseDate' ->> 'date') < NOW()");
+
+            if (!includeEarlyAccessGames) {
+                releasedSourcesQuery
+                    // Again, shitty cast because of the knex bug.
+                    .andWhereRaw("coalesce(data ->> 'isEarlyAccess', 'false')::boolean = false");
+            }
 
             query
                 .withSubQuery(releasedSourcesQuery, 'game.releasedInSources')

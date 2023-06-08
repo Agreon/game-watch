@@ -38,6 +38,9 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const [showOnlyAlreadyReleased, setShowOnlyAlreadyReleased] = useState(
         filter.showOnlyAlreadyReleased
     );
+    const [showEarlyAccessGames, setShowEarlyAccessGames] = useState(
+        filter.showEarlyAccessGames
+    );
 
     const availableInfoSources = useMemo(
         () => INFO_SOURCE_PRIORITY.filter(
@@ -65,41 +68,16 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         setFilter({
             infoSources: filterInfoSources,
             tags: filterTags,
-            showOnlyAlreadyReleased
+            showOnlyAlreadyReleased,
+            showEarlyAccessGames,
         });
         onClose();
-    }, [onClose, filterTags, filterInfoSources, showOnlyAlreadyReleased, setFilter]);
+    }, [onClose, filterTags, filterInfoSources, showOnlyAlreadyReleased, showEarlyAccessGames, setFilter]);
 
     return (
         <Box>
             <Flex direction="column">
-                <Box>
-                    <Text fontSize="lg" fontWeight="bold" mb="0.5rem">InfoSources</Text>
-                    <InfoSourceFilter
-                        availableInfoSources={availableInfoSources}
-                        filterInfoSources={filterInfoSources}
-                        setFilterInfoSources={setFilterInfoSources}
-                    />
-                </Box>
-                <Box mt="1rem">
-                    <Text fontSize="lg" fontWeight="bold" mb="0.5rem">Tags</Text>
-                    <Flex flexWrap="wrap">
-                        {tagsWithToggleState.map(tag => (
-                            <ChakraTag
-                                key={tag.id}
-                                onClick={() => toggleTag(tag)}
-                                variant={tag.toggled ? 'subtle' : 'outline'}
-                                colorScheme={tag.toggled ? tag.color : 'white'}
-                                cursor="pointer"
-                                mx="0.5rem"
-                                my="0.25rem"
-                            >
-                                {tag.name}
-                            </ChakraTag>
-                        ))}
-                    </Flex>
-                </Box>
-                <Box mt="2rem">
+                <Box mb="1rem">
                     <FormControl display='flex' alignItems='center'>
                         <Switch
                             id='show-only-released-games-switch'
@@ -117,7 +95,55 @@ export const FilterMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             Show only released games
                         </FormLabel>
                     </FormControl>
+                    {showOnlyAlreadyReleased &&
+                        <FormControl display='flex' alignItems='center'>
+                            <Switch
+                                id='show-early-access-games-switch'
+                                checked={showEarlyAccessGames}
+                                colorScheme="teal"
+                                defaultChecked={filter.showEarlyAccessGames}
+                                onChange={e => setShowEarlyAccessGames(e.target.checked)}
+                            />
+                            <FormLabel
+                                htmlFor='show-early-access-games-switch'
+                                mt="0.75rem"
+                                ml="1rem"
+                                cursor="pointer"
+                            >
+                                Include Early Access Games
+                            </FormLabel>
+                        </FormControl>
+                    }
                 </Box>
+                <Box>
+                    <Text fontSize="lg" fontWeight="bold" mb="0.5rem">InfoSources</Text>
+                    <InfoSourceFilter
+                        availableInfoSources={availableInfoSources}
+                        filterInfoSources={filterInfoSources}
+                        setFilterInfoSources={setFilterInfoSources}
+                    />
+                </Box>
+                {tagsWithToggleState.length !== 0 &&
+                    <Box mt="1rem">
+                        <Text fontSize="lg" fontWeight="bold" mb="0.5rem">Tags</Text>
+                        <Flex flexWrap="wrap">
+                            {tagsWithToggleState.map(tag => (
+                                <ChakraTag
+                                    key={tag.id}
+                                    onClick={() => toggleTag(tag)}
+                                    variant={tag.toggled ? 'subtle' : 'outline'}
+                                    colorScheme={tag.toggled ? tag.color : 'white'}
+                                    cursor="pointer"
+                                    mx="0.5rem"
+                                    my="0.25rem"
+                                >
+                                    {tag.name}
+                                </ChakraTag>
+                            ))}
+                        </Flex>
+                    </Box>
+                }
+
                 <Flex justify="end">
                     <Button mt="1rem" mr="1rem" onClick={onClose}>Cancel</Button>
                     <Button mt="1rem" onClick={applyFilter} colorScheme="teal">Apply</Button>
