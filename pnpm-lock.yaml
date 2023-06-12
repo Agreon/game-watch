@@ -674,8 +674,8 @@ importers:
         specifier: ^5.7.11
         version: 5.7.11(@mikro-orm/migrations@5.7.11)(@mikro-orm/postgresql@5.7.11)
       '@mikro-orm/knex':
-        specifier: ^5.7.11
-        version: 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
+        specifier: ^5.7.12
+        version: 5.7.12(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
       '@mikro-orm/migrations':
         specifier: ^5.7.11
         version: 5.7.11(@mikro-orm/core@5.7.11)(pg@8.11.0)
@@ -3173,7 +3173,7 @@ packages:
     dependencies:
       '@jercle/yargonaut': 1.1.5
       '@mikro-orm/core': 5.7.11(@mikro-orm/migrations@5.7.11)(@mikro-orm/postgresql@5.7.11)
-      '@mikro-orm/knex': 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
+      '@mikro-orm/knex': 5.7.12(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
       '@mikro-orm/migrations': 5.7.11(@mikro-orm/core@5.7.11)(pg@8.11.0)
       '@mikro-orm/postgresql': 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)
       fs-extra: 11.1.1
@@ -3237,8 +3237,8 @@ packages:
       mikro-orm: 5.7.11
       reflect-metadata: 0.1.13
 
-  /@mikro-orm/knex@5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0):
-    resolution: {integrity: sha512-t2H3Dtrv0RaOn9vQGz7IPXN2L34H/RpTCN697lZXRVG2AgIJ4ImL52Ntqf+3L5dV4INSYvoKYm7ywBcfI990dQ==}
+  /@mikro-orm/knex@5.7.12(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0):
+    resolution: {integrity: sha512-odIk92yREju/LnyW+nC8evz1Iyjk+0kOavlORQR92G3nbj10LRbCG7H21bdko2oGQfDS/Pav4btMJLLt6NjXwQ==}
     engines: {node: '>= 14.0.0'}
     peerDependencies:
       '@mikro-orm/core': ^5.0.0
@@ -3286,7 +3286,7 @@ packages:
       '@mikro-orm/core': ^5.0.0
     dependencies:
       '@mikro-orm/core': 5.7.11(@mikro-orm/migrations@5.7.11)(@mikro-orm/postgresql@5.7.11)
-      '@mikro-orm/knex': 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
+      '@mikro-orm/knex': 5.7.12(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
       fs-extra: 11.1.1
       knex: 2.4.2(pg@8.11.0)
       umzug: 3.2.1
@@ -3332,7 +3332,7 @@ packages:
         optional: true
     dependencies:
       '@mikro-orm/core': 5.7.11(@mikro-orm/migrations@5.7.11)(@mikro-orm/postgresql@5.7.11)
-      '@mikro-orm/knex': 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
+      '@mikro-orm/knex': 5.7.12(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)(pg@8.11.0)
       '@mikro-orm/migrations': 5.7.11(@mikro-orm/core@5.7.11)(pg@8.11.0)
       pg: 8.11.0
     transitivePeerDependencies:
@@ -7490,22 +7490,10 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /is-core-module@2.12.0:
-    resolution: {integrity: sha512-RECHCBCd/viahWmwj6enj19sKbHfJrddi/6cBDsNTKbNq0f7VeaUkBo60BqzvPqo/W54ChS62Z5qyun7cfOMqQ==}
-    dependencies:
-      has: 1.0.3
-
   /is-core-module@2.12.1:
     resolution: {integrity: sha512-Q4ZuBAe2FUsKtyQJoQHlvP8OvBERxO3jEmy1I7hcRXcJBGGHFh/aJBswbXuS9sgrDH2QUO8ilkwNPHvHMd8clg==}
     dependencies:
       has: 1.0.3
-    dev: true
-
-  /is-core-module@2.8.1:
-    resolution: {integrity: sha512-SdNCUs284hr40hFTFP6l0IfZ/RSrMXF3qgoRHd3/79unUTvrFO/JoXwkGm+5J/Oe3E/b5GsnG330uUNgRpu1PA==}
-    dependencies:
-      has: 1.0.3
-    dev: true
 
   /is-date-object@1.0.5:
     resolution: {integrity: sha512-9YQaSxsAiSwcvS33MBk3wTCVnWK+HhF8VZR2jRxehM16QcVOdHqPn4VPHmRK4lSr38n9JriurInLcP90xsYNfQ==}
@@ -7983,7 +7971,7 @@ packages:
       jest-pnp-resolver: 1.2.3(jest-resolve@29.5.0)
       jest-util: 29.5.0
       jest-validate: 29.5.0
-      resolve: 1.22.1
+      resolve: 1.22.2
       resolve.exports: 2.0.2
       slash: 3.0.0
     dev: true
@@ -9906,15 +9894,6 @@ packages:
     resolution: {integrity: sha512-Hhtrw0nLeSrFQ7phPp4OOcVjLPIeMnRlr5mcnVuMe7M/7eBn98A3hmFRLoFo3DLZkivSYwhRUJTyPyWAk56WLw==}
     hasBin: true
     dependencies:
-      is-core-module: 2.8.1
-      path-parse: 1.0.7
-      supports-preserve-symlinks-flag: 1.0.0
-    dev: true
-
-  /resolve@1.22.1:
-    resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
-    hasBin: true
-    dependencies:
       is-core-module: 2.12.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
@@ -9924,7 +9903,7 @@ packages:
     resolution: {integrity: sha512-Sb+mjNHOULsBv818T40qSPeRiuWLyaGMa5ewydRLFimneixmVy2zdivRl+AF6jaYPC8ERxGDmFSiqui6SfPd+g==}
     hasBin: true
     dependencies:
-      is-core-module: 2.12.0
+      is-core-module: 2.12.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
