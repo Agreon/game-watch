@@ -258,8 +258,8 @@ importers:
         specifier: workspace:0.0.1
         version: link:../shared
       '@sentry/node':
-        specifier: ^7.54.0
-        version: 7.54.0
+        specifier: ^7.55.0
+        version: 7.55.0
       fp-ts:
         specifier: ^2.13.1
         version: 2.16.0
@@ -362,8 +362,8 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0
       '@sentry/node':
-        specifier: ^7.54.0
-        version: 7.54.0
+        specifier: ^7.55.0
+        version: 7.55.0
       '@sentry/tracing':
         specifier: ^7.54.0
         version: 7.54.0
@@ -474,8 +474,8 @@ importers:
         specifier: ^5.7.11
         version: 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)
       '@sentry/node':
-        specifier: ^7.54.0
-        version: 7.54.0
+        specifier: ^7.55.0
+        version: 7.55.0
       '@sentry/tracing':
         specifier: ^7.54.0
         version: 7.54.0
@@ -577,8 +577,8 @@ importers:
         specifier: ^5.7.11
         version: 5.7.11(@mikro-orm/core@5.7.11)(@mikro-orm/migrations@5.7.11)
       '@sentry/node':
-        specifier: ^7.54.0
-        version: 7.54.0
+        specifier: ^7.55.0
+        version: 7.55.0
       '@sentry/tracing':
         specifier: ^7.54.0
         version: 7.54.0
@@ -713,8 +713,8 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0
       '@sentry/node':
-        specifier: ^7.54.0
-        version: 7.54.0
+        specifier: ^7.55.0
+        version: 7.55.0
       '@sentry/tracing':
         specifier: ^7.54.0
         version: 7.54.0
@@ -3733,7 +3733,7 @@ packages:
       is-glob: 4.0.3
       open: 9.1.0
       picocolors: 1.0.0
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: true
 
   /@popperjs/core@2.11.8:
@@ -3816,6 +3816,16 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@sentry-internal/tracing@7.55.0:
+    resolution: {integrity: sha512-Bm82Z2tHcz4BF8CQDfYT5LeZPpuePWNHcxTSknJImPpPlQnol++2WQtloZZOs5FxllXL08UjN3LphRKmiEQsVQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/core': 7.55.0
+      '@sentry/types': 7.55.0
+      '@sentry/utils': 7.55.0
+      tslib: 1.14.1
+    dev: false
+
   /@sentry/cli@2.18.1:
     resolution: {integrity: sha512-lc/dX/cvcmznWNbLzDbzxn224vwY5zLIDBe3yOO6Usg3CDgkZZ3xfjN4AIUZwkiTEPIOELodrOfdoMxqpXyYDw==}
     engines: {node: '>= 10'}
@@ -3841,14 +3851,23 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/node@7.54.0:
-    resolution: {integrity: sha512-k8P7WD6lra3JF3H/y9GO+twBV8qQilj3X3d8PpaVPBHHwOA9AfdBVF18qgrdlZKghKtgALapZzrQQVnTOm34rw==}
+  /@sentry/core@7.55.0:
+    resolution: {integrity: sha512-ClOcxdAlX7aS52UQQFc7zAIoqyV24wZnDamJTNtnygETGhrjsj4sUyhelF0xecn5gyYJQ0pfT55iBTGacms8Ag==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.54.0
-      '@sentry/core': 7.54.0
-      '@sentry/types': 7.54.0
-      '@sentry/utils': 7.54.0
+      '@sentry/types': 7.55.0
+      '@sentry/utils': 7.55.0
+      tslib: 1.14.1
+    dev: false
+
+  /@sentry/node@7.55.0:
+    resolution: {integrity: sha512-X7v1LoZu6mlZAg7eDz+gU4V0QdfcKcZjI/4bxl6E9yKX6VH5ORuNaNujWXMfzu7Yvu8Dtp+JZ0ZDa+9nEmXbZQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry-internal/tracing': 7.55.0
+      '@sentry/core': 7.55.0
+      '@sentry/types': 7.55.0
+      '@sentry/utils': 7.55.0
       cookie: 0.4.2
       https-proxy-agent: 5.0.1
       lru_map: 0.3.3
@@ -3869,11 +3888,24 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
+  /@sentry/types@7.55.0:
+    resolution: {integrity: sha512-e8VLiR0NIYd1Y5SlATp3eSARTYmbpNEYsX2b3a1E0NDZj+G5eOqef7k6ab6Y30LUrqrqmkDE0VJqTtnI3pMzzg==}
+    engines: {node: '>=8'}
+    dev: false
+
   /@sentry/utils@7.54.0:
     resolution: {integrity: sha512-3Yf5KlKjIcYLddOexSt2ovu2TWlR4Fi7M+aCK8yUTzwNzf/xwFSWOstHlD/WiDy9HvfhWAOB/ukNTuAeJmtasw==}
     engines: {node: '>=8'}
     dependencies:
       '@sentry/types': 7.54.0
+      tslib: 1.14.1
+    dev: false
+
+  /@sentry/utils@7.55.0:
+    resolution: {integrity: sha512-18YU0fLhlr/e7lUyMkh/BEE05N8DG9lzWToz6c9DOYw6pTyt2EXZrxho+BcYufd7IayU0Twb0sp8EX/wfggYxA==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.55.0
       tslib: 1.14.1
     dev: false
 
@@ -10493,7 +10525,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': 2.4.1
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: true
 
   /tapable@2.2.1:
@@ -10834,10 +10866,10 @@ packages:
 
   /tslib@2.5.2:
     resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
+    dev: false
 
   /tslib@2.5.3:
     resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==}
-    dev: false
 
   /tsutils@3.21.0(typescript@5.1.3):
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
