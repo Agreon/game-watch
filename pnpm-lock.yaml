@@ -8,8 +8,8 @@ importers:
   .:
     devDependencies:
       '@sentry/cli':
-        specifier: ^2.18.1
-        version: 2.18.1
+        specifier: ^2.19.0
+        version: 2.19.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.59.9
         version: 5.59.9(@typescript-eslint/parser@5.59.9)(eslint@8.42.0)(typescript@5.1.3)
@@ -3123,7 +3123,7 @@ packages:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
       make-dir: 3.1.0
-      node-fetch: 2.6.9
+      node-fetch: 2.6.11
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
@@ -3816,8 +3816,8 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/cli@2.18.1:
-    resolution: {integrity: sha512-lc/dX/cvcmznWNbLzDbzxn224vwY5zLIDBe3yOO6Usg3CDgkZZ3xfjN4AIUZwkiTEPIOELodrOfdoMxqpXyYDw==}
+  /@sentry/cli@2.19.0:
+    resolution: {integrity: sha512-mbXkUtNBHQtfc3QGEm0yWJymmzZLyey5tnH8DOKpu3l8tu8HJjNiCVXlzzEkV4wJiorwmTGG+eNJ8+79wolG7Q==}
     engines: {node: '>= 10'}
     hasBin: true
     requiresBuild: true
@@ -8820,18 +8820,6 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
-
-  /node-fetch@2.6.9:
-    resolution: {integrity: sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-    dependencies:
-      whatwg-url: 5.0.0
-    dev: false
 
   /node-gyp-build-optional-packages@5.0.7:
     resolution: {integrity: sha512-YlCCc6Wffkx0kHkmam79GKvDQ6x+QZkMjFGrIMxgFNILFvGSbCp2fCBC55pGTT9gVaz8Na5CLmxt/urtzRv36w==}
