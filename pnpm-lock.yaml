@@ -50,8 +50,8 @@ importers:
         specifier: 0.0.1
         version: link:../lib/shared
       '@hookform/resolvers':
-        specifier: ^3.1.0
-        version: 3.1.0(react-hook-form@7.44.3)
+        specifier: ^3.1.1
+        version: 3.1.1(react-hook-form@7.44.3)
       axios:
         specifier: ^0.27.2
         version: 0.27.2
@@ -2772,8 +2772,8 @@ packages:
       '@floating-ui/core': 1.2.1
     dev: false
 
-  /@hookform/resolvers@3.1.0(react-hook-form@7.44.3):
-    resolution: {integrity: sha512-z0A8K+Nxq+f83Whm/ajlwE6VtQlp/yPHZnXw7XWVPIGm1Vx0QV8KThU3BpbBRfAZ7/dYqCKKBNnQh85BkmBKkA==}
+  /@hookform/resolvers@3.1.1(react-hook-form@7.44.3):
+    resolution: {integrity: sha512-tS16bAUkqjITNSvbJuO1x7MXbn7Oe8ZziDTJdA9mMvsoYthnOOiznOTGBYwbdlYBgU+tgpI/BtTU3paRbCuSlg==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
