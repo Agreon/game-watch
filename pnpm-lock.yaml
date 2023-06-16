@@ -755,8 +755,8 @@ importers:
         specifier: ^3.0.0-canary.1
         version: 3.0.0-canary.1
       nestjs-pino:
-        specifier: ^3.2.0
-        version: 3.2.0(@nestjs/common@9.4.2)(pino-http@8.3.3)
+        specifier: ^3.3.0
+        version: 3.3.0(@nestjs/common@9.4.2)(pino-http@8.3.3)
       newtype-ts:
         specifier: ^0.3.5
         version: 0.3.5(fp-ts@2.16.0)(monocle-ts@2.3.13)
@@ -8716,12 +8716,12 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /nestjs-pino@3.2.0(@nestjs/common@9.4.2)(pino-http@8.3.3):
-    resolution: {integrity: sha512-Pi5jaOdNMCV81vbll3IrK4jW1Yri265i4T2IoFdlZf0sP8USfUSD8V9JENkMCS7vKbOXCWeeBLucxE96yM8hyA==}
+  /nestjs-pino@3.3.0(@nestjs/common@9.4.2)(pino-http@8.3.3):
+    resolution: {integrity: sha512-FVMbzz0wi7YKqtrifnAjcQejGmhIfxXY2q+jdW1bK7RxN9640UJ7pDeQa/FOQMSu1Ud0L0/eqI3Ha9NejJxIjQ==}
     engines: {node: '>= 14'}
     requiresBuild: true
     peerDependencies:
-      '@nestjs/common': ^8.0.0 || ^9.0.0
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
       pino-http: ^6.4.0 || ^7.0.0 || ^8.0.0
     dependencies:
       '@nestjs/common': 9.4.2(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
