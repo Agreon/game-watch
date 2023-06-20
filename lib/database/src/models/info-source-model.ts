@@ -4,10 +4,10 @@ import {
     Collection,
     Entity,
     Enum,
-    Ref,
     ManyToOne,
     OneToMany,
     Property,
+    Ref,
     Reference,
     Unique,
 } from '@mikro-orm/core';

@@ -1,5 +1,5 @@
 import { Notification, User } from '@game-watch/database';
-import { EntityRepository, Ref, QueryOrder } from '@mikro-orm/core';
+import { EntityRepository, QueryOrder,Ref } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 

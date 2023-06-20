@@ -30,9 +30,9 @@ import { Migration20221006064636 } from './migrations/Migration20221006064636';
 import { Migration20221006064637 } from './migrations/Migration20221006064637';
 import { Migration20230320071621 } from './migrations/Migration20230320071621';
 import { Migration20230407084514 } from './migrations/Migration20230407084514';
+import { Migration20230608072430 } from './migrations/Migration20230608072430';
 import { Migration20231006064638 } from './migrations/Migration20231006064638';
 import { Migration20231006064639 } from './migrations/Migration20231006064639';
-import { Migration20230608072430 } from './migrations/Migration20230608072430';
 import { Game } from './models/game-model';
 import { InfoSource } from './models/info-source-model';
 import { Notification } from './models/notification-model';
@@ -91,7 +91,7 @@ const config: MikroOrmModuleSyncOptions = {
             { name: 'Migration20231006064639.ts', class: Migration20231006064639 },
             { name: 'Migration20230320071621.ts', class: Migration20230320071621 },
             { name: 'Migration20230407084514.ts', class: Migration20230407084514 },
-            { name: "Migration20230608072430.ts", class: Migration20230608072430 },
+            { name: 'Migration20230608072430.ts', class: Migration20230608072430 },
         ]
     }
 };
