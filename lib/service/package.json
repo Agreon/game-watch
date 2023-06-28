@@ -13,7 +13,7 @@
     "devDependencies": {
         "eslint": "^8.43.0",
         "pnpm": "^8.6.3",
-        "typescript": "^5.1.3"
+        "typescript": "^5.1.5"
     },
     "dependencies": {
         "@game-watch/shared": "workspace:0.0.1",
