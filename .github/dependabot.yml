@@ -6,6 +6,22 @@ updates:
     open-pull-requests-limit: 30
     schedule:
       interval: 'daily'
+    groups:
+      sentry:
+        patterns:
+          - "@sentry/*"
+      mikro-orm:
+        patterns:
+          - "@mikro-orm/*"
+        exclude-patterns:
+          - "@mikro-orm/nestjs"
+          - "@mikro-orm/sql-highlighter"
+      nestjs:
+        patterns:
+          - "@nestjs/common"
+          - "@nestjs/core"
+          - "@nestjs/platform-express"
+          - "@mikro-orm/nestjs"
     ignore:
       - dependency-name: axios
         versions:
