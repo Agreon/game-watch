@@ -31,6 +31,7 @@ import { PlaystationSearcher } from './searchers/playstation-searcher';
 import { ProtonSearcher } from './searchers/proton-searcher';
 import { SteamSearcher } from './searchers/steam-searcher';
 import { SwitchSearcher } from './searchers/switch-searcher';
+import { XboxSearcher } from './searchers/xbox-searcher';
 
 const {
     SEARCH_GAME_CONCURRENCY,
@@ -60,6 +61,7 @@ const searchers = [
     new EpicSearcher(),
     new MetacriticSearcher(axiosInstance),
     new PlaystationSearcher(axiosInstance),
+    new XboxSearcher(axiosInstance),
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance),
     new ProtonSearcher(axiosInstance),

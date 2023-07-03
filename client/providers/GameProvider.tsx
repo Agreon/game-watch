@@ -19,34 +19,18 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Steam,
     InfoSourceType.Switch,
     InfoSourceType.Epic,
+    InfoSourceType.Xbox,
     InfoSourceType.Metacritic,
     InfoSourceType.Proton
 ];
 
 const retrieveDataFromInfoSources = (infoSources: InfoSourceDto[], key: string): string | null => {
     for (const infoSource of infoSources) {
-        if (!infoSource.data) {
+        const data = infoSource.data as unknown as Record<string, string>;
+        if (!data?.[key]) {
             continue;
         }
-        const valueForKey = (infoSource.data as any)[key] as string | undefined;
-
-        if (valueForKey) {
-            if (infoSource.type === InfoSourceType.Playstation && key === 'thumbnailUrl') {
-                const url = new URL(valueForKey);
-                url.searchParams.delete('w');
-                url.searchParams.append('w', '460');
-                return url.toString();
-            }
-
-            if (infoSource.type === InfoSourceType.Epic && key === 'thumbnailUrl') {
-                const url = new URL(valueForKey);
-                url.searchParams.delete('h');
-                url.searchParams.append('h', '215');
-                return url.toString();
-            }
-
-            return valueForKey;
-        }
+        return data[key];
     }
 
     return null;

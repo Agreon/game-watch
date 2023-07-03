@@ -7,7 +7,7 @@ interface Query {
     queryKey: Array<string | Array<string>>
 }
 
-export class EpicResolver implements UrlMapper {
+export class EpicMapper implements UrlMapper {
     public type = InfoSourceType.Epic;
 
     public async mapUrlToId(url: string): Promise<string> {

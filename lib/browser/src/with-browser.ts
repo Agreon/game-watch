@@ -28,3 +28,5 @@ export const withBrowser = async <T>(
         await browser.close();
     }
 };
+
+export { Page };

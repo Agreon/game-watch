@@ -9,6 +9,7 @@ import psLogo from '../../assets/playstation.svg';
 import protonLogo from '../../assets/protondb.svg';
 import steamLogo from '../../assets/steam.svg';
 import switchLogo from '../../assets/switch.png';
+import xboxLogo from '../../assets/xbox.png';
 
 export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Steam]: (
@@ -51,6 +52,18 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
             </Box>
             <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">
                 {InfoSourceTypeNames[InfoSourceType.Playstation]}
+            </Text>
+        </Flex>
+    ),
+    [InfoSourceType.Xbox]: (
+        <Flex align="center" pl="0.25rem" pr="0.5rem">
+            <Box position="relative" width={30} height={30}>
+                <Box position="absolute" width="35px" height="35px" top="-2.5px" left="-2.5px">
+                    <Image alt="source-icon" priority={true} src={xboxLogo} quality={100} height={35} width={35} />
+                </Box>
+            </Box>
+            <Text fontWeight="bold" ml="0.5rem" mt="0.25rem">
+                {InfoSourceTypeNames[InfoSourceType.Xbox]}
             </Text>
         </Flex>
     ),
@@ -131,6 +144,15 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
             </Text>
         </Flex>
     ),
+
+    [InfoSourceType.Xbox]: (
+        <Flex align="end">
+            <Image alt="source-icon" priority={true} src={xboxLogo} quality={100} height={30} width={30} />
+            <Text fontWeight="bold" ml="0.5rem">
+                {InfoSourceTypeNames[InfoSourceType.Xbox]}
+            </Text>
+        </Flex>
+    ),
     [InfoSourceType.Epic]: (
         <Flex align="center">
             <Image alt="source-icon" priority={true} src={epicLogo} quality={100} height={30} width={30} />
@@ -171,6 +193,11 @@ export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Playstation]: (
         <Flex align="start" mt="-0.2rem">
             <Image alt="source-icon" priority={true} src={psLogo} quality={100} height={22} width={22} />
+        </Flex>
+    ),
+    [InfoSourceType.Xbox]: (
+        <Flex align="start" mt="-0.2rem">
+            <Image alt="source-icon" priority={true} src={xboxLogo} quality={100} height={22} width={22} />
         </Flex>
     ),
     [InfoSourceType.Epic]: (

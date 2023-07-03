@@ -433,6 +433,7 @@
             "steam",
             "switch",
             "playstation",
+            "xbox",
             "epic",
             "metacritic",
             "proton"
@@ -474,7 +475,7 @@
         },
         "data": {
           "name": "data",
-          "type": "json",
+          "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -652,7 +653,7 @@
         },
         "data": {
           "name": "data",
-          "type": "json",
+          "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,

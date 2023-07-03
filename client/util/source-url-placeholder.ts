@@ -57,7 +57,9 @@ export const SourceUrlPlaceholder = (sourceType: InfoSourceType, userCountry: Co
         case InfoSourceType.Playstation:
             const acceptLang = mapCountryCodeToAcceptLanguage(userCountry);
             return `https://store.playstation.com/${acceptLang}/product/...`;
-
+        case InfoSourceType.Xbox:
+            const xboxAcceptLang = mapCountryCodeToAcceptLanguage(userCountry);
+            return `https://www.xbox.com/${xboxAcceptLang}/games/store/...`;
     }
 };
 

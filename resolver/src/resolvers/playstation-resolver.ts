@@ -1,4 +1,5 @@
-import { withBrowser } from '@game-watch/browser';
+import { Page, withBrowser } from '@game-watch/browser';
+import { Logger } from '@game-watch/service';
 import {
     Country,
     InfoSourceType,
@@ -44,34 +45,46 @@ export class PlaystationResolver implements InfoResolver {
                 )?.textContent?.trim()
             );
 
-            let thumbnailUrl = await browser.evaluate(
-                () => document.querySelector(
-                    'img[data-qa="gameBackgroundImage#heroImage#image"]'
-                )?.getAttribute('src')
-            );
-            if (!thumbnailUrl) {
-                logger.warn('Could not resolve hero image URL. Trying tile image...');
-                thumbnailUrl = await browser.evaluate(
-                    () => document.querySelector(
-                        'img[data-qa="gameBackgroundImage#tileImage#image"]'
-                    )?.getAttribute('src')
-                );
-
-                if (!thumbnailUrl) {
-                    throw new Error('Could not retrieve thumbnail URL');
-                }
-            }
-
             return {
                 ...source.data,
                 fullName,
-                thumbnailUrl,
+                thumbnailUrl: await this.getThumbnailUrl(browser, logger),
                 priceInformation:
                     this.getPriceInformation({ price, originalPrice }, source.country),
                 releaseDate: this.getReleaseDateInformation(source.country, releaseDate),
                 originalReleaseDate: releaseDate
             };
         });
+    }
+
+    private async getThumbnailUrl(
+        browser: Page,
+        logger: Logger,
+    ) {
+        let imageUrl = await browser.evaluate(
+            () => document.querySelector(
+                'img[data-qa="gameBackgroundImage#heroImage#image"]'
+            )?.getAttribute('src')
+        );
+        if (!imageUrl) {
+            logger.warn('Could not resolve hero image URL. Trying tile image...');
+            imageUrl = await browser.evaluate(
+                () => document.querySelector(
+                    'img[data-qa="gameBackgroundImage#tileImage#image"]'
+                )?.getAttribute('src')
+            );
+
+            if (!imageUrl) {
+                throw new Error('Could not retrieve thumbnail URL');
+            }
+        }
+
+        const thumbnailUrl = new URL(imageUrl);
+        thumbnailUrl.searchParams.delete('w');
+        thumbnailUrl.searchParams.append('w', '460');
+
+        return thumbnailUrl.toString();
+
     }
 
     private getReleaseDateInformation(

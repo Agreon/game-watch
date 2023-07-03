@@ -4,6 +4,7 @@ export enum InfoSourceType {
     Steam = 'steam',
     Switch = 'switch',
     Playstation = 'playstation',
+    Xbox = 'xbox',
     Epic = 'epic',
     Metacritic = 'metacritic',
     Proton = 'proton'
@@ -12,12 +13,14 @@ export type StoreInfoSource =
     | InfoSourceType.Steam
     | InfoSourceType.Switch
     | InfoSourceType.Playstation
+    | InfoSourceType.Xbox
     | InfoSourceType.Epic;
 
 export const StoreInfoSources = [
     InfoSourceType.Steam,
     InfoSourceType.Switch,
     InfoSourceType.Playstation,
+    InfoSourceType.Xbox,
     InfoSourceType.Epic,
 ];
 
@@ -75,6 +78,7 @@ export type GameData = {
     [InfoSourceType.Steam]: StoreGameData;
     [InfoSourceType.Switch]: StoreGameData;
     [InfoSourceType.Playstation]: StoreGameData;
+    [InfoSourceType.Xbox]: StoreGameData;
     [InfoSourceType.Epic]: StoreGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
     [InfoSourceType.Proton]: ProtonGameData;
@@ -90,6 +94,7 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Proton]: Countries,
     [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
     [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
+    [InfoSourceType.Xbox]: Countries,
     [InfoSourceType.Epic]: Countries,
 } as const;
 
@@ -97,6 +102,7 @@ export const InfoSourceTypeNames: Record<InfoSourceType, string> = {
     [InfoSourceType.Steam]: 'Steam',
     [InfoSourceType.Switch]: 'Switch',
     [InfoSourceType.Playstation]: 'PS Store',
+    [InfoSourceType.Xbox]: 'Xbox',
     [InfoSourceType.Epic]: 'Epic',
     [InfoSourceType.Metacritic]: 'Metacritic',
     [InfoSourceType.Proton]: 'ProtonDB',

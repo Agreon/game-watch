@@ -18,6 +18,7 @@ export const InfoSource: React.FC = () => {
         case InfoSourceType.Steam:
         case InfoSourceType.Switch:
         case InfoSourceType.Playstation:
+        case InfoSourceType.Xbox:
         case InfoSourceType.Epic:
             return <StoreInfoSource data={source.data as StoreGameData} country={source.country} />;
         case InfoSourceType.Metacritic:

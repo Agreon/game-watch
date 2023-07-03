@@ -31,6 +31,7 @@ import { PlaystationResolver } from './resolvers/playstation-resolver';
 import { ProtonResolver } from './resolvers/proton-resolver';
 import { SteamResolver } from './resolvers/steam-resolver';
 import { SwitchResolver } from './resolvers/switch-resolver';
+import { XboxResolver } from './resolvers/xbox-resolver';
 
 const {
     RESOLVE_SOURCE_CONCURRENCY,
@@ -65,6 +66,7 @@ const resolvers = [
     new SteamResolver(axiosInstance),
     new SwitchResolver(axiosInstance),
     new PlaystationResolver(),
+    new XboxResolver(axiosInstance),
     new EpicResolver(),
     new MetacriticResolver(axiosInstance),
     new ProtonResolver(axiosInstance),

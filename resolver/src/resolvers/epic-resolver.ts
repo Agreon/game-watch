@@ -27,24 +27,29 @@ export class EpicResolver implements InfoResolver {
             tags
         } = await retrieveEpicGameData(offerId, sandboxId, source.country.split('-')[0]);
 
-        const thumbnailUrl = keyImages.find(({ type }) => type === 'OfferImageWide');
-        if (!thumbnailUrl) {
-            throw new Error('Could not find OfferImageWide keyImage');
-        }
-
-        const isEarlyAccess = tags.find(({ id }) => id === '1310') !== undefined;
-
         return {
             ...source.data,
-            isEarlyAccess,
             fullName: title,
-            thumbnailUrl: thumbnailUrl.url,
+            thumbnailUrl: this.getThumbnailUrl(keyImages),
+            isEarlyAccess: tags.find(({ id }) => id === '1310') !== undefined,
             // Price information is not reliable at this point in time. Epic always has a price set.
             priceInformation: approximateReleasePlan && approximateReleasePlan.releaseDateType !== 'BY_DATE'
                 ? undefined
                 : this.getPriceInformation(price),
             releaseDate: this.getReleaseDateInformation({ releaseDate, approximateReleasePlan }),
         };
+    }
+
+    private getThumbnailUrl(keyImages: Array<{ type: string; url: string }>) {
+        const offerImage = keyImages.find(({ type }) => type === 'OfferImageWide');
+        if (!offerImage) {
+            throw new Error('Could not find OfferImageWide keyImage');
+        }
+        const thumbnailUrl = new URL(offerImage.url);
+        thumbnailUrl.searchParams.delete('h');
+        thumbnailUrl.searchParams.append('h', '215');
+
+        return thumbnailUrl.toString();
     }
 
     private getReleaseDateInformation(
