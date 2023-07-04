@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   multer: 1.4.4-lts.1
 
@@ -23,8 +27,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(eslint@8.43.0)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       turbo:
         specifier: ^1.10.3
         version: 1.10.3
@@ -105,8 +109,8 @@ importers:
         specifier: ^13.4.6
         version: 13.4.6(eslint@8.43.0)(typescript@5.1.3)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -139,8 +143,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -158,7 +162,7 @@ importers:
         version: 5.7.12(@mikro-orm/core@5.7.12)(pg@8.11.0)
       '@mikro-orm/nestjs':
         specifier: ^5.1.8
-        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.2)(@nestjs/core@9.4.2)
       '@mikro-orm/postgresql':
         specifier: ^5.7.12
         version: 5.7.12(@mikro-orm/core@5.7.12)(@mikro-orm/migrations@5.7.12)
@@ -206,8 +210,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.3.1)(typescript@5.1.3)
@@ -246,8 +250,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -289,8 +293,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -326,8 +330,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -354,7 +358,7 @@ importers:
         version: 5.7.12(@mikro-orm/core@5.7.12)(pg@8.11.0)
       '@mikro-orm/nestjs':
         specifier: ^5.1.8
-        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.2)(@nestjs/core@9.4.2)
       '@mikro-orm/postgresql':
         specifier: ^5.7.12
         version: 5.7.12(@mikro-orm/core@5.7.12)(@mikro-orm/migrations@5.7.12)
@@ -429,8 +433,8 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@20.3.1)(ts-node@10.9.1)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       ts-jest:
         specifier: ^29.1.0
         version: 29.1.0(@babel/core@7.22.5)(jest@29.5.0)(typescript@5.1.3)
@@ -469,7 +473,7 @@ importers:
         version: 5.7.12(@mikro-orm/core@5.7.12)(pg@8.11.0)
       '@mikro-orm/nestjs':
         specifier: ^5.1.8
-        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.2)(@nestjs/core@9.4.2)
       '@mikro-orm/postgresql':
         specifier: ^5.7.12
         version: 5.7.12(@mikro-orm/core@5.7.12)(@mikro-orm/migrations@5.7.12)
@@ -535,8 +539,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(eslint@8.43.0)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.3.1)(typescript@5.1.3)
@@ -572,7 +576,7 @@ importers:
         version: 5.7.12(@mikro-orm/core@5.7.12)(pg@8.11.0)
       '@mikro-orm/nestjs':
         specifier: ^5.1.8
-        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+        version: 5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.2)(@nestjs/core@9.4.2)
       '@mikro-orm/postgresql':
         specifier: ^5.7.12
         version: 5.7.12(@mikro-orm/core@5.7.12)(@mikro-orm/migrations@5.7.12)
@@ -641,8 +645,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(eslint@8.43.0)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.3.1)(typescript@5.1.3)
@@ -793,7 +797,7 @@ importers:
         version: 9.3.0
       '@nestjs/schematics':
         specifier: ^9.2.0
-        version: 9.2.0(chokidar@3.5.3)(typescript@4.9.5)
+        version: 9.2.0(typescript@5.1.3)
       '@types/bcrypt':
         specifier: ^5.0.0
         version: 5.0.0
@@ -837,8 +841,8 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@20.3.1)(ts-node@10.9.1)
       pnpm:
-        specifier: ^8.6.3
-        version: 8.6.3
+        specifier: ^8.6.6
+        version: 8.6.6
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -3530,19 +3534,6 @@ packages:
       '@nestjs/core': 9.4.2(@nestjs/common@9.4.2)(@nestjs/platform-express@9.4.2)(reflect-metadata@0.1.13)(rxjs@7.8.1)
     dev: false
 
-  /@mikro-orm/nestjs@5.1.8(@mikro-orm/core@5.7.12)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3):
-    resolution: {integrity: sha512-E830nQOvJU25Jn1Chjw4YRIV8swBn4qlVt2HDvmYTrvXsPmcIStcz7Ccpoocu4M/Ulm5gH2EuL8LWVgG6ROOJw==}
-    engines: {node: '>= 14.0.0'}
-    peerDependencies:
-      '@mikro-orm/core': ^5.0.0 || ^6.0.0-dev.0
-      '@nestjs/common': ^8.0.0 || ^9.0.0
-      '@nestjs/core': ^8.0.0 || ^9.0.0
-    dependencies:
-      '@mikro-orm/core': 5.7.12(@mikro-orm/migrations@5.7.12)(@mikro-orm/postgresql@5.7.12)
-      '@nestjs/common': 9.4.3(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 9.4.3(@nestjs/common@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-    dev: false
-
   /@mikro-orm/postgresql@5.7.12(@mikro-orm/core@5.7.12)(@mikro-orm/migrations@5.7.12):
     resolution: {integrity: sha512-JF89Yf3D/nyA45TzXxclajaDrHXFB/ad3edkF0BA5+sFKsj6it18P/wq0HEk/rhqsHLTlxcmyG0/F+AO3HOPow==}
     engines: {node: '>= 14.0.0'}
@@ -3712,29 +3703,6 @@ packages:
       uid: 2.0.2
     dev: false
 
-  /@nestjs/common@9.4.3(reflect-metadata@0.1.13)(rxjs@7.8.1):
-    resolution: {integrity: sha512-Gd6D4IaYj01o14Bwv81ukidn4w3bPHCblMUq+SmUmWLyosK+XQmInCS09SbDDZyL8jy86PngtBLTdhJ2bXSUig==}
-    peerDependencies:
-      cache-manager: <=5
-      class-transformer: '*'
-      class-validator: '*'
-      reflect-metadata: ^0.1.12
-      rxjs: ^7.1.0
-    peerDependenciesMeta:
-      cache-manager:
-        optional: true
-      class-transformer:
-        optional: true
-      class-validator:
-        optional: true
-    dependencies:
-      iterare: 1.2.1
-      reflect-metadata: 0.1.13
-      rxjs: 7.8.1
-      tslib: 2.5.3
-      uid: 2.0.2
-    dev: false
-
   /@nestjs/config@2.3.2(@nestjs/common@9.4.2)(reflect-metadata@0.1.13)(rxjs@7.8.1):
     resolution: {integrity: sha512-VtGV8PBpxzMzz68kdxTWqPm9v7SYCSZXQ0tC72AMNnjdmU+CVjUSLpEpdnm0XcWHxE1nV6wSI3HZxsATIV4ZxA==}
     peerDependencies:
@@ -3778,37 +3746,6 @@ packages:
       reflect-metadata: 0.1.13
       rxjs: 7.8.1
       tslib: 2.5.2
-      uid: 2.0.2
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  /@nestjs/core@9.4.3(@nestjs/common@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1):
-    resolution: {integrity: sha512-Qi63+wi55Jh4sDyaj5Hhx2jOpKqT386aeo+VOKsxnd+Ql9VvkO/FjmuwBGUyzkJt29ENYc+P0Sx/k5LtstNpPQ==}
-    requiresBuild: true
-    peerDependencies:
-      '@nestjs/common': ^9.0.0
-      '@nestjs/microservices': ^9.0.0
-      '@nestjs/platform-express': ^9.0.0
-      '@nestjs/websockets': ^9.0.0
-      reflect-metadata: ^0.1.12
-      rxjs: ^7.1.0
-    peerDependenciesMeta:
-      '@nestjs/microservices':
-        optional: true
-      '@nestjs/platform-express':
-        optional: true
-      '@nestjs/websockets':
-        optional: true
-    dependencies:
-      '@nestjs/common': 9.4.3(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nuxtjs/opencollective': 0.3.2
-      fast-safe-stringify: 2.1.1
-      iterare: 1.2.1
-      path-to-regexp: 3.2.0
-      reflect-metadata: 0.1.13
-      rxjs: 7.8.1
-      tslib: 2.5.3
       uid: 2.0.2
     transitivePeerDependencies:
       - encoding
@@ -3861,6 +3798,20 @@ packages:
       jsonc-parser: 3.2.0
       pluralize: 8.0.0
       typescript: 4.9.5
+    transitivePeerDependencies:
+      - chokidar
+    dev: true
+
+  /@nestjs/schematics@9.2.0(typescript@5.1.3):
+    resolution: {integrity: sha512-wHpNJDPzM6XtZUOB3gW0J6mkFCSJilzCM3XrHI1o0C8vZmFE1snbmkIXNyoi1eV0Nxh1BMymcgz5vIMJgQtTqw==}
+    peerDependencies:
+      typescript: '>=4.3.5'
+    dependencies:
+      '@angular-devkit/core': 16.0.1(chokidar@3.5.3)
+      '@angular-devkit/schematics': 16.0.1(chokidar@3.5.3)
+      jsonc-parser: 3.2.0
+      pluralize: 8.0.0
+      typescript: 5.1.3
     transitivePeerDependencies:
       - chokidar
     dev: true
@@ -9502,8 +9453,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pnpm@8.6.3:
-    resolution: {integrity: sha512-0Y4neugHIJEEa8y8oJMfd9wwgHkc1hIq6JC/UEEl2K92s3+zPaKH26n7u22m67E+MU6fpKRkx+/+PYWZzr5yQw==}
+  /pnpm@8.6.6:
+    resolution: {integrity: sha512-a51bIJyCmvstgCvsWf6SgZnsXfWmwAW1pHWEaH2gN3vqQGC58yLFL/oKBwcZWH0mjpMzBWRXdS9dLdN6GAK2Rw==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true

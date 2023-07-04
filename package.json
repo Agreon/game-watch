@@ -31,7 +31,7 @@
         "@typescript-eslint/parser": "^5.60.0",
         "eslint": "^8.43.0",
         "eslint-plugin-simple-import-sort": "^10.0.0",
-        "pnpm": "^8.6.3",
+        "pnpm": "^8.6.6",
         "turbo": "^1.10.3",
         "typescript": "^5.1.3"
     },
