@@ -28,7 +28,7 @@
     "@mikro-orm/migrations": "^5.7.12",
     "@mikro-orm/nestjs": "^5.2.0",
     "@mikro-orm/postgresql": "^5.7.12",
-    "@nestjs/bullmq": "^1.1.0",
+    "@nestjs/bullmq": "^10.0.0",
     "@nestjs/common": "9.4.2",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "9.4.2",
