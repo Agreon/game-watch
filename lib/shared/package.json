@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "class-validator": "^0.14.0",
-        "dayjs": "^1.11.8",
+        "dayjs": "^1.11.9",
         "fp-ts": "^2.16.0",
         "io-ts": "^2.2.20",
         "io-ts-reporters": "^2.0.1",
