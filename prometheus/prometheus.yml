@@ -1,0 +1,22 @@
+global:
+  scrape_interval:     15s
+
+# TODO: How to save dashboards in repo?
+# TODO: Docker exporter https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-metrics
+scrape_configs:
+  # TODO: dashboard
+  - job_name: redis_exporter
+    static_configs:
+    - targets: ['prom-redis:9121']
+
+  # TODO: FS full alert
+  - job_name: node
+    static_configs:
+      - targets: ['localhost:9100']
+
+  # https://grafana.com/grafana/dashboards/3091-swagger-stats-dashboard-v3/
+  # https://grafana.com/grafana/dashboards/11159-nodejs-application-dashboard/
+  - job_name: rest_stats
+    metrics_path: /swagger-stats/metrics
+    static_configs:
+      - targets: ['server:3007']

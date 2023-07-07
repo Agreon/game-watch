@@ -10,9 +10,13 @@ import { NestFactory } from '@nestjs/core';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
+import { collectDefaultMetrics } from 'prom-client';
+import swStats from 'swagger-stats';
 
 import { AppModule } from './app.module';
 import { EnvironmentStructure } from './environment';
+
+collectDefaultMetrics();
 
 const {
   CORS_ORIGIN,
@@ -31,6 +35,9 @@ async function bootstrap() {
       origin: CORS_ORIGIN
     }
   });
+
+  // TODO: With auth
+  app.use(swStats.getMiddleware());
 
   const logger = app.get(Logger);
   app.useLogger(logger);

@@ -129,6 +129,52 @@ services:
       - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    ports:
+      - 3012:3000
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+
+  # prom-postgres:
+  #   image: quay.io/prometheuscommunity/postgres-exporter
+  #   volumes:
+  #     - ./prometheus:/usr/bin
+  #   environment:
+  #     # TODO: MAybe port?
+  #     - DATA_SOURCE_NAME=postgresql://$DATABASE_USER:$DATABASE_PASSWORD@db:5432/$DATABASE_NAME?sslmode=disable
+
+  prom-redis:
+    image: oliver006/redis_exporter
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+      - REDIS_PASSWORD=$REDIS_PASSWORD
+    ports:
+      - 9121:9121
+
+
 volumes:
   redis_data:
+    external: false
+  prometheus:
+    external: false
+  grafana_data:
     external: false
