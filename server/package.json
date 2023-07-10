@@ -35,7 +35,7 @@
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "9.4.2",
-    "@nestjs/throttler": "^4.0.0",
+    "@nestjs/throttler": "^4.2.1",
     "@sendgrid/mail": "^7.7.0",
     "@sentry/node": "^7.57.0",
     "@sentry/tracing": "^7.57.0",
