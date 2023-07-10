@@ -13,7 +13,7 @@
     "devDependencies": {
         "@types/node": "^20.3.3",
         "eslint": "^8.44.0",
-        "pnpm": "^8.6.6",
+        "pnpm": "^8.6.7",
         "typescript": "^5.1.6"
     },
     "dependencies": {
