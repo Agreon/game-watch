@@ -24,7 +24,7 @@
     "next": "^13.4.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.45.1",
+    "react-hook-form": "^7.45.4",
     "react-masonry-css": "^1.0.16",
     "sharp": "^0.32.1",
     "uuid": "^9.0.0"
