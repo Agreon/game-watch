@@ -20,7 +20,7 @@
         "@game-watch/shared": "0.0.1",
         "@mikro-orm/core": "^5.7.12",
         "@mikro-orm/migrations": "^5.7.12",
-        "@mikro-orm/nestjs": "^5.2.0",
+        "@mikro-orm/nestjs": "^5.2.1",
         "@mikro-orm/postgresql": "^5.7.12",
         "@sendgrid/mail": "^7.7.0",
         "@sentry/node": "^7.57.0",
