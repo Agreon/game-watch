@@ -71,7 +71,7 @@
     "@types/node": "^20.5.7",
     "@types/passport-jwt": "^3.0.9",
     "@types/passport-local": "^1.0.35",
-    "@types/uuid": "^9.0.2",
+    "@types/uuid": "^9.0.3",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
     "eslint": "^8.48.0",
