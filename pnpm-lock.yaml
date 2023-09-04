@@ -12,8 +12,8 @@ importers:
   .:
     devDependencies:
       '@sentry/cli':
-        specifier: ^2.20.5
-        version: 2.20.5
+        specifier: ^2.20.6
+        version: 2.20.6
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.4.1
         version: 6.4.1(@typescript-eslint/parser@6.4.1)(eslint@8.48.0)(typescript@5.2.2)
@@ -162,7 +162,7 @@ importers:
         version: 5.7.14(@mikro-orm/core@5.7.14)(pg@8.11.1)
       '@mikro-orm/nestjs':
         specifier: ^5.2.1
-        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.1)(@nestjs/core@10.2.1)
+        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
       '@mikro-orm/postgresql':
         specifier: ^5.7.14
         version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14)
@@ -262,8 +262,8 @@ importers:
         specifier: workspace:0.0.1
         version: link:../shared
       '@sentry/node':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       fp-ts:
         specifier: ^2.13.1
         version: 2.16.1
@@ -358,7 +358,7 @@ importers:
         version: 5.7.14(@mikro-orm/core@5.7.14)(pg@8.11.1)
       '@mikro-orm/nestjs':
         specifier: ^5.2.1
-        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.1)(@nestjs/core@10.2.1)
+        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
       '@mikro-orm/postgresql':
         specifier: ^5.7.14
         version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14)
@@ -366,11 +366,11 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0
       '@sentry/node':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       '@sentry/tracing':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       axios:
         specifier: ^0.27.2
         version: 0.27.2
@@ -473,16 +473,16 @@ importers:
         version: 5.7.14(@mikro-orm/core@5.7.14)(pg@8.11.1)
       '@mikro-orm/nestjs':
         specifier: ^5.2.1
-        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.1)(@nestjs/core@10.2.1)
+        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
       '@mikro-orm/postgresql':
         specifier: ^5.7.14
         version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14)
       '@sentry/node':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       '@sentry/tracing':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       axios:
         specifier: ^0.27.2
         version: 0.27.2
@@ -576,16 +576,16 @@ importers:
         version: 5.7.14(@mikro-orm/core@5.7.14)(pg@8.11.1)
       '@mikro-orm/nestjs':
         specifier: ^5.2.1
-        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.1)(@nestjs/core@10.2.1)
+        version: 5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
       '@mikro-orm/postgresql':
         specifier: ^5.7.14
         version: 5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14)
       '@sentry/node':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       '@sentry/tracing':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       axios:
         specifier: ^0.27.2
         version: 0.27.2
@@ -717,11 +717,11 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0
       '@sentry/node':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       '@sentry/tracing':
-        specifier: ^7.64.0
-        version: 7.64.0
+        specifier: ^7.66.0
+        version: 7.66.0
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -3465,6 +3465,19 @@ packages:
       '@nestjs/core': 10.2.1(@nestjs/common@10.2.1)(@nestjs/platform-express@10.2.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)
     dev: false
 
+  /@mikro-orm/nestjs@5.2.1(@mikro-orm/core@5.7.14)(@nestjs/common@10.2.4)(@nestjs/core@10.2.4):
+    resolution: {integrity: sha512-TrCdPsM7DApxrK3avBbijT6/6Er4TZhtiQ+qlMqtqva13vMCG4HiF2vIWGrKJbFukkLRuhOfZlES+KZ9Y1Lx2A==}
+    engines: {node: '>= 14.0.0'}
+    peerDependencies:
+      '@mikro-orm/core': ^5.0.0 || ^6.0.0-dev.0
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
+    dependencies:
+      '@mikro-orm/core': 5.7.14(@mikro-orm/migrations@5.7.14)(@mikro-orm/postgresql@5.7.14)
+      '@nestjs/common': 10.2.4(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.2.4(@nestjs/common@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+    dev: false
+
   /@mikro-orm/postgresql@5.7.14(@mikro-orm/core@5.7.14)(@mikro-orm/migrations@5.7.14):
     resolution: {integrity: sha512-3nF/UtUZ9a8jj0bD7ONeLRLg5MIHNKJngl7yR3c8sRz9yTAX6bT0lttbCxCeL4Q6/5XdcDtjgAQMUrYx1QVPhQ==}
     engines: {node: '>= 14.0.0'}
@@ -3638,6 +3651,26 @@ packages:
       uid: 2.0.2
     dev: false
 
+  /@nestjs/common@10.2.4(reflect-metadata@0.1.13)(rxjs@7.8.1):
+    resolution: {integrity: sha512-3Lg4PUaSDucf14V8rPCH212NqrK09AJbY0NKqFsb4j5OIE+TuOzVZR/yjaJ8JNxH2hjskJNCZie0D/9tA2lzlA==}
+    peerDependencies:
+      class-transformer: '*'
+      class-validator: '*'
+      reflect-metadata: ^0.1.12
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+    dependencies:
+      iterare: 1.2.1
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.1
+      tslib: 2.6.2
+      uid: 2.0.2
+    dev: false
+
   /@nestjs/config@3.0.0(@nestjs/common@10.2.1)(reflect-metadata@0.1.13):
     resolution: {integrity: sha512-fzASk1Uv6AjdE6uA1na8zpqRCXAhRpcfgpCVv3SAKlgJ3VR3bEjcI4G17WHLgLBsmPzI1ofdkSI451WLD1F1Rw==}
     peerDependencies:
@@ -3679,6 +3712,37 @@ packages:
       reflect-metadata: 0.1.13
       rxjs: 7.8.1
       tslib: 2.6.1
+      uid: 2.0.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@nestjs/core@10.2.4(@nestjs/common@10.2.4)(reflect-metadata@0.1.13)(rxjs@7.8.1):
+    resolution: {integrity: sha512-aWeii2l+3pNCc9kIRdLbXQMvrgSZD0jZgXOZv7bZwVf9mClMMi7TussLI4On12VbqVE7LE3gsNgRTwgQJlVC8g==}
+    requiresBuild: true
+    peerDependencies:
+      '@nestjs/common': ^10.0.0
+      '@nestjs/microservices': ^10.0.0
+      '@nestjs/platform-express': ^10.0.0
+      '@nestjs/websockets': ^10.0.0
+      reflect-metadata: ^0.1.12
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/platform-express':
+        optional: true
+      '@nestjs/websockets':
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.2.4(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nuxtjs/opencollective': 0.3.2
+      fast-safe-stringify: 2.1.1
+      iterare: 1.2.1
+      path-to-regexp: 3.2.0
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.1
+      tslib: 2.6.2
       uid: 2.0.2
     transitivePeerDependencies:
       - encoding
@@ -3956,18 +4020,18 @@ packages:
       - debug
     dev: false
 
-  /@sentry-internal/tracing@7.64.0:
-    resolution: {integrity: sha512-1XE8W6ki7hHyBvX9hfirnGkKDBKNq3bDJyXS86E0bYVDl94nvbRM9BD9DHsCFetqYkVm1yDGEK+6aUVs4CztoQ==}
+  /@sentry-internal/tracing@7.66.0:
+    resolution: {integrity: sha512-3vCgC2hC3T45pn53yTDVcRpHoJTBxelDPPZVsipAbZnoOVPkj7n6dNfDhj3I3kwWCBPahPkXmE+R4xViR8VqJg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.64.0
-      '@sentry/types': 7.64.0
-      '@sentry/utils': 7.64.0
+      '@sentry/core': 7.66.0
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
       tslib: 2.6.2
     dev: false
 
-  /@sentry/cli@2.20.5:
-    resolution: {integrity: sha512-ZvWb86eF0QXH9C5Mbi87aUmr8SH848yEpXJmlM2AoBowpE9kKDnewCAKvyXUihojUFwCSEEjoJhrRMMgmCZqXA==}
+  /@sentry/cli@2.20.6:
+    resolution: {integrity: sha512-j4OFbDCIo/dB/uXDmXnRqCbku0KquekSFSG0Wb6RKwkGqpKwFMRauKXZJrgL4as3qIfDX8HrjNRv257QYMwdQA==}
     engines: {node: '>= 10'}
     hasBin: true
     requiresBuild: true
@@ -3982,23 +4046,23 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/core@7.64.0:
-    resolution: {integrity: sha512-IzmEyl5sNG7NyEFiyFHEHC+sizsZp9MEw1+RJRLX6U5RITvcsEgcajSkHQFafaBPzRrcxZMdm47Cwhl212LXcw==}
+  /@sentry/core@7.66.0:
+    resolution: {integrity: sha512-WMAEPN86NeCJ1IT48Lqiz4MS5gdDjBwP4M63XP4msZn9aujSf2Qb6My5uT87AJr9zBtgk8MyJsuHr35F0P3q1w==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.64.0
-      '@sentry/utils': 7.64.0
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
       tslib: 2.6.2
     dev: false
 
-  /@sentry/node@7.64.0:
-    resolution: {integrity: sha512-wRi0uTnp1WSa83X2yLD49tV9QPzGh5e42IKdIDBiQ7lV9JhLILlyb34BZY1pq6p4dp35yDasDrP3C7ubn7wo6A==}
+  /@sentry/node@7.66.0:
+    resolution: {integrity: sha512-PxqIqLr4Sh5xcDfECiBQ4PuZ7v8yTgLhaRkruWrZPYxQrcJFPkwbFkw/IskzVnhT2VwXUmeWEIlRMQKBJ0t83A==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.64.0
-      '@sentry/core': 7.64.0
-      '@sentry/types': 7.64.0
-      '@sentry/utils': 7.64.0
+      '@sentry-internal/tracing': 7.66.0
+      '@sentry/core': 7.66.0
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
       cookie: 0.4.2
       https-proxy-agent: 5.0.1
       lru_map: 0.3.3
@@ -4007,23 +4071,23 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/tracing@7.64.0:
-    resolution: {integrity: sha512-Php0XnnJolfxkFdgLlgwgRz3bgHmu/7gDRQaGQHJeDgCCjrmNHI+sHi8zmkWCWSO0Z1mi111n2ZUr9B9YLPBTg==}
+  /@sentry/tracing@7.66.0:
+    resolution: {integrity: sha512-9bnz2EcOwjeMZAuYJnrwcRrImu9c10p7A0iDB8b2HLcp7gpuCkJbJyGoC1xeKD7reVD0BPq3VIbeHSwCcQufoQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.64.0
+      '@sentry-internal/tracing': 7.66.0
     dev: false
 
-  /@sentry/types@7.64.0:
-    resolution: {integrity: sha512-LqjQprWXjUFRmzIlUjyA+KL+38elgIYmAeoDrdyNVh8MK5IC1W2Lh1Q87b4yOiZeMiIhIVNBd7Ecoh2rodGrGA==}
+  /@sentry/types@7.66.0:
+    resolution: {integrity: sha512-uUMSoSiar6JhuD8p7ON/Ddp4JYvrVd2RpwXJRPH1A4H4Bd4DVt1mKJy1OLG6HdeQv39XyhB1lPZckKJg4tATPw==}
     engines: {node: '>=8'}
     dev: false
 
-  /@sentry/utils@7.64.0:
-    resolution: {integrity: sha512-HRlM1INzK66Gt+F4vCItiwGKAng4gqzCR4C5marsL3qv6SrKH98dQnCGYgXluSWaaa56h97FRQu7TxCk6jkSvQ==}
+  /@sentry/utils@7.66.0:
+    resolution: {integrity: sha512-9GYUVgXjK66uXXcLXVMXVzlptqMtq1eJENCuDeezQiEFrNA71KkLDg00wESp+LL+bl3wpVTBApArpbF6UEG5hQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.64.0
+      '@sentry/types': 7.66.0
       tslib: 2.6.2
     dev: false
 
