@@ -37,7 +37,7 @@
     "devDependencies": {
         "@types/node": "^20.5.7",
         "@typescript-eslint/eslint-plugin": "^6.4.1",
-        "@typescript-eslint/parser": "^6.4.1",
+        "@typescript-eslint/parser": "^6.6.0",
         "eslint": "^8.48.0",
         "eslint-plugin-simple-import-sort": "^10.0.0",
         "pnpm": "^8.7.0",
