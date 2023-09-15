@@ -38,7 +38,7 @@ const Score: React.FC<{ score: number, displayScore: number }> = ({ score, displ
                 px="0.4rem"
                 bg={scoreColor}
             >
-                {isNaN(displayScore) ? 'TBD' : displayScore}
+                {isNaN(displayScore) ? 'tbd' : displayScore}
             </Text>
         </StatNumber>
     );

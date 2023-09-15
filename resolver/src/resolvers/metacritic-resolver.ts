@@ -14,9 +14,15 @@ export class MetacriticResolver implements InfoResolver {
 
         const $ = cheerio.load(data);
 
-        const fullName = $('.product_title h1').text().trim();
-        const criticScore = $('.metascore_w > span').text().trim();
-        const userScore = $('.metascore_w.user').first().text().trim() || 'TBA';
+        const fullName = $('.c-productHero_title').text().trim();
+        const criticScore = $('.c-siteReviewScore_medium > span').first().text().trim();
+        const userScore = $('.c-siteReviewScore_user > span').first().text().trim() || 'tbd';
+
+        console.log({
+            fullName,
+            criticScore,
+            userScore
+        })
 
         return {
             ...source.data,

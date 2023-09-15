@@ -1,9 +1,22 @@
-import { BaseGameData, InfoSourceType } from '@game-watch/shared';
+import { BaseGameData, InfoSourceType, parseStructure } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
-import * as cheerio from 'cheerio';
+import * as t from 'io-ts';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
+
+const MetacriticApiGameComponentResponseDataStructure = t.type({
+    data: t.type({
+        totalResults: t.number,
+        items: t.array(t.type({
+            title: t.string,
+            slug: t.string,
+            criticScoreSummary: t.type({
+                score: t.union([t.number, t.null])
+            })
+        }))
+    })
+});
 
 export class MetacriticSearcher implements InfoSearcher {
     public type = InfoSourceType.Metacritic;
@@ -14,44 +27,42 @@ export class MetacriticSearcher implements InfoSearcher {
         search: string,
         { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
-        const { data } = await this.axios.get<string>(
-            `https://www.metacritic.com/search/game/${encodeURIComponent(search)}/results`,
+        const { data: unknownData } = await this.axios.get(
+            `https://fandom-prod.apigee.net/v1/xapi/composer/metacritic/pages/search/${encodeURIComponent(search)}/web`,
+            {
+                params: {
+                    apiKey: '1MOZgmNFxvmljaQR1X9KAij9Mo4xAY3u'
+                }
+            }
         );
 
-        const $ = cheerio.load(data);
-
-        const resultRow = $('.first_result a');
-        if (!resultRow.length) {
-            logger.debug('No results found');
+        if (!unknownData.components || !unknownData.components[0] || !unknownData.components[0].data.totalResults) {
+            logger.debug('No search results found');
 
             return null;
         }
 
-        const gameLink = resultRow.attr('href');
-        if (!gameLink) {
-            return null;
-        }
+        const parsedDate = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData.components[0]);
+        const { title, slug, criticScoreSummary: { score } } = parsedDate.data.items[0];
 
-        const fullName = resultRow.text().trim();
-        if (!matchingName(fullName, search)) {
-            logger.debug(`Found name '${fullName}' does not include search '${search}'. Skipping`);
+        if (!matchingName(title, search)) {
+            logger.debug(`Found name '${title}' does not include search '${search}'. Skipping`);
 
             return null;
         }
 
-        const criticScore = $('.main_stats > .metascore_w').text().trim();
-        if (isNaN(parseInt(criticScore))) {
-            logger.debug(`Found score '${criticScore}' is not a number. Skipping`);
+        if (!score) {
+            logger.debug(`Score is tbd. Skipping`);
 
             return null;
         }
 
-        const url = `https://www.metacritic.com${gameLink}`;
+        const url = `https://www.metacritic.com/game/${slug}`;
 
         return {
             id: url,
             url,
-            fullName,
+            fullName: title,
         };
 
     }
