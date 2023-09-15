@@ -66,7 +66,7 @@ export class ResolveService {
 
         try {
             const resolvedGameData = await this.resolveGameInformation(
-                { source, logger }
+                { source, logger, triggeredManually }
             );
 
             logger.debug(`Resolved source information in ${source.type}`);
@@ -144,15 +144,20 @@ export class ResolveService {
         });
     }
 
-    private async resolveGameInformation(context: InfoResolverContext): Promise<AnyGameData> {
-        const { source: { country, type, data: { id } }, logger } = context;
+    private async resolveGameInformation(
+        context: InfoResolverContext & { triggeredManually?: boolean }
+    ): Promise<AnyGameData> {
+        const { source: { country, type, data: { id } }, logger, triggeredManually } = context;
 
         const cacheKey = `${type}:${country}:${id}`.toLocaleLowerCase();
-        const existingData = await this.cacheService.get<AnyGameData>(cacheKey);
-        if (existingData) {
-            logger.debug(`Data for ${cacheKey} was found in cache`);
 
-            return existingData;
+        if (!triggeredManually) {
+            const existingData = await this.cacheService.get<AnyGameData>(cacheKey);
+            if (existingData) {
+                logger.debug(`Data for ${cacheKey} was found in cache`);
+
+                return existingData;
+            }
         }
 
         const startTime = new Date().getTime();

@@ -18,12 +18,6 @@ export class MetacriticResolver implements InfoResolver {
         const criticScore = $('.c-siteReviewScore_medium > span').first().text().trim();
         const userScore = $('.c-siteReviewScore_user > span').first().text().trim() || 'tbd';
 
-        console.log({
-            fullName,
-            criticScore,
-            userScore
-        })
-
         return {
             ...source.data,
             fullName,
