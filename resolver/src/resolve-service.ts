@@ -71,6 +71,12 @@ export class ResolveService {
 
             logger.debug(`Resolved source information in ${source.type}`);
 
+            await this.em.nativeUpdate(InfoSource, sourceId, {
+                state: InfoSourceState.Resolved,
+                data: resolvedGameData,
+                updatedAt: new Date()
+            });
+
             if (!triggeredManually) {
                 await this.addToNotificationQueue({
                     sourceId,
@@ -78,12 +84,6 @@ export class ResolveService {
                     existingGameData: source.data as AnyGameData,
                 });
             }
-
-            await this.em.nativeUpdate(InfoSource, sourceId, {
-                state: InfoSourceState.Resolved,
-                data: resolvedGameData,
-                updatedAt: new Date()
-            });
 
             // Delete old, unnecessary ResolveError notifications so that on a new error a
             // new notification is created.

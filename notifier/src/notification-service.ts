@@ -49,6 +49,10 @@ export class NotificationService {
             { populate: ['game', 'user'] }
         );
         const game = infoSource.game.getEntity();
+        if (!game.setupCompleted) {
+            return;
+        }
+
         const user = infoSource.user.getEntity();
 
         const logger = this.sourceScopedLogger.child({

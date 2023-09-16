@@ -33,18 +33,17 @@ export class MailService {
         const game = notification.game.getEntity();
         const infoSource = notification.infoSource.getEntity();
 
-        const gameName = game.name || game.search;
         // We rather display the resolved name so a user can see instantly if an unrelated
         // game was added.
         const infoSourceName = infoSource.data.fullName;
 
         switch (notification.type) {
             case NotificationType.GameReleased:
-                return `${gameName} will be available today in the ${infoSource.type} store`;
+                return `${infoSourceName} will be available today in the ${infoSource.type} store`;
             case NotificationType.GameReduced:
-                return `${gameName} was reduced in the ${infoSource.type} store`;
+                return `${infoSourceName} was reduced in the ${infoSource.type} store`;
             case NotificationType.ReleaseDateChanged:
-                return `The release date of ${gameName} changed`;
+                return `The release date of ${infoSourceName} changed`;
             case NotificationType.NewStoreEntry:
                 return `${infoSourceName} was added to the ${infoSource.type} store`;
             case NotificationType.NewMetacriticRating:
@@ -56,7 +55,7 @@ export class MailService {
             case NotificationType.LeftEarlyAccess:
                 return `${infoSourceName} left Early Access`;
             case NotificationType.ResolveError:
-                return `${gameName} could not be resolved`;
+                return `${game.name || game.search} could not be resolved`;
         }
     }
 

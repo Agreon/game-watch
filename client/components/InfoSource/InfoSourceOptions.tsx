@@ -54,7 +54,7 @@ export const InfoSourceOptions: React.FC = () => {
 
                         <AlertDialogBody>
                             Do you not want to be bothered again or should we keep searching
-                            for alternatives?
+                            for alternatives with search term {"'"}{game.search}{"'"}?
                         </AlertDialogBody>
 
                         <AlertDialogFooter display="flex" justifyContent="space-between">
