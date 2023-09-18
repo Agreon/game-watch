@@ -33,7 +33,7 @@
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.2.1",
     "@nestjs/jwt": "^10.1.0",
-    "@nestjs/passport": "^10.0.1",
+    "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.2.1",
     "@nestjs/throttler": "^4.2.1",
     "@sendgrid/mail": "^7.7.0",
