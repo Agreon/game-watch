@@ -23,12 +23,12 @@
         "io-ts-types": "^0.5.19",
         "monocle-ts": "^2.3.13",
         "newtype-ts": "^0.3.5",
-        "uuid": "^9.0.0"
+        "uuid": "^9.0.1"
     },
     "devDependencies": {
         "@mikro-orm/cli": "^5.7.14",
         "@types/node": "^20.5.7",
-        "@types/uuid": "^9.0.2",
+        "@types/uuid": "^9.0.4",
         "eslint": "^8.48.0",
         "pnpm": "^8.7.0",
         "ts-node": "^10.9.1",
