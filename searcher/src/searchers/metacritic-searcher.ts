@@ -3,12 +3,14 @@ import { AxiosInstance } from 'axios';
 import * as t from 'io-ts';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
+import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
 const MetacriticApiGameComponentResponseDataStructure = t.type({
     data: t.type({
         totalResults: t.number,
         items: t.array(t.type({
+            type: t.string,
             title: t.string,
             slug: t.string,
             criticScoreSummary: t.type({
@@ -43,8 +45,10 @@ export class MetacriticSearcher implements InfoSearcher {
         }
 
         const parsedDate = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData.components[0]);
-        const { title, slug, criticScoreSummary: { score } } = parsedDate.data.items[0];
 
+        const games = parsedDate.data.items.filter(({ type }) => type === 'game-title');
+
+        const { title, slug, criticScoreSummary: { score } } = findBestMatch(search, games, 'title');
         if (!matchingName(title, search)) {
             logger.debug(`Found name '${title}' does not include search '${search}'. Skipping`);
 
