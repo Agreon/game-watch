@@ -759,8 +759,8 @@ importers:
         specifier: ^3.0.0-canary.1
         version: 3.0.0-canary.1
       nestjs-pino:
-        specifier: ^3.4.0
-        version: 3.4.0(@nestjs/common@10.2.1)(pino-http@8.4.0)
+        specifier: ^3.5.0
+        version: 3.5.0(@nestjs/common@10.2.1)(pino-http@8.4.0)
       newtype-ts:
         specifier: ^0.3.5
         version: 0.3.5(fp-ts@2.16.1)(monocle-ts@2.3.13)
@@ -8714,8 +8714,8 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /nestjs-pino@3.4.0(@nestjs/common@10.2.1)(pino-http@8.4.0):
-    resolution: {integrity: sha512-L79tk+WqVJApGxD4K40srSHopwlBX8WVPoIJtVhWaxJUfk9ND6eZp7kmgdgwQw8PpYUeoeOhS1g2j0Ep3c0NJA==}
+  /nestjs-pino@3.5.0(@nestjs/common@10.2.1)(pino-http@8.4.0):
+    resolution: {integrity: sha512-IWJ3dzLVjg5istcd3Cz3rVO+gmvabfVAT1YmQgzL1HnC2hkc0H6qA6k6SZ7OIwQfewuRejYfPu3TlkxwRrqxHQ==}
     engines: {node: '>= 14'}
     requiresBuild: true
     peerDependencies:
