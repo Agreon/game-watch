@@ -29,7 +29,7 @@
         "@mikro-orm/cli": "^5.7.14",
         "@types/node": "^20.5.7",
         "@types/uuid": "^9.0.2",
-        "eslint": "^8.48.0",
+        "eslint": "^8.51.0",
         "pnpm": "^8.7.0",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.2.0",
