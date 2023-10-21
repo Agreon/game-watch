@@ -54,6 +54,8 @@ const EpicGameDataStructure = t.type({
 
 export type EpicGameDataResponse = t.TypeOf<typeof EpicGameDataStructure>;
 
+export class EmptyResponseError extends Error { }
+
 // We need to use a browser for Epic store api requests because cloudflare would block axios requests.
 export const retrieveEpicGameData = async (
     offerId: string,
@@ -83,7 +85,7 @@ export const retrieveEpicGameData = async (
         const unknownData = await browser.$eval('body', (el) => JSON.parse(el.textContent!));
         const catalogData = unknownData?.data?.Catalog?.catalogOffer;
         if (!catalogData) {
-            throw new Error(`No catalogData found for ${offerId}`);
+            throw new EmptyResponseError(`No catalogData found for ${offerId}`);
         }
 
         return parseStructure(EpicGameDataStructure, catalogData);

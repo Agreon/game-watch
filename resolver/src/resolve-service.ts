@@ -1,3 +1,4 @@
+import { EmptyResponseError } from '@game-watch/browser';
 import { InfoSource, Notification } from '@game-watch/database';
 import { NIGHTLY_JOB_OPTIONS, QueueParams, QueueType } from '@game-watch/queue';
 import { CacheService, Logger } from '@game-watch/service';
@@ -102,6 +103,7 @@ export class ResolveService {
                 // This error occurs if Puppeteer timeouts.
                 error.name === 'TimeoutError'
                 || error.message.includes('ERR_NETWORK_CHANGED')
+                || error instanceof EmptyResponseError
                 || (
                     axios.isAxiosError(error)
                     && error.response?.status !== undefined
