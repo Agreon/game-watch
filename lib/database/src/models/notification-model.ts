@@ -29,6 +29,7 @@ export class Notification<T extends NotificationType = NotificationType>
     public game!: Ref<Game>;
 
     @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: 'cascade' })
+    @Index()
     public infoSource!: Ref<InfoSource>;
 
     @Property({ columnType: 'jsonb' })

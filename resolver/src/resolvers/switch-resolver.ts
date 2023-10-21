@@ -140,7 +140,6 @@ export class SwitchResolver implements InfoResolver {
         const product = (data.products as SwitchUsGraphqlResponse[]).find(
             ({ productType }) => productType === 'SIMPLE'
         );
-
         if (!product) {
             throw new Error("Could not find 'SIMPLE' product in the response");
         }

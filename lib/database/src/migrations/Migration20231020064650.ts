@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20231006064639 extends Migration {
+export class Migration20231020064650 extends Migration {
   async up(): Promise<void> {
     this.addSql('alter table "notification" drop constraint if exists "notification_type_check"');
     this.addSql('alter table "notification" alter column "type" type text using ("type"::text)');
@@ -12,6 +12,7 @@ export class Migration20231006064639 extends Migration {
         'game-released',
         'game-reduced',
         'new-metacritic-rating',
+        'new-metacritic-user-rating',
         'new-proton-db-rating',
         'proton-db-rating-increased',
         'left-early-access',

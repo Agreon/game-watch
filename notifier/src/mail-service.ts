@@ -48,6 +48,8 @@ export class MailService {
                 return `${infoSourceName} was added to the ${infoSource.type} store`;
             case NotificationType.NewMetacriticRating:
                 return `${infoSourceName} received a Metacritic rating`;
+            case NotificationType.NewMetacriticUserRating:
+                return `${infoSourceName} received a Metacritic user rating`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating`;
             case NotificationType.ProtonDbRatingIncreased:
@@ -110,6 +112,8 @@ ${unsubscribeLink}
                 return `${gameName} will be available today in the ${infoSource.type} store.`;
             case NotificationType.NewMetacriticRating:
                 return `${infoSourceName} received a Metacritic rating.`;
+            case NotificationType.NewMetacriticUserRating:
+                return `${infoSourceName} received a Metacritic user rating`;
             case NotificationType.NewProtonDbRating:
                 return `${infoSourceName} received a Proton DB rating.`;
             case NotificationType.ProtonDbRatingIncreased:

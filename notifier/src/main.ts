@@ -23,6 +23,9 @@ import {
     NewMetacriticRatingNotificationCreator
 } from './notifiers/new-metacritic-rating-notification-creator';
 import {
+    NewMetacriticUserRatingNotificationCreator
+} from './notifiers/new-metacritic-user-rating-notification-creator';
+import {
     NewProtonDbRatingNotificationCreator
 } from './notifiers/new-proton-db-rating-notification-creator';
 import { NewStoreEntryNotificationCreator } from './notifiers/new-store-entry-notification-creator';
@@ -50,6 +53,7 @@ const notificationCreators = [
     new GameReducedNotificationCreator(),
     new GameReleasedNotificationCreator(),
     new NewMetacriticRatingNotificationCreator(),
+    new NewMetacriticUserRatingNotificationCreator(),
     new NewProtonDbRatingNotificationCreator(),
     new ProtonDbRatingIncreasedNotificationCreator(),
     new NewStoreEntryNotificationCreator(),
