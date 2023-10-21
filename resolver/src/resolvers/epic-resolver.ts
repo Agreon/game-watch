@@ -54,7 +54,7 @@ export class EpicResolver implements InfoResolver {
 
     private getReleaseDateInformation(
         { releaseDate, approximateReleasePlan }: {
-            releaseDate: string;
+            releaseDate: string | null;
             approximateReleasePlan: EpicApproximateReleasePlan | null;
         },
     ): StoreReleaseDateInformation | undefined {
@@ -67,6 +67,10 @@ export class EpicResolver implements InfoResolver {
                 isExact: false,
                 date: this.transformApproximateReleasePlanToDate(approximateReleasePlan)
             };
+        }
+
+        if (!releaseDate) {
+            return undefined;
         }
 
         const parsedDate = dayjs(releaseDate);

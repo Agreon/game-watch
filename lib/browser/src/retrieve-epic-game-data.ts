@@ -42,10 +42,10 @@ export type EpicApproximateReleasePlan = t.TypeOf<typeof ApproximateReleasePlanS
 
 const EpicGameDataStructure = t.type({
     title: t.string,
-    releaseDate: t.string,
+    releaseDate: t.union([t.string, t.null]),
     keyImages: t.array(t.type({ type: t.string, url: t.string })),
     price: PriceStructure,
-    approximateReleasePlan: t.union([t.null, ApproximateReleasePlanStructure]),
+    approximateReleasePlan: t.union([ApproximateReleasePlanStructure, t.null]),
     urlSlug: t.string,
     productSlug: t.union([t.string, t.null]),
     offerMappings: t.array(t.type({ pageSlug: t.string })),
@@ -83,7 +83,7 @@ export const retrieveEpicGameData = async (
         const unknownData = await browser.$eval('body', (el) => JSON.parse(el.textContent!));
         const catalogData = unknownData?.data?.Catalog?.catalogOffer;
         if (!catalogData) {
-            throw new Error(`No catalogData found in ${unknownData}`);
+            throw new Error(`No catalogData found for ${offerId}`);
         }
 
         return parseStructure(EpicGameDataStructure, catalogData);
