@@ -7,7 +7,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 
 import { AuthModule } from './auth/auth-module';
@@ -29,10 +29,10 @@ import { UserModule } from './user/user-module';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService<environment, true>) => ({
-        ttl: config.get('THROTTLE_TTL'),
+      useFactory: (config: ConfigService<environment, true>) => [{
+        ttl: seconds(config.get('THROTTLE_TTL')),
         limit: config.get('THROTTLE_LIMIT'),
-      }),
+      }],
     }),
     AuthModule,
     MikroOrmModule.forRoot(mikroOrmConfig),

@@ -17,11 +17,11 @@
     "@game-watch/shared": "0.0.1",
     "@hookform/resolvers": "^3.3.2",
     "axios": "^0.27.2",
-    "chakra-react-select": "^4.7.4",
+    "chakra-react-select": "^4.7.5",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.10",
     "framer-motion": "^10.16.4",
-    "next": "^13.5.4",
+    "next": "^13.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
@@ -30,12 +30,12 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.8.6",
-    "@types/react": "^18.2.28",
-    "@types/uuid": "^9.0.5",
-    "eslint": "^8.51.0",
-    "eslint-config-next": "^13.5.4",
-    "pnpm": "^8.9.1",
+    "@types/node": "^20.8.7",
+    "@types/react": "^18.2.31",
+    "@types/uuid": "^9.0.6",
+    "eslint": "^8.52.0",
+    "eslint-config-next": "^13.5.6",
+    "pnpm": "^8.9.2",
     "typescript": "^5.2.2"
   }
 }

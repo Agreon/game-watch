@@ -11,13 +11,13 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.51.0",
-        "pnpm": "^8.9.1",
+        "eslint": "^8.52.0",
+        "pnpm": "^8.9.2",
         "typescript": "^5.2.2"
     },
     "dependencies": {
         "@game-watch/shared": "workspace:0.0.1",
-        "@sentry/node": "^7.74.0",
+        "@sentry/node": "^7.74.1",
         "io-ts": "^2.2.20",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.2",

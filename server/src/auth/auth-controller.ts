@@ -21,7 +21,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { seconds, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { CookieOptions, Request, Response } from 'express';
 import ms from 'ms';
 
@@ -64,7 +64,7 @@ export class AuthController {
     @Post('/create')
     @HttpCode(HttpStatus.OK)
     @UseGuards(ThrottlerGuard)
-    @Throttle(4, 10)
+    @Throttle({ default: { ttl: seconds(10), limit: 4 } })
     public async createUser(
         @Body() { id }: CreateUserDto,
         @Req() request: Request,
