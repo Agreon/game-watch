@@ -7,6 +7,7 @@ import { useGamesContext } from '../providers/GamesProvider';
 import { useNotificationContext } from '../providers/NotificationProvider';
 import { useAction } from '../util/useAction';
 import { AddGameModal } from './AddGameModal';
+import { clear } from 'console';
 
 export const AddGameInput: React.FC = () => {
     const { removeNotificationsForInfoSource } = useNotificationContext();
@@ -38,9 +39,15 @@ export const AddGameInput: React.FC = () => {
 
     const onCloseModal = useCallback(() => {
         setGameId(null);
+        onClose();
+    }, [onClose]);
+
+    const onSaveModal = useCallback(() => {
+        setGameId(null);
         setName('');
         onClose();
     }, [onClose]);
+
 
     const currentGame = useMemo(() => games.find(game => game.id === gameId), [games, gameId]);
 
@@ -75,7 +82,7 @@ export const AddGameInput: React.FC = () => {
                     removeGame={removeGame}
                     removeNotificationsForInfoSource={removeNotificationsForInfoSource}
                 >
-                    <AddGameModal show={isOpen} onClose={onCloseModal} />
+                    <AddGameModal show={isOpen} onClose={onCloseModal} onSave={onSaveModal} />
                 </GameProvider>
             }
         </>
