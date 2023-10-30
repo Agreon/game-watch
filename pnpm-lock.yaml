@@ -60,8 +60,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.2
       chakra-react-select:
-        specifier: ^4.7.5
-        version: 4.7.5(@chakra-ui/form-control@2.1.1)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/system@2.6.1)(@emotion/react@11.11.1)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^4.7.6
+        version: 4.7.6(@chakra-ui/form-control@2.1.1)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/system@2.6.1)(@emotion/react@11.11.1)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -4876,8 +4876,8 @@ packages:
   /caniuse-lite@1.0.30001551:
     resolution: {integrity: sha512-vtBAez47BoGMMzlbYhfXrMV1kvRF2WP/lqiMuDu1Sb4EE4LKEgjopFDSRtZfdVnslNRpOqV/woE+Xgrwj6VQlg==}
 
-  /chakra-react-select@4.7.5(@chakra-ui/form-control@2.1.1)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/system@2.6.1)(@emotion/react@11.11.1)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-lEDiwdy3Y49XeqaPv6qo3HeRr0kxkouRqk8eOV3PHvi/ZOmLbdflE7d+wLgoh8bsNp2acV4f10G7rlJOcEDCdA==}
+  /chakra-react-select@4.7.6(@chakra-ui/form-control@2.1.1)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/system@2.6.1)(@emotion/react@11.11.1)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-ZL43hyXPnWf1g/HjsZDecbeJ4F2Q6tTPYJozlKWkrQ7lIX7ORP0aZYwmc5/Wly4UNzMimj2Vuosl6MmIXH+G2g==}
     peerDependencies:
       '@chakra-ui/form-control': ^2.0.0
       '@chakra-ui/icon': ^3.0.0
