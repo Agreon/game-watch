@@ -760,7 +760,7 @@ importers:
         version: 3.0.0-canary.1
       nestjs-pino:
         specifier: ^3.5.0
-        version: 3.5.0(@nestjs/common@10.2.7)(pino-http@8.5.0)
+        version: 3.5.0(@nestjs/common@10.2.7)(pino-http@8.5.1)
       newtype-ts:
         specifier: ^0.3.5
         version: 0.3.5(fp-ts@2.16.1)(monocle-ts@2.3.13)
@@ -774,8 +774,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       pino-http:
-        specifier: ^8.5.0
-        version: 8.5.0
+        specifier: ^8.5.1
+        version: 8.5.1
       pino-pretty:
         specifier: ^10.2.3
         version: 10.2.3
@@ -8283,7 +8283,7 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /nestjs-pino@3.5.0(@nestjs/common@10.2.7)(pino-http@8.5.0):
+  /nestjs-pino@3.5.0(@nestjs/common@10.2.7)(pino-http@8.5.1):
     resolution: {integrity: sha512-IWJ3dzLVjg5istcd3Cz3rVO+gmvabfVAT1YmQgzL1HnC2hkc0H6qA6k6SZ7OIwQfewuRejYfPu3TlkxwRrqxHQ==}
     engines: {node: '>= 14'}
     requiresBuild: true
@@ -8292,7 +8292,7 @@ packages:
       pino-http: ^6.4.0 || ^7.0.0 || ^8.0.0
     dependencies:
       '@nestjs/common': 10.2.7(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      pino-http: 8.5.0
+      pino-http: 8.5.1
     dev: false
 
   /netmask@2.0.2:
@@ -8810,8 +8810,8 @@ packages:
       split2: 4.2.0
     dev: false
 
-  /pino-http@8.5.0:
-    resolution: {integrity: sha512-kLGKNLyfWfdmrG1Ug0YdYpCTGbNcuD/YGC3g+elRU/Cm44UTs+tj/dZTxDN3bYauekxFxdLZhJuZdKKl0cml9w==}
+  /pino-http@8.5.1:
+    resolution: {integrity: sha512-T/3d9YHKBYpv/QHjNy73P5BNYYkRrC2/D6CxKMecG4fKFLN+B2iC6LsKYzGRTRV+Ld3fjxFC1ca4TUGbPdzk+Q==}
     dependencies:
       get-caller-file: 2.0.5
       pino: 8.16.0
