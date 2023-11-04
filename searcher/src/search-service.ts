@@ -1,3 +1,4 @@
+import { EmptyResponseError } from '@game-watch/browser';
 import { Game, InfoSource } from '@game-watch/database';
 import {
     MANUALLY_TRIGGERED_JOB_OPTIONS,
@@ -229,6 +230,7 @@ export class SearchService {
                 )
                 // This error occurs if Puppeteer timeouts.
                 || error.name === 'TimeoutError'
+                || error instanceof EmptyResponseError
             ) {
                 throw error;
             }
