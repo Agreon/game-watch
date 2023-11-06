@@ -27,7 +27,7 @@
     },
     "devDependencies": {
         "@mikro-orm/cli": "^5.8.10",
-        "@types/node": "^20.8.7",
+        "@types/node": "^20.8.10",
         "@types/uuid": "^9.0.6",
         "eslint": "^8.52.0",
         "pnpm": "^8.9.2",
