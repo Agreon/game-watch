@@ -25,7 +25,7 @@ import { AddInfoSource } from './InfoSource/AddInfoSource';
 import { InfoSourcePreview } from './InfoSource/InfoSourcePreview';
 import { LoadingSpinner } from './LoadingSpinner';
 
-export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
+export const AddGameModal: React.FC<ModalProps & { onSave: () => void }> = ({ show, onClose , onSave }) => {
     const { game, } = useGameContext();
 
     return (
@@ -56,7 +56,7 @@ export const AddGameModal: React.FC<ModalProps> = ({ show, onClose }) => {
                         {
                             game.syncing
                                 ? <AddGameLoadingScreen onClose={onClose} />
-                                : <SetupGameForm onClose={onClose} />
+                                : <SetupGameForm onClose={onClose} onSave={onSave}/>
                         }
                     </Flex>
                 </ModalBody>
@@ -115,7 +115,7 @@ const AddGameLoadingScreen: React.FC<{ onClose: () => void }> = ({ onClose }) =>
     );
 };
 
-const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const SetupGameForm: React.FC<{ onClose: () => void; onSave: () => void }> = ({ onClose, onSave }) => {
     const { user: { interestedInSources } } = useUserContext();
     const {
         game,
@@ -129,7 +129,7 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         type => activeInfoSources.find(source => source.type === type) === undefined
     );
 
-    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
+    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onSave });
 
     const activeSourceName = activeInfoSources[0]?.data.fullName;
     const [name, setName] = useState(activeSourceName || game.search);
@@ -228,7 +228,9 @@ const SetupGameForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     colorScheme="teal"
                     isLoading={loading}
                     disabled={loading || game.syncing}
-                    onClick={() => onAdd({ name, continueSearching })}
+                    onClick={() => {
+                        onAdd({ name, continueSearching });
+                    }}
                 >
                     Save
                 </Button>

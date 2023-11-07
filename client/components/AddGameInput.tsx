@@ -38,6 +38,11 @@ export const AddGameInput: React.FC = () => {
 
     const onCloseModal = useCallback(() => {
         setGameId(null);
+        onClose();
+    }, [onClose]);
+
+    const onSaveModal = useCallback(() => {
+        setGameId(null);
         setName('');
         onClose();
     }, [onClose]);
@@ -75,7 +80,7 @@ export const AddGameInput: React.FC = () => {
                     removeGame={removeGame}
                     removeNotificationsForInfoSource={removeNotificationsForInfoSource}
                 >
-                    <AddGameModal show={isOpen} onClose={onCloseModal} />
+                    <AddGameModal show={isOpen} onClose={onCloseModal} onSave={onSaveModal} />
                 </GameProvider>
             }
         </>
