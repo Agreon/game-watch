@@ -25,7 +25,7 @@ import { AddInfoSource } from './InfoSource/AddInfoSource';
 import { InfoSourcePreview } from './InfoSource/InfoSourcePreview';
 import { LoadingSpinner } from './LoadingSpinner';
 
-export const AddGameModal: React.FC<ModalProps & {onSave: () => void}> = ({ show, onClose , onSave}) => {
+export const AddGameModal: React.FC<ModalProps & { onSave: () => void }> = ({ show, onClose , onSave }) => {
     const { game, } = useGameContext();
 
     return (
@@ -129,7 +129,7 @@ const SetupGameForm: React.FC<{ onClose: () => void; onSave: () => void }> = ({ 
         type => activeInfoSources.find(source => source.type === type) === undefined
     );
 
-    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onClose });
+    const { loading, execute: onAdd } = useAction(setupGame, { onSuccess: onSave });
 
     const activeSourceName = activeInfoSources[0]?.data.fullName;
     const [name, setName] = useState(activeSourceName || game.search);
@@ -230,7 +230,6 @@ const SetupGameForm: React.FC<{ onClose: () => void; onSave: () => void }> = ({ 
                     disabled={loading || game.syncing}
                     onClick={() => {
                         onAdd({ name, continueSearching });
-                        onSave();
                     }}
                 >
                     Save

@@ -7,7 +7,6 @@ import { useGamesContext } from '../providers/GamesProvider';
 import { useNotificationContext } from '../providers/NotificationProvider';
 import { useAction } from '../util/useAction';
 import { AddGameModal } from './AddGameModal';
-import { clear } from 'console';
 
 export const AddGameInput: React.FC = () => {
     const { removeNotificationsForInfoSource } = useNotificationContext();
@@ -47,7 +46,6 @@ export const AddGameInput: React.FC = () => {
         setName('');
         onClose();
     }, [onClose]);
-
 
     const currentGame = useMemo(() => games.find(game => game.id === gameId), [games, gameId]);
 
