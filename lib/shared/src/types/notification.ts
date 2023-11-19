@@ -10,6 +10,7 @@ export enum NotificationType {
     NewProtonDbRating = 'new-proton-db-rating',
     ProtonDbRatingIncreased = 'proton-db-rating-increased',
     LeftEarlyAccess = 'left-early-access',
+    AddedToPsPlus = 'added-to-ps-plus',
     ResolveError = 'resolve-error'
 }
 
@@ -30,5 +31,6 @@ export type NotificationData = {
     [NotificationType.NewProtonDbRating]: { score: string },
     [NotificationType.ProtonDbRatingIncreased]: { score: string },
     [NotificationType.LeftEarlyAccess]: Record<string, never>,
+    [NotificationType.AddedToPsPlus]: Record<string, never>,
     [NotificationType.ResolveError]: Record<string, never>,
 };

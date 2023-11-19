@@ -4,7 +4,7 @@ import {
     Country,
     InfoSourceType,
     mapCountryCodeToAcceptLanguage,
-    StoreGameData,
+    PlaystationGameData,
     StorePriceInformation,
     StoreReleaseDateInformation,
 } from '@game-watch/shared';
@@ -16,7 +16,7 @@ import { parseDate } from '../util/parse-date';
 export class PlaystationResolver implements InfoResolver {
     public type = InfoSourceType.Playstation;
 
-    public async resolve({ source, logger }: InfoResolverContext): Promise<StoreGameData> {
+    public async resolve({ source, logger }: InfoResolverContext): Promise<PlaystationGameData> {
 
         return await withBrowser(mapCountryCodeToAcceptLanguage(source.country), async browser => {
             await browser.goto(source.data.id);
@@ -45,6 +45,8 @@ export class PlaystationResolver implements InfoResolver {
                 )?.textContent?.trim()
             );
 
+            const pageContent = await browser.content();
+
             return {
                 ...source.data,
                 fullName,
@@ -52,7 +54,8 @@ export class PlaystationResolver implements InfoResolver {
                 priceInformation:
                     this.getPriceInformation({ price, originalPrice }, source.country),
                 releaseDate: this.getReleaseDateInformation(source.country, releaseDate),
-                originalReleaseDate: releaseDate
+                originalReleaseDate: releaseDate,
+                freeForPsPlus: pageContent.includes('UPSELL_PS_PLUS_GAME_CATALOG')
             };
         });
     }

@@ -59,6 +59,10 @@ export interface StoreGameData extends BaseGameData {
     priceInformation?: StorePriceInformation;
 }
 
+export interface PlaystationGameData extends StoreGameData {
+    freeForPsPlus?: boolean;
+}
+
 export interface MetacriticData extends BaseGameData {
     criticScore: string;
     userScore: string;
@@ -77,7 +81,7 @@ export interface ProtonGameData extends BaseGameData {
 export type GameData = {
     [InfoSourceType.Steam]: StoreGameData;
     [InfoSourceType.Switch]: StoreGameData;
-    [InfoSourceType.Playstation]: StoreGameData;
+    [InfoSourceType.Playstation]: PlaystationGameData;
     [InfoSourceType.Xbox]: StoreGameData;
     [InfoSourceType.Epic]: StoreGameData;
     [InfoSourceType.Metacritic]: MetacriticData;

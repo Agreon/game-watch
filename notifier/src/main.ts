@@ -14,6 +14,7 @@ import { Worker } from 'bullmq';
 import { EnvironmentStructure } from './environment';
 import { MailService } from './mail-service';
 import { NotificationService } from './notification-service';
+import { GameAddedToPsPlusNotificationCreator } from './notifiers/game-added-to-ps-plus-notification-creator';
 import {
     GameLeftEarlyAccessNotificationCreator
 } from './notifiers/game-left-early-access-notification-creator';
@@ -58,7 +59,8 @@ const notificationCreators = [
     new ProtonDbRatingIncreasedNotificationCreator(),
     new NewStoreEntryNotificationCreator(),
     new ReleaseDateChangedNotificationCreator(),
-    new GameLeftEarlyAccessNotificationCreator()
+    new GameLeftEarlyAccessNotificationCreator(),
+    new GameAddedToPsPlusNotificationCreator()
 ];
 
 const mailService = new MailService(SendgridMailClient);

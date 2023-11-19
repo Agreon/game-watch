@@ -56,6 +56,8 @@ export class MailService {
                 return `Proton DB rating of ${infoSourceName} increased`;
             case NotificationType.LeftEarlyAccess:
                 return `${infoSourceName} left Early Access`;
+            case NotificationType.AddedToPsPlus:
+                return `${infoSourceName} was added to the PS Plus library`;
             case NotificationType.ResolveError:
                 return `${game.name || game.search} could not be resolved`;
         }
@@ -120,6 +122,8 @@ ${unsubscribeLink}
                 return `Proton DB rating of ${infoSourceName} increased`;
             case NotificationType.LeftEarlyAccess:
                 return `${infoSourceName} left Early Access`;
+            case NotificationType.AddedToPsPlus:
+                return `${infoSourceName} was added to the PS Plus library`;
             case NotificationType.ResolveError:
                 return `${gameName} could not be resolved. Try to trigger it manually again.`
                     + " If that didn't help, there might be an issue with our implementation."

@@ -23,6 +23,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.NewProtonDbRating]: 'Game rated',
     [NotificationType.ProtonDbRatingIncreased]: 'Rating increased',
     [NotificationType.LeftEarlyAccess]: 'Game left Early Access',
+    [NotificationType.AddedToPsPlus]: 'Game added to PS Plus',
     [NotificationType.ResolveError]: 'Resolve error',
 };
 
@@ -69,6 +70,8 @@ const getNotificationText = (notification: NotificationDto) => {
             return <>{infoSourceName} rating increased!</>;
         case NotificationType.LeftEarlyAccess:
             return <>{infoSourceName} left Early Access!</>;
+        case NotificationType.LeftEarlyAccess:
+            return <>{infoSourceName} was added to the PS Plus library!</>;
         case NotificationType.ResolveError:
             return <>{gameName} could not be resolved!</>;
     }
