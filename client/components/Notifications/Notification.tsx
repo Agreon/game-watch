@@ -70,7 +70,7 @@ const getNotificationText = (notification: NotificationDto) => {
             return <>{infoSourceName} rating increased!</>;
         case NotificationType.LeftEarlyAccess:
             return <>{infoSourceName} left Early Access!</>;
-        case NotificationType.LeftEarlyAccess:
+        case NotificationType.AddedToPsPlus:
             return <>{infoSourceName} was added to the PS Plus library!</>;
         case NotificationType.ResolveError:
             return <>{gameName} could not be resolved!</>;
