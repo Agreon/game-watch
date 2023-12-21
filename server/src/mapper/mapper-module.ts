@@ -4,22 +4,28 @@ import { MapperService } from './mapper-service';
 import { EpicMapper } from './mappers/epic-mapper';
 import { MetacriticMapper } from './mappers/metacritic-mapper';
 import { PlaystationMapper } from './mappers/playstation-mapper';
+import { ProtonMapper } from './mappers/proton-mapper';
 import { SteamMapper } from './mappers/steam-mapper';
 import { SwitchMapper } from './mappers/switch-mapper';
 import { XboxMapper } from './mappers/xbox-mapper';
 
+const MAPPERS = [
+    SteamMapper,
+    SwitchMapper,
+    PlaystationMapper,
+    XboxMapper,
+    EpicMapper,
+    MetacriticMapper,
+    ProtonMapper,
+];
+
 @Module({
     providers: [
-        SteamMapper,
-        SwitchMapper,
-        PlaystationMapper,
-        XboxMapper,
-        EpicMapper,
-        MetacriticMapper,
+        ...MAPPERS,
         {
             provide: MapperService,
             useFactory: (...mappers) => new MapperService(mappers),
-            inject: [SteamMapper, SwitchMapper, PlaystationMapper, XboxMapper, EpicMapper, MetacriticMapper]
+            inject: MAPPERS
         }
     ],
     exports: [MapperService]
