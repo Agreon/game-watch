@@ -11,13 +11,13 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "eslint": "^8.53.0",
-        "pnpm": "^8.10.2",
-        "typescript": "^5.2.2"
+        "eslint": "^8.56.0",
+        "pnpm": "^8.12.1",
+        "typescript": "^5.3.3"
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "io-ts": "^2.2.20",
+        "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19",
         "puppeteer": "21.1.0"
     },
