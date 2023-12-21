@@ -25,14 +25,14 @@
         "@sentry/node": "^7.90.0",
         "@sentry/tracing": "^7.90.0",
         "axios": "^0.27.2",
-        "bullmq": "^4.13.1",
+        "bullmq": "^4.16.0",
         "cheerio": "^1.0.0-rc.12",
         "dotenv": "^16.3.1",
         "fast-levenshtein": "^3.0.0",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.3.2",
-        "reflect-metadata": "^0.1.13"
+        "reflect-metadata": "^0.2.1"
     },
     "devDependencies": {
         "@types/fast-levenshtein": "^0.0.4",
