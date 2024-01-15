@@ -17,7 +17,7 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "class-validator": "^0.14.0",
+        "class-validator": "^0.14.1",
         "dayjs": "^1.11.10",
         "fp-ts": "^2.16.1",
         "io-ts": "^2.2.21",
