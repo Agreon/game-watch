@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "bullmq": "^4.16.0",
+        "bullmq": "^5.1.4",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19"
     },
