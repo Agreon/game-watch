@@ -45,7 +45,7 @@
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.5",
     "io-ts": "^2.2.21",
     "io-ts-types": "^0.5.19",
     "ms": "^3.0.0-canary.1",
