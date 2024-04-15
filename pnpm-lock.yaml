@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   multer: 1.4.4-lts.1
 
@@ -102,8 +106,8 @@ importers:
         specifier: ^8.56.0
         version: 8.56.0
       eslint-config-next:
-        specifier: ^14.0.4
-        version: 14.0.4(eslint@8.56.0)(typescript@5.3.3)
+        specifier: ^14.2.1
+        version: 14.2.1(eslint@8.56.0)(typescript@5.3.3)
       pnpm:
         specifier: ^8.12.1
         version: 8.12.1
@@ -793,7 +797,7 @@ importers:
         version: 10.2.1
       '@nestjs/schematics':
         specifier: ^10.0.3
-        version: 10.0.3(chokidar@3.5.3)(typescript@5.2.2)
+        version: 10.0.3(typescript@5.3.3)
       '@types/bcrypt':
         specifier: ^5.0.2
         version: 5.0.2
@@ -3572,8 +3576,8 @@ packages:
       '@nestjs/core': ^8.0.0 || ^9.0.0 || ^10.0.0
     dependencies:
       '@mikro-orm/core': 5.9.5(@mikro-orm/migrations@5.9.5)(@mikro-orm/postgresql@5.9.5)
-      '@nestjs/common': 10.3.0(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.2.1)(rxjs@7.8.1)
-      '@nestjs/core': 10.3.0(@nestjs/common@10.3.0)(@nestjs/platform-express@10.3.0)(reflect-metadata@0.2.1)(rxjs@7.8.1)
+      '@nestjs/common': 10.3.0(reflect-metadata@0.1.14)(rxjs@7.8.1)
+      '@nestjs/core': 10.3.0(@nestjs/common@10.3.0)(reflect-metadata@0.1.14)(rxjs@7.8.1)
     dev: false
 
   /@mikro-orm/postgresql@5.9.5(@mikro-orm/core@5.9.5)(@mikro-orm/migrations@5.9.5):
@@ -3750,6 +3754,26 @@ packages:
       uid: 2.0.2
     dev: false
 
+  /@nestjs/common@10.3.0(reflect-metadata@0.1.14)(rxjs@7.8.1):
+    resolution: {integrity: sha512-DGv34UHsZBxCM3H5QGE2XE/+oLJzz5+714JQjBhjD9VccFlQs3LRxo/epso4l7nJIiNlZkPyIUC8WzfU/5RTsQ==}
+    peerDependencies:
+      class-transformer: '*'
+      class-validator: '*'
+      reflect-metadata: ^0.1.12
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+    dependencies:
+      iterare: 1.2.1
+      reflect-metadata: 0.1.14
+      rxjs: 7.8.1
+      tslib: 2.6.2
+      uid: 2.0.2
+    dev: false
+
   /@nestjs/config@3.1.1(@nestjs/common@10.3.0)(reflect-metadata@0.2.1):
     resolution: {integrity: sha512-qu5QlNiJdqQtOsnB6lx4JCXPQ96jkKUsOGd+JXfXwqJqZcOSAq6heNFg0opW4pq4J/VZoNwoo87TNnx9wthnqQ==}
     peerDependencies:
@@ -3789,6 +3813,37 @@ packages:
       iterare: 1.2.1
       path-to-regexp: 3.2.0
       reflect-metadata: 0.2.1
+      rxjs: 7.8.1
+      tslib: 2.6.2
+      uid: 2.0.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@nestjs/core@10.3.0(@nestjs/common@10.3.0)(reflect-metadata@0.1.14)(rxjs@7.8.1):
+    resolution: {integrity: sha512-N06P5ncknW/Pm8bj964WvLIZn2gNhHliCBoAO1LeBvNImYkecqKcrmLbY49Fa1rmMfEM3MuBHeDys3edeuYAOA==}
+    requiresBuild: true
+    peerDependencies:
+      '@nestjs/common': ^10.0.0
+      '@nestjs/microservices': ^10.0.0
+      '@nestjs/platform-express': ^10.0.0
+      '@nestjs/websockets': ^10.0.0
+      reflect-metadata: ^0.1.12
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/platform-express':
+        optional: true
+      '@nestjs/websockets':
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.3.0(reflect-metadata@0.1.14)(rxjs@7.8.1)
+      '@nuxtjs/opencollective': 0.3.2
+      fast-safe-stringify: 2.1.1
+      iterare: 1.2.1
+      path-to-regexp: 3.2.0
+      reflect-metadata: 0.1.14
       rxjs: 7.8.1
       tslib: 2.6.2
       uid: 2.0.2
@@ -3848,6 +3903,21 @@ packages:
       - chokidar
     dev: true
 
+  /@nestjs/schematics@10.0.3(typescript@5.3.3):
+    resolution: {integrity: sha512-2BRujK0GqGQ7j1Zpz+obVfskDnnOeVKt5aXoSaVngKo8Oczy8uYCY+R547TQB+Kf35epdfFER2pVnQrX3/It5A==}
+    peerDependencies:
+      typescript: '>=4.8.2'
+    dependencies:
+      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
+      '@angular-devkit/schematics': 16.2.8(chokidar@3.5.3)
+      comment-json: 4.2.3
+      jsonc-parser: 3.2.0
+      pluralize: 8.0.0
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - chokidar
+    dev: true
+
   /@nestjs/throttler@5.1.1(@nestjs/common@10.3.0)(@nestjs/core@10.3.0)(reflect-metadata@0.2.1):
     resolution: {integrity: sha512-0fJAGroqpQLnQlERslx2fG264YCXU35nMfiFhykY6/chgc56/W0QPM6BEEf9Q/Uca9lXh5IyjE0fqFToksbP/A==}
     peerDependencies:
@@ -3865,10 +3935,10 @@ packages:
     resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==}
     dev: false
 
-  /@next/eslint-plugin-next@14.0.4:
-    resolution: {integrity: sha512-U3qMNHmEZoVmHA0j/57nRfi3AscXNvkOnxDmle/69Jz/G0o/gWjXTDdlgILZdrxQ0Lw/jv2mPW8PGy0EGIHXhQ==}
+  /@next/eslint-plugin-next@14.2.1:
+    resolution: {integrity: sha512-Fp+mthEBjkn8r9qd6o4JgxKp0IDEzW0VYHD8ZC05xS5/lFNwHKuOdr2kVhWG7BQCO9L6eeepshM1Wbs2T+LgSg==}
     dependencies:
-      glob: 7.1.7
+      glob: 10.3.10
     dev: true
 
   /@next/swc-darwin-arm64@14.0.4:
@@ -6340,8 +6410,8 @@ packages:
       source-map: 0.6.1
     dev: false
 
-  /eslint-config-next@14.0.4(eslint@8.56.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-9/xbOHEQOmQtqvQ1UsTQZpnA7SlDMBtuKJ//S4JnoyK3oGLhILKXdBgu/UO7lQo/2xOykQULS1qQ6p2+EpHgAQ==}
+  /eslint-config-next@14.2.1(eslint@8.56.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-BgD0kPCWMlqoItRf3xe9fG0MqwObKfVch+f2ccwDpZiCJA8ghkz2wrASH+bI6nLZzGcOJOpMm1v1Q1euhfpt4Q==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -6349,7 +6419,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 14.0.4
+      '@next/eslint-plugin-next': 14.2.1
       '@rushstack/eslint-patch': 1.6.1
       '@typescript-eslint/parser': 6.15.0(eslint@8.56.0)(typescript@5.3.3)
       eslint: 8.56.0
@@ -7187,17 +7257,6 @@ packages:
       minimatch: 9.0.3
       minipass: 7.0.4
       path-scurry: 1.10.1
-
-  /glob@7.1.7:
-    resolution: {integrity: sha512-OvD9ENzPLbegENnYP5UUfJIirTg4+XwMWGaQfQTY0JenxNvvIKP3U3/tAQSPIu/lHxXYSZmpXlUHeqAIdKzBLQ==}
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 3.1.2
-      once: 1.4.0
-      path-is-absolute: 1.0.1
-    dev: true
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
@@ -10460,8 +10519,6 @@ packages:
       babel-plugin-macros: '*'
       react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
     peerDependenciesMeta:
-      '@babel/core':
-        optional: true
       babel-plugin-macros:
         optional: true
     dependencies:
@@ -11378,7 +11435,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
