@@ -18,17 +18,6 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_DB: game_watch
-          POSTGRES_USER: game_watch
-          POSTGRES_PASSWORD: game_watch
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
-          --health-timeout 10s
-          --health-retries 5
       redis:
         image: bitnami/redis:7.0
         env:
@@ -50,7 +39,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: pnpm
 
       - name: Install dependencies
@@ -69,6 +58,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: start postgres
+        run: docker-compose up -d db
 
       - name: Test
         run: pnpm test
