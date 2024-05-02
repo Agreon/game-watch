@@ -1,30 +1,28 @@
 import { Tag, User } from '@game-watch/database';
-import { QueryOrder,Ref } from '@mikro-orm/core';
-import { EntityRepository } from '@mikro-orm/knex';
-import { InjectRepository } from '@mikro-orm/nestjs';
+import { QueryOrder, Ref } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { ConflictException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TagService {
   public constructor(
-    @InjectRepository(Tag)
-    private readonly tagRepository: EntityRepository<Tag>
+    private readonly entityManager: EntityManager,
   ) { }
 
   public async create(name: string, color: string, user: Ref<User>) {
-    let tag = await this.tagRepository.findOne({ name, user });
+    let tag = await this.entityManager.findOne(Tag, { name, user });
     if (tag !== null) {
       throw new ConflictException();
     }
 
     tag = new Tag({ name, color, user });
-    await this.tagRepository.persistAndFlush(tag);
+    await this.entityManager.persistAndFlush(tag);
 
     return tag;
   }
 
   public async getAll(user: Ref<User>) {
-    return await this.tagRepository.createQueryBuilder('tag')
+    return await this.entityManager.createQueryBuilder(Tag, 'tag')
       .select('*')
       .where({ user })
       .orderBy({

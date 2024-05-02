@@ -1,17 +1,17 @@
 import { Notification, User } from '@game-watch/database';
-import { EntityRepository, QueryOrder,Ref } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
+import { QueryOrder, Ref } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class NotificationService {
     public constructor(
-        @InjectRepository(Notification)
-        private readonly notificationRepository: EntityRepository<Notification>,
+        private readonly entityManager: EntityManager
     ) { }
 
     public async getNotifications(user: Ref<User>): Promise<Notification[]> {
-        return await this.notificationRepository.find(
+        return await this.entityManager.find(
+            Notification,
             { read: false, user },
             {
                 populate: ['game', 'infoSource'],
@@ -21,20 +21,20 @@ export class NotificationService {
     }
 
     public async markNotificationAsRead(id: string): Promise<Notification> {
-        const notification = await this.notificationRepository.findOneOrFail(id);
+        const notification = await this.entityManager.findOneOrFail(Notification, id);
 
         notification.read = true;
-        await this.notificationRepository.persistAndFlush(notification);
+        await this.entityManager.persistAndFlush(notification);
 
         return notification;
     }
 
     public async markAllNotificationsAsRead(user: Ref<User>): Promise<void> {
-        const notifications = await this.notificationRepository.find({ read: false, user });
+        const notifications = await this.entityManager.find(Notification, { read: false, user });
 
         for (const notification of notifications) {
             notification.read = true;
         }
-        await this.notificationRepository.persistAndFlush(notifications);
+        await this.entityManager.persistAndFlush(notifications);
     }
 }

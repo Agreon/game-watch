@@ -19,8 +19,6 @@ RUN \
     --mount=type=cache,target=/root/.local/share/pnpm/store/v3 \
     pnpm install --frozen-lockfile --prefer-offline
 
-RUN node lib/browser/node_modules/puppeteer/install.js
-
 COPY lib/shared lib/shared
 COPY lib/database lib/database
 COPY lib/service lib/service

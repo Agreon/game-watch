@@ -16,8 +16,7 @@ import { User } from './user-model';
 
 @Entity()
 export class Notification<T extends NotificationType = NotificationType>
-    extends BaseEntity<Notification<T>>
-{
+    extends BaseEntity {
     @Enum({ items: () => NotificationType, type: 'string' })
     public type!: T;
 
@@ -25,17 +24,17 @@ export class Notification<T extends NotificationType = NotificationType>
     @Index()
     public read: boolean = false;
 
-    @ManyToOne(() => Game, { wrappedReference: true, onDelete: 'cascade' })
+    @ManyToOne(() => Game, { ref: true, deleteRule: 'cascade' })
     public game!: Ref<Game>;
 
-    @ManyToOne(() => InfoSource, { wrappedReference: true, onDelete: 'cascade' })
+    @ManyToOne(() => InfoSource, { ref: true, deleteRule: 'cascade' })
     @Index()
     public infoSource!: Ref<InfoSource>;
 
     @Property({ columnType: 'jsonb' })
     public data!: NotificationData[T];
 
-    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
+    @ManyToOne(() => User, { ref: true, deleteRule: 'cascade' })
     public user!: Ref<User>;
 
     public constructor(

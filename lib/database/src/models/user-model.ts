@@ -7,7 +7,7 @@ import { InfoSource } from './info-source-model';
 import { Tag } from './tag-model';
 
 @Entity()
-export class User extends BaseEntity<User> {
+export class User extends BaseEntity {
     @Property({ unique: true, nullable: true })
     public username: string | null = null;
 

@@ -1,6 +1,8 @@
 import { parseStructure } from '@game-watch/shared';
-import { Configuration, LoadStrategy } from '@mikro-orm/core';
+import { LoadStrategy } from '@mikro-orm/core';
+import { Migrator } from '@mikro-orm/migrations';
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import * as dotenv from 'dotenv';
 import path from 'path';
@@ -56,7 +58,7 @@ const {
 
 const config: MikroOrmModuleSyncOptions = {
     entities: [Game, InfoSource, Tag, Notification, User],
-    type: 'postgresql' as keyof typeof Configuration.PLATFORMS,
+    driver: PostgreSqlDriver,
     user: DATABASE_USER,
     password: DATABASE_PASSWORD,
     dbName: DATABASE_NAME,
@@ -65,6 +67,7 @@ const config: MikroOrmModuleSyncOptions = {
     highlighter: ENABLE_MIKRO_ORM_DEBUGGING ? new SqlHighlighter() : undefined,
     port: DATABASE_PORT,
     loadStrategy: LoadStrategy.JOINED,
+    extensions: [Migrator],
     migrations: {
         path: './src/migrations',
         migrationsList: [

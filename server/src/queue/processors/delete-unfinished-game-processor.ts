@@ -1,5 +1,5 @@
 import { QueueParams, QueueType } from '@game-watch/queue';
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { CreateRequestContext,MikroORM } from '@mikro-orm/core';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
@@ -32,7 +32,7 @@ export class DeleteUnfinishedGameProcessor extends WorkerHost {
         }
     }
 
-    @UseRequestContext()
+    @CreateRequestContext()
     public async deleteUnfinishedGame(id: string) {
         const gameToDelete = await this.gameService.getGame(id);
         if (!gameToDelete || gameToDelete.setupCompleted) {

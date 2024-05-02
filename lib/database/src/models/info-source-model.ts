@@ -35,7 +35,7 @@ interface InfoSourceParams<
 export class InfoSource<
     T extends InfoSourceType = InfoSourceType,
     S extends InfoSourceState = InfoSourceState
-> extends BaseEntity<InfoSource> {
+> extends BaseEntity {
     @Enum({ items: () => InfoSourceType, type: 'string' })
     public type!: T;
 
@@ -59,10 +59,10 @@ export class InfoSource<
     @Property()
     public country: Country;
 
-    @ManyToOne(() => Game, { wrappedReference: true, hidden: true, onDelete: 'cascade' })
+    @ManyToOne(() => Game, { ref: true, hidden: true, deleteRule: 'cascade' })
     public game!: Ref<Game>;
 
-    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
+    @ManyToOne(() => User, { ref: true, deleteRule: 'cascade' })
     public user!: Ref<User>;
 
     @OneToMany(() => Notification, notification => notification.infoSource)

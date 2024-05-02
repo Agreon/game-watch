@@ -1,7 +1,6 @@
 import { User } from '@game-watch/database';
 import { UpdateUserSettingsDto } from '@game-watch/shared';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -10,8 +9,6 @@ import { MailService } from '../mail/mail-service';
 @Injectable()
 export class UserService {
     public constructor(
-        @InjectRepository(User)
-        private readonly userRepository: EntityRepository<User>,
         private readonly entityManager: EntityManager,
         private readonly mailService: MailService
     ) { }
@@ -20,7 +17,7 @@ export class UserService {
         userId: string,
         { country, interestedInSources, email, enableEmailNotifications }: UpdateUserSettingsDto
     ): Promise<User> {
-        const user = await this.userRepository.findOneOrFail(userId);
+        const user = await this.entityManager.findOneOrFail(User, userId);
 
         if (user.email !== email) {
             user.emailConfirmed = false;
@@ -46,24 +43,24 @@ export class UserService {
     }
 
     public async confirmEmailAddress(token: string) {
-        const user = await this.userRepository.findOneOrFail({ emailConfirmationToken: token });
+        const user = await this.entityManager.findOneOrFail(User, { emailConfirmationToken: token });
 
         user.emailConfirmationToken = null;
         user.emailConfirmed = true;
 
-        await this.userRepository.persistAndFlush(user);
+        await this.entityManager.persistAndFlush(user);
     }
 
     public async unsubscribeFromNotifications(userId: string) {
-        const user = await this.userRepository.findOneOrFail(userId);
+        const user = await this.entityManager.findOneOrFail(User, userId);
 
         user.emailConfirmed = false;
         user.enableEmailNotifications = false;
 
-        await this.userRepository.persistAndFlush(user);
+        await this.entityManager.persistAndFlush(user);
     }
 
     public async deleteUserAccount(userId: string) {
-        await this.userRepository.nativeDelete(userId);
+        await this.entityManager.nativeDelete(User, userId);
     }
 }

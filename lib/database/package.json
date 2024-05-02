@@ -13,12 +13,12 @@
     },
     "dependencies": {
         "@game-watch/shared": "0.0.1",
-        "@mikro-orm/core": "^5.9.5",
-        "@mikro-orm/migrations": "^5.9.5",
-        "@mikro-orm/nestjs": "^5.2.2",
-        "@mikro-orm/postgresql": "^5.9.5",
+        "@mikro-orm/core": "^6.2.2",
+        "@mikro-orm/migrations": "^6.2.2",
+        "@mikro-orm/nestjs": "^5.2.3",
+        "@mikro-orm/postgresql": "^6.2.2",
         "@mikro-orm/sql-highlighter": "^1.0.1",
-        "dotenv": "^16.3.1",
+        "dotenv": "^16.4.5",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19",
         "monocle-ts": "^2.3.13",
@@ -26,14 +26,14 @@
         "uuid": "^9.0.1"
     },
     "devDependencies": {
-        "@mikro-orm/cli": "^5.9.5",
-        "@types/node": "^20.10.5",
-        "@types/uuid": "^9.0.7",
+        "@mikro-orm/cli": "^6.2.2",
+        "@types/node": "^20.12.7",
+        "@types/uuid": "^9.0.8",
         "eslint": "^8.56.0",
         "pnpm": "^8.12.1",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.5"
     },
     "peerDependencies": {
         "fp-ts": "^2.13.1",

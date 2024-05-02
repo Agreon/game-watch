@@ -3,8 +3,7 @@ import { MANUALLY_TRIGGERED_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { getCronForNightlySync } from '@game-watch/service';
 import { InfoSourceState, SetupGameDto } from '@game-watch/shared';
 import { QueryOrder, Ref } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
 import { QueueService } from '../queue/queue-service';
@@ -13,16 +12,13 @@ import { QueueService } from '../queue/queue-service';
 export class GameService {
     public constructor(
         private readonly queueService: QueueService,
-        @InjectRepository(Game)
-        private readonly gameRepository: EntityRepository<Game>,
-        @InjectRepository(InfoSource)
-        private readonly infoSourceRepository: EntityRepository<InfoSource>,
+        private readonly entityManager: EntityManager,
     ) { }
 
     public async createGame(search: string, user: Ref<User>) {
         const game = new Game({ search, user });
 
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         await this.queueService.addToQueue(
             QueueType.SearchGame,
@@ -40,11 +36,11 @@ export class GameService {
     }
 
     public async syncGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ['infoSources'] });
+        const game = await this.entityManager.findOneOrFail(Game, id, { populate: ['infoSources'] });
         game.syncing = true;
         // We have to persist early here to avoid a race condition with the searcher setting the
         // syncing to false to early.
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         await this.queueService.addToQueue(
             QueueType.SearchGame,
@@ -65,18 +61,18 @@ export class GameService {
             );
         }
 
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         return game;
     }
 
     public async setupGame(id: string, { name, continueSearching }: SetupGameDto) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ['user'] });
+        const game = await this.entityManager.findOneOrFail(Game, id, { populate: ['user'] });
 
         game.setupCompleted = true;
         game.continueSearching = continueSearching;
         game.name = name;
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         if (continueSearching) {
             await this.queueService.createRepeatableGameSearchJob(
@@ -89,34 +85,35 @@ export class GameService {
     }
 
     public async addTagToGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ['tags'] });
+        const game = await this.entityManager.findOneOrFail(Game, id, { populate: ['tags'] });
 
         game.tags.add(tag);
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         return game;
     }
 
     public async removeTagFromGame(id: string, tag: Tag) {
-        const game = await this.gameRepository.findOneOrFail(id, { populate: ['tags'] });
+        const game = await this.entityManager.findOneOrFail(Game, id, { populate: ['tags'] });
 
         game.tags.remove(tag);
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         return game;
     }
 
     public async updateGameName(id: string, name: string) {
-        const game = await this.gameRepository.findOneOrFail(id);
+        const game = await this.entityManager.findOneOrFail(Game, id);
 
         game.name = name;
-        await this.gameRepository.persistAndFlush(game);
+        await this.entityManager.persistAndFlush(game);
 
         return game;
     }
 
     public async deleteGame(id: string) {
-        const game = await this.gameRepository.findOneOrFail(
+        const game = await this.entityManager.findOneOrFail(
+            Game,
             id,
             { populate: ['infoSources', 'user'] }
         );
@@ -129,11 +126,11 @@ export class GameService {
             game,
             getCronForNightlySync(game.user.getEntity().country)
         );
-        await this.gameRepository.removeAndFlush(game);
+        await this.entityManager.removeAndFlush(game);
     }
 
     public async getGame(id: string): Promise<Game & { infoSources: InfoSource[], tags: Tag[] }> {
-        const game = await this.gameRepository.createQueryBuilder('game')
+        const game = await this.entityManager.createQueryBuilder(Game, 'game')
             .select('*')
             .leftJoinAndSelect('game.tags', 'tags')
             .leftJoinAndSelect('game.infoSources', 'infoSources')
@@ -173,9 +170,9 @@ export class GameService {
             user: Ref<User>;
         },
     ) {
-        const knex = this.infoSourceRepository.getKnex();
+        const knex = this.entityManager.getKnex();
 
-        const query = this.gameRepository.createQueryBuilder('game')
+        const query = this.entityManager.createQueryBuilder(Game, 'game')
             .select('*')
             .leftJoinAndSelect('game.tags', 'tags')
             .leftJoinAndSelect(

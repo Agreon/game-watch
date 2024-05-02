@@ -12,7 +12,7 @@ import { Game } from './game-model';
 import { User } from './user-model';
 
 @Entity()
-export class Tag extends BaseEntity<Tag> {
+export class Tag extends BaseEntity {
     @Property()
     public name!: string;
 
@@ -22,7 +22,7 @@ export class Tag extends BaseEntity<Tag> {
     @ManyToMany(() => Game, game => game.tags)
     public games = new Collection<Game>(this);
 
-    @ManyToOne(() => User, { wrappedReference: true, onDelete: 'cascade' })
+    @ManyToOne(() => User, { ref: true, deleteRule: 'cascade' })
     public user!: Ref<User>;
 
     public constructor(

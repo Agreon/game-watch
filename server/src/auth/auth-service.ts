@@ -1,7 +1,6 @@
 import { User } from '@game-watch/database';
 import { Country, RegisterUserDto, UserState } from '@game-watch/shared';
-import { EntityRepository } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
@@ -11,14 +10,13 @@ import { Environment } from '../environment';
 @Injectable()
 export class AuthService {
     public constructor(
-        @InjectRepository(User)
-        private readonly userRepository: EntityRepository<User>,
+        private readonly entityManager: EntityManager,
         private readonly configService: ConfigService<Environment, true>
     ) { }
 
     public async createUser({ id, country }: { id: string; country: Country }): Promise<User> {
         const user = new User({ id, country });
-        await this.userRepository.persistAndFlush(user);
+        await this.entityManager.persistAndFlush(user);
 
         return user;
     }
@@ -32,7 +30,7 @@ export class AuthService {
             enableEmailNotifications,
         }: Omit<RegisterUserDto, 'agreeToTermsOfService'>
     ): Promise<User> {
-        const userToRegister = await this.userRepository.findOneOrFail(id);
+        const userToRegister = await this.entityManager.findOneOrFail(User, id);
 
         userToRegister.username = username.toLocaleLowerCase();
         userToRegister.state = UserState.Registered;
@@ -40,7 +38,7 @@ export class AuthService {
         userToRegister.enableEmailNotifications = enableEmailNotifications;
         userToRegister.password = await this.hashPassword(password);
 
-        await this.userRepository.persistAndFlush(userToRegister);
+        await this.entityManager.persistAndFlush(userToRegister);
 
         delete (userToRegister as any).password;
 
@@ -48,7 +46,8 @@ export class AuthService {
     }
 
     public async validateUser(username: string, password: string): Promise<User | null> {
-        const user = await this.userRepository.findOne(
+        const user = await this.entityManager.findOne(
+            User,
             { username: username.toLocaleLowerCase(), },
             { populate: ['password'] }
         );
