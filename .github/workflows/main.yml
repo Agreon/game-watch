@@ -59,8 +59,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Test
+      - name: start postgres
         run: docker-compose up -d db
+
+      - name: Test
+        run: pnpm test
 
 
   build-docker:
