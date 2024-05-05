@@ -41,14 +41,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
@@ -78,25 +78,7 @@ jobs:
     name: Build Docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: pnpm
-
-      - name: Install dependencies
-        if: contains(github.event.pull_request.labels.*.name, 'dependencies') == false
-        run: pnpm install
-
-      - name: Install dependencies
-        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
-        run: pnpm install --no-frozen-lockfile
+      - uses: actions/checkout@v4
 
       - name: Build
         run: |
