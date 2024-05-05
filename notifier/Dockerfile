@@ -1,9 +1,9 @@
-FROM node:18-slim
+FROM node:20-slim
 RUN apt-get update && \
     apt-get install -y git --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@8.1.0
+RUN npm i -g pnpm@9.0.6
 
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./

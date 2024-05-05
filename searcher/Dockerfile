@@ -1,11 +1,11 @@
-FROM node:18-slim
+FROM node:20-slim
 
 RUN apt-get update \
     && apt-get install -y git chromium fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@8.1.0
+RUN npm i -g pnpm@9.0.6
 
 # This block is shared with the resolver for optimal caching
 WORKDIR /app

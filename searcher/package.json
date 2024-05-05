@@ -13,11 +13,11 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "dependencies": {
-        "@game-watch/browser": "0.0.1",
-        "@game-watch/database": "0.0.1",
-        "@game-watch/queue": "0.0.1",
-        "@game-watch/service": "0.0.1",
-        "@game-watch/shared": "0.0.1",
+        "@game-watch/browser": "workspace:*",
+        "@game-watch/database": "workspace:*",
+        "@game-watch/queue": "workspace:*",
+        "@game-watch/service": "workspace:*",
+        "@game-watch/shared": "workspace:*",
         "@mikro-orm/core": "^6.2.4",
         "@mikro-orm/migrations": "^6.2.4",
         "@mikro-orm/nestjs": "^5.2.3",
@@ -41,7 +41,7 @@
         "@typescript-eslint/parser": "^7.8.0",
         "eslint": "^8.56.0",
         "eslint-plugin-simple-import-sort": "^12.1.0",
-        "pnpm": "^8.12.1",
+        "pnpm": "^9.0.6",
         "ts-node-dev": "^2.0.0",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.4.5"
