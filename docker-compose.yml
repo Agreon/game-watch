@@ -80,7 +80,7 @@ services:
       - $CLIENT_SERVER_PORT:3000
 
   db:
-    image: postgres:14
+    image: postgres:12
     restart: always
     environment:
       - POSTGRES_DB=$DATABASE_NAME

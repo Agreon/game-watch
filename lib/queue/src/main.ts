@@ -75,7 +75,7 @@ export const MANUALLY_TRIGGERED_JOB_OPTIONS: JobsOptions = {
 export const createWorkerForQueue = <T extends QueueType>(
     type: T,
     processor: Processor<QueueParams[T]>,
-    options?: WorkerOptions
+    options?: Omit<WorkerOptions, 'connection'>
 ) => new Worker<QueueParams[T]>(
     type,
     processor,

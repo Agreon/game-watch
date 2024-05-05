@@ -20,6 +20,7 @@ export const createLogger = (name: string) =>
             }
         } : undefined,
         level: 'debug',
+        base: {},
         formatters: {
             level: (label) => ({ level: label }),
         },

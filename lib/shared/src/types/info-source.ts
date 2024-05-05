@@ -96,10 +96,10 @@ export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
     [InfoSourceType.Proton]: Countries,
-    [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU'),
+    [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU' && country !== 'US'),
     [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
     [InfoSourceType.Xbox]: Countries,
-    [InfoSourceType.Epic]: Countries,
+    [InfoSourceType.Epic]: [],
 } as const;
 
 export const InfoSourceTypeNames: Record<InfoSourceType, string> = {
