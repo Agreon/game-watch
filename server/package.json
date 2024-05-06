@@ -23,7 +23,7 @@
     "@game-watch/queue": "workspace:*",
     "@game-watch/service": "workspace:*",
     "@game-watch/shared": "workspace:*",
-    "@mikro-orm/core": "^6.2.4",
+    "@mikro-orm/core": "^6.2.5",
     "@mikro-orm/knex": "^6.2.4",
     "@mikro-orm/migrations": "^6.2.4",
     "@mikro-orm/nestjs": "^5.2.3",
