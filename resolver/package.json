@@ -22,7 +22,7 @@
         "@mikro-orm/migrations": "^6.2.4",
         "@mikro-orm/nestjs": "^5.2.3",
         "@mikro-orm/postgresql": "^6.2.4",
-        "@sentry/node": "^7.113.0",
+        "@sentry/node": "^7.114.0",
         "@sentry/tracing": "^7.113.0",
         "axios": "^0.27.2",
         "bullmq": "^5.7.8",
