@@ -218,9 +218,7 @@ export class SwitchSearcher implements InfoSearcher {
                     q: search,
                     fq: `type:GAME AND sorting_title:* AND *:*`,
                     sort: 'score desc, date_from desc',
-                    start: 0,
                     rows: 10,
-                    bf: 'linear(ms(priority,NOW/HOUR),3.19e-11,0)'
                 }
             }
         );
