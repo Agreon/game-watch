@@ -30,7 +30,7 @@
         "@types/node": "^20.12.12",
         "@types/uuid": "^9.0.8",
         "eslint": "^8.56.0",
-        "pnpm": "^9.0.6",
+        "pnpm": "^9.1.4",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.4.5"
