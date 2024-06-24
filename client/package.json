@@ -35,7 +35,7 @@
     "@types/uuid": "^9.0.8",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.2.3",
-    "pnpm": "^9.0.6",
+    "pnpm": "^9.4.0",
     "typescript": "^5.4.5"
   }
 }
