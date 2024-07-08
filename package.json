@@ -33,7 +33,7 @@
         "eslint-plugin-simple-import-sort": "^12.1.0",
         "pnpm": "^9.0.6",
         "turbo": "^1.13.3",
-        "typescript": "^5.4.5"
+        "typescript": "^5.5.3"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"
