@@ -19,7 +19,7 @@
     "dependencies": {
         "class-validator": "^0.14.1",
         "dayjs": "^1.11.11",
-        "fp-ts": "^2.16.6",
+        "fp-ts": "^2.16.8",
         "io-ts": "^2.2.21",
         "io-ts-reporters": "^2.0.1",
         "monocle-ts": "^2.3.13",
