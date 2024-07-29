@@ -26,7 +26,7 @@
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "@sentry/cli": "^2.31.2",
+        "@sentry/cli": "^2.33.0",
         "@typescript-eslint/eslint-plugin": "^7.8.0",
         "@typescript-eslint/parser": "^7.8.0",
         "eslint": "^8.56.0",
