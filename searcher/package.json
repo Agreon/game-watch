@@ -25,7 +25,7 @@
         "@sentry/node": "^8.4.0",
         "@sentry/tracing": "^7.114.0",
         "axios": "^0.27.2",
-        "bullmq": "^5.7.12",
+        "bullmq": "^5.10.4",
         "cheerio": "^1.0.0-rc.12",
         "dotenv": "^16.4.5",
         "fast-levenshtein": "^3.0.0",
