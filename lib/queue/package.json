@@ -12,12 +12,12 @@
     },
     "devDependencies": {
         "eslint": "^8.56.0",
-        "pnpm": "^9.0.6",
+        "pnpm": "^9.1.4",
         "typescript": "^5.4.5"
     },
     "dependencies": {
         "@game-watch/shared": "workspace:*",
-        "bullmq": "^5.7.12",
+        "bullmq": "^5.7.14",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19"
     },
