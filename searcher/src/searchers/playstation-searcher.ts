@@ -60,6 +60,8 @@ export class PlaystationSearcher implements InfoSearcher {
             `https://web.np.playstation.com/api/graphql/v1/op`,
             {
                 headers: {
+                    'Origin': 'https://store.playstation.com',
+                    'Content-Type': 'application/json',
                     'X-PSN-Store-Locale-Override': mapCountryCodeToAcceptLanguage(userCountry)
                 },
                 params: {

@@ -90,7 +90,6 @@ ${unsubscribeLink}
         const game = notification.game.getEntity();
         const infoSource = notification.infoSource.getEntity();
 
-        const gameName = game.name || game.search;
         // We rather display the resolved name so a user can see instantly if an unrelated
         // game was added.
         const infoSourceName = infoSource.data.fullName;
@@ -101,17 +100,17 @@ ${unsubscribeLink}
                 const initial = formatPrice({ price: data.initial, country: infoSource.country });
                 const final = formatPrice({ price: data.final, country: infoSource.country });
 
-                return `${gameName} was reduced from ${initial} to ${final}.`;
+                return `${infoSourceName} was reduced from ${initial} to ${final}.`;
             case NotificationType.ReleaseDateChanged:
                 const releaseDate = notification.data as NotificationData[NotificationType.ReleaseDateChanged];
                 const formattedDate = formatReleaseDate(releaseDate);
 
-                return `${gameName} will be released ${releaseDate.isExact ? 'on' : 'in'} ${formattedDate} in `
+                return `${infoSourceName} will be released ${releaseDate.isExact ? 'on' : 'in'} ${formattedDate} in `
                     + `the ${infoSource.type} store.`;
             case NotificationType.NewStoreEntry:
                 return `${infoSourceName} was added to the ${infoSource.type} store.`;
             case NotificationType.GameReleased:
-                return `${gameName} will be available today in the ${infoSource.type} store.`;
+                return `${infoSourceName} will be available today in the ${infoSource.type} store.`;
             case NotificationType.NewMetacriticRating:
                 return `${infoSourceName} received a Metacritic rating.`;
             case NotificationType.NewMetacriticUserRating:
@@ -125,7 +124,7 @@ ${unsubscribeLink}
             case NotificationType.AddedToPsPlus:
                 return `${infoSourceName} was added to the PS Plus library`;
             case NotificationType.ResolveError:
-                return `${gameName} could not be resolved. Try to trigger it manually again.`
+                return `${game.name || game.search} could not be resolved. Try to trigger it manually again.`
                     + " If that didn't help, there might be an issue with our implementation."
                     + ' But worry not, the team is already notified.';
         }
