@@ -47,6 +47,8 @@ export const SourceUrlPlaceholder = (sourceType: InfoSourceType, userCountry: Co
             return 'https://store.steampowered.com/app/...';
         case InfoSourceType.Metacritic:
             return 'https://www.metacritic.com/game/pc/...';
+        case InfoSourceType.OpenCritic:
+            return 'https://opencritic.com/game/...';
         case InfoSourceType.Proton:
             return 'https://www.protondb.com/app/...';
         case InfoSourceType.Switch:

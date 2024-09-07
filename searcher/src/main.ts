@@ -27,6 +27,7 @@ import { EnvironmentStructure } from './environment';
 import { CriticalError, SearchService } from './search-service';
 import { EpicSearcher } from './searchers/epic-searcher';
 import { MetacriticSearcher } from './searchers/metacritic-searcher';
+import { OpenCriticSearcher } from './searchers/opencritic-searcher';
 import { PlaystationSearcher } from './searchers/playstation-searcher';
 import { ProtonSearcher } from './searchers/proton-searcher';
 import { SteamSearcher } from './searchers/steam-searcher';
@@ -65,6 +66,7 @@ const searchers = [
     new SteamSearcher(axiosInstance),
     new SwitchSearcher(axiosInstance),
     new ProtonSearcher(axiosInstance),
+    new OpenCriticSearcher(axiosInstance),
 ];
 
 const cacheService = CACHING_ENABLED

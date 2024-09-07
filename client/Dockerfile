@@ -39,7 +39,7 @@ RUN \
     pnpm --filter @game-watch/client build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 RUN npm i -g pnpm@9.0.6
 WORKDIR /app
 

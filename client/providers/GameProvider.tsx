@@ -21,6 +21,7 @@ export const INFO_SOURCE_PRIORITY = [
     InfoSourceType.Epic,
     InfoSourceType.Xbox,
     InfoSourceType.Metacritic,
+    InfoSourceType.OpenCritic,
     InfoSourceType.Proton
 ];
 

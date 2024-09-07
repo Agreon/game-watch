@@ -20,6 +20,7 @@ const NotificationTypeNames: Record<NotificationType, string> = {
     [NotificationType.GameReduced]: 'Game reduced',
     [NotificationType.NewMetacriticRating]: 'Game rated',
     [NotificationType.NewMetacriticUserRating]: 'Game rated',
+    [NotificationType.NewOpenCriticRating]: 'Game rated',
     [NotificationType.NewProtonDbRating]: 'Game rated',
     [NotificationType.ProtonDbRatingIncreased]: 'Rating increased',
     [NotificationType.LeftEarlyAccess]: 'Game left Early Access',
@@ -64,6 +65,8 @@ const getNotificationText = (notification: NotificationDto) => {
             return <>{infoSourceName} received a rating!</>;
         case NotificationType.NewMetacriticUserRating:
             return <>{infoSourceName} received a user rating!</>;
+        case NotificationType.NewOpenCriticRating:
+            return <>{infoSourceName} received a rating!</>;
         case NotificationType.NewProtonDbRating:
             return <>{infoSourceName} received a rating!</>;
         case NotificationType.ProtonDbRatingIncreased:
