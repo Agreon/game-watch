@@ -3,7 +3,7 @@ RUN apt-get update && \
     apt-get install -y git --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@9.0.6
+RUN npm i -g pnpm@9.9.0
 
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
