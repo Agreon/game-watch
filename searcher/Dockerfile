@@ -5,7 +5,7 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@9.0.6
+RUN npm i -g pnpm@9.9.0
 
 # This block is shared with the resolver for optimal caching
 WORKDIR /app

@@ -252,6 +252,12 @@ export class GameService {
             query.limit(limit, offset);
         }
 
-        return await query.getResult() as Array<Game & { infoSources: InfoSource[], tags: Tag[] }>;
+        const result = await query.getResult();
+
+        return result.map((game) => ({
+            ...game.toObject(),
+            infoSources: game.infoSources.toArray(),
+            tags: game.tags.toArray(),
+        }));
     }
 }
