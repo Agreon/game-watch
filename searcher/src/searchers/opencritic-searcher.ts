@@ -22,13 +22,10 @@ export class OpenCriticSearcher implements InfoSearcher {
             `https://api.opencritic.com/api/meta/search`,
             {
                 headers: {
-                    'Origin': 'https://opencritic.com',
-                    'accept': 'application/json, text/plain, */*',
-                    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-                    'Referer': 'https://opencritic.com/',
+                    'Referer': 'https://opencritic.com',
                 },
                 params: {
-                    criteria: encodeURIComponent(search),
+                    criteria: search,
                 }
             }
         );
@@ -48,7 +45,7 @@ export class OpenCriticSearcher implements InfoSearcher {
 
         const { data } = await this.axios.get<string>(url);
         const $ = cheerio.load(data);
-        const score = $('.score-orb > .inner-orb');
+        const score = $('.score-orb > .inner-orb').first().text().trim();
         if(!score) {
             logger.debug(`No score found for ${fullName}`);
             return null;
