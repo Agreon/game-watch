@@ -1,5 +1,6 @@
 import { InfoSourceType } from '@game-watch/shared';
 import { AxiosInstance } from 'axios';
+import * as cheerio from 'cheerio';
 
 import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { matchingName } from '../util/matching-name';
@@ -44,6 +45,14 @@ export class OpenCriticSearcher implements InfoSearcher {
 
         const slug = fullName.toLowerCase().replace(/ /g, '-').replace(/[:]/g, '');
         const url = `https://opencritic.com/game/${gameId}/${slug}`;
+
+        const { data } = await this.axios.get<string>(url);
+        const $ = cheerio.load(data);
+        const score = $('.score-orb > .inner-orb');
+        if(!score) {
+            logger.debug(`No score found for ${fullName}`);
+            return null;
+        }
 
         return {
             id: url,
