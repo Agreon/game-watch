@@ -1,4 +1,4 @@
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat
 RUN npm i -g pnpm@9.9.0
 WORKDIR /app
@@ -10,7 +10,7 @@ RUN \
     pnpm install --frozen-lockfile --prefer-offline
 
 # Rebuild the source code only when needed
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 RUN npm i -g pnpm@9.9.0
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
@@ -39,7 +39,7 @@ RUN \
     pnpm --filter @game-watch/client build && \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 RUN npm i -g pnpm@9.9.0
 WORKDIR /app
 

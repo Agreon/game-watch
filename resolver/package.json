@@ -24,7 +24,7 @@
         "@mikro-orm/postgresql": "^6.3.8",
         "@sentry/node": "^8.28.0",
         "@sentry/tracing": "^7.114.0",
-        "axios": "^0.27.2",
+        "axios": "^1.7.7",
         "bullmq": "^5.12.14",
         "cheerio": "^1.0.0",
         "dayjs": "^1.11.13",
@@ -35,10 +35,10 @@
         "reflect-metadata": "^0.2.2"
     },
     "devDependencies": {
-        "@types/node": "^20.16.5",
-        "@typescript-eslint/eslint-plugin": "^7.18.0",
-        "@typescript-eslint/parser": "^7.18.0",
-        "eslint": "^8.57.0",
+        "@types/node": "^22.5.4",
+        "@typescript-eslint/eslint-plugin": "^8.4.0",
+        "@typescript-eslint/parser": "^8.4.0",
+        "eslint": "^9.10.0",
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "pnpm": "9.9.0",
         "ts-node-dev": "^2.0.0",

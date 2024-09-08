@@ -27,15 +27,16 @@
     },
     "devDependencies": {
         "@sentry/cli": "^2.35.0",
-        "@typescript-eslint/eslint-plugin": "^7.18.0",
-        "@typescript-eslint/parser": "^7.18.0",
-        "eslint": "^8.57.0",
+        "@typescript-eslint/eslint-plugin": "^8.4.0",
+        "@typescript-eslint/parser": "^8.4.0",
+        "eslint": "^9.10.0",
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "pnpm": "9.9.0",
-        "turbo": "^1.13.4",
+        "turbo": "^2.1.1",
         "typescript": "^5.5.4"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"
-    }
+    },
+    "packageManager": "pnpm@9.9.0"
 }

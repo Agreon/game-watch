@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:22-slim
 
 RUN apt-get update \
     && apt-get install -y git chromium fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
