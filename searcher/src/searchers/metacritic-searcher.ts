@@ -8,7 +8,6 @@ import { matchingName } from '../util/matching-name';
 
 const MetacriticApiGameComponentResponseDataStructure = t.type({
     data: t.type({
-        totalResults: t.number,
         items: t.array(t.type({
             type: t.string,
             title: t.string,
@@ -29,8 +28,9 @@ export class MetacriticSearcher implements InfoSearcher {
         search: string,
         { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
+        const encodedSearch = encodeURIComponent(search);
         const { data: unknownData } = await this.axios.get(
-            `https://fandom-prod.apigee.net/v1/xapi/composer/metacritic/pages/search/${encodeURIComponent(search)}/web`,
+            `https://internal-prod.apigee.fandom.net/v1/xapi/finder/metacritic/autosuggest/${encodedSearch}`,
             {
                 params: {
                     apiKey: '1MOZgmNFxvmljaQR1X9KAij9Mo4xAY3u'
@@ -38,15 +38,15 @@ export class MetacriticSearcher implements InfoSearcher {
             }
         );
 
-        if (!unknownData.components || !unknownData.components[0] || !unknownData.components[0].data.totalResults) {
+        if (!unknownData.data) {
             logger.debug('No search results found');
 
             return null;
         }
 
-        const parsedDate = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData.components[0]);
+        const parsedData = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData.data);
 
-        const games = parsedDate.data.items.filter(({ type }) => type === 'game-title');
+        const games = parsedData.data.items.filter(({ type }) => type === 'game-title');
 
         const { title, slug, criticScoreSummary: { score } } = findBestMatch(search, games, 'title');
         if (!matchingName(title, search)) {
