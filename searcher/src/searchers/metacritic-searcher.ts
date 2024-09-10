@@ -38,13 +38,7 @@ export class MetacriticSearcher implements InfoSearcher {
             }
         );
 
-        if (!unknownData.data) {
-            logger.debug('No search results found');
-
-            return null;
-        }
-
-        const parsedData = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData.data);
+        const parsedData = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData);
 
         const games = parsedData.data.items.filter(({ type }) => type === 'game-title');
 
