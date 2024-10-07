@@ -40,7 +40,7 @@
         "@typescript-eslint/parser": "^7.18.0",
         "eslint": "^8.57.0",
         "eslint-plugin-simple-import-sort": "^12.1.1",
-        "pnpm": "9.9.0",
+        "pnpm": "9.12.0",
         "ts-node-dev": "^2.0.0",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.5.4"
