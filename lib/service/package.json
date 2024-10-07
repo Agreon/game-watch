@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "@game-watch/shared": "workspace:*",
-        "@sentry/node": "^8.28.0",
+        "@sentry/node": "^8.33.1",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19",
         "ioredis": "^5.4.1",
