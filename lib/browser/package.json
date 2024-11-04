@@ -19,7 +19,7 @@
         "@game-watch/shared": "workspace:*",
         "io-ts": "^2.2.21",
         "io-ts-types": "^0.5.19",
-        "puppeteer": "^23.3.0"
+        "puppeteer": "^23.6.1"
     },
     "peerDependencies": {
         "fp-ts": "^2.13.1",
