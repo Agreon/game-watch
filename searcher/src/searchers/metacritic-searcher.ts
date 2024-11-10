@@ -6,7 +6,7 @@ import { InfoSearcher, InfoSearcherContext } from '../search-service';
 import { findBestMatch } from '../util/find-best-match';
 import { matchingName } from '../util/matching-name';
 
-const MetacriticApiGameComponentResponseDataStructure = t.type({
+const MetacriticSearchApiResponseStructure = t.type({
     data: t.type({
         items: t.array(t.type({
             type: t.string,
@@ -28,9 +28,8 @@ export class MetacriticSearcher implements InfoSearcher {
         search: string,
         { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
-        const encodedSearch = encodeURIComponent(search);
         const { data: unknownData } = await this.axios.get(
-            `https://internal-prod.apigee.fandom.net/v1/xapi/finder/metacritic/autosuggest/${encodedSearch}`,
+            `https://backend.metacritic.com/v1/xapi/finder/metacritic/autosuggest/${encodeURIComponent(search)}`,
             {
                 params: {
                     apiKey: '1MOZgmNFxvmljaQR1X9KAij9Mo4xAY3u'
@@ -38,7 +37,7 @@ export class MetacriticSearcher implements InfoSearcher {
             }
         );
 
-        const parsedData = parseStructure(MetacriticApiGameComponentResponseDataStructure, unknownData);
+        const parsedData = parseStructure(MetacriticSearchApiResponseStructure, unknownData);
 
         const games = parsedData.data.items.filter(({ type }) => type === 'game-title');
 
