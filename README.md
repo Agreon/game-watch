@@ -15,7 +15,6 @@ Receive updates of game release dates, prices and news
     - Nintendo Store
     - ProtonDB
     - Metacritic
-    - OpenCritic
 - (E-Mail) Notifications for
     - Price reduction
     - Release date change
@@ -23,7 +22,6 @@ Receive updates of game release dates, prices and news
     - Game left Early Access
     - Addition to a store
     - Addition of Metacritic rating
-    - Addition of OpenCritic rating
     - Addition of ProtonDB rating
     - Improvement of ProtonDB rating
 

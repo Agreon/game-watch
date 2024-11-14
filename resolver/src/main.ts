@@ -27,7 +27,6 @@ import { EnvironmentStructure } from './environment';
 import { CriticalError, ResolveService } from './resolve-service';
 import { EpicResolver } from './resolvers/epic-resolver';
 import { MetacriticResolver } from './resolvers/metacritic-resolver';
-import { OpenCriticResolver } from './resolvers/opencritic-resolver';
 import { PlaystationResolver } from './resolvers/playstation-resolver';
 import { ProtonResolver } from './resolvers/proton-resolver';
 import { SteamResolver } from './resolvers/steam-resolver';
@@ -70,7 +69,6 @@ const resolvers = [
     new XboxResolver(axiosInstance),
     new EpicResolver(),
     new MetacriticResolver(axiosInstance),
-    new OpenCriticResolver(axiosInstance),
     new ProtonResolver(axiosInstance),
 ];
 

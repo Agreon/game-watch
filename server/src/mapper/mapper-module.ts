@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { MapperService } from './mapper-service';
 import { EpicMapper } from './mappers/epic-mapper';
 import { MetacriticMapper } from './mappers/metacritic-mapper';
-import { OpenCriticMapper } from './mappers/opencritic-mapper';
 import { PlaystationMapper } from './mappers/playstation-mapper';
 import { ProtonMapper } from './mappers/proton-mapper';
 import { SteamMapper } from './mappers/steam-mapper';
@@ -17,7 +16,6 @@ const MAPPERS = [
     XboxMapper,
     EpicMapper,
     MetacriticMapper,
-    OpenCriticMapper,
     ProtonMapper,
 ];
 

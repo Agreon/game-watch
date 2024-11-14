@@ -1,7 +1,6 @@
 import {
     InfoSourceType,
     MetacriticData,
-    OpenCriticData,
     PlaystationGameData,
     ProtonGameData,
     StoreGameData,
@@ -10,7 +9,6 @@ import React from 'react';
 
 import { useInfoSourceContext } from '../../providers/InfoSourceProvider';
 import { MetacriticInfoSource } from './MetacriticInfoSource';
-import { OpenCriticInfoSource } from './OpenCriticInfoSource';
 import { PlaystationInfoSource } from './PlaystationInfoSource';
 import { ProtonDbInfoSource } from './ProtonDbInfoSource';
 import { StoreInfoSource } from './StoreInfoSource';
@@ -28,8 +26,6 @@ export const InfoSource: React.FC = () => {
             return <PlaystationInfoSource data={source.data as PlaystationGameData} country={source.country} />;
         case InfoSourceType.Metacritic:
             return <MetacriticInfoSource data={source.data as MetacriticData} />;
-        case InfoSourceType.OpenCritic:
-            return <OpenCriticInfoSource data={source.data as OpenCriticData} />;
         case InfoSourceType.Proton:
             return <ProtonDbInfoSource data={source.data as ProtonGameData} />;
     }

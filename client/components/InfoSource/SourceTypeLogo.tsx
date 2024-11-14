@@ -5,7 +5,6 @@ import React from 'react';
 
 import epicLogo from '../../assets/epic';
 import metacriticLogo from '../../assets/metacritic.svg';
-import opencriticLogo from '../../assets/opencritic.png';
 import psLogo from '../../assets/playstation.svg';
 import protonLogo from '../../assets/protondb.svg';
 import steamLogo from '../../assets/steam.svg';
@@ -99,25 +98,6 @@ export const SourceTypeLogoWithName: Record<InfoSourceType, React.ReactElement> 
             </Text>
         </Flex>
     ),
-    [InfoSourceType.OpenCritic]: (
-        <Flex align="center" pl="0.25rem" pr="0.5rem">
-            <Box position="relative" width={30} height={30}>
-                <Box position="absolute" width="27px" height="27px" top="1.25px" left="1.25px">
-                    <Image
-                        alt="source-icon"
-                        priority={true}
-                        src={opencriticLogo}
-                        quality={100}
-                        height={27}
-                        width={27}
-                    />
-                </Box>
-            </Box>
-            <Text fontWeight="bold" ml="0.25rem">
-                {InfoSourceTypeNames[InfoSourceType.OpenCritic]}
-            </Text>
-        </Flex>
-    ),
     [InfoSourceType.Proton]: (
         <Flex align="center" pl="0.25rem" pr="0.5rem">
             <Box position="relative" width={30} height={30}>
@@ -189,14 +169,6 @@ export const SourceTypeLogo: Record<InfoSourceType, React.ReactElement> = {
             </Text>
         </Flex>
     ),
-    [InfoSourceType.OpenCritic]: (
-        <Flex align="center">
-            <Image alt="openCritic" priority={true} src={opencriticLogo} quality={100} height={30} width={30} />
-            <Text fontWeight="bold" ml="0.25rem">
-                {InfoSourceTypeNames[InfoSourceType.OpenCritic]}
-            </Text>
-        </Flex>
-    ),
     [InfoSourceType.Proton]: (
         <Flex align="end">
             <Image alt="source-icon" priority={true} src={protonLogo} quality={100} height={30} width={30} />
@@ -236,11 +208,6 @@ export const SourceTypeLogoSmall: Record<InfoSourceType, React.ReactElement> = {
     [InfoSourceType.Metacritic]: (
         <Flex align="start" mt="-0.2rem">
             <Image alt="metacritic" priority={true} src={metacriticLogo} quality={100} height={20} width={20} />
-        </Flex>
-    ),
-    [InfoSourceType.OpenCritic]: (
-        <Flex align="start">
-            <Image alt="opencritic" priority={true} src={opencriticLogo} quality={100} height={20} width={20} />
         </Flex>
     ),
     [InfoSourceType.Proton]: (

@@ -7,7 +7,6 @@ export enum InfoSourceType {
     Xbox = 'xbox',
     Epic = 'epic',
     Metacritic = 'metacritic',
-    OpenCritic = 'opencritic',
     Proton = 'proton'
 }
 export type StoreInfoSource =
@@ -69,13 +68,6 @@ export interface MetacriticData extends BaseGameData {
     userScore: string;
 }
 
-export type OpenCriticRating = 'mighty' | 'strong' | 'fair' | 'weak';
-export interface OpenCriticData extends BaseGameData {
-    rating: OpenCriticRating;
-    criticScore: number;
-    recommendedBy: number;
-}
-
 export type ProtonDbScore = 'native' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'borked';
 
 export type DeckVerified = 'verified' | 'playable' | 'unsupported' | 'unknown';
@@ -93,19 +85,16 @@ export type GameData = {
     [InfoSourceType.Xbox]: StoreGameData;
     [InfoSourceType.Epic]: StoreGameData;
     [InfoSourceType.Metacritic]: MetacriticData;
-    [InfoSourceType.OpenCritic]: OpenCriticData;
     [InfoSourceType.Proton]: ProtonGameData;
 };
 export type AnyGameData =
     | StoreGameData
     | MetacriticData
-    | OpenCriticData
     | ProtonGameData;
 
 export const SupportedCountries: Record<InfoSourceType, readonly Country[]> = {
     [InfoSourceType.Steam]: Countries,
     [InfoSourceType.Metacritic]: Countries,
-    [InfoSourceType.OpenCritic]: Countries,
     [InfoSourceType.Proton]: Countries,
     [InfoSourceType.Switch]: Countries.filter(country => country !== 'RU' && country !== 'US'),
     [InfoSourceType.Playstation]: Countries.filter(country => country !== 'RU'),
@@ -120,6 +109,5 @@ export const InfoSourceTypeNames: Record<InfoSourceType, string> = {
     [InfoSourceType.Xbox]: 'Xbox',
     [InfoSourceType.Epic]: 'Epic',
     [InfoSourceType.Metacritic]: 'Metacritic',
-    [InfoSourceType.OpenCritic]: 'OpenCritic',
     [InfoSourceType.Proton]: 'ProtonDB',
 };
