@@ -37,7 +37,7 @@
     "@nestjs/platform-express": "^10.4.1",
     "@nestjs/throttler": "^5.2.0",
     "@sendgrid/mail": "^8.1.3",
-    "@sentry/node": "^8.28.0",
+    "@sentry/node": "^8.38.0",
     "@sentry/tracing": "^7.114.0",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.12.14",
