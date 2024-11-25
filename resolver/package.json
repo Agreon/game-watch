@@ -43,7 +43,7 @@
         "pnpm": "9.9.0",
         "ts-node-dev": "^2.0.0",
         "tsconfig-paths": "^4.2.0",
-        "typescript": "^5.5.4"
+        "typescript": "^5.7.2"
     },
     "peerDependencies": {
         "fp-ts": "^2.13.1",
