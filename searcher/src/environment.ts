@@ -8,7 +8,6 @@ export const EnvironmentStructure = t.type({
     REDIS_PORT: IntFromString,
     CACHING_ENABLED: BooleanFromString,
     CACHE_TIME_IN_SECONDS: IntFromString,
-    SENDGRID_API_KEY: t.string,
 });
 
 export type Environment = t.TypeOf<typeof EnvironmentStructure>;

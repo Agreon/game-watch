@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { Environment } from '../environment';
+import { MailModule } from '../mail/mail-module';
 import { AuthController } from './auth-controller';
 import { AuthService } from './auth-service';
 import { JwtAccessTokenStrategy } from './jwt-access-token-strategy';
@@ -32,7 +33,8 @@ import { LocalAuthStrategy } from './local-auth-strategy';
                 },
             })
         }),
-        PassportModule
+        PassportModule,
+        MailModule
     ],
     providers: [
         AuthService,

@@ -6,7 +6,7 @@ import {
     NotificationType,
     parseStructure,
 } from '@game-watch/shared';
-import { MailService as SendgridMailClient } from '@sendgrid/mail';
+import { EmailParams, MailerSend, Recipient, Sender } from 'mailersend';
 
 import { EnvironmentStructure } from './environment';
 
@@ -17,16 +17,20 @@ const {
 
 export class MailService {
     public constructor(
-        private readonly sendgridClient: SendgridMailClient
+        private readonly mailerSendClient: MailerSend
     ) { }
 
     public async sendNotificationMail(receiver: User, notification: Notification) {
-        await this.sendgridClient.send({
-            to: receiver.getEmailOrFail(),
-            from: 'daniel@game-watch.agreon.de',
-            subject: this.getMailSubject(notification),
-            text: this.getMailText(receiver, notification)
-        });
+        const sentFrom = new Sender('daniel@game-watch.agreon.de', 'Daniel');
+
+        const emailParams = new EmailParams()
+            .setFrom(sentFrom)
+            .setTo([new Recipient(receiver.getEmailOrFail())])
+            .setReplyTo(sentFrom)
+            .setSubject(this.getMailSubject(notification))
+            .setText(this.getMailText(receiver, notification));
+
+        await this.mailerSendClient.email.send(emailParams);
     }
 
     private getMailSubject(notification: Notification): string {

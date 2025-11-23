@@ -4,14 +4,17 @@ import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
+import { v4 as uuidV4 } from 'uuid';
 
 import { Environment } from '../environment';
+import { MailService } from '../mail/mail-service';
 
 @Injectable()
 export class AuthService {
     public constructor(
         private readonly entityManager: EntityManager,
-        private readonly configService: ConfigService<Environment, true>
+        private readonly mailService: MailService,
+        private readonly configService: ConfigService<Environment, true>,
     ) { }
 
     public async createUser({ id, country }: { id: string; country: Country }): Promise<User> {
@@ -38,7 +41,14 @@ export class AuthService {
         userToRegister.enableEmailNotifications = enableEmailNotifications;
         userToRegister.password = await this.hashPassword(password);
 
-        await this.entityManager.persistAndFlush(userToRegister);
+        await this.entityManager.transactional(async em => {
+            if (userToRegister.enableEmailNotifications) {
+                userToRegister.emailConfirmationToken = uuidV4();
+                await this.mailService.sendDoiMail(userToRegister, userToRegister.emailConfirmationToken);
+            }
+
+            await em.persistAndFlush(userToRegister);
+        });
 
         delete (userToRegister as any).password;
 

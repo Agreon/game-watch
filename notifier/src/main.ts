@@ -7,9 +7,9 @@ import { createWorkerForQueue, QueueType } from '@game-watch/queue';
 import { createLogger, initializeSentry } from '@game-watch/service';
 import { parseStructure } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
-import SendgridMailClient from '@sendgrid/mail';
 import * as Sentry from '@sentry/node';
 import { Worker } from 'bullmq';
+import { MailerSend } from 'mailersend';
 
 import { EnvironmentStructure } from './environment';
 import { MailService } from './mail-service';
@@ -39,7 +39,7 @@ import {
 
 const {
     CREATE_NOTIFICATIONS_CONCURRENCY,
-    SENDGRID_API_KEY
+    MAILERSEND_API_KEY
 } = parseStructure(EnvironmentStructure, process.env);
 
 initializeSentry('Notifier');
@@ -47,8 +47,6 @@ initializeSentry('Notifier');
 const logger = createLogger('Notifier');
 
 let createNotificationsWorker: Worker | undefined;
-
-SendgridMailClient.setApiKey(SENDGRID_API_KEY);
 
 const notificationCreators = [
     new GameReducedNotificationCreator(),
@@ -63,7 +61,9 @@ const notificationCreators = [
     new GameAddedToPsPlusNotificationCreator()
 ];
 
-const mailService = new MailService(SendgridMailClient);
+const mailService = new MailService(new MailerSend({
+    apiKey: MAILERSEND_API_KEY,
+}));
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig);

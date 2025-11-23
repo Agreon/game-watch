@@ -14,7 +14,7 @@ export const EnvironmentStructure = t.type({
     THROTTLE_TTL: IntFromString,
     THROTTLE_LIMIT: IntFromString,
     PRETTY_LOGGING: BooleanFromString,
-    SENDGRID_API_KEY: t.string,
+    MAILERSEND_API_KEY: t.string,
     API_URL: t.string,
     PUBLIC_URL: t.string,
 });
