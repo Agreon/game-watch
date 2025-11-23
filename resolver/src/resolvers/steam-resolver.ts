@@ -19,7 +19,7 @@ export class SteamResolver implements InfoResolver {
 
     public async resolve({ source }: InfoResolverContext): Promise<StoreGameData> {
         // We have to make a second request here because the steam api will return a localized
-        // 'Coming soon' and we don't want to make an `if``case for every possible language.
+        // 'Coming soon' and we don't want to make an `if`-case for every possible language.
         // Checking for this value is the only way of telling whether a game release
         // is still TBD.
         const [data, { release_date: { date: enLocalizedDate } }] = await Promise.all([
@@ -45,7 +45,7 @@ export class SteamResolver implements InfoResolver {
             priceInformation: data.is_free
                 ? { final: 0 }
                 : this.getPriceInformation(data.price_overview ?? {}),
-            isEarlyAccess: data.genres.some(genre => genre.id === '70')
+            isEarlyAccess: data.genres?.some(genre => genre.id === '70')
         };
     }
 

@@ -14,9 +14,6 @@ const SteamApiResponseDataStructure = t.intersection([
             date: t.string
         }),
         is_free: t.boolean,
-        genres: t.array(t.type({
-            id: t.string,
-        })),
         platforms: t.type({
             linux: t.boolean
         })
@@ -26,6 +23,9 @@ const SteamApiResponseDataStructure = t.intersection([
             initial: t.number,
             final: t.number
         }),
+        genres: t.array(t.type({
+            id: t.string,
+        })),
     })
 ]);
 

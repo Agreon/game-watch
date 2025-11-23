@@ -108,7 +108,7 @@ export class ResolveService {
                     axios.isAxiosError(error)
                     && error.response?.status !== undefined
                     // We only want to retry on network errors that are not signaling us to stop.
-                    && [400, 401, 403, 429].includes(error.response.status) === false
+                    && [400, 401, 403].includes(error.response.status) === false
                 )
             ) {
                 if (isLastAttempt) {
