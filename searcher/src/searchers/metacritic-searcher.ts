@@ -29,12 +29,7 @@ export class MetacriticSearcher implements InfoSearcher {
         { logger }: InfoSearcherContext
     ): Promise<BaseGameData | null> {
         const { data: unknownData } = await this.axios.get(
-            `https://backend.metacritic.com/v1/xapi/finder/metacritic/autosuggest/${encodeURIComponent(search)}`,
-            {
-                params: {
-                    apiKey: '1MOZgmNFxvmljaQR1X9KAij9Mo4xAY3u'
-                }
-            }
+	        `https://backend.metacritic.com/finder/metacritic/autosuggest/${encodeURIComponent(search)}`,
         );
 
         const parsedData = parseStructure(MetacriticSearchApiResponseStructure, unknownData);
