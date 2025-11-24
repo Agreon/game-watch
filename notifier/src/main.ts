@@ -3,7 +3,7 @@ import path from 'path';
 dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
 
 import { mikroOrmConfig } from '@game-watch/database';
-import { createWorkerForQueue, QueueType } from '@game-watch/queue';
+import { createWorkerForQueue, NIGHTLY_JOB_OPTIONS, QueueType } from '@game-watch/queue';
 import { createLogger, initializeSentry } from '@game-watch/service';
 import { parseStructure } from '@game-watch/shared';
 import { MikroORM } from '@mikro-orm/core';
@@ -70,7 +70,10 @@ const main = async () => {
 
     createNotificationsWorker = createWorkerForQueue(
         QueueType.CreateNotifications,
-        async ({ data: { sourceId, existingGameData, resolvedGameData } }) => {
+        async ({ data: { sourceId, existingGameData, resolvedGameData }, attemptsMade }) => {
+            const isLastAttempt =
+                NIGHTLY_JOB_OPTIONS.attempts === attemptsMade;
+
             const sourceScopedLogger = logger.child({ sourceId });
 
             const notificationService = new NotificationService(
@@ -87,9 +90,17 @@ const main = async () => {
                     resolvedGameData,
                 });
             } catch (error) {
-                // Need to wrap this because otherwise the error is swallowed by the worker.
-                sourceScopedLogger.error(error);
-                Sentry.captureException(error, { tags: { sourceId } });
+                if (isLastAttempt) {
+                    // Need to wrap this because otherwise the error is swallowed by the worker.
+                    sourceScopedLogger.error(error);
+                    Sentry.captureException(error, { tags: { sourceId } });
+                } else {
+                    sourceScopedLogger.warn(
+                        error,
+                        `Error thrown while resolving in attempt ${attemptsMade}. Will retry`
+                    );
+                }
+
                 throw error;
             }
         }, { concurrency: CREATE_NOTIFICATIONS_CONCURRENCY, });

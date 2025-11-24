@@ -59,7 +59,7 @@ export const NIGHTLY_JOB_OPTIONS: JobsOptions = {
     attempts: 8,
     backoff: {
         type: 'exponential',
-        delay: 5000,
+        delay: 10000,
     },
 };
 

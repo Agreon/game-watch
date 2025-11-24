@@ -102,13 +102,14 @@ export class ResolveService {
             if (
                 // This error occurs if Puppeteer timeouts.
                 error.name === 'TimeoutError'
+                || error.code === 'ECONNABORTED'
                 || error.message.includes('ERR_NETWORK_CHANGED')
                 || error instanceof EmptyResponseError
                 || (
                     axios.isAxiosError(error)
                     && error.response?.status !== undefined
                     // We only want to retry on network errors that are not signaling us to stop.
-                    && [400, 401, 403].includes(error.response.status) === false
+                    && [400, 401].includes(error.response.status) === false
                 )
             ) {
                 if (isLastAttempt) {
@@ -201,7 +202,12 @@ export class ResolveService {
             {
                 jobId: sourceId,
                 priority: 2,
-                ...NIGHTLY_JOB_OPTIONS
+                ...NIGHTLY_JOB_OPTIONS,
+                // MailerSend has a limit of 10req/min
+                backoff: {
+                    type: 'fixed',
+                    delay: 60000,
+                },
             }
         );
     }
