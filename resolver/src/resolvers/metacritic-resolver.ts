@@ -16,7 +16,7 @@ export class MetacriticResolver implements InfoResolver {
 
         const fullName = $('.hero-title__text').text().trim();
         const criticScore = $('span[data-testid="global-score-value"]').first().text().trim();
-        const userScore = $('span[data-testid="global-score-value"]').first().next().text().trim() || 'tbd';
+        const userScore = $('span[data-testid="global-score-value"]').eq(1).text().trim() || 'tbd';
 
         return {
             ...source.data,
