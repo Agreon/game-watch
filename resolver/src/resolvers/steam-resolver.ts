@@ -83,8 +83,9 @@ export class SteamResolver implements InfoResolver {
             .replace(/\.|\,/g, '')
             // Portuguese release dates will come in the format: 1\/set.\/2011
             .replace(/\\\//g, ' ')
-            // For some reason "Okt" and "Dez" is leading to an invalid date.
+            // For some reason "Mrz","Okt" and "Dez" is leading to an invalid date.
             // So we use the english one.
+            .replace('Mrz', 'Mar')
             .replace('Okt', 'Oct')
             .replace('Dez', 'Dec');
 
