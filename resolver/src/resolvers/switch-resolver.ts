@@ -88,9 +88,9 @@ export class SwitchResolver implements InfoResolver {
                 ? { isExact: false, date: releaseDateText }
                 : { isExact: true, date: parsedDate };
 
-            const priceId = extract(data, /(?<=offdeviceNsuID": ").\d+/)!;
+            const priceId = extract(data, /(?<=nsuid: ").\d+/)!;
             if (!priceId) {
-                logger.warn(`Could not get game id. Game might not have a price yet`);
+                logger.warn(`Could not get game price id. Game might not have a price yet`);
 
                 return {
                     ...source.data,
