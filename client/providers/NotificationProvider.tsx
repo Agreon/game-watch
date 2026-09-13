@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { useHttp } from '../util/useHttp';
 import { usePolling } from '../util/usePolling';
+import { useUserContext } from './UserProvider';
 
 export interface NotificationCtx {
     notifications: NotificationDto[]
@@ -29,6 +30,7 @@ export function useNotificationContext() {
 export const NotificationProvider: React.FC<{
     children: React.ReactChild,
 }> = ({ children }) => {
+    const { user } = useUserContext();
     const { requestWithErrorHandling: requestWithErrorHandling, http } = useHttp();
     const [notifications, setNotifications] = useState<NotificationDto[]>([]);
 
@@ -43,7 +45,7 @@ export const NotificationProvider: React.FC<{
     useEffect(() => {
         (async () => await pollNotifications())();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [user.id]);
     usePolling(pollNotifications, 60 * 60 * 1000, []);
 
     const markNotificationAsRead = useCallback(async (notificationId: string) => {
