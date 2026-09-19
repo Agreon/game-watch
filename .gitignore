@@ -13,6 +13,9 @@
 # production
 /build
 
+# typescript incremental build state
+*.tsbuildinfo
+
 # misc
 .DS_Store
 *.pem

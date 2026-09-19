@@ -5,7 +5,12 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@9.9.0
+# Skip Puppeteer's Chrome download and point it at the system Chromium installed above.
+# Has to be set before the installs so the postinstall script honours it.
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+RUN npm i -g pnpm@12.4.2
 
 # This block is shared with the resolver for optimal caching
 WORKDIR /app

@@ -30,12 +30,12 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.16.5",
+    "@types/node": "catalog:",
     "@types/react": "^18.3.5",
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.8",
-    "pnpm": "9.9.0",
-    "typescript": "^5.5.4"
+    "eslint-plugin-simple-import-sort": "catalog:",
+    "typescript": "catalog:"
   }
 }

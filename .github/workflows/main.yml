@@ -17,29 +17,15 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    services:
-      redis:
-        image: bitnamilegacy/redis:7.0
-        env:
-          REDIS_PASSWORD: test
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
+      - uses: pnpm/action-setup@v4
 
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
@@ -59,8 +45,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Start postgres
-        run: docker compose up -d db
+      - name: Start postgres and redis
+        run: docker compose up -d --wait db redis
 
       - name: Test
         run: pnpm test

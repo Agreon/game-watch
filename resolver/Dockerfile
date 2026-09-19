@@ -1,14 +1,20 @@
 FROM node:24-slim
 
-# Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
-# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
-# installs, work.
+# Chromium plus fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others).
+# Puppeteer drives this system Chromium (see PUPPETEER_EXECUTABLE_PATH below) instead of
+# downloading its own: Chrome for Testing ships linux-x64 only, so the bundled binary cannot
+# run in a linux/arm64 image.
 RUN apt-get update \
     && apt-get install -y git chromium fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm i -g pnpm@9.9.0
+# Skip Puppeteer's Chrome download and point it at the system Chromium installed above.
+# Has to be set before the installs so the postinstall script honours it.
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+RUN npm i -g pnpm@12.4.2
 
 # This block is shared with the searcher for optimal caching
 WORKDIR /app

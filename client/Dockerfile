@@ -1,6 +1,6 @@
 FROM node:24-alpine AS deps
 RUN apk add --no-cache libc6-compat
-RUN npm i -g pnpm@9.9.0
+RUN npm i -g pnpm@12.4.2
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY lib/shared/package.json lib/shared/package.json
@@ -11,7 +11,7 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM node:24-alpine AS builder
-RUN npm i -g pnpm@9.9.0
+RUN npm i -g pnpm@12.4.2
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY lib/shared lib/shared
@@ -22,6 +22,7 @@ COPY client/providers client/providers
 COPY client/public client/public
 COPY client/styles client/styles
 COPY client/util client/util
+COPY client/global.d.ts client/global.d.ts
 COPY client/next-env.d.ts client/next-env.d.ts
 COPY client/next.config.js client/next.config.js
 COPY client/package.json client/package.json
@@ -40,7 +41,6 @@ RUN \
     pnpm install --frozen-lockfile --prod --ignore-scripts --prefer-offline
 
 FROM node:24-alpine AS runner
-RUN npm i -g pnpm@9.9.0
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -63,4 +63,6 @@ EXPOSE 3000
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD ["pnpm", "--filter", "@game-watch/client", "start"]
+WORKDIR /app/client
+
+CMD ["node_modules/.bin/next", "start"]

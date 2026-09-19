@@ -1,24 +1,24 @@
 import { User } from '@game-watch/database';
 import {
-    Countries,
-    CreateUserDto,
-    RegisterUserDto,
-    UserDto,
-    UserState,
+  Countries,
+  CreateUserDto,
+  RegisterUserDto,
+  UserDto,
+  UserState,
 } from '@game-watch/shared';
 import { EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
-    BadRequestException,
-    Body,
-    ConflictException,
-    Controller,
-    HttpCode,
-    HttpStatus,
-    Post,
-    Req,
-    Res,
-    UseGuards,
+  BadRequestException,
+  Body,
+  ConflictException,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { seconds, Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -36,137 +36,151 @@ import { LocalAuthGuard } from './local-auth-guard';
 
 @Controller('/auth')
 export class AuthController {
-    private accessTokenCookieOptions: CookieOptions;
-    private refreshTokenCookieOptions: CookieOptions;
+  private accessTokenCookieOptions: CookieOptions;
+  private refreshTokenCookieOptions: CookieOptions;
 
-    public constructor(
-        private readonly authService: AuthService,
-        private readonly jwtService: JwtService,
-        @InjectRepository(User)
-        private readonly userRepository: EntityRepository<User>,
-        private readonly configService: ConfigService<Environment, true>
-    ) {
-        this.accessTokenCookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            maxAge: ms(configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')),
-        };
+  public constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+    @InjectRepository(User)
+    private readonly userRepository: EntityRepository<User>,
+    private readonly configService: ConfigService<Environment, true>,
+  ) {
+    this.accessTokenCookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: ms(configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN')),
+    };
 
-        this.refreshTokenCookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            maxAge: ms(configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')),
-        };
+    this.refreshTokenCookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: ms(configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN')),
+    };
+  }
+
+  @Post('/create')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { ttl: seconds(10), limit: 4 } })
+  public async createUser(
+    @Body() { id }: CreateUserDto,
+    @Req() request: Request,
+    @Res() response: Response,
+  ): Promise<Response<UserDto>> {
+    const existingUserWithId = await this.userRepository.findOne(id);
+    if (existingUserWithId) {
+      // Don't let others hijack existing accounts.
+      if (existingUserWithId.state !== UserState.Trial) {
+        throw new BadRequestException();
+      }
+
+      return await this.setJwtCookiesForUser(existingUserWithId, response);
     }
 
-    @Post('/create')
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(ThrottlerGuard)
-    @Throttle({ default: { ttl: seconds(10), limit: 4 } })
-    public async createUser(
-        @Body() { id }: CreateUserDto,
-        @Req() request: Request,
-        @Res() response: Response,
-    ): Promise<Response<UserDto>> {
-        const existingUserWithId = await this.userRepository.findOne(id);
-        if (existingUserWithId) {
-            // Don't let others hijack existing accounts.
-            if (existingUserWithId.state !== UserState.Trial) {
-                throw new BadRequestException();
-            }
-
-            return await this.setJwtCookiesForUser(existingUserWithId, response);
-        }
-
-        if (this.configService.get('DISABLE_USER_REGISTRATION')) {
-            throw new BadRequestException(
-                'We are not allowing new user registrations at the moment'
-            );
-        }
-
-        const matchingCountry = Countries
-            // Cloudflare will only send ISO 3166-1 alpha-2 codes. So we'll get `CH` instead
-            // of our `CH-XX` for example.
-            .find(country => country.split('-')[0] === request.headers['cf-ipcountry']);
-
-        const user = await this.authService.createUser({
-            id,
-            country: matchingCountry ?? 'US'
-        });
-
-        return await this.setJwtCookiesForUser(user, response);
+    if (this.configService.get('DISABLE_USER_REGISTRATION')) {
+      throw new BadRequestException(
+        'We are not allowing new user registrations at the moment',
+      );
     }
 
-    @Post('/register')
-    @HttpCode(HttpStatus.OK)
-    public async registerUser(
-        @Body() { id, username, password, enableEmailNotifications, email }: RegisterUserDto,
-        @Res() response: Response,
-    ): Promise<Response<UserDto>> {
-        const existingUser = await this.userRepository.findOne({ username });
-        if (existingUser) {
-            throw new ConflictException();
-        }
+    const matchingCountry = Countries
+      // Cloudflare will only send ISO 3166-1 alpha-2 codes. So we'll get `CH` instead
+      // of our `CH-XX` for example.
+      .find(
+        (country) => country.split('-')[0] === request.headers['cf-ipcountry'],
+      );
 
-        // Again, don't let others hijack existing accounts.
-        const userToRegister = await this.userRepository.findOneOrFail(id);
-        if (userToRegister.state !== UserState.Trial) {
-            throw new BadRequestException();
-        }
+    const user = await this.authService.createUser({
+      id,
+      country: matchingCountry ?? 'US',
+    });
 
-        const registeredUser = await this.authService.registerUser({
-            id,
-            username,
-            password,
-            email,
-            enableEmailNotifications,
-        });
+    return await this.setJwtCookiesForUser(user, response);
+  }
 
-        return await this.setJwtCookiesForUser(registeredUser, response);
+  @Post('/register')
+  @HttpCode(HttpStatus.OK)
+  public async registerUser(
+    @Body()
+    {
+      id,
+      username,
+      password,
+      enableEmailNotifications,
+      email,
+    }: RegisterUserDto,
+    @Res() response: Response,
+  ): Promise<Response<UserDto>> {
+    const existingUser = await this.userRepository.findOne({ username });
+    if (existingUser) {
+      throw new ConflictException();
     }
 
-    @Post('/refresh')
-    @UseGuards(JwtRefreshTokenGuard)
-    @HttpCode(HttpStatus.OK)
-    public async refreshToken(
-        @CurrentUser() user: User,
-        @Res() response: Response,
-    ): Promise<Response<UserDto>> {
-        return await this.setJwtCookiesForUser(user, response);
+    // Again, don't let others hijack existing accounts.
+    const userToRegister = await this.userRepository.findOneOrFail(id);
+    if (userToRegister.state !== UserState.Trial) {
+      throw new BadRequestException();
     }
 
-    @Post('/login')
-    @UseGuards(LocalAuthGuard)
-    @HttpCode(HttpStatus.OK)
-    public async loginUser(
-        @CurrentUser() user: User,
-        @Res() response: Response,
-    ): Promise<Response<UserDto>> {
-        return await this.setJwtCookiesForUser(user, response);
-    }
+    const registeredUser = await this.authService.registerUser({
+      id,
+      username,
+      password,
+      email,
+      enableEmailNotifications,
+    });
 
-    @Post('/logout')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    public async logoutUser(
-        @Res() response: Response,
-    ): Promise<Response<void>> {
-        return response
-            .clearCookie(JWT_ACCESS_TOKEN_NAME, this.accessTokenCookieOptions)
-            .clearCookie(JWT_REFRESH_TOKEN_NAME, this.refreshTokenCookieOptions)
-            .send();
-    }
+    return await this.setJwtCookiesForUser(registeredUser, response);
+  }
 
-    private async setJwtCookiesForUser(user: User, response: Response): Promise<Response<User>> {
-        const [accessToken, refreshToken] = await Promise.all([
-            this.jwtService.createJwtAccessTokenForUser(user),
-            this.jwtService.createJwtRefreshTokenForUser(user)
-        ]);
+  @Post('/refresh')
+  @UseGuards(JwtRefreshTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  public async refreshToken(
+    @CurrentUser() user: User,
+    @Res() response: Response,
+  ): Promise<Response<UserDto>> {
+    return await this.setJwtCookiesForUser(user, response);
+  }
 
-        return response
-            .cookie(JWT_ACCESS_TOKEN_NAME, accessToken, this.accessTokenCookieOptions)
-            .cookie(JWT_REFRESH_TOKEN_NAME, refreshToken, this.refreshTokenCookieOptions)
-            .send(user);
-    }
+  @Post('/login')
+  @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  public async loginUser(
+    @CurrentUser() user: User,
+    @Res() response: Response,
+  ): Promise<Response<UserDto>> {
+    return await this.setJwtCookiesForUser(user, response);
+  }
+
+  @Post('/logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async logoutUser(@Res() response: Response): Promise<Response<void>> {
+    return response
+      .clearCookie(JWT_ACCESS_TOKEN_NAME, this.accessTokenCookieOptions)
+      .clearCookie(JWT_REFRESH_TOKEN_NAME, this.refreshTokenCookieOptions)
+      .send();
+  }
+
+  private async setJwtCookiesForUser(
+    user: User,
+    response: Response,
+  ): Promise<Response<UserDto>> {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.createJwtAccessTokenForUser(user),
+      this.jwtService.createJwtRefreshTokenForUser(user),
+    ]);
+
+    return response
+      .cookie(JWT_ACCESS_TOKEN_NAME, accessToken, this.accessTokenCookieOptions)
+      .cookie(
+        JWT_REFRESH_TOKEN_NAME,
+        refreshToken,
+        this.refreshTokenCookieOptions,
+      )
+      .send(user);
+  }
 }

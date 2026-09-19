@@ -1,10 +1,9 @@
-version: "3"
-
 services:
   server:
     build:
       context: .
       dockerfile: ./server/Dockerfile
+    restart: unless-stopped
     env_file: .env
     environment:
       - DATABASE_HOST=db
@@ -17,12 +16,13 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - $SERVER_PORT:$SERVER_PORT
+      - 127.0.0.1:$SERVER_PORT:$SERVER_PORT
 
   searcher:
     build:
       context: .
       dockerfile: ./searcher/Dockerfile
+    restart: unless-stopped
     env_file: .env
     init: true
     environment:
@@ -40,6 +40,7 @@ services:
     build:
       context: .
       dockerfile: ./resolver/Dockerfile
+    restart: unless-stopped
     env_file: .env
     init: true
     environment:
@@ -57,6 +58,7 @@ services:
     build:
       context: .
       dockerfile: ./notifier/Dockerfile
+    restart: unless-stopped
     env_file: .env
     environment:
       - DATABASE_HOST=db
@@ -73,42 +75,54 @@ services:
     build:
       context: .
       dockerfile: ./client/Dockerfile
+    restart: unless-stopped
     depends_on:
       - server
     ports:
-      - $CLIENT_SERVER_PORT:3000
+      - 127.0.0.1:$CLIENT_SERVER_PORT:3000
 
   db:
-    image: postgres:12
-    restart: always
+    image: postgres:17
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=$DATABASE_NAME
       - POSTGRES_USER=$DATABASE_USER
       - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+    volumes:
+      - db_data:/var/lib/postgresql/data
     ports:
-      - $DATABASE_PORT:5432
+      - 127.0.0.1:$DATABASE_PORT:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $DATABASE_USER -d $DATABASE_NAME"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   redis:
-    image: bitnami/redis:7.0
-    environment:
-      - REDIS_PASSWORD=$REDIS_PASSWORD
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --requirepass "$REDIS_PASSWORD" --appendonly yes
     volumes:
-      - redis_data:/bitnami/redis/data
+      - redis_data:/data
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "-a",
+          "$REDIS_PASSWORD",
+          "--no-auth-warning",
+          "ping",
+        ]
       interval: 1s
       timeout: 3s
       retries: 30
 
   datadog-agent:
     image: gcr.io/datadoghq/agent:7
+    restart: unless-stopped
     environment:
       - DD_API_KEY=$DD_API_KEY
       - DD_SITE=datadoghq.eu
@@ -139,5 +153,7 @@ services:
       - server
 
 volumes:
+  db_data:
+    external: false
   redis_data:
     external: false

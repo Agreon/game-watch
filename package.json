@@ -1,6 +1,7 @@
 {
     "name": "game-watch",
     "private": true,
+    "packageManager": "pnpm@12.4.2",
     "workspaces": [
         "lib/shared",
         "lib/database",
@@ -26,14 +27,12 @@
         "mikro-orm": "pnpm --filter @game-watch/database mikro-orm"
     },
     "devDependencies": {
-        "@sentry/cli": "^2.35.0",
-        "@typescript-eslint/eslint-plugin": "^7.18.0",
-        "@typescript-eslint/parser": "^7.18.0",
-        "eslint": "^8.57.0",
-        "eslint-plugin-simple-import-sort": "^12.1.1",
-        "pnpm": "9.9.0",
-        "turbo": "^1.13.4",
-        "typescript": "^5.5.4"
+        "@sentry/cli": "^3.8.0",
+        "eslint": "catalog:",
+        "eslint-plugin-simple-import-sort": "catalog:",
+        "turbo": "^2.11.2",
+        "typescript": "catalog:",
+        "typescript-eslint": "catalog:"
     },
     "resolutions": {
         "multer": "1.4.4-lts.1"

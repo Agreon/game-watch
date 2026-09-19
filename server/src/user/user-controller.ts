@@ -15,10 +15,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { Environment } from 'src/environment';
 
 import { CurrentUser } from '../auth/current-user-decorator';
 import { JwtAccessTokenGuard } from '../auth/jwt-access-token-guard';
+import { Environment } from '../environment';
 import { UserService } from './user-service';
 
 @Controller('/user')

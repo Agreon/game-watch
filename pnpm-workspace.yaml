@@ -5,3 +5,35 @@ packages:
   - 'searcher'
   - 'resolver'
   - 'notifier'
+# Single source of truth for the toolchain versions. Referenced as `catalog:` in
+# the package.json files so root, libs and services can't drift apart again.
+catalog:
+  '@types/node': ^24.13.6
+  eslint: ^10.10.0
+  eslint-plugin-simple-import-sort: ^14.0.0
+  # Capped at 6.x: typescript-eslint 8.x declares `typescript >=4.8.4 <6.1.0`.
+  # Bump to 7.x once typescript-eslint supports the TS >= 7.1 API
+  # (https://github.com/typescript-eslint/typescript-eslint/issues/10940).
+  typescript: ^6.0.3
+  typescript-eslint: ^8.70.0
+allowBuilds:
+  '@nestjs/core': true
+  '@scarf/scarf': true
+  '@sentry/cli': true
+  bcrypt: true
+  msgpackr-extract: true
+  nestjs-pino: true
+  puppeteer: true
+  sharp: true
+  # Native resolver behind eslint-plugin-import-x, pulled in by eslint-config-next.
+  unrs-resolver: true
+# Exceptions to pnpm's minimum release age check, added for the toolchain upgrade.
+minimumReleaseAgeExclude:
+  - '@turbo/darwin-64@2.11.2'
+  - '@turbo/darwin-arm64@2.11.2'
+  - '@turbo/linux-64@2.11.2'
+  - '@turbo/linux-arm64@2.11.2'
+  - '@turbo/windows-64@2.11.2'
+  - '@turbo/windows-arm64@2.11.2'
+  - '@types/node@24.13.6'
+  - turbo@2.11.2

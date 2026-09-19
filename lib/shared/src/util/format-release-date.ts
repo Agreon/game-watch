@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import { StoreReleaseDateInformation } from '../types/info-source';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
 
 export const formatReleaseDate = (releaseDate?: StoreReleaseDateInformation): string => {

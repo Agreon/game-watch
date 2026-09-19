@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    // `moduleResolution` therefore defaults to the deprecated "node10". ts-jest
+    // passes the resolved options back to the compiler, which turns that into a
+    // hard error, so the deprecation is acknowledged explicitly here.
+    // Migrating to "node16" is a prerequisite for TypeScript 7 and needs the `ms`
+    // module augmentation in server/src/@types/ms.ts sorted out first.
+    "ignoreDeprecations": "6.0",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -12,6 +18,10 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    // TypeScript 6 turned this on by default. The class-validator DTOs and the
+    // MikroORM entities are populated by their respective frameworks, not by a
+    // constructor, so keep the previous behaviour instead of sprinkling `!` around.
+    "strictPropertyInitialization": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": true,

@@ -229,14 +229,14 @@ export class SearchService {
                     )
                 )
                 // This error occurs if Puppeteer timeouts.
-                || error.name === 'TimeoutError'
+                || (error instanceof Error && error.name === 'TimeoutError')
                 || error instanceof EmptyResponseError
             ) {
                 throw error;
             }
 
             logger.warn("Retrying likely won't help. Aborting immediately");
-            throw new CriticalError(type, error);
+            throw new CriticalError(type, error instanceof Error ? error : new Error(String(error)));
         } finally {
             const duration = new Date().getTime() - start;
             logger.debug(`Searching ${type} took ${duration} ms`);

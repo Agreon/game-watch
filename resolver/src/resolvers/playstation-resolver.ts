@@ -23,7 +23,6 @@ export class PlaystationResolver implements InfoResolver {
             await browser.waitForSelector('.psw-t-title-m');
 
             const fullName = await browser.$eval(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 'h1[data-qa="mfe-game-title#name"]', (el) => el.textContent!.trim()
             );
 

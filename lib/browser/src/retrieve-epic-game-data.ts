@@ -81,7 +81,6 @@ export const retrieveEpicGameData = async (
 
         await browser.goto(`https://store.epicgames.com/graphql?${searchParams.toString()}`);
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const unknownData = await browser.$eval('body', (el) => JSON.parse(el.textContent!));
         const catalogData = unknownData?.data?.Catalog?.catalogOffer;
         if (!catalogData) {

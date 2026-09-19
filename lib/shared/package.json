@@ -11,10 +11,9 @@
         "lint:fix": "eslint \"src/**/*.ts\" --fix"
     },
     "devDependencies": {
-        "@types/node": "^20.16.5",
-        "eslint": "^8.57.0",
-        "pnpm": "9.9.0",
-        "typescript": "^5.5.4"
+        "@types/node": "catalog:",
+        "eslint": "catalog:",
+        "typescript": "catalog:"
     },
     "dependencies": {
         "class-validator": "^0.14.1",
