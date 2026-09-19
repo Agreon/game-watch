@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 
 services:
-
   server:
     build:
       context: .
@@ -89,7 +88,7 @@ services:
     ports:
       - $DATABASE_PORT:5432
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -103,7 +102,7 @@ services:
     ports:
       - 6379:6379
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 1s
       timeout: 3s
       retries: 30
@@ -128,6 +127,16 @@ services:
       - /proc/:/host/proc/:ro
       - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+
+cloudflared:
+  image: cloudflare/cloudflared:latest
+  restart: unless-stopped
+  command: tunnel --no-autoupdate run
+  environment:
+    - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+  depends_on:
+    - client
+    - server
 
 volumes:
   redis_data:
