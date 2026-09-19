@@ -128,15 +128,15 @@ services:
       - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
 
-cloudflared:
-  image: cloudflare/cloudflared:latest
-  restart: unless-stopped
-  command: tunnel --no-autoupdate run
-  environment:
-    - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-  depends_on:
-    - client
-    - server
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - client
+      - server
 
 volumes:
   redis_data:

@@ -22,9 +22,6 @@ set -euo pipefail
 #  KONFIGURATION – bitte vor dem Ausführen anpassen
 # ============================================================
 SSH_PORT="22"                        # ggf. auf einen anderen Port ändern
-STACKS_DIR="/opt/stacks"             # docker-compose Stacks liegen hier
-DATA_DIR="/opt/data"                 # persistente Volume-Daten liegen hier
-
 OPEN_HTTP_HTTPS_PORTS=false          # true, falls KEIN Cloudflare Tunnel genutzt wird
                                       # und Traefik/Caddy direkt Port 80/443 braucht
 
@@ -106,4 +103,3 @@ systemctl enable --now fail2ban
 log "Fertig!"
 echo "Nächste Schritte:"
 echo "  1. Secrets (.env-Dateien) manuell/aus dem Passwort-Manager einspielen"
-echo "  2. In $STACKS_DIR/<app>/ jeweils: docker compose up -d"
