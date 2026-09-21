@@ -16,13 +16,13 @@
     },
     "dependencies": {
         "@game-watch/shared": "workspace:*",
-        "io-ts": "^2.2.21",
-        "io-ts-types": "^0.5.19",
-        "puppeteer": "^23.3.0"
+        "io-ts": "catalog:",
+        "io-ts-types": "catalog:",
+        "puppeteer": "^25.11.0"
     },
     "peerDependencies": {
-        "fp-ts": "^2.13.1",
-        "monocle-ts": "^2.3.13",
-        "newtype-ts": "^0.3.5"
+        "fp-ts": "catalog:",
+        "monocle-ts": "catalog:",
+        "newtype-ts": "catalog:"
     }
 }

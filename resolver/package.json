@@ -18,19 +18,18 @@
         "@game-watch/queue": "workspace:*",
         "@game-watch/service": "workspace:*",
         "@game-watch/shared": "workspace:*",
-        "@mikro-orm/core": "^6.3.8",
-        "@mikro-orm/migrations": "^6.3.8",
-        "@mikro-orm/postgresql": "^6.3.8",
-        "@sentry/node": "^8.28.0",
-        "@sentry/tracing": "^7.114.0",
-        "axios": "^0.27.2",
-        "bullmq": "^5.12.14",
-        "cheerio": "^1.0.0",
-        "dayjs": "^1.11.13",
-        "dotenv": "^16.4.5",
-        "io-ts": "^2.2.21",
-        "io-ts-types": "^0.5.19",
-        "ioredis": "^5.4.1",
+        "@mikro-orm/core": "^6.6.16",
+        "@mikro-orm/migrations": "^6.6.16",
+        "@mikro-orm/postgresql": "^6.6.16",
+        "@sentry/node": "^10.75.0",
+        "axios": "^1.20.0",
+        "bullmq": "^5.81.5",
+        "cheerio": "^1.2.0",
+        "dayjs": "^1.11.23",
+        "dotenv": "^16.6.1",
+        "io-ts": "catalog:",
+        "io-ts-types": "catalog:",
+        "ioredis": "^5.11.1",
         "reflect-metadata": "^0.2.2"
     },
     "devDependencies": {
@@ -41,9 +40,9 @@
         "typescript": "catalog:"
     },
     "peerDependencies": {
-        "fp-ts": "^2.13.1",
-        "monocle-ts": "^2.3.13",
-        "newtype-ts": "^0.3.5",
+        "fp-ts": "catalog:",
+        "monocle-ts": "catalog:",
+        "newtype-ts": "catalog:",
         "rxjs": "^7.1.0"
     }
 }

@@ -1,16 +1,16 @@
-import { EmptyResponseError } from "@game-watch/browser";
-import { InfoSource, Notification } from "@game-watch/database";
-import { NIGHTLY_JOB_OPTIONS, QueueParams, QueueType } from "@game-watch/queue";
-import { CacheService, Logger } from "@game-watch/service";
+import { EmptyResponseError } from '@game-watch/browser';
+import { InfoSource, Notification } from '@game-watch/database';
+import { NIGHTLY_JOB_OPTIONS, QueueParams, QueueType } from '@game-watch/queue';
+import { CacheService, Logger } from '@game-watch/service';
 import {
   AnyGameData,
   InfoSourceState,
   InfoSourceType,
   NotificationType,
-} from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
-import axios from "axios";
-import { Queue } from "bullmq";
+} from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
+import axios from 'axios';
+import { Queue } from 'bullmq';
 
 export interface InfoResolverContext {
   logger: Logger;
@@ -59,7 +59,7 @@ export class ResolveService {
         id: sourceId,
         state: { $ne: InfoSourceState.Disabled },
       },
-      { populate: ["user"] },
+      { populate: ['user'] },
     );
 
     const logger = this.sourceScopedLogger.child({
@@ -110,9 +110,9 @@ export class ResolveService {
       // Allow retry in these cases
       if (
         // This error occurs if Puppeteer timeouts.
-        thrownError.name === "TimeoutError" ||
-        thrownError.code === "ECONNABORTED" ||
-        thrownError.message.includes("ERR_NETWORK_CHANGED") ||
+        thrownError.name === 'TimeoutError' ||
+        thrownError.code === 'ECONNABORTED' ||
+        thrownError.message.includes('ERR_NETWORK_CHANGED') ||
         error instanceof EmptyResponseError ||
         (axios.isAxiosError(error) &&
           error.response?.status !== undefined &&
@@ -224,7 +224,7 @@ export class ResolveService {
         ...NIGHTLY_JOB_OPTIONS,
         // MailerSend has a limit of 10req/min
         backoff: {
-          type: "fixed",
+          type: 'fixed',
           delay: 60000,
         },
       },

@@ -16,8 +16,41 @@ catalog:
   # (https://github.com/typescript-eslint/typescript-eslint/issues/10940).
   typescript: ^6.0.3
   typescript-eslint: ^8.70.0
+  # The fp-ts family is declared as a peerDependency almost everywhere, so with
+  # auto-install-peers each package used to resolve it on its own. That produced two
+  # io-ts instances (one per fp-ts version) whose types are nominally distinct, and
+  # `parseStructure` stopped accepting codecs from the other copy. Pinning all five
+  # through the catalog keeps the workspace on exactly one instance.
+  fp-ts: ^2.16.11
+  io-ts: ^2.2.22
+  io-ts-types: ^0.5.19
+  monocle-ts: ^2.3.13
+  newtype-ts: ^0.3.5
+# io-ts-reporters declares fp-ts and io-ts as peers with wider ranges than the
+# catalog, and auto-install-peers resolves those into a second copy. Overriding both
+# collapses the graph onto the catalog versions so only one io-ts instance exists.
+overrides:
+  fp-ts: ^2.16.11
+  io-ts: ^2.2.22
+  # Transitive advisories with no direct-dependency route. Each is pulled in by a
+  # package that still pins the vulnerable version; all stay within the same major.
+  jws: ^3.2.3              # passport-jwt -> jsonwebtoken 9.0.2 (HMAC verification bypass)
+  multer: ^2.4.0           # @nestjs/platform-express 11
+  picomatch: ^2.3.2        # ReDoS via extglob quantifiers
+  postcss: ^8.5.23         # pinned to 8.4.31 by next
+  nanoid: ^3.3.18          # via postcss
+  qs: ^6.16.0              # mailersend 2.x
+  # Scoped to the one consumer: a global ajv override would also replace the ajv 6
+  # that eslint requires for its draft-04 schema support, and eslint then crashes.
+  '@rushstack/node-core-library>ajv': ^8.18.0
+  yaml: ^1.10.3            # next's postcss config loader
+  '@babel/runtime': ^7.26.10
+  '@babel/core': ^7.29.6
+
 allowBuilds:
   '@nestjs/core': true
+  # Native file watcher behind @nestjs/cli 11's watch mode.
+  '@parcel/watcher': true
   '@scarf/scarf': true
   '@sentry/cli': true
   bcrypt: true
@@ -37,3 +70,32 @@ minimumReleaseAgeExclude:
   - '@turbo/windows-arm64@2.11.2'
   - '@types/node@24.13.6'
   - turbo@2.11.2
+  - '@jest/console@30.5.2'
+  - '@jest/core@30.5.2'
+  - '@jest/environment@30.5.2'
+  - '@jest/expect-utils@30.5.2'
+  - '@jest/expect@30.5.2'
+  - '@jest/fake-timers@30.5.2'
+  - '@jest/globals@30.5.2'
+  - '@jest/reporters@30.5.2'
+  - '@jest/source-map@30.5.2'
+  - '@jest/test-result@30.5.2'
+  - '@jest/test-sequencer@30.5.2'
+  - '@jest/transform@30.5.2'
+  - babel-jest@30.5.2
+  - expect@30.5.2
+  - jest-circus@30.5.2
+  - jest-cli@30.5.2
+  - jest-config@30.5.2
+  - jest-diff@30.5.2
+  - jest-each@30.5.2
+  - jest-environment-node@30.5.2
+  - jest-matcher-utils@30.5.2
+  - jest-mock@30.5.2
+  - jest-resolve-dependencies@30.5.2
+  - jest-runner@30.5.2
+  - jest-runtime@30.5.2
+  - jest-snapshot@30.5.2
+  - jest-watcher@30.5.2
+  - jest@30.5.2
+  - webpack@5.111.1

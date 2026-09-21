@@ -16,12 +16,12 @@
         "typescript": "catalog:"
     },
     "dependencies": {
-        "class-validator": "^0.14.1",
-        "dayjs": "^1.11.13",
-        "fp-ts": "^2.16.9",
-        "io-ts": "^2.2.21",
+        "class-validator": "^0.15.1",
+        "dayjs": "^1.11.23",
+        "fp-ts": "catalog:",
+        "io-ts": "catalog:",
         "io-ts-reporters": "^2.0.1",
-        "monocle-ts": "^2.3.13",
-        "newtype-ts": "^0.3.5"
+        "monocle-ts": "catalog:",
+        "newtype-ts": "catalog:"
     }
 }

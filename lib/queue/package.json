@@ -16,13 +16,13 @@
     },
     "dependencies": {
         "@game-watch/shared": "workspace:*",
-        "bullmq": "^5.12.14",
-        "io-ts": "^2.2.21",
-        "io-ts-types": "^0.5.19"
+        "bullmq": "^5.81.5",
+        "io-ts": "catalog:",
+        "io-ts-types": "catalog:"
     },
     "peerDependencies": {
-        "fp-ts": "^2.13.1",
-        "monocle-ts": "^2.3.13",
-        "newtype-ts": "^0.3.5"
+        "fp-ts": "catalog:",
+        "monocle-ts": "catalog:",
+        "newtype-ts": "catalog:"
     }
 }

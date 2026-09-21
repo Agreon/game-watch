@@ -1,15 +1,15 @@
-import { Game, InfoSource, Notification, User } from "@game-watch/database";
-import { Logger } from "@game-watch/service";
+import { Game, InfoSource, Notification, User } from '@game-watch/database';
+import { Logger } from '@game-watch/service';
 import {
   AnyGameData,
   GameData,
   InfoSourceType,
   NotificationData,
   NotificationType,
-} from "@game-watch/shared";
-import { EntityManager } from "@mikro-orm/core";
+} from '@game-watch/shared';
+import { EntityManager } from '@mikro-orm/core';
 
-import { MailService } from "./mail-service";
+import { MailService } from './mail-service';
 
 export interface NotificationCreatorContext<
   T extends InfoSourceType = InfoSourceType,
@@ -48,7 +48,7 @@ export class NotificationService {
     resolvedGameData: AnyGameData | null;
   }) {
     const infoSource = await this.em.findOneOrFail(InfoSource, sourceId, {
-      populate: ["game", "user"],
+      populate: ['game', 'user'],
     });
     const game = infoSource.game.getEntity();
     if (!game.setupCompleted) {

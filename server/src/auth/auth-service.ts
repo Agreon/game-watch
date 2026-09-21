@@ -1,10 +1,11 @@
+import { randomUUID } from 'node:crypto';
+
 import { User } from '@game-watch/database';
 import { Country, RegisterUserDto, UserState } from '@game-watch/shared';
 import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
-import { v4 as uuidV4 } from 'uuid';
 
 import { Environment } from '../environment';
 import { MailService } from '../mail/mail-service';
@@ -43,7 +44,7 @@ export class AuthService {
 
         await this.entityManager.transactional(async em => {
             if (userToRegister.enableEmailNotifications) {
-                userToRegister.emailConfirmationToken = uuidV4();
+                userToRegister.emailConfirmationToken = randomUUID();
                 await this.mailService.sendDoiMail(userToRegister, userToRegister.emailConfirmationToken);
             }
 

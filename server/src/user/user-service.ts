@@ -1,8 +1,9 @@
+import { randomUUID } from 'node:crypto';
+
 import { User } from '@game-watch/database';
 import { UpdateUserSettingsDto } from '@game-watch/shared';
 import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidV4 } from 'uuid';
 
 import { MailService } from '../mail/mail-service';
 
@@ -26,7 +27,7 @@ export class UserService {
         user.email = email ?? null;
         user.country = country;
         if (user.emailConfirmed === false && !!user.email) {
-            user.emailConfirmationToken = uuidV4();
+            user.emailConfirmationToken = randomUUID();
         }
 
         user.interestedInSources = interestedInSources;

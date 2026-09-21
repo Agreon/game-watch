@@ -1,9 +1,10 @@
+import { randomUUID } from 'node:crypto';
+
 import { BaseEntity as MikroOrmBaseEntity, PrimaryKey, Property } from '@mikro-orm/core';
-import { v4 } from 'uuid';
 
 export abstract class BaseEntity extends MikroOrmBaseEntity {
     @PrimaryKey()
-    public id: string = v4();
+    public id: string = randomUUID();
 
     @Property()
     public createdAt: Date = new Date();

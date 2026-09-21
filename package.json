@@ -33,8 +33,5 @@
         "turbo": "^2.11.2",
         "typescript": "catalog:",
         "typescript-eslint": "catalog:"
-    },
-    "resolutions": {
-        "multer": "1.4.4-lts.1"
     }
 }
